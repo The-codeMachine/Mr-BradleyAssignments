@@ -20,6 +20,8 @@ public class Main {
         
         System.out.println("\tA new instance of a light: " + l);
         
+        l.turnOn();
+
         l.brighten();
         System.out.println("\tlight (brighten): " + l);
         
