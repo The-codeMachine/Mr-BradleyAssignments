@@ -1,4 +1,4 @@
-# Mr. Bradley Assignments
+# Mr-BradleyAssignments/java
 
 This is a GitHub repository for organizing the solutions to the assignments my teacher gave me. 
 
@@ -8,7 +8,7 @@ This is organized as a multi-module Gradle project. Each assignment is its own m
 
 ## Building
 
-In advance, please understand that all commands in this .md file take please in this root directory.
+In advance, please understand that all commands in this .md file take please in the ```java/``` sub directory.
 
 To build this please ensure you have all of these tools properly installed:
 

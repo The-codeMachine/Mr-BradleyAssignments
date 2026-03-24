@@ -26,7 +26,9 @@ public class Light {
 
     // Core API
     
-    public Light() {}
+    public Light() {
+        luminosity = 50; // init brightness
+    }
 
     public void turnOn() {
         luminosity = MIN;
@@ -36,25 +38,26 @@ public class Light {
         luminosity = OFF;
     }
 
-    public void dim() {
+    // it has been decided that the light can only be adjusted by the set 10% each time (so it is private)
+    private void adjustBrightness(int lumens) {
         if (!isOn())
             return;
 
-        luminosity -= DIM_AMOUNT;
+        luminosity += lumens;
 
         if (luminosity < MIN) {
             luminosity = MIN;
+        } else if (luminosity > MAX) {
+            luminosity = MAX;
         }
     }
 
-    public void brighten() {
-        if (!isOn())
-            return;
+    public void dim() {
+        adjustBrightness(-ADJUSTMENT); 
+    }
 
-        luminosity += BRIGHTEN_AMOUNT;
- 
-        if (luminosity > MAX)
-            luminosity = MAX;
+    public void brighten() {
+        adjustBrightness(ADJUSTMENT);
     }
 
     public boolean isOn() {
@@ -82,5 +85,5 @@ public class Light {
     private int luminosity;
 
     // Constants
-    private static final int OFF = 0, MIN = 1, MAX = 100, DIM = 50, DIM_AMOUNT = 10, BRIGHTEN_AMOUNT = 10;
+    private static final int OFF = 0, MIN = 1, MAX = 100, DIM = 50, ADJUSTMENT = 10;
 }
