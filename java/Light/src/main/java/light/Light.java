@@ -31,7 +31,7 @@ public class Light {
     }
 
     public void turnOn() {
-        luminosity = MIN;
+        luminosity = 50;
     }
 
     public void turnOff() {
@@ -39,6 +39,11 @@ public class Light {
     }
 
     // it has been decided that the light can only be adjusted by the set 10% each time (so it is private)
+    /*
+        The adjustBrightness function changes the luminosity variable by the amount given as an argument (lumens).
+        This function also checks to ensure that the luminosity does not exceed its range (1-100), and ensures
+        the light is on.
+    */
     private void adjustBrightness(int lumens) {
         if (!isOn())
             return;

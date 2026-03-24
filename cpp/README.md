@@ -41,7 +41,7 @@ The .exe file will be found inside (from the assignment sub directory) ```build/
 - Add CMakeLists.txt, example usage:
 ```CMake
 cmake_minimum_required(VERSION 3.18)
-project(Light CXX)
+project(assignmentX CXX)
 
 add_executable(assignmentX src/main.cpp)
 ```

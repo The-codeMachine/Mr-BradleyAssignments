@@ -43,9 +43,9 @@ int main() {
 
 /* Sample Run
 Testing the Light class...
-        A new instance of a light: Light is on: 1, luminonsity 1
-        light (brighten): Light is on: 1, luminonsity 11
-        light (dim): Light is on: 1, luminonsity 1
+        A new instance of a light: Light is on: 1, luminonsity 50
+        light (brighten): Light is on: 1, luminonsity 60
+        light (dim): Light is on: 1, luminonsity 50
         light (off): Light is on: 0, luminonsity 0
         light: Light is on: 0, luminonsity 0
         light: Light is on: 1, luminonsity 100

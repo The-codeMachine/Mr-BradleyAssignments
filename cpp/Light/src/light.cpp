@@ -1,5 +1,14 @@
 #include "light.hpp"
 
+Light::Light() {
+    luminosity = 50;
+}
+
+/*
+    The adjustBrightness function changes the luminosity variable by the amount given as an argument (lumens).
+    This function also checks to ensure that the luminosity does not exceed its range (1-100), and ensures
+    the light is on.
+*/
 void Light::adjustBrightness(int lumens) {
     if (!isOn())
         return;
@@ -13,10 +22,8 @@ void Light::adjustBrightness(int lumens) {
     }
 }
 
-Light::Light() : luminosity(50) {}
-
 void Light::turnOn() {
-    luminosity = MIN;
+    luminosity = 50;
 }
 
 void Light::turnOff() {
