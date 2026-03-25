@@ -10,14 +10,27 @@
  * Design
  * ======
  *  A light is encoded as an int value with a valid range between
- *  [0..100]  0 - OFF, 1 - MIN, 100 - MAX Any values outside this range
- *  are invalid.
+ *  [1 -> 100] The the first bit inside the int represents whether 
+ *  or not the light is on. Any values outside this range
+ *  are invalid [1 -> 100].
  *  
  *  Operations include:
  *  
  *      o turning on / off the light
  *      o brighten / dim the light by 10% NB: luminosity changes can only occur if the light is ON
  *      o query the light for its state - on | off, and luminosity
+ */
+ 
+/**
+ * A bit-packed light representation using a single byte (8 bits)
+ * 
+ * Layout:
+ *  Bit 0: represents whether or not the light is on
+ *  Bit 1-7: represents the brightness level
+ * 
+ * Notes:
+ *  Brightness is clamped between values 1 -> 100, anything else is invalid
+ *  All operations preserve bit integrity
  */
 
 #pragma once
@@ -30,36 +43,35 @@ constexpr int MIN = 1;
 constexpr int MAX = 100;
 constexpr int DIM = 50;
 constexpr int ADJUSTMENT = 10;
+constexpr uint8_t POWER_MASK = 0b0000001;
 
 class Light {
 public:
     Light();
 
     void turnOn();
-
     void turnOff();
-
     bool isOn() const;
 
     void dim();
-
     void brighten();
 
-    int getLuminosity() const;
+    int getBrightness() const;
 
     bool isDim() const;
-
     bool isBright() const;
 
     friend std::ostream& operator<<(std::ostream& os, Light& lt);
 
 private:
-    int luminosity;
+    uint8_t luminosity;
 
 private:
+    void setBrightness(int value);
     // it was decided that the light could only be adjusted by 10% each step
     void adjustBrightness(int lumens);
 
+    int clamp(int value);
 };
 
 // Uses a friend function to overload the insertion operator to write lt

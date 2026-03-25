@@ -37,21 +37,18 @@ int main() {
     l.turnOff();
     
     std::cout << "END Run \n";
-
-    // -rb- same use of Light<< overload
-    std::cout << l;
     
     return 0;
 }
 
 /* Sample Run
 Testing the Light class...
-        A new instance of a light: Light is on: 1, luminonsity 50
-        light (brighten): Light is on: 1, luminonsity 60
-        light (dim): Light is on: 1, luminonsity 50
-        light (off): Light is on: 0, luminonsity 0
-        light: Light is on: 0, luminonsity 0
-        light: Light is on: 1, luminonsity 100
-        light: Light is on: 1, luminonsity 1
+        A new instance of a light: Light is on: 1, luminonsity 50%
+        light (brighten): Light is on: 1, luminonsity 60%
+        light (dim): Light is on: 1, luminonsity 50%
+        light (off): Light is on: 0, luminonsity 50%
+        light: Light is on: 0, luminonsity 60%
+        light: Light is on: 1, luminonsity 100%
+        light: Light is on: 1, luminonsity 1%
 END Run
 */

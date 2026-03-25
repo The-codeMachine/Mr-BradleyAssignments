@@ -50,13 +50,62 @@ public class Light {
         // example:         01100100 | 00000001 -> 01100101
         luminosity = (byte)(luminosity | POWER_MASK);
     }
-
+    
     public void turnOff() {
         // forces bit 0 to 0, leaves other bits unchanged
         // example:         01100101 & 11111110 -> 01100100
         luminosity = (byte)(luminosity & ~POWER_MASK);
     }
-
+    
+    public boolean isOn() {
+        // AND isolated bit 0
+        // if result != 0 then bit is 1 (on)
+        // example: 01100101 & 00000001 -> 00000001
+        return (luminosity & POWER_MASK) != 0;
+    }
+    
+    public boolean isDim() {
+        return getBrightness() <= DIM;
+    }
+    
+    public boolean isBright() {
+        return getBrightness() > DIM;
+    }
+    
+    public void dim() {
+        adjustBrightness(-ADJUSTMENT); 
+    }
+    
+    public void brighten() {
+        adjustBrightness(ADJUSTMENT);
+    }
+    
+    public int getBrightness() {
+        // luminosity & 0xFF
+        // promotes byte to int without sign extension (unsigned)
+        
+        // >> 1
+        // shifts all bits right by 1
+        // moves bits 1-7 into 0-6
+        // example: 01100101 -> 00110010 (50)
+        return (luminosity & 0xFF) >> 1;
+    }
+    
+    // Helper conversion function
+    public String toString() {
+        return String.format("Light is on: %b, luminonsity %d%%", isOn(), getBrightness());
+    }
+    
+    private void setBrightness(int value) {
+        value = clamp(value);
+        
+        // clear brightness bits
+        luminosity = (byte)(luminosity & POWER_MASK); // keeps only bit 0
+        
+        // set new brightness
+        luminosity = (byte)(luminosity | (value << 1)); // shifts bits and then inserts new bits (not affecting bit 0)
+    }
+    
     // it has been decided that the light can only be adjusted by the set 10% each time (so it is private)
     /*
         The adjustBrightness function changes the luminosity variable by the amount given as an argument (lumens).
@@ -64,67 +113,15 @@ public class Light {
         the light is on.
     */
     private void adjustBrightness(int lumens) {
-        int current = getBrightness();
-        int updated = clamp(current + lumens);
-
-        setBrightness(updated);
+        setBrightness(getBrightness() + lumens);
     }
     
-    public boolean isDim() {
-        return getBrightness() <= DIM;
-    }
-
-    public boolean isBright() {
-        return getBrightness() > DIM;
-    }
-
-    public void dim() {
-        adjustBrightness(-ADJUSTMENT); 
-    }
-
-    public int getBrightness() {
-        // luminosity & 0xFF
-        // promotes byte to int without sign extension (unsigned)
-
-        // >> 1
-        // shifts all bits right by 1
-        // moves bits 1-7 into 0-6
-        // example: 01100101 -> 00110010 (50)
-        return (luminosity & 0xFF) >> 1;
-    }
-
-    public void brighten() {
-        adjustBrightness(ADJUSTMENT);
-    }
-
-    public boolean isOn() {
-        // AND isolated bit 0
-        // if result != 0 then bit is 1 (on)
-        // example: 01100101 & 00000001 -> 00000001
-        return (luminosity & POWER_MASK) != 0;
-    }
-
-    // Helper conversion function
-    public String toString() {
-        return String.format("Light is on: %b, luminonsity %d%%", isOn(), getBrightness());
-    }
-
-    private void setBrightness(int value) {
-        value = clamp(value);
-
-        // clear brightness bits
-        luminosity = (byte)(luminosity & POWER_MASK); // keeps only bit 0
-
-        // set new brightness
-        luminosity = (byte)(luminosity | (value << 1)); // shifts bits and then inserts new bits (not affecting bit 0)
-    }
-
     private int clamp(int value) {
         if (value < MIN)
             return MIN;
         else if (value > MAX)
             return MAX;
-
+        
         return value;
     }
 
