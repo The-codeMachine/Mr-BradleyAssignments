@@ -57,6 +57,6 @@ bool Light::isBright() const {
 
 // Uses a friend function to overload the insertion operator to easily print Light (enables syntax std::cout << LightObject)
 std::ostream& operator<<(std::ostream& os, Light& lt) {
-    os << "List is on: " << lt.isOn() << ", liminosity " << lt.luminosity;
+    os << "Light is on: " << lt.isOn() << ", luminosity " << lt.luminosity;
     return os;
 }
