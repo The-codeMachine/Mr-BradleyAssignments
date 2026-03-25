@@ -23,6 +23,7 @@
 #pragma once
 #include <string>
 #include <stdint.h>
+#include <iostream>
 
 constexpr int OFF = 0;
 constexpr int MIN = 1;
@@ -58,5 +59,7 @@ private:
 private:
     // it was decided that the light could only be adjusted by 10% each step
     void adjustBrightness(int lumens);
+
+friend ostream& operator<<( ostream& os, Light & lt );
 
 };
