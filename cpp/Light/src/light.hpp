@@ -39,19 +39,19 @@ public:
 
     void turnOff();
 
-    bool isOn();
+    bool isOn() const;
 
     void dim();
 
     void brighten();
 
-    int getLuminosity();
+    int getLuminosity() const;
 
-    bool isDim();
+    bool isDim() const;
 
-    bool isBright();
+    bool isBright() const;
 
-    std::string toString();
+    friend std::ostream& operator<<(std::ostream& os, Light& lt);
 
 private:
     int luminosity;
@@ -60,6 +60,7 @@ private:
     // it was decided that the light could only be adjusted by 10% each step
     void adjustBrightness(int lumens);
 
-friend ostream& operator<<( ostream& os, Light & lt );
-
 };
+
+// Uses a friend function to overload the insertion operator to write lt
+std::ostream& operator<<(std::ostream& os, Light& lt);

@@ -8,31 +8,31 @@ int main() {
 
     l.turnOn();
     
-    std::cout << "\tA new instance of a light: " + l.toString() << "\n";
+    std::cout << "\tA new instance of a light: " << l << "\n";
     
     l.brighten();
-    std::cout << "\tlight (brighten): " + l.toString() << "\n";
+    std::cout << "\tlight (brighten): " << l << "\n";
     
     l.dim();
-    std::cout << "\tlight (dim): " + l.toString() << "\n"; 
+    std::cout << "\tlight (dim): " << l << "\n"; 
     
     l.turnOff();
-    std::cout << "\tlight (off): " + l.toString() << "\n";
+    std::cout << "\tlight (off): " << l << "\n";
 
     l.brighten();
-    std::cout << "\tlight: " + l.toString() << "\n";
+    std::cout << "\tlight: " << l << "\n";
 
     l.turnOn();
 
     for (int i = 0; i < 15; ++i)
         l.brighten();
 
-    std::cout << "\tlight: " + l.toString() << "\n";
+    std::cout << "\tlight: " << l << "\n";
 
     for (int i = 0; i < 15; ++i)
         l.dim();
 
-    std::cout << "\tlight: " + l.toString() << "\n";
+    std::cout << "\tlight: " << l << "\n";
 
     l.turnOff();
     

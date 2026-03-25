@@ -31,7 +31,7 @@ void Light::turnOff() {
     luminosity = OFF;
 }
 
-bool Light::isOn() {
+bool Light::isOn() const {
     return luminosity > OFF; 
 }
 
@@ -43,25 +43,20 @@ void Light::brighten() {
     adjustBrightness(ADJUSTMENT);
 }
 
-int Light::getLuminosity() {
+int Light::getLuminosity() const {
     return luminosity;
 }
 
-bool Light::isDim() {
+bool Light::isDim() const {
     return luminosity <= DIM;
 }
 
-bool Light::isBright() {
+bool Light::isBright() const {
     return luminosity > DIM;
 }
 
-/* see note and code below for the idomatic way this is done in c++ */
-std::string Light::toString() {
-    return "Light is on: " + std::to_string(isOn()) + ", luminonsity " + std::to_string(luminosity);
-}
-
-/* The proper way to do this in C++ is to overload the write (insertion) operator as follows */
-friend ostream& operator<<( ostream& os, const Light& lt ) {
-    os << "List is on: " << isOn() << ", liminosity " << luminosity;
+// Uses a friend function to overload the insertion operator to easily print Light (enables syntax std::cout << LightObject)
+std::ostream& operator<<(std::ostream& os, Light& lt) {
+    os << "List is on: " << lt.isOn() << ", liminosity " << lt.luminosity;
     return os;
 }
