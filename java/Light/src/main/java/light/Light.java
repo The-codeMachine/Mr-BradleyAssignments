@@ -12,8 +12,9 @@ package light;
  * Design
  * ======
  *  A light is encoded as an int value with a valid range between
- *  [0..100]  0 - OFF, 1 - MIN, 100 - MAX Any values outside this range
- *  are invalid.
+ *  [1 -> 100] The the first bit inside the int represents whether 
+ *  or not the light is on. Any values outside this range
+ *  are invalid [1 -> 100].
  *  
  *  Operations include:
  *  
@@ -22,20 +23,38 @@ package light;
  *      o query the light for its state - on | off, and luminosity
  */
 
+
+/**
+ * A bit-packed light representation using a single byte (8 bits)
+ * 
+ * Layout:
+ *  Bit 0: represents whether or not the light is on
+ *  Bit 1-7: represents the brightness level
+ * 
+ * Notes:
+ *  Brightness is clamped between values 1 -> 100, anything else is invalid
+ *  All operations preserve bit integrity
+ */
+
 public class Light {
 
     // Core API
     
     public Light() {
-        luminosity = 50; // init brightness
+        adjustBrightness(50); // init brightness
+        turnOn();
     }
 
     public void turnOn() {
-        luminosity = 50;
+        // forces bit 0 to 1, leaves other bits unchanged
+        // example:         01100100 | 00000001 -> 01100101
+        luminosity = (byte)(luminosity | POWER_MASK);
     }
 
     public void turnOff() {
-        luminosity = OFF;
+        // forces bit 0 to 0, leaves other bits unchanged
+        // example:         01100101 & 11111110 -> 01100100
+        luminosity = (byte)(luminosity & ~POWER_MASK);
     }
 
     // it has been decided that the light can only be adjusted by the set 10% each time (so it is private)
@@ -45,20 +64,33 @@ public class Light {
         the light is on.
     */
     private void adjustBrightness(int lumens) {
-        if (!isOn())
-            return;
+        int current = getBrightness();
+        int updated = clamp(current + lumens);
 
-        luminosity += lumens;
+        setBrightness(updated);
+    }
+    
+    public boolean isDim() {
+        return getBrightness() <= DIM;
+    }
 
-        if (luminosity < MIN) {
-            luminosity = MIN;
-        } else if (luminosity > MAX) {
-            luminosity = MAX;
-        }
+    public boolean isBright() {
+        return getBrightness() > DIM;
     }
 
     public void dim() {
         adjustBrightness(-ADJUSTMENT); 
+    }
+
+    public int getBrightness() {
+        // luminosity & 0xFF
+        // promotes byte to int without sign extension (unsigned)
+
+        // >> 1
+        // shifts all bits right by 1
+        // moves bits 1-7 into 0-6
+        // example: 01100101 -> 00110010 (50)
+        return (luminosity & 0xFF) >> 1;
     }
 
     public void brighten() {
@@ -66,29 +98,40 @@ public class Light {
     }
 
     public boolean isOn() {
-        return luminosity > OFF;
-    }
-
-    public int luminosity() {
-        return luminosity;
-    }
-
-    public boolean isDim() {
-        return luminosity <= DIM;
-    }
-
-    public boolean isBright() {
-        return luminosity > DIM;
+        // AND isolated bit 0
+        // if result != 0 then bit is 1 (on)
+        // example: 01100101 & 00000001 -> 00000001
+        return (luminosity & POWER_MASK) != 0;
     }
 
     // Helper conversion function
     public String toString() {
-        return String.format("Light is on: %b, luminonsity %d%%", isOn(), luminosity);
+        return String.format("Light is on: %b, luminonsity %d%%", isOn(), getBrightness());
+    }
+
+    private void setBrightness(int value) {
+        value = clamp(value);
+
+        // clear brightness bits
+        luminosity = (byte)(luminosity & POWER_MASK); // keeps only bit 0
+
+        // set new brightness
+        luminosity = (byte)(luminosity | (value << 1)); // shifts bits and then inserts new bits (not affecting bit 0)
+    }
+
+    private int clamp(int value) {
+        if (value < MIN)
+            return MIN;
+        else if (value > MAX)
+            return MAX;
+
+        return value;
     }
 
     // Private members
-    private int luminosity;
+    private byte luminosity; // uses only 1 byte
 
     // Constants
-    private static final int OFF = 0, MIN = 1, MAX = 100, DIM = 50, ADJUSTMENT = 10;
+    private static final int POWER_MASK = 0b00000001;
+    private static final int MIN = 1, MAX = 100, DIM = 50, ADJUSTMENT = 10;
 }
