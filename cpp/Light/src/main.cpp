@@ -38,6 +38,9 @@ int main() {
     
     std::cout << "END Run \n";
 
+    // -rb- same use of Light<< overload
+    std::cout << l;
+    
     return 0;
 }
 
