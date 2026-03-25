@@ -1,4 +1,5 @@
 #include "light.hpp"
+#include <iostream>
 
 Light::Light() {
     luminosity = 50;
@@ -54,6 +55,13 @@ bool Light::isBright() {
     return luminosity > DIM;
 }
 
+/* see note and code below for the idomatic way this is done in c++ */
 std::string Light::toString() {
     return "Light is on: " + std::to_string(isOn()) + ", luminonsity " + std::to_string(luminosity);
+}
+
+/* The proper way to do this in C++ is to overload the write (insertion) operator as follows */
+friend ostream& operator<<( ostream& os, const Light& lt ) {
+    os << "List is on: " << isOn() << ", liminosity " << luminosity;
+    return os;
 }
