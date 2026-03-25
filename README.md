@@ -6,6 +6,8 @@ The solutions can be found in both Java, and C++. For each language look inside 
 
 In each folder there will be a ```README.md```. Please follow the instructions in that for compilation, and usage.
 
+The ```examples/``` folder includes my teacher's Java implementation of each assignment.
+
 ## Building
 
 Each assignment will follow this organization: ```language/assignmentName/```.
