@@ -58,7 +58,7 @@ Testing the Light class...
         light (brighten): Light is on: true, luminonsity 60%
         light (dim): Light is on: true, luminonsity 50%
         light (off): Light is on: false, luminonsity 50%
-        light: Light is on: false, luminonsity 60%
+        light: Light is on: false, luminonsity 50%
         light: Light is on: true, luminonsity 100%
         light: Light is on: true, luminonsity 1%
 END Run
