@@ -9,8 +9,8 @@
  * 
  * Design
  * ======
- *  A light is encoded as an int value with a valid range between
- *  [1 -> 100] The the first bit inside the int represents whether 
+ *  A light is encoded as a byte value with a valid range between
+ *  [1 -> 100] The the last bit inside the byte represents whether 
  *  or not the light is on. Any values outside this range
  *  are invalid [1 -> 100].
  *  
@@ -20,18 +20,18 @@
  *      o brighten / dim the light by 10% NB: luminosity changes can only occur if the light is ON
  *      o query the light for its state - on | off, and luminosity
  */
- 
+
+
 /**
  * A bit-packed light representation using a single byte (8 bits)
  * 
  * Layout:
- *  Bit 0: represents whether or not the light is on
- *  Bit 1-7: represents the brightness level
+ *  Bit 7: represents whether or not the light is on
+ *  Bit 0-6: represents the brightness level
  * 
  * Notes:
  *  Brightness is clamped between values 1 -> 100, anything else is invalid
- *  All operations preserve bit integrity
- */
+*/
 
 #pragma once
 #include <string>
@@ -43,7 +43,8 @@ constexpr int MIN = 1;
 constexpr int MAX = 100;
 constexpr int DIM = 50;
 constexpr int ADJUSTMENT = 10;
-constexpr uint8_t POWER_MASK = 0b0000001;
+constexpr uint8_t POWER_MASK = 0b10000000;
+constexpr uint8_t BRIGHTNESS_MASK = 0b01111111;
 
 class Light {
 public:

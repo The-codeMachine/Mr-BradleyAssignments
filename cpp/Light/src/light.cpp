@@ -50,7 +50,7 @@ int Light::getBrightness() const {
     // shifts all bits right by 1
     // moves bits 1-7 into 0-6
     // example: 01100101 -> 00110010 (50)
-    return (luminosity & 0xFF) >> 1;
+    return luminosity & BRIGHTNESS_MASK;
 }
 
 bool Light::isDim() const {
@@ -68,7 +68,7 @@ void Light::setBrightness(int value) {
     luminosity = luminosity & POWER_MASK; // keeps only bit 0
         
     // set new brightness
-    luminosity = luminosity | (value << 1); // shifts bits and then inserts new bits (not affecting bit 0)
+    luminosity = luminosity | value; // shifts bits and then inserts new bits (not affecting bit 0)
 }
 
 /*
@@ -77,6 +77,9 @@ void Light::setBrightness(int value) {
     the light is on.
 */
 void Light::adjustBrightness(int lumens) {
+    if (!isOn())
+        return;
+
     setBrightness(getBrightness() + lumens);
 }
 
