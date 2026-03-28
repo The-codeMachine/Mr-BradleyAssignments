@@ -98,17 +98,19 @@ public class Light {
         return String.format("Light is on: %b, luminonsity %d%%", isOn(), getBrightness());
     }
     
-    private int clamp(int value) {
-        if (value < MIN)
-            return MIN;
-        else if (value > MAX)
-            return MAX;
+    // ensures the value is within the given range (does not exceed 100, or go below 1)
+    static int clamp(int value, int min, int max) {
+        if (value < min)
+            return min;
+        else if (value > max)
+            return max;
         
         return value;
     }
     
+    // sets the brightness of the luminosity value 
     private void setBrightness(int value) {
-        value = clamp(value);
+        value = clamp(value, MIN, MAX);
         
         // clear brightness bits
         luminosity = (byte)(luminosity & POWER_MASK); // keeps only bit 0

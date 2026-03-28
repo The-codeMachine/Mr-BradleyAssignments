@@ -24,10 +24,14 @@ public class Main {
 
         l.brighten();
         System.out.println("\tlight (brighten): " + l);
+
+        assert l.getBrightness() == 60;
         
         l.dim();
         System.out.println("\tlight (dim): " + l);
         
+        assert l.getBrightness() == 50;
+
         l.turnOff();
         System.out.println("\tlight (off): " + l);
 
@@ -39,14 +43,26 @@ public class Main {
         for (int i = 0; i < 15; ++i)
             l.brighten();
 
+        assert l.getBrightness() == 100;
+        
         System.out.println("\tlight: " + l);
-    
+        
         for (int i = 0; i < 15; ++i)
             l.dim();
+
+        assert l.getBrightness() == 1;
     
         System.out.println("\tlight: " + l);
 
         l.turnOff();
+ 
+        int returnValue = light.Light.clamp(-12, 1, 100);
+
+        System.out.printf("\tTesting clamp (-12, 1, 100): %d\n", returnValue);
+
+        returnValue = light.Light.clamp(1010, 1, 100);
+
+        System.out.printf("\tTesting clamp (1010, 1, 100): %d\n", returnValue);
         
         System.out.println("END Run ");
     }
@@ -61,5 +77,7 @@ Testing the Light class...
         light: Light is on: false, luminonsity 50%
         light: Light is on: true, luminonsity 100%
         light: Light is on: true, luminonsity 1%
+        Testing clamp (-12, 1, 100): 1
+        Testing clamp (1010, 1, 100): 100
 END Run
 */

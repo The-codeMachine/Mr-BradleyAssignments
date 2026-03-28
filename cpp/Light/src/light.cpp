@@ -1,11 +1,11 @@
 #include "light.hpp"
 #include <iostream>
 
-int Light::clamp(int value) {
-    if (value > MAX) 
-        return MAX;
-    else if (value < MIN)
-        return MIN;
+int clamp(int value, int min, int max) {
+    if (value > max) 
+        return max;
+    else if (value < min)
+        return min;
 
     return value;
 }
@@ -61,8 +61,9 @@ bool Light::isBright() const {
     return getBrightness() > DIM;
 }
 
+// sets the brightness of the luminosity value 
 void Light::setBrightness(int value) {
-    value = clamp(value);
+    value = clamp(value, MIN, MAX);
 
       // clear brightness bits
     luminosity = luminosity & POWER_MASK; // keeps only bit 0

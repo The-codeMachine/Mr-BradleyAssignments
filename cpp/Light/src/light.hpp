@@ -71,9 +71,10 @@ private:
     void setBrightness(int value);
     // it was decided that the light could only be adjusted by 10% each step
     void adjustBrightness(int lumens);
-
-    int clamp(int value);
 };
 
 // Uses a friend function to overload the insertion operator to write lt
 std::ostream& operator<<(std::ostream& os, Light& lt);
+
+// ensures the value is within the given range (does not exceed 100, or go below 1)
+int clamp(int value, int min, int max);
