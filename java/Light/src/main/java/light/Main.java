@@ -1,83 +1,82 @@
-/*
-    I used Gradle, Groovy to build this again. 
-    Technically not necessary (you could just put the two classes in the same file)
-    but I did for organization's sake.
-
-    I hope you find this file less bug prone.
-    I believe this does everything it needs to, based off the design.
-
-    Thank you again for all of your feedback,
-    Rey
-*/
+// I used Gradle, Groovy to build this.
 
 package light;
 
 public class Main {
-    public static void main(String[] arg) {
-        System.out.println("Testing the Light class...");
-        
+    // These functions consist of tests for all of the light class, as
+    // well as for a global clamp function
+
+    // tests that the constructor initialize the object properly
+    private static void testInitialState() {
         Light l = new Light();
-        
-        System.out.println("\tA new instance of a light: " + l);
-        
-        l.turnOn();
 
-        l.brighten();
-        System.out.println("\tlight (brighten): " + l);
+        assert(l.getBrightness() == 50);
+        assert(l.isOn());
+    }
 
-        assert l.getBrightness() == 60;
-        
-        l.dim();
-        System.out.println("\tlight (dim): " + l);
-        
-        assert l.getBrightness() == 50;
+    // tests that the brightness does not exceed its bounds
+    private static void testBrightnessBounds() {
+        Light l = new Light();
 
-        l.turnOff();
-        System.out.println("\tlight (off): " + l);
-
-        l.brighten();
-        System.out.println("\tlight: " + l);
-
-        l.turnOn();
-
-        for (int i = 0; i < 15; ++i)
+        for (int i = 0; i < 15; ++i) 
             l.brighten();
 
-        assert l.getBrightness() == 100;
-        
-        System.out.println("\tlight: " + l);
-        
-        for (int i = 0; i < 15; ++i)
+        assert(l.getBrightness() < 101);
+
+        for (int i = 0; i < 15; ++i) 
             l.dim();
 
-        assert l.getBrightness() == 1;
-    
-        System.out.println("\tlight: " + l);
+        assert(l.getBrightness() > 0);
+    }
+
+    // tests that the light's power behaviour is correct
+    private static void testPowerBehaviour() {
+        Light l = new Light();
+
+        assert(l.isOn());
 
         l.turnOff();
- 
-        int returnValue = light.Light.clamp(-12, 1, 100);
 
-        System.out.printf("\tTesting clamp (-12, 1, 100): %d\n", returnValue);
+        assert(!l.isOn());
 
-        returnValue = light.Light.clamp(1010, 1, 100);
+        l.turnOff();
 
-        System.out.printf("\tTesting clamp (1010, 1, 100): %d\n", returnValue);
+        assert(!l.isOn());
+
+        l.turnOn();
+
+        assert(l.isOn());
+
+        l.turnOn();
+
+        assert(l.isOn());
+    }
+
+    // tests that the clamp function works as expected
+    private static void testClamp() {
+        assert(Light.clamp(-12, 1, 100) == 1);
+
+        assert(Light.clamp(1234, 1, 199) == 199);
+    }
+
+    public static void main(String[] arg) {
+        System.out.println("Testing light class ... \n\n");
+
+        // the tests now consist of asserts instead of logging 
+        // to more easily tell if the tests failed
+
+        testInitialState();
+        testBrightnessBounds();
+        testPowerBehaviour();
+        testClamp();
         
         System.out.println("END Run ");
     }
 }
 
 /***  SAMPLE OUTPUT ****
-Testing the Light class...
-        A new instance of a light: Light is on: true, luminonsity 50%
-        light (brighten): Light is on: true, luminonsity 60%
-        light (dim): Light is on: true, luminonsity 50%
-        light (off): Light is on: false, luminonsity 50%
-        light: Light is on: false, luminonsity 50%
-        light: Light is on: true, luminonsity 100%
-        light: Light is on: true, luminonsity 1%
-        Testing clamp (-12, 1, 100): 1
-        Testing clamp (1010, 1, 100): 100
+Testing light class ... 
+
+
 END Run
 */

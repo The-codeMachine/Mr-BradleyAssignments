@@ -1,5 +1,3 @@
-package light;
-
 /**
  * Concept / Use 
  * =============
@@ -21,30 +19,33 @@ package light;
  *      o turning on / off the light
  *      o brighten / dim the light by 10% NB: luminosity changes can only occur if the light is ON
  *      o query the light for its state - on | off, and luminosity
- */
+*/
 
 
 /**
- * A bit-packed light representation using a single byte (8 bits)
+ * Internal representation (1 bytes):
  * 
  * Layout:
- *  Bit 7: represents whether or not the light is on
- *  Bit 0-6: represents the brightness level
+ *  Bit 7: Power (1 = ON, 0 = OFF)
+ *  Bit 0-6: brightness (range 1-100)
  * 
- * Notes:
- *  Brightness is clamped between values 1 -> 100, anything else is invalid
- */
+ * Example:
+ *  10000001 -> ON, Brightness = 1
+ *  11100100 -> ON, Brightness = 100
+*/
+
+package light;
 
 public class Light {
-
+    
     // Private members
     private byte luminosity; // uses only 1 byte
-
+    
     // Constants
     private static final int POWER_MASK = 0b10000000;
     private static final int BRIGHTNESS_MASK = 0b01111111;
-    private static final int MIN = 1, MAX = 100, DIM = 50, ADJUSTMENT = 10;
-
+    private static final int MIN = 1, MAX = 100, ADJUSTMENT = 10;
+    
     // Core API
     
     public Light() {
@@ -53,36 +54,27 @@ public class Light {
     }
 
     public void turnOn() {
-        // forces bit 0 to 1, leaves other bits unchanged
-        // example:         01100100 | 10000000 -> 11100100
+        // forces bit 7 to 1, leaves other bits unchanged
+    // example: 01100100 | 10000000 -> 11100100
         luminosity = (byte)(luminosity | POWER_MASK);
     }
     
     public void turnOff() {
-        // forces bit 0 to 0, leaves other bits unchanged
-        // example:         11100101 & 01111111 -> 01100101
+        // forces bit 7 to 0, leaves other bits unchanged
+        // example: 11100100 & 01111111 -> 01100100
         luminosity = (byte)(luminosity & ~POWER_MASK);
     }
     
     public boolean isOn() {
-        // AND isolated bit 0
-        // if result != 0 then bit is 1 (on)
-        // example: 11100101 & 10000000 -> 10000000
+        // isolate the power bit (bit 7)
+        // if result != 0 then the light is ON
+        // example: 11100100 & 10000000 -> 10000000 (ON) 0
         return (luminosity & POWER_MASK) != 0;
     }
     
     public int getBrightness() {
-        // luminosity & 0xFF
-        // promotes byte to int without sign extension (unsigned)
+        // extracts brightness (bits 0–6) by masking out the power bit (bit 7)
         return luminosity & BRIGHTNESS_MASK;
-    }
-    
-    public boolean isDim() {
-        return getBrightness() <= DIM;
-    }
-    
-    public boolean isBright() {
-        return getBrightness() > DIM;
     }
     
     public void brighten() {
@@ -111,19 +103,19 @@ public class Light {
     // sets the brightness of the luminosity value 
     private void setBrightness(int value) {
         value = clamp(value, MIN, MAX);
+        byte bValue = (byte)(value); // value is clamped to [1, 100] which fits within bits 0-6
         
-        // clear brightness bits
-        luminosity = (byte)(luminosity & POWER_MASK); // keeps only bit 0
+        luminosity = (byte)(luminosity & POWER_MASK); // clears the power bits (0-6), keeps the power bit (clearing the brightness bits)
         
-        // set new brightness
-        luminosity = (byte)(luminosity | value); // shifts bits and then inserts new bits (not affecting bit 0)
+        luminosity = (byte)(luminosity | bValue); // sets the brightness bits (0-6) does not affect bit 7 since bValue < 128
     }
     
     /*
-        it has been decided that the light can only be adjusted by the set 10% each time (so it is private)
-        The adjustBrightness function changes the luminosity variable by the amount given as an argument (lumens).
-        This function also checks to ensure that the luminosity does not exceed its range (1-100), and ensures
-        the light is on.
+        Adjusts brightness by a signed amount (positive = brighten, negative = dim).
+
+        - Only applies if the light is ON
+        - Resulting brightness is clamped to [1, 100]
+        - Internally updates only bits 0–6 (brightness)
     */
     private void adjustBrightness(int lumens) {
         if (!isOn())
