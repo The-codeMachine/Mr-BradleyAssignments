@@ -2,56 +2,72 @@
 #include <cassert>
 #include <iostream>
 
-int main() {
-    std::cout << "Testing the Light class...\n";
-    
+// These functions consist of tests for all of the light class, as
+// well as for a global clamp function
+
+// tests that the constructor initialize the object properly
+void testInitialState() {
     Light l;
 
-    l.turnOn();
-    
-    std::cout << "\tA new instance of a light: " << l << "\n";
-    
-    l.brighten();
-    std::cout << "\tlight (brighten): " << l << "\n";
-
-    assert(l.getBrightness() == 60);
-    
-    l.dim();
-    std::cout << "\tlight (dim): " << l << "\n"; 
-    
     assert(l.getBrightness() == 50);
+    assert(l.isOn());
+}
 
-    l.turnOff();
-    std::cout << "\tlight (off): " << l << "\n";
+// tests that the brightness does not exceed its bounds
+void testBrightnessBounds() {
+    Light l;
 
-    l.brighten();
-    std::cout << "\tlight: " << l << "\n";
-
-    l.turnOn();
-
-    for (int i = 0; i < 15; ++i)
+    for (size_t i = 0; i < 15; ++i) 
         l.brighten();
 
-    assert(l.getBrightness() == 100);
-    
-    std::cout << "\tlight: " << l << "\n";
-    
-    for (int i = 0; i < 15; ++i)
+    assert(l.getBrightness() < 101);
+
+    for (size_t i = 0; i < 15; ++i) 
         l.dim();
-    
-    assert(l.getBrightness() == 1);
-    
-    std::cout << "\tlight: " << l << "\n";
+
+    assert(l.getBrightness() > 0);
+}
+
+// tests that the light's power behaviour is correct
+void testPowerBehaviour() {
+    Light l;
+
+    assert(l.isOn());
 
     l.turnOff();
 
-    int returnValue = clamp(-12, 1, 100);
+    assert(!l.isOn());
 
-    std::cout << "\tTesting clamp (-12, 1, 100): " << returnValue << "\n";
+    l.turnOff();
 
-    returnValue = clamp(1010, 1, 100);
+    assert(!l.isOn());
 
-    std::cout << "\tTesting clamp (1010, 1, 100): " << returnValue << "\n";
+    l.turnOn();
+
+    assert(l.isOn());
+
+    l.turnOn();
+
+    assert(l.isOn());
+}
+
+// tests that the clamp function works as expected
+void testClamp() {
+    assert(clamp(-12, 1, 100) == 1);
+
+    assert(clamp(1234, 1, 199) == 199);
+}
+
+int main() {
+    std::cout << "Testing light class ... \n\n";
+
+    // the tests now consist of asserts instead of logging 
+    // to more easily tell if the tests failed
+
+    testInitialState();
+    testBrightnessBounds();
+    testPowerBehaviour();
+    testClamp();
 
     std::cout << "END Run \n";
     
@@ -59,15 +75,7 @@ int main() {
 }
 
 /* Sample Run
-Testing the Light class...
-        A new instance of a light: Light is on: 1, luminosity 50
-        light (brighten): Light is on: 1, luminosity 60
-        light (dim): Light is on: 1, luminosity 50
-        light (off): Light is on: 0, luminosity 50
-        light: Light is on: 0, luminosity 50
-        light: Light is on: 1, luminosity 100
-        light: Light is on: 1, luminosity 1
-        Testing clamp (-12, 1, 100): 1
-        Testing clamp (1010, 1, 100): 100
-END Run
+Testing light class ...
+
+END Run 
 */

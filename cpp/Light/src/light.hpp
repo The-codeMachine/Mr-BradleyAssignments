@@ -23,14 +23,15 @@
 
 
 /**
- * A bit-packed light representation using a single byte (8 bits)
+ * Internal representation (1 bytes):
  * 
  * Layout:
- *  Bit 7: represents whether or not the light is on
- *  Bit 0-6: represents the brightness level
+ *  Bit 7: Power (1 = ON, 0 = OFF)
+ *  Bit 0-6: brightness (range 1-100)
  * 
- * Notes:
- *  Brightness is clamped between values 1 -> 100, anything else is invalid
+ * Example:
+ *  10000001 -> ON, Brightness = 1
+ *  11100100 -> ON, Brightness = 100
 */
 
 #pragma once
@@ -41,7 +42,6 @@
 constexpr int OFF = 0;
 constexpr int MIN = 1;
 constexpr int MAX = 100;
-constexpr int DIM = 50;
 constexpr int ADJUSTMENT = 10;
 constexpr uint8_t POWER_MASK = 0b10000000;
 constexpr uint8_t BRIGHTNESS_MASK = 0b01111111;
@@ -59,22 +59,20 @@ public:
 
     int getBrightness() const;
 
-    bool isDim() const;
-    bool isBright() const;
-
-    friend std::ostream& operator<<(std::ostream& os, Light& lt);
+    friend std::ostream& operator<<(std::ostream& os, const Light& lt);
 
 private:
     uint8_t luminosity;
 
 private:
     void setBrightness(int value);
+
     // it was decided that the light could only be adjusted by 10% each step
     void adjustBrightness(int lumens);
 };
 
-// Uses a friend function to overload the insertion operator to write lt
-std::ostream& operator<<(std::ostream& os, Light& lt);
+// Uses a friend function to overload the insertion operator to write light
+std::ostream& operator<<(std::ostream& os, const Light& lt);
 
 // ensures the value is within the given range (does not exceed 100, or go below 1)
 int clamp(int value, int min, int max);

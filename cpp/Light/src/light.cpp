@@ -16,21 +16,21 @@ Light::Light() : luminosity(0) {
 }
 
 void Light::turnOn() {
-    // forces bit 0 to 1, leaves other bits unchanged
-    // example:         01100100 | 00000001 -> 01100101
+    // forces bit 7 to 1, leaves other bits unchanged
+    // example: 01100100 | 10000000 -> 11100100
     luminosity = luminosity | POWER_MASK;
 }
 
 void Light::turnOff() {
-    // forces bit 0 to 0, leaves other bits unchanged
-    // example:         01100101 & 11111110 -> 01100100
+    // forces bit 7 to 0, leaves other bits unchanged
+    // example: 11100100 & 01111111 -> 01100100
     luminosity = luminosity & ~POWER_MASK;
 }
 
 bool Light::isOn() const {
-    // AND isolated bit 0   
-    // if result != 0 then bit is 1 (on)
-    // example: 01100101 & 00000001 -> 00000001
+    // isolate the power bit (bit 7)
+    // if result != 0 then the light is ON
+    // example: 11100100 & 10000000 -> 10000000 (ON)    
     return (luminosity & POWER_MASK) != 0; 
 }
 
@@ -43,39 +43,26 @@ void Light::brighten() {
 }
 
 int Light::getBrightness() const {
-    // luminosity & 0xFF
-    // promotes byte to int without sign extension (unsigned)
-    
-    // >> 1
-    // shifts all bits right by 1
-    // moves bits 1-7 into 0-6
-    // example: 01100101 -> 00110010 (50)
+    // extracts brightness (bits 0–6) by masking out the power bit (bit 7)
     return luminosity & BRIGHTNESS_MASK;
-}
-
-bool Light::isDim() const {
-    return getBrightness() <= DIM;
-}
-
-bool Light::isBright() const {
-    return getBrightness() > DIM;
 }
 
 // sets the brightness of the luminosity value 
 void Light::setBrightness(int value) {
     value = clamp(value, MIN, MAX);
+    uint8_t bValue = static_cast<uint8_t>(value); // value is clamped to [1, 100] which fits within bits 0-6
 
-      // clear brightness bits
-    luminosity = luminosity & POWER_MASK; // keeps only bit 0
+    luminosity = luminosity & POWER_MASK; // clears the power bits (0-6), keeps the power bit (clearing the brightness bits)
         
-    // set new brightness
-    luminosity = luminosity | value; // shifts bits and then inserts new bits (not affecting bit 0)
+    luminosity = luminosity | bValue; // sets the brightness bits (0-6) does not affect bit 7 since bValue < 128
 }
 
 /*
-    The adjustBrightness function changes the luminosity variable by the amount given as an argument (lumens).
-    This function also checks to ensure that the luminosity does not exceed its range (1-100), and ensures
-    the light is on.
+    Adjusts brightness by a signed amount (positive = brighten, negative = dim).
+
+    - Only applies if the light is ON
+    - Resulting brightness is clamped to [1, 100]
+    - Internally updates only bits 0–6 (brightness)
 */
 void Light::adjustBrightness(int lumens) {
     if (!isOn())
@@ -85,7 +72,7 @@ void Light::adjustBrightness(int lumens) {
 }
 
 // Uses a friend function to overload the insertion operator to easily print Light (enables syntax std::cout << LightObject)
-std::ostream& operator<<(std::ostream& os, Light& lt) {
+std::ostream& operator<<(std::ostream& os, const Light& lt) {
     os << "Light is on: " << lt.isOn() << ", luminosity " << lt.getBrightness();
     return os;
 }
