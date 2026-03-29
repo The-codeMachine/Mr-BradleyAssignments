@@ -20,12 +20,12 @@ void testBrightnessBounds() {
     for (size_t i = 0; i < 15; ++i) 
         l.brighten();
 
-    assert(l.getBrightness() < 101);
+    assert(l.getBrightness() == 100);
 
     for (size_t i = 0; i < 15; ++i) 
         l.dim();
 
-    assert(l.getBrightness() > 0);
+    assert(l.getBrightness() == 1);
 }
 
 // tests that the light's power behaviour is correct
@@ -51,6 +51,18 @@ void testPowerBehaviour() {
     assert(l.isOn());
 }
 
+// tests that brightness only changes when ON
+void testAdjustWhileOff() {
+    Light l;
+
+    l.turnOff();
+
+    int before = l.getBrightness();
+    l.brighten();
+
+    assert(l.getBrightness() == before);
+}
+
 // tests that the clamp function works as expected
 void testClamp() {
     assert(clamp(-12, 1, 100) == 1);
@@ -67,6 +79,7 @@ int main() {
     testInitialState();
     testBrightnessBounds();
     testPowerBehaviour();
+    testAdjustWhileOff();
     testClamp();
 
     std::cout << "END Run \n";

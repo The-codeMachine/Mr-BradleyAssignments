@@ -1,7 +1,7 @@
 /**
  * Concept / Use 
  * =============
- * A Light represents a the concept similar to a light in a house
+ * A Light represents a concept similar to a light in a house
  * with an on/off button and a brighten / dim switch or dial.
  * Pressing the on/off button turns the light on, after which
  * pressing the brighten / dim switches increase and decrease the 
@@ -12,14 +12,15 @@
  *  A light is encoded as a byte value with a valid range between
  *  [1 -> 100] The the last bit inside the byte represents whether 
  *  or not the light is on. Any values outside this range
- *  are invalid [1 -> 100].
+ *  are invalid [1 -> 100]. Brightness is always stored regardless
+ *  of the power state. 
  *  
  *  Operations include:
  *  
  *      o turning on / off the light
  *      o brighten / dim the light by 10% NB: luminosity changes can only occur if the light is ON
  *      o query the light for its state - on | off, and luminosity
-*/
+ */
 
 
 /**
@@ -55,7 +56,7 @@ public class Light {
 
     public void turnOn() {
         // forces bit 7 to 1, leaves other bits unchanged
-    // example: 01100100 | 10000000 -> 11100100
+        // example: 01100100 | 10000000 -> 11100100
         luminosity = (byte)(luminosity | POWER_MASK);
     }
     
@@ -85,12 +86,12 @@ public class Light {
         adjustBrightness(-ADJUSTMENT); 
     }
     
-    // Helper conversion function
+    // Outputs "Light is on: <false|true>, luminosity <value>"
     public String toString() {
-        return String.format("Light is on: %b, luminonsity %d%%", isOn(), getBrightness());
+        return String.format("Light is on: %b, luminosity %d%%", isOn(), getBrightness());
     }
     
-    // ensures the value is within the given range (does not exceed 100, or go below 1)
+    // Clamps a value to a certain range [min, max]
     static int clamp(int value, int min, int max) {
         if (value < min)
             return min;
@@ -105,7 +106,8 @@ public class Light {
         value = clamp(value, MIN, MAX);
         byte bValue = (byte)(value); // value is clamped to [1, 100] which fits within bits 0-6
         
-        luminosity = (byte)(luminosity & POWER_MASK); // clears the power bits (0-6), keeps the power bit (clearing the brightness bits)
+        // clears the power bits (0-6), perserves the power bit (7)
+        luminosity = (byte)(luminosity & POWER_MASK); 
         
         luminosity = (byte)(luminosity | bValue); // sets the brightness bits (0-6) does not affect bit 7 since bValue < 128
     }
@@ -118,6 +120,7 @@ public class Light {
         - Internally updates only bits 0–6 (brightness)
     */
     private void adjustBrightness(int lumens) {
+        // can only adjust the brightness if the light is ON
         if (!isOn())
             return;
 

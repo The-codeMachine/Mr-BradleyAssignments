@@ -52,6 +52,18 @@ public class Main {
         assert(l.isOn());
     }
 
+    // tests that the brightness only changes when ON
+    private static void testAdjustWhileOff() {
+        Light l = new Light();
+
+        l.turnOff();
+
+        int before = l.getBrightness();
+        l.brighten();
+
+        assert(l.getBrightness() == before);
+    }
+
     // tests that the clamp function works as expected
     private static void testClamp() {
         assert(Light.clamp(-12, 1, 100) == 1);
@@ -68,6 +80,7 @@ public class Main {
         testInitialState();
         testBrightnessBounds();
         testPowerBehaviour();
+        testAdjustWhileOff();
         testClamp();
         
         System.out.println("END Run ");

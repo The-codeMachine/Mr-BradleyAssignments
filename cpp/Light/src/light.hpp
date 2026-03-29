@@ -1,7 +1,7 @@
 /**
  * Concept / Use 
  * =============
- * A Light represents a the concept similar to a light in a house
+ * A Light represents a concept similar to a light in a house
  * with an on/off button and a brighten / dim switch or dial.
  * Pressing the on/off button turns the light on, after which
  * pressing the brighten / dim switches increase and decrease the 
@@ -12,7 +12,8 @@
  *  A light is encoded as a byte value with a valid range between
  *  [1 -> 100] The the last bit inside the byte represents whether 
  *  or not the light is on. Any values outside this range
- *  are invalid [1 -> 100].
+ *  are invalid [1 -> 100]. Brightness is always stored regardless
+ *  of the power state. 
  *  
  *  Operations include:
  *  
@@ -68,11 +69,11 @@ private:
     void setBrightness(int value);
 
     // it was decided that the light could only be adjusted by 10% each step
-    void adjustBrightness(int lumens);
+    void adjustBrightness(int delta);
 };
 
-// Uses a friend function to overload the insertion operator to write light
+// Outputs "Light is on: <0|1>, luminosity <value>"
 std::ostream& operator<<(std::ostream& os, const Light& lt);
 
-// ensures the value is within the given range (does not exceed 100, or go below 1)
+// Clamps the value to a specific range [min, max]
 int clamp(int value, int min, int max);
