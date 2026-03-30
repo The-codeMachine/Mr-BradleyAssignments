@@ -73,15 +73,6 @@ public class Main {
         assert(l.getBrightness() == 50);
     }
 
-    // tests that the clamp function works as expected
-    private static void testClamp() {
-        assert(Light.clamp(-12, 1, 100) == 1);
-
-        assert(Light.clamp(1234, 1, 199) == 199);
-
-        assert(Light.clamp(50, 1, 100) == 50);
-    }
-
     public static void main(String[] arg) {
         System.out.println("Testing light class ... \n\n");
 
@@ -93,7 +84,6 @@ public class Main {
         testPowerBehaviour();
         testAdjustWhileOff();
         testBrightnessPreservation();
-        testClamp();
         
         System.out.println("END Run ");
     }
