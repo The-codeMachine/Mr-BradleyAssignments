@@ -191,15 +191,19 @@ public class Light {
 
         // test internal brightness manipulation
         l.setBrightness((byte)70);
-        assert l.getBrightness() == 70;
+        assert l.getBrightness() == 70 : "The light was not set to 70";
 
         // test clamping through setBrightness
         l.setBrightness((byte)120);
-        assert l.getBrightness() == 100;
+        assert l.getBrightness() == 100 : "The light's brightness was not clamped to 100";
 
         l.setBrightness((byte)-20);
-        assert l.getBrightness() == 1;
+        assert l.getBrightness() == 1 : "The light's brightness was not clamped to 1";
 
         System.out.println("White-box tests passed.");
     }
+
+    /***  SAMPLE OUTPUT ****
+    White-box tests passed.
+    */  
 }

@@ -10,8 +10,8 @@ public class Main {
     private static void testInitialState() {
         Light l = new Light();
 
-        assert(l.getBrightness() == 50);
-        assert(l.isOn());
+        assert l.getBrightness() == 50 : "Light is not 50 (when initialized)";
+        assert l.isOn() : "Light is not ON (when initialized)";
     }
 
     // tests that the brightness does not exceed its bounds
@@ -21,35 +21,36 @@ public class Main {
         for (int i = 0; i < 15; ++i) 
             l.brighten();
 
-        assert(l.getBrightness() == 100);
+
+        assert l.getBrightness() == 100 : "The light did not reach a maximum of 100";
 
         for (int i = 0; i < 15; ++i) 
             l.dim();
 
-        assert(l.getBrightness() == 1);
+        assert l.getBrightness() == 1 : "The light did not reach a minimum of 1";
     }
 
     // tests that the light's power behaviour is correct
     private static void testPowerBehaviour() {
         Light l = new Light();
 
-        assert(l.isOn());
+        assert l.isOn() : "The light does not initialize as ON";
 
         l.turnOff();
 
-        assert(!l.isOn());
+        assert !l.isOn() : "The light fails to turn OFF";
 
         l.turnOff();
 
-        assert(!l.isOn());
+        assert !l.isOn() : "The light still fails to turn OFF";
 
         l.turnOn();
 
-        assert(l.isOn());
+        assert l.isOn() : "The light fails to turn ON";
 
         l.turnOn();
 
-        assert(l.isOn());
+        assert l.isOn() : "The light still fails to turn ON";
     }
 
     // tests that the brightness only changes when ON
@@ -61,7 +62,7 @@ public class Main {
         int before = l.getBrightness();
         l.brighten();
 
-        assert(l.getBrightness() == before);
+        assert l.getBrightness() == before : "The light's brightness changed when it was OFF";
     }
 
     // tests that the brightness is perserved even when the light is off
@@ -70,7 +71,7 @@ public class Main {
 
         l.turnOff();
 
-        assert(l.getBrightness() == 50);
+        assert l.getBrightness() == 50 : "The light's brightness fails to stay when it is OFF";
     }
 
     public static void main(String[] arg) {
