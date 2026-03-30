@@ -74,6 +74,53 @@ void Light::adjustBrightness(int delta) {
     setBrightness(getBrightness() + delta);
 }
 
+#ifndef NDEBUG
+
+#include <assert.h>
+
+// tests the light class's private members
+void Light::testLightClass() {
+    turnOn();
+    setBrightness(50);
+    
+    assert(getBrightness() == 50);
+
+    setBrightness(70);
+
+    assert(getBrightness() == 70);
+
+    setBrightness(110);
+
+    assert(getBrightness() == 100);
+
+    setBrightness(-100);
+
+    assert(getBrightness() == 1);
+    
+    adjustBrightness(10);
+
+    assert(getBrightness() == 11);
+
+    adjustBrightness(60);
+
+    assert(getBrightness() == 71);
+
+    adjustBrightness(-40);
+
+    assert(getBrightness() == 31);
+
+    adjustBrightness(-1000);
+
+    assert(getBrightness() == 1);
+
+    adjustBrightness(1000);
+
+    assert(getBrightness() == 100);
+
+}
+
+#endif
+
 // Outputs "Light is on: <0|1>, luminosity <value>"
 std::ostream& operator<<(std::ostream& os, const Light& lt) {
     os << "Light is on: " << lt.isOn() << ", luminosity " << lt.getBrightness();

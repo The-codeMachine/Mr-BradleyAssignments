@@ -60,6 +60,13 @@ public:
 
     int getBrightness() const;
 
+    #ifndef NDEBUG
+
+    // tests the light class's private members
+    void testLightClass();
+
+    #endif
+
     friend std::ostream& operator<<(std::ostream& os, const Light& lt);
 
 private:

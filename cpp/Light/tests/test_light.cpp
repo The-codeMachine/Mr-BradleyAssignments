@@ -99,6 +99,9 @@ int main() {
     testBrightnessPreservation();
     testClamp();
 
+    Light l;
+    l.testLightClass();
+
     std::cout << "END Run \n";
     
     #endif
