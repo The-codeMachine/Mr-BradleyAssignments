@@ -1,4 +1,8 @@
 cmake_minimum_required(VERSION 3.18)
 project(Light CXX)
 
-add_executable(Light src/main.cpp src/light.cpp)
+set(CMAKE_CXX_STANDARD 20)
+
+add_executable(light_tests tests/test_light.cpp src/light.cpp)
+
+target_include_directories(light_tests PRIVATE src)

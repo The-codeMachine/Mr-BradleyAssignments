@@ -1,4 +1,4 @@
-#include "light.hpp"
+#include "../src/light.hpp"
 #include <cassert>
 #include <iostream>
 
