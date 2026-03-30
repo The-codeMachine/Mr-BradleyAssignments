@@ -10,7 +10,7 @@
  * Design
  * ======
  *  A light is encoded as a byte value with a valid range between
- *  [1 -> 100] The the last bit inside the byte represents whether 
+ *  [1 -> 100] The last bit inside the byte represents whether 
  *  or not the light is on. Any values outside this range
  *  are invalid [1 -> 100]. Brightness is always stored regardless
  *  of the power state. 
@@ -24,7 +24,7 @@
 
 
 /**
- * Internal representation (1 bytes):
+ * Internal representation (1 byte):
  * 
  * Layout:
  *  Bit 7: Power (1 = ON, 0 = OFF)
@@ -43,15 +43,15 @@ public class Light {
     private byte luminosity; // uses only 1 byte
     
     // Constants
-    private static final int POWER_MASK = 0b10000000;
-    private static final int BRIGHTNESS_MASK = 0b01111111;
+    private static final byte POWER_MASK = (byte)0b10000000;
+    private static final byte BRIGHTNESS_MASK = (byte)0b01111111;
     private static final int MIN = 1, MAX = 100, ADJUSTMENT = 10;
     
     // Core API
     
     public Light() {
-        setBrightness(50); // init brightness
         turnOn();
+        setBrightness(50); // init brightness
     }
 
     public void turnOn() {
@@ -106,7 +106,7 @@ public class Light {
         value = clamp(value, MIN, MAX);
         byte bValue = (byte)(value); // value is clamped to [1, 100] which fits within bits 0-6
         
-        // clears the power bits (0-6), perserves the power bit (7)
+        // clears the brightness bits (0-6), perserves the power bit (7)
         luminosity = (byte)(luminosity & POWER_MASK); 
         
         luminosity = (byte)(luminosity | bValue); // sets the brightness bits (0-6) does not affect bit 7 since bValue < 128

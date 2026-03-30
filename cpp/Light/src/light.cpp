@@ -12,8 +12,8 @@ int clamp(int value, int min, int max) {
 }
 
 Light::Light() : luminosity(0) {
-    setBrightness(50);
     turnOn();
+    setBrightness(50);
 }
 
 void Light::turnOn() {
@@ -53,7 +53,7 @@ void Light::setBrightness(int value) {
     value = clamp(value, MIN, MAX);
     uint8_t bValue = static_cast<uint8_t>(value); // value is clamped to [1, 100] which fits within bits 0-6
 
-    // clears the power bits (0-6), preservess the power bit (clearing the brightness bits)
+    // clears the brightness bits (0-6), preservess the power bit (clearing the brightness bits)
     luminosity &= POWER_MASK; 
         
     luminosity |= bValue; // sets the brightness bits (0-6) does not affect bit 7 since bValue < 128

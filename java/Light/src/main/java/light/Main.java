@@ -21,12 +21,12 @@ public class Main {
         for (int i = 0; i < 15; ++i) 
             l.brighten();
 
-        assert(l.getBrightness() < 101);
+        assert(l.getBrightness() == 100);
 
         for (int i = 0; i < 15; ++i) 
             l.dim();
 
-        assert(l.getBrightness() > 0);
+        assert(l.getBrightness() == 1);
     }
 
     // tests that the light's power behaviour is correct
@@ -64,11 +64,22 @@ public class Main {
         assert(l.getBrightness() == before);
     }
 
+    // tests that the brightness is perserved even when the light is off
+    private static void testBrightnessPreservation() {
+        Light l = new Light();
+
+        l.turnOff();
+
+        assert(l.getBrightness() == 50);
+    }
+
     // tests that the clamp function works as expected
     private static void testClamp() {
         assert(Light.clamp(-12, 1, 100) == 1);
 
         assert(Light.clamp(1234, 1, 199) == 199);
+
+        assert(Light.clamp(50, 1, 100) == 50);
     }
 
     public static void main(String[] arg) {
@@ -81,6 +92,7 @@ public class Main {
         testBrightnessBounds();
         testPowerBehaviour();
         testAdjustWhileOff();
+        testBrightnessPreservation();
         testClamp();
         
         System.out.println("END Run ");

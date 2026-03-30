@@ -10,7 +10,7 @@
  * Design
  * ======
  *  A light is encoded as a byte value with a valid range between
- *  [1 -> 100] The the last bit inside the byte represents whether 
+ *  [1 -> 100] The last bit inside the byte represents whether 
  *  or not the light is on. Any values outside this range
  *  are invalid [1 -> 100]. Brightness is always stored regardless
  *  of the power state. 
@@ -24,7 +24,7 @@
 
 
 /**
- * Internal representation (1 bytes):
+ * Internal representation (1 byte):
  * 
  * Layout:
  *  Bit 7: Power (1 = ON, 0 = OFF)
