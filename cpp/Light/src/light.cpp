@@ -1,23 +1,57 @@
 #include "light.hpp"
 #include <iostream>
+#include <algorithm>
 
+/**
+ * Constructs a new Light
+ * 
+ * A newly created light starts with:
+ * - ON
+ * - Brightness = 50%
+ * 
+ */
 Light::Light() : luminosity(0) {
     turnOn();
     setBrightness(50);
 }
 
+/**
+ * Turns the light ON
+ * 
+ * Sets the power bit (bit 7) while preserving brightness
+ */
 void Light::turnOn() {
     // forces bit 7 to 1, leaves other bits unchanged
     // example: 01100100 | 10000000 -> 11100100
     luminosity |= POWER_MASK;
 }
 
+/**
+ * Turns the light OFF
+ * 
+ * Clears the power bit while preserving brightness
+ */
 void Light::turnOff() {
     // forces bit 7 to 0, leaves other bits unchanged
     // example: 11100100 & 01111111 -> 01100100
     luminosity &= ~POWER_MASK;
 }
 
+/**
+ * Turns the light OFF if it is ON, 
+ * or it turns the light ON if it is OFF
+ */
+void Light::switchPower() {
+    // for example: 01100100 ^ 10000000 -> 11100100
+    // another example 11100100 ^ 10000000 -> 01100100
+    luminosity ^= POWER_MASK;
+}
+
+/**
+ * Returns whether the light is currently ON
+ * 
+ * @return true if the power bit is set
+ */
 bool Light::isOn() const {
     // isolate the power bit (bit 7)
     // if result != 0 then the light is ON
@@ -25,34 +59,58 @@ bool Light::isOn() const {
     return (luminosity & POWER_MASK) != 0; 
 }
 
+/**
+ * Increases brightness by 10%.
+ *
+ * Brightness changes only occur if the light is ON.
+ * The value is clamped to the valid range [1,100].
+ */
 void Light::brighten() {
     setBrightness(getBrightness() + ADJUSTMENT);
 }
 
+/**
+ * Decreases brightness by 10%.
+ *
+ * Brightness changes only occur if the light is ON.
+ * The value is clamped to the valid range [1,100].
+*/
 void Light::dim() {
     setBrightness(getBrightness() - ADJUSTMENT);
 }
 
+/**
+ * Returns the current brightness of the light.
+ *
+ * Brightness is stored in bits 0–6 and ranges from 1–100.
+ *
+ * @return brightness percentage
+ */
 int Light::getBrightness() const {
     // extracts brightness (bits 0–6) by masking out the power bit (bit 7)
     return luminosity & BRIGHTNESS_MASK;
 }
 
-/* sets the brightness of the luminosity value
-- Only applies if the light is ON
-- Resulting brightness is clamped to [1, 100]
-- Internally updates only bits 0–6 (brightness)
-*/
+/**
+ * Sets the brightness of the luminosity value
+ * 
+ * @apiNote Only applies if the light is ON
+ * @apiNote Resulting brightness is clamped to [1, 100]
+ * @apiNote Internally updates only bits 0-6
+ * 
+ * @param value
+ */
 void Light::setBrightness(int value) {
     // can only adjust the brightness if the light is ON
     if (!isOn())
         return;
 
-    value = clamp(value, MIN, MAX);
+    value = std::clamp(value, MIN, MAX); // changed this to the standard clamp function 
+    // (if you want me to implement my own again inside its own library I can do that, like in Java)
     uint8_t bValue = static_cast<uint8_t>(value); // value is clamped to [1, 100] which fits within bits 0-6
     
     // clears the brightness bits (0-6), preservess the power bit (clearing the brightness bits)
-    luminosity &= POWER_MASK; 
+    luminosity &= ~BRIGHTNESS_MASK; 
     
     luminosity |= bValue; // sets the brightness bits (0-6) does not affect bit 7 since bValue < 128
 }
@@ -80,28 +138,15 @@ void Light::testLightClass() {
     setBrightness(-100);
     assert(getBrightness() == 1);
 
-    // test clamp
-    assert(clamp(-10, MIN, MAX) == MIN);
-    assert(clamp(120, MIN, MAX) == MAX);
-    assert(clamp(50, MIN, MAX) == 50);
-
     std::cout << "White-box tests passed.\n";
 }
 
 #endif
 
-// Outputs "Light is on: <0|1>, luminosity <value>"
+/**
+ * @return true if {@link #Light::isOn()} is true, with brightness {@link #Light::getBrightness()}.
+*/
 std::ostream& operator<<(std::ostream& os, const Light& lt) {
     os << "Light is on: " << lt.isOn() << ", luminosity " << lt.getBrightness();
     return os;
-}
-
-// Clamps the value to a specific range [min, max]
-int Light::clamp(int value, int min, int max) {
-    if (value > max) 
-        return max;
-    else if (value < min)
-        return min;
-
-    return value;
 }

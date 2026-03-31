@@ -17,7 +17,7 @@
  *  
  *  Operations include:
  *  
- *      o turning on / off the light
+ *      o turning on / off the light through direct methods (turnOn(), or turnOff()), or by switching its state (switchPower())
  *      o brighten / dim the light by 10% NB: luminosity changes can only occur if the light is ON
  *      o query the light for its state - on | off, and luminosity
  */
@@ -92,6 +92,16 @@ public class Light {
     }
     
     /**
+     * Turns the light OFF if it is ON, 
+     * or it turns the light ON if it is OFF
+     */
+    public void switchPower() {
+        // for example: 01100100 ^ 10000000 -> 11100100
+        // another example 11100100 ^ 10000000 -> 01100100
+        luminosity ^= POWER_MASK;
+    }
+
+    /**
      * Returns whether the light is currently ON
      * 
      * @return true if the power bit is set
@@ -160,13 +170,12 @@ public class Light {
         byte bValue = (byte)clamp((int)value, MIN, MAX); // value is clamped to [1, 100] which fits within bits 0-6
         
         // clears the brightness bits (0-6), perserves the power bit (7)
-        luminosity = (byte)(luminosity & POWER_MASK); 
+        luminosity = (byte)(luminosity & ~BRIGHTNESS_MASK); 
         
         luminosity = (byte)(luminosity | bValue); // sets the brightness bits (0-6) does not affect bit 7 since bValue < 128
     }
 
     public static void main(String[] args) {
-
         Light l = new Light();
 
         // test internal brightness manipulation

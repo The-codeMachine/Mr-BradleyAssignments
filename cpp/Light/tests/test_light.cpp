@@ -73,6 +73,19 @@ void testBrightnessPreservation() {
     assert(l.getBrightness() == 50);
 }
 
+// tests that the switchPower function works
+void testSwitchPower() {
+    Light l;
+
+    l.switchPower();
+
+    assert(!l.isOn());
+
+    l.switchPower();
+
+    assert(l.isOn());
+}
+
 #endif
 
 int main() {
@@ -88,6 +101,7 @@ int main() {
     testPowerBehaviour();
     testAdjustWhileOff();
     testBrightnessPreservation();
+    testSwitchPower();
 
     Light l;
     l.testLightClass();

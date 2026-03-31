@@ -76,6 +76,19 @@ public class Main {
         assert l.getBrightness() == 50 : "The light's brightness fails to stay when it is OFF";
     }
 
+    // tests that the switchPower function works
+    private static void testSwitchPower() {
+        Light l = new Light();
+
+        l.switchPower();
+
+        assert !l.isOn() : "Light did not turn OFF";
+
+        l.switchPower();
+
+        assert l.isOn() : "Light did not turn ON";
+    }
+
     // tests that the clamp function actually works
     private static void testClamp() {
         assert clamp(-10, 1, 100) == 1 : "The clamp function did not clamp the value to MIN";
@@ -94,6 +107,7 @@ public class Main {
         testPowerBehaviour();
         testAdjustWhileOff();
         testBrightnessPreservation();
+        testSwitchPower();
         testClamp();
         
         System.out.println("END Run ");

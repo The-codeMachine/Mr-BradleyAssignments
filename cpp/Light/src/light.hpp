@@ -17,7 +17,7 @@
  *  
  *  Operations include:
  *  
- *      o turning on / off the light
+ *      o turning on / off the light through direct methods (turnOn(), or turnOff()), or by switching its state (switchPower())
  *      o brighten / dim the light by 10% NB: luminosity changes can only occur if the light is ON
  *      o query the light for its state - on | off, and luminosity
  */
@@ -53,6 +53,7 @@ public:
 
     void turnOn();
     void turnOff();
+    void switchPower();
     bool isOn() const;
 
     void dim();
