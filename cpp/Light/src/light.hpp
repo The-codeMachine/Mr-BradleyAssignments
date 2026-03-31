@@ -10,7 +10,7 @@
  * Design
  * ======
  *  A light is encoded as a byte value with a valid range between
- *  [1 -> 100] The last bit inside the byte represents whether 
+ *  [1 -> 100] The highest (7) bit inside the byte represents whether 
  *  or not the light is on. Any values outside this range
  *  are invalid [1 -> 100]. Brightness is always stored regardless
  *  of the power state. 
@@ -75,12 +75,9 @@ private:
 private:
     void setBrightness(int value);
 
-    // it was decided that the light could only be adjusted by 10% each step
-    void adjustBrightness(int delta);
+    // Clamps the value to a specific range [min, max]
+    int clamp(int value, int min, int max);
 };
 
 // Outputs "Light is on: <0|1>, luminosity <value>"
 std::ostream& operator<<(std::ostream& os, const Light& lt);
-
-// Clamps the value to a specific range [min, max]
-int clamp(int value, int min, int max);

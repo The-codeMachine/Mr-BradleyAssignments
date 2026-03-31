@@ -1,16 +1,6 @@
 #include "light.hpp"
 #include <iostream>
 
-// Clamps the value to a specific range [min, max]
-int clamp(int value, int min, int max) {
-    if (value > max) 
-        return max;
-    else if (value < min)
-        return min;
-
-    return value;
-}
-
 Light::Light() : luminosity(0) {
     turnOn();
     setBrightness(50);
@@ -35,12 +25,12 @@ bool Light::isOn() const {
     return (luminosity & POWER_MASK) != 0; 
 }
 
-void Light::dim() {
-    adjustBrightness(-ADJUSTMENT);
+void Light::brighten() {
+    setBrightness(getBrightness() + ADJUSTMENT);
 }
 
-void Light::brighten() {
-    adjustBrightness(ADJUSTMENT);
+void Light::dim() {
+    setBrightness(getBrightness() - ADJUSTMENT);
 }
 
 int Light::getBrightness() const {
@@ -48,30 +38,23 @@ int Light::getBrightness() const {
     return luminosity & BRIGHTNESS_MASK;
 }
 
-// sets the brightness of the luminosity value 
-void Light::setBrightness(int value) {
-    value = clamp(value, MIN, MAX);
-    uint8_t bValue = static_cast<uint8_t>(value); // value is clamped to [1, 100] which fits within bits 0-6
-
-    // clears the brightness bits (0-6), preservess the power bit (clearing the brightness bits)
-    luminosity &= POWER_MASK; 
-        
-    luminosity |= bValue; // sets the brightness bits (0-6) does not affect bit 7 since bValue < 128
-}
-
-/*
-    Adjusts brightness by a signed amount (positive = brighten, negative = dim).
-
-    - Only applies if the light is ON
-    - Resulting brightness is clamped to [1, 100]
-    - Internally updates only bits 0–6 (brightness)
+/* sets the brightness of the luminosity value
+- Only applies if the light is ON
+- Resulting brightness is clamped to [1, 100]
+- Internally updates only bits 0–6 (brightness)
 */
-void Light::adjustBrightness(int delta) {
+void Light::setBrightness(int value) {
     // can only adjust the brightness if the light is ON
     if (!isOn())
         return;
 
-    setBrightness(getBrightness() + delta);
+    value = clamp(value, MIN, MAX);
+    uint8_t bValue = static_cast<uint8_t>(value); // value is clamped to [1, 100] which fits within bits 0-6
+    
+    // clears the brightness bits (0-6), preservess the power bit (clearing the brightness bits)
+    luminosity &= POWER_MASK; 
+    
+    luminosity |= bValue; // sets the brightness bits (0-6) does not affect bit 7 since bValue < 128
 }
 
 #ifndef NDEBUG
@@ -84,39 +67,25 @@ void Light::testLightClass() {
     setBrightness(50);
     
     assert(getBrightness() == 50);
-
-    setBrightness(70);
-
-    assert(getBrightness() == 70);
-
-    setBrightness(110);
-
-    assert(getBrightness() == 100);
-
-    setBrightness(-100);
-
-    assert(getBrightness() == 1);
     
-    adjustBrightness(10);
-
-    assert(getBrightness() == 11);
-
-    adjustBrightness(60);
-
-    assert(getBrightness() == 71);
-
-    adjustBrightness(-40);
-
-    assert(getBrightness() == 31);
-
-    adjustBrightness(-1000);
-
+    // test internal brightness manipulation
+    setBrightness(70);
+    
+    assert(getBrightness() == 70);
+    
+    // test clamping in setBrightness
+    setBrightness(110);
+    assert(getBrightness() == 100);
+    
+    setBrightness(-100);
     assert(getBrightness() == 1);
 
-    adjustBrightness(1000);
+    // test clamp
+    assert(clamp(-10, MIN, MAX) == MIN);
+    assert(clamp(120, MIN, MAX) == MAX);
+    assert(clamp(50, MIN, MAX) == 50);
 
-    assert(getBrightness() == 100);
-
+    std::cout << "White-box tests passed.\n";
 }
 
 #endif
@@ -125,4 +94,14 @@ void Light::testLightClass() {
 std::ostream& operator<<(std::ostream& os, const Light& lt) {
     os << "Light is on: " << lt.isOn() << ", luminosity " << lt.getBrightness();
     return os;
+}
+
+// Clamps the value to a specific range [min, max]
+int Light::clamp(int value, int min, int max) {
+    if (value > max) 
+        return max;
+    else if (value < min)
+        return min;
+
+    return value;
 }

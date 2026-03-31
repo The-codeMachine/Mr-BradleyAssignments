@@ -73,15 +73,6 @@ void testBrightnessPreservation() {
     assert(l.getBrightness() == 50);
 }
 
-// tests that the clamp function works as expected
-void testClamp() {
-    assert(clamp(-12, 1, 100) == 1);
-
-    assert(clamp(1234, 1, 199) == 199);
-
-    assert(clamp(50, 1, 100) == 50);
-}
-
 #endif
 
 int main() {
@@ -97,7 +88,6 @@ int main() {
     testPowerBehaviour();
     testAdjustWhileOff();
     testBrightnessPreservation();
-    testClamp();
 
     Light l;
     l.testLightClass();
@@ -110,7 +100,8 @@ int main() {
 }
 
 /* Sample Run
-Testing light class ...
+Testing light class ... 
 
-END Run 
+White-box tests passed.
+END Run
 */
