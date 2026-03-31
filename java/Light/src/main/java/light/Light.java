@@ -37,6 +37,8 @@
 
 package light;
 
+import static common.MathUtils.clamp;
+
 public class Light {
     
     // Private members
@@ -46,8 +48,8 @@ public class Light {
     private static final byte POWER_MASK = (byte)0b10000000;
     private static final byte BRIGHTNESS_MASK = (byte)0b01111111;
 
-    private static final byte MIN = 1;
-    private static final byte MAX = 100;
+    private static final int MIN = 1; // only used for clamping so they can be int (since the clamp function takes ints)
+    private static final int MAX = 100;
     private static final byte ADJUSTMENT = 10;
     private static final byte OFF = 0;
     private static final byte DEFAULT = 50;
@@ -142,23 +144,6 @@ public class Light {
     }
     
     /**
-     * Clamps a value to a certain range [min, max]
-     * 
-     * @param value
-     * @param min
-     * @param max
-     * @return min, max, or the value; based off the value of value
-     */
-    static private byte clamp(byte value, byte min, byte max) {
-        if (value < min)
-            return min;
-        else if (value > max)
-            return max;
-        
-        return value;
-    }
-    
-    /**
      * Sets the brightness of the luminosity value
      * 
      * @apiNote Only applies if the light is ON
@@ -172,7 +157,7 @@ public class Light {
         if (!isOn())
             return;
 
-        byte bValue = clamp(value, MIN, MAX); // value is clamped to [1, 100] which fits within bits 0-6
+        byte bValue = (byte)clamp((int)value, MIN, MAX); // value is clamped to [1, 100] which fits within bits 0-6
         
         // clears the brightness bits (0-6), perserves the power bit (7)
         luminosity = (byte)(luminosity & POWER_MASK); 
@@ -183,11 +168,6 @@ public class Light {
     public static void main(String[] args) {
 
         Light l = new Light();
-
-        // test clamp
-        assert clamp((byte)-10, MIN, MAX) == MIN;
-        assert clamp((byte)120, MIN, MAX) == MAX;
-        assert clamp((byte)50, MIN, MAX) == 50;
 
         // test internal brightness manipulation
         l.setBrightness((byte)70);

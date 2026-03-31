@@ -2,6 +2,8 @@
 
 package light;
 
+import static common.MathUtils.clamp;
+
 public class Main {
     // These functions consist of tests for all of the light class, as
     // well as for a global clamp function
@@ -74,6 +76,13 @@ public class Main {
         assert l.getBrightness() == 50 : "The light's brightness fails to stay when it is OFF";
     }
 
+    // tests that the clamp function actually works
+    private static void testClamp() {
+        assert clamp(-10, 1, 100) == 1 : "The clamp function did not clamp the value to MIN";
+        assert clamp(120, 1, 100) == 100 : "The clamp function did not return the MAX";
+        assert clamp(50, 1, 100) == 50 : "The clamp function did not return the value when it was valid";
+    }
+
     public static void main(String[] arg) {
         System.out.println("Testing light class ... \n\n");
 
@@ -85,6 +94,7 @@ public class Main {
         testPowerBehaviour();
         testAdjustWhileOff();
         testBrightnessPreservation();
+        testClamp();
         
         System.out.println("END Run ");
     }
