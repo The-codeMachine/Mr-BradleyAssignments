@@ -73,6 +73,9 @@ public:
 private:
     uint8_t luminosity;
 
+    // testing named constants within scope of a class
+    static inline constexpr uint8_t TEST = 0;
+
 private:
     void setBrightness(int value);
 
