@@ -40,13 +40,6 @@
 #include <stdint.h>
 #include <iostream>
 
-constexpr int OFF = 0;
-constexpr int MIN = 1;
-constexpr int MAX = 100;
-constexpr int ADJUSTMENT = 10;
-constexpr uint8_t POWER_MASK = 0b10000000;
-constexpr uint8_t BRIGHTNESS_MASK = 0b01111111;
-
 class Light {
 public:
     Light();
@@ -73,8 +66,12 @@ public:
 private:
     uint8_t luminosity;
 
-    // testing named constants within scope of a class
-    static inline constexpr uint8_t TEST = 0;
+    static inline constexpr int OFF = 0;
+    static inline constexpr int MIN = 1;
+    static inline constexpr int MAX = 100;
+    static inline constexpr int ADJUSTMENT = 10;
+    static inline constexpr uint8_t POWER_MASK = 0b10000000;
+    static inline constexpr uint8_t BRIGHTNESS_MASK = 0b01111111;
 
 private:
     void setBrightness(int value);
