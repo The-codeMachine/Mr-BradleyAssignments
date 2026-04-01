@@ -11,12 +11,17 @@
  * Design
  * ======
  *  A light is encoded as an int value with a valid range between
- *  [0..100]  0 - OFF, 1 - MIN, 100 - MAX Any values outside this range
- *  are invalid.
+ *  [-100..100]  0 is OFF, +/- 1 is MIN, +/- 100 is MAX Any values outside this range
+ *  are invalid. 
+ *  A luminosity value of < 0 indicates that the light is off, and that
+ *  its previous 'on' value was the magnitude of its current value.
+ *  For example: a light that is on at 45, is turned off; 
+ *      then its luminosity value would now be -45.
  *  
  *  Operations include:
  *  
  *      o turning on / off the light
+ *      o toggling the light between off/on
  *      o brighten / dim the light by 10%
  *      o query the light for its state - on | off, and luminosity
  */
@@ -24,16 +29,17 @@
 public class Light
 {
     /*** API - from design ***/
-    public Light() { luminosity = OFF; }
+    public Light() { luminosity = -DEFAULT; }   // lights starts off at 50%
     
-    public void turnOn()    { luminosity = DEFAULT; }
-    public void turnOff()   { luminosity = OFF; }
+    public void turnOn()    { if( !isOn() ) toggle(); }
+    public void turnOff()   { if(  isOn() ) toggle(); }
     
     public void brighten()  { adjustBrightness(+ADJUSTMENT); }
     public void dim()       { adjustBrightness(-ADJUSTMENT); }
     
     public boolean isOn()   { return luminosity > OFF; }
     public int luminosity() { return luminosity; }
+    public void toggle()    { luminosity *= POWER_TOGGLE; }
     
     /*** Helper methods ***/   
     
@@ -49,13 +55,23 @@ public class Light
      * NOTE: that the check for isOn() is now also located in one spot
      */
     private void adjustBrightness( int lumens ) {
-        if( !isOn() ) return;
+        if( isOn() ) setBrightness( luminosity + lumens );;
         
-        int value = luminosity + lumens;
-        if      ( value < MIN ) luminosity = MIN;
-        else if ( value > MAX ) luminosity = MAX;
-        else                    luminosity = value;
-        
+                /*
+                int value = luminosity + lumens;
+                if      ( value < MIN ) luminosity = MIN;
+                else if ( value > MAX ) luminosity = MAX;
+                else                    luminosity = value;
+                */
+    }
+    
+    /**
+     * constrains the value to be within [MIN..MAX]
+     * NB: Does no checking about whether the light is on or off
+     */
+    private void setBrightness( int value ) {
+        value = MathUtils.constrain(value, MIN, MAX);
+        luminosity = value;
     }
     
     public String toString() {
@@ -72,6 +88,7 @@ public class Light
         ADJUSTMENT  = 10,
         OFF = 0,
         MIN = 1,
-        MAX = 100;
+        MAX = 100,
+        POWER_TOGGLE = -1;
         
 }
