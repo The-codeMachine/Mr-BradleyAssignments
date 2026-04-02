@@ -13,7 +13,7 @@
  *  [1 -> 100] The highest (7) bit inside the byte represents whether 
  *  or not the light is on. Any values outside this range
  *  are invalid [1 -> 100]. Brightness is always stored regardless
- *  of the power state. 
+ *  of the power state. However, it can only be changed if the light is ON
  *  
  *  Operations include:
  *  
@@ -36,9 +36,8 @@
 */
 
 #pragma once
-#include <string>
-#include <stdint.h>
-#include <iostream>
+#include <ostream>
+#include <cstdint>
 
 class Light {
 public:
@@ -66,7 +65,6 @@ public:
 private:
     uint8_t luminosity;
 
-    static inline constexpr int OFF = 0;
     static inline constexpr int MIN = 1;
     static inline constexpr int MAX = 100;
     static inline constexpr int ADJUSTMENT = 10;
@@ -76,8 +74,6 @@ private:
 private:
     void setBrightness(int value);
 
-    // Clamps the value to a specific range [min, max]
-    int clamp(int value, int min, int max);
 };
 
 // Outputs "Light is on: <0|1>, luminosity <value>"

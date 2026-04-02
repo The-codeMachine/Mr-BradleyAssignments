@@ -109,15 +109,15 @@ void Light::setBrightness(int value) {
     // (if you want me to implement my own again inside its own library I can do that, like in Java)
     uint8_t bValue = static_cast<uint8_t>(value); // value is clamped to [1, 100] which fits within bits 0-6
     
-    // clears the brightness bits (0-6), preservess the power bit (clearing the brightness bits)
+    // clears the brightness bits (0-6), preserves the power bit (clearing the brightness bits)
     luminosity &= ~BRIGHTNESS_MASK; 
     
-    luminosity |= bValue; // sets the brightness bits (0-6) does not affect bit 7 since bValue < 128
+    luminosity |= (bValue & BRIGHTNESS_MASK); // sets the brightness bits (0-6) does not affect bit 7 since bValue < 128
 }
 
 #ifndef NDEBUG
 
-#include <assert.h>
+#include <cassert>
 
 // tests the light class's private members
 void Light::testLightClass() {
@@ -147,6 +147,7 @@ void Light::testLightClass() {
  * @return true if {@link #Light::isOn()} is true, with brightness {@link #Light::getBrightness()}.
 */
 std::ostream& operator<<(std::ostream& os, const Light& lt) {
-    os << "Light is on: " << lt.isOn() << ", luminosity " << lt.getBrightness();
+    std::string status = lt.isOn() ? "ON" : "OFF";
+    os << "Light is on: " << status << ", luminosity " << lt.getBrightness();
     return os;
 }
