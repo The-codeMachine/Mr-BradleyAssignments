@@ -2,6 +2,10 @@ plugins {
     id 'application'
 }
 
+tasks.named('run') {
+    enableAssertions = true
+}
+
 dependencies {
     implementation project(':common')
 }

@@ -51,6 +51,7 @@ public class Light {
      * 
     */
     public Light() {
+        turnOff();
         luminosity = (byte)(luminosity | DEFAULT);
     }
 
@@ -63,7 +64,8 @@ public class Light {
      * 
     */
     public Light(int initBrightness) {
-       luminosity = (byte)(luminosity | initBrightness);
+        turnOff();
+        luminosity = (byte)(luminosity | initBrightness);
     }
     
     /**
@@ -164,7 +166,7 @@ public class Light {
         if (!isOn())
             return;
         
-        value = (byte)clamp((int)value, MIN, MAX); // value is clamped to [1, 100] which fits within bits 0-6
+        value = (byte)clamp(value, MIN, MAX); // value is clamped to [1, 100] which fits within bits 0-6
         
         // clears the brightness bits (0-6), perserves the power bit (7)
         luminosity = (byte)(luminosity & ~BRIGHTNESS_MASK); 
@@ -200,7 +202,7 @@ public class Light {
     private static final byte POWER_MASK = (byte)0b10000000;
     private static final byte BRIGHTNESS_MASK = (byte)0b01111111;
 
-    private static final byte MIN = 1; // only used for clamping so they can be int (since the clamp function takes ints)
+    private static final byte MIN = 1;
     private static final byte MAX = 100;
     private static final byte ADJUSTMENT = 10;
     private static final byte OFF = 0;
