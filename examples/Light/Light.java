@@ -71,7 +71,7 @@ public class Light
      */
     private void setBrightness( int value ) {
         value = MathUtils.constrain(value, MIN, MAX);
-        luminosity = value;
+        luminosity = (byte)value;
     }
     
     public String toString() {
@@ -80,10 +80,10 @@ public class Light
     }
     
     /*** State - instance variables ***/
-    private int luminosity;
+    private byte luminosity;
     
     /*** Constants ***/
-    private static final int
+    private static final byte
         DEFAULT     = 50,
         ADJUSTMENT  = 10,
         OFF = 0,
