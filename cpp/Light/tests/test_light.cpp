@@ -12,12 +12,12 @@ void testInitialState() {
     Light l;
 
     assert(l.getBrightness() == 50);
-    assert(l.isOn());
 }
 
 // tests that the brightness does not exceed its bounds
 void testBrightnessBounds() {
     Light l;
+    l.turnOn();
 
     for (size_t i = 0; i < 15; ++i) 
         l.brighten();
@@ -33,10 +33,6 @@ void testBrightnessBounds() {
 // tests that the light's power behaviour is correct
 void testPowerBehaviour() {
     Light l;
-
-    assert(l.isOn());
-
-    l.turnOff();
 
     assert(!l.isOn());
 
@@ -79,11 +75,11 @@ void testSwitchPower() {
 
     l.switchPower();
 
-    assert(!l.isOn());
+    assert(l.isOn());
 
     l.switchPower();
 
-    assert(l.isOn());
+    assert(!l.isOn());
 }
 
 #endif

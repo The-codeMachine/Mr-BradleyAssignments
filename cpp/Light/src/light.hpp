@@ -17,7 +17,8 @@
  *  
  *  Operations include:
  *  
- *      o turning on / off the light through direct methods (turnOn(), or turnOff()), or by switching its state (switchPower())
+ *      o turning on / off the light 
+ *      o toggling the light on / off 
  *      o brighten / dim the light by 10% NB: luminosity changes can only occur if the light is ON
  *      o query the light for its state - on | off, and luminosity
  */
@@ -42,6 +43,7 @@
 class Light {
 public:
     Light();
+    Light(int initBrightness);
 
     void turnOn();
     void turnOff();
@@ -65,9 +67,11 @@ public:
 private:
     uint8_t luminosity;
 
-    static inline constexpr int MIN = 1;
-    static inline constexpr int MAX = 100;
-    static inline constexpr int ADJUSTMENT = 10;
+    static inline constexpr int MIN = 1; // this is a ints because std::clamp requires ints
+    static inline constexpr int MAX = 100; // this is a ints because std::clamp requires ints
+    static inline constexpr uint8_t OFF = 0;
+    static inline constexpr uint8_t DEFAULT = 50;
+    static inline constexpr uint8_t ADJUSTMENT = 10;
     static inline constexpr uint8_t POWER_MASK = 0b10000000;
     static inline constexpr uint8_t BRIGHTNESS_MASK = 0b01111111;
 

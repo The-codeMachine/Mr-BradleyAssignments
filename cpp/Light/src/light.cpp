@@ -6,13 +6,26 @@
  * Constructs a new Light
  * 
  * A newly created light starts with:
- * - ON
+ * - OFF
  * - Brightness = 50%
  * 
  */
 Light::Light() : luminosity(0) {
-    turnOn();
-    setBrightness(50);
+    // sets the brightness to be 50, and the light to be OFF
+    luminosity |= (static_cast<uint8_t>(DEFAULT) & BRIGHTNESS_MASK);
+}
+
+/**
+ * Constructs a new Light
+ * 
+ * A newly created light starts with:
+ * - OFF
+ * - Brightness = initBrightness
+ * 
+ */
+Light::Light(int initBrightness) : luminosity(0) {
+    // sets the brightness to be the init brightness
+    luminosity |= (static_cast<uint8_t>(initBrightness) & BRIGHTNESS_MASK);
 }
 
 /**
@@ -56,7 +69,7 @@ bool Light::isOn() const {
     // isolate the power bit (bit 7)
     // if result != 0 then the light is ON
     // example: 11100100 & 10000000 -> 10000000 (ON)    
-    return (luminosity & POWER_MASK) != 0; 
+    return (luminosity & POWER_MASK) != OFF; 
 }
 
 /**
@@ -66,7 +79,7 @@ bool Light::isOn() const {
  * The value is clamped to the valid range [1,100].
  */
 void Light::brighten() {
-    setBrightness(getBrightness() + ADJUSTMENT);
+    setBrightness((luminosity & BRIGHTNESS_MASK) + ADJUSTMENT);
 }
 
 /**
@@ -76,7 +89,7 @@ void Light::brighten() {
  * The value is clamped to the valid range [1,100].
 */
 void Light::dim() {
-    setBrightness(getBrightness() - ADJUSTMENT);
+    setBrightness((int)(luminosity & BRIGHTNESS_MASK) - ADJUSTMENT);
 }
 
 /**
@@ -106,11 +119,11 @@ void Light::setBrightness(int value) {
         return;
 
     value = std::clamp(value, MIN, MAX); // changed this to the standard clamp function 
-    // (if you want me to implement my own again inside its own library I can do that, like in Java)
-    uint8_t bValue = static_cast<uint8_t>(value); // value is clamped to [1, 100] which fits within bits 0-6
-    
+
     // clears the brightness bits (0-6), preserves the power bit (clearing the brightness bits)
     luminosity &= ~BRIGHTNESS_MASK; 
+
+    uint8_t bValue = static_cast<uint8_t>(value);
     
     luminosity |= (bValue & BRIGHTNESS_MASK); // sets the brightness bits (0-6) does not affect bit 7 since bValue < 128
 }
