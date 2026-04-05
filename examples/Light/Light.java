@@ -30,7 +30,7 @@ public class Light
 {
     /*** API - from design ***/
     public Light() { luminosity = -DEFAULT; }   // lights starts off at 50%
-    public Light( int baseLumens ) { setBrightness(baseLumens); turnOff(); }
+    public Light( int brightness ) { setBrightness(brightness); turnOff(); }
     
     public void turnOn()    { if( !isOn() ) toggle(); }
     public void turnOff()   { if(  isOn() ) toggle(); }
