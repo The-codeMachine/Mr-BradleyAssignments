@@ -163,7 +163,7 @@ public class Light {
     */
     private void setBrightness(byte value) {
         // can only adjust the brightness if the light is ON
-        if (!isOn())
+        if (!isOn()) 
             return;
         
         value = (byte)clamp(value, MIN, MAX); // value is clamped to [1, 100] which fits within bits 0-6
