@@ -35,7 +35,7 @@ void testQuadrantGetters() {
     std::cout << "Stars: " << q.stars() << "\n";
 }
 
-// ensures all the setters and working corretly
+// ensures all the setters are working corretly
 void testQuadrantSetters() {
     Quadrant q(319);
 
@@ -80,7 +80,7 @@ int main() {
     return 0;
 }
 
-/*Sample Output
+/* Sample Output
 
 Klingons: 1, Bases: 1, Stars: 8 <- this one can change
 Klingons: 3, Bases: 1, Stars: 2

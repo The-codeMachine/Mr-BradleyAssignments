@@ -20,61 +20,123 @@ import static common.MathUtils.clamp;
  * 
  */
 
+import java.util.Random;
+
 public class Quadrant {
     
-    // Constructs a quadrant using an initial value
+    /**
+     * Generates a quadrant using a RNG
+     */
+    public Quadrant() {
+        Random rand = new Random();
+
+        int k = rand.nextInt(KLINGON_MIN, KLINGON_MAX);
+        int b = rand.nextInt(BASE_MIN, BASE_MAX);
+        int s = rand.nextInt(STAR_MIN, STAR_MAX);
+
+        kbs = k * 100 + b * 10 + s;
+    }
+
+    /**
+     * Constructs the Quadrant based off a raw KBS value
+     * 
+     * @param initValue
+     */
     public Quadrant(int initValue) {
         kbs = clampKBS(initValue);
     }
 
-    // Constructs a new quadrant based off the number of klingons, bases, and stars
+    /**
+     * Constructs the Quadrant based off the number of klingons, bases, and stars wanted
+     * 
+     * @param klingons
+     * @param bases
+     * @param stars
+     */
     public Quadrant(int klingons, int bases, int stars) {
         kbs = clampKBS(klingons * 100 + bases * 10 + stars);
     }
 
+    /**
+     * 
+     * @return the number of klingons in the quadrant
+     */
     public int klingons() {
         return kbs / 100;
     }
 
+    /**
+     * 
+     * @return the number of bases in the quadrant
+     */
     public int bases() {
         return (kbs / 10) % 10;
     }
 
+    /**
+     * 
+     * @return the number of stars in the quadrant
+     */
     public int stars() {
         return kbs % 10;
     }
 
-    // Returns the Quadrant's raw kbs value
+    /**
+     * 
+     * @return Quadrant's raw KBS value
+     */
     int raw() {
         return kbs;
     }
 
-    // Sets the raw kbs value to a new value
+    /**
+     * Sets the raw KBS value to a new value (clamps it)
+     * 
+     * @param newValue
+     */
     void setContent(int newValue) {
         kbs = clampKBS(newValue);
     }
 
-    // Sets a new klingon value (does not affect the other)
+    /**
+     * Sets the klingon to a new value, and clamps it.
+     * It ensures none of the other values are changed
+     * 
+     * @param newValue
+     */
     void setKlingons(int newValue) {
         newValue = clamp(newValue, KLINGON_MIN, KLINGON_MAX);
         
         kbs = newValue * 100 + bases() * 10 + stars();
     }
 
-    // Sets a new base value (does not affect the other)
+    /**
+     * Sets the base to a new value, and clamps it.
+     * It ensures none of the other values are changed
+     * 
+     * @param newValue
+     */
     void setBases(int newValue) {
         newValue = clamp(newValue, BASE_MIN, BASE_MAX);
         
         kbs = klingons() * 100 + newValue * 10 + stars();
     }
 
-    // Sets a new star value (does not affect the other)
+    /**
+     * Sets the stars to a new value, and clamps it.
+     * It ensures none of the other values are changed
+     * 
+     * @param newValue
+     */
     void setStars(int newValue) {
         newValue = clamp(newValue, STAR_MIN, STAR_MAX);
         
         kbs = klingons() * 100 + bases() * 10 + newValue;
     }
 
+    /**
+     * Tests the clampKBS function to ensure it clamps the value correctly
+     */
     void whiteBoxTest() {
         int value = clampKBS(319);
         assert value == 319  : "Value did not clamp correctly";
@@ -89,6 +151,19 @@ public class Quadrant {
         assert value == 213  : "Value did not clamp correctly";
     }
 
+    /**
+     * Returns a string value constructed from the number of klingons, bases, and stars
+     */
+    @Override
+    public String toString() {
+        return String.format("Klingons: %d, Bases: %d, Stars: %d", klingons(), bases(), stars());
+    }
+
+    /**
+     * 
+     * @param kbs
+     * @return kbs formatted to ensure that none of the values exceed its limit
+     */
     private int clampKBS(int kbs) {
         int k = kbs / 100; // gets the number of klingons
         int b = (kbs / 10) % 10; // gets the number of bases
