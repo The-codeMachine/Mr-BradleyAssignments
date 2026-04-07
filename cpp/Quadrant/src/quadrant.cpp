@@ -1,16 +1,19 @@
 #include "quadrant.hpp"
 
 #include <random>
+#include <cassert>
 #include <algorithm>
 
 // Constructs a quadrant using a random number generator
 Quadrant::Quadrant() {
     static std::random_device rd;
     static std::mt19937 gen(rd());
-    static std::uniform_int_distribution<> dist(1, 319);
 
-    // ensures that there is the correct amount of klingons/bases/stars
-    kbs = clampKBS(dist(gen));   
+    static std::uniform_int_distribution<> klingons(0,3);
+    static std::uniform_int_distribution<> bases(0,1);
+    static std::uniform_int_distribution<> stars(1,9);
+
+    kbs = klingons(gen) * 100 + bases(gen) * 10 + stars(gen);
 }
 
 // Constructs a quadrant using an initial value
@@ -69,11 +72,29 @@ void Quadrant::setStars(int newValue) {
     kbs = klingons() * 100 + bases() * 10 + newValue;
 }
 
+#ifndef NDEBUG
+
+    void Quadrant::whiteBoxTest() {
+        int value = clampKBS(319);
+        assert(value == 319);
+    
+        value = clampKBS(500);
+        assert(value == 301);
+
+        value = clampKBS(257);
+        assert(value == 217);
+
+        value = clampKBS(233);
+        assert(value == 213);
+    }
+    
+#endif
+
 // Clamps the KBS value to their max/mins
 int Quadrant::clampKBS(int kbs) {
-    int k = kbs / 100;
-    int b = (kbs / 10) % 10;
-    int s = kbs % 10;
+    int k = kbs / 100; // gets the number of klingons
+    int b = (kbs / 10) % 10; // gets the number of bases
+    int s = kbs % 10; // gets the number of stars
 
     k = std::clamp(k, KLINGON_MIN, KLINGON_MAX);
     b = std::clamp(b, BASE_MIN, BASE_MAX);
@@ -83,4 +104,9 @@ int Quadrant::clampKBS(int kbs) {
     // another example: 000 becomes 001
 
     return k * 100 + b * 10 + s;
+}
+
+std::ostream& operator<<(std::ostream& os, const Quadrant& qu) {
+    os << "Klingons: " << qu.klingons() << ", Bases: " << qu.bases() << ", Stars: " << qu.stars();
+    return os;
 }
