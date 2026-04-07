@@ -15,12 +15,12 @@ Quadrant::Quadrant() {
 
 // Constructs a quadrant using an initial value
 Quadrant::Quadrant(int initValue) {
-    kbs = clampKBS(initValue);
+    kbs = clampKBS(initValue); // clamps the value to be within the given range
 }
 
 // Constructs a new quadrant based off the number of klingons, bases, and stars
 Quadrant::Quadrant(int klingons, int bases, int stars) {
-    kbs = clampKBS(klingons * 100 + bases * 10 + stars);
+    kbs = clampKBS(klingons * 100 + bases * 10 + stars); // clamps the value to be within the given range
 }
 
 // Gets the number of klingons inside the quadrant
