@@ -73,12 +73,12 @@ public class Quadrant {
     }
    
     /**
-        * Sets the klingon to a new value, and clamps it.
-        * It ensures none of the other values are changed √
-    !! This last point is very important! -- Well done!
-    * 
-    * @param newValue
-    */
+     * Sets the klingon to a new value, and clamps it.
+     * It ensures none of the other values are changed √
+     * !! This last point is very important! -- Well done!
+     * 
+     * @param newValue
+     */
     public void setKlingons(int newValue) {
       setContent(newValue, bases(), stars());
     }
@@ -104,10 +104,7 @@ public class Quadrant {
     }
     
     /**
-     * Tests the clampKBS function to ensure it clamps the value correctly
-    
-    -> other methods remain un-tested!
-    
+     * Tests the setContent function 
     */
     public void whiteBoxTest() {
        setContent(KLINGON_MAX, BASE_MAX, STAR_MAX);
@@ -136,12 +133,9 @@ public class Quadrant {
     
     /**
      * Sets the raw KBS value to a new value (clamps it)
-
-        This should bot be part of the public API
-            
-        * 
-        * @param newValue
-        */
+     * 
+     * @param newValue
+     */
     private void setContent(int klingons, int bases, int stars) {
         if (klingons > KLINGON_MAX || klingons < KLINGON_MIN)
             throw new RuntimeException("Klingon exceed MAX, or dropped under MIN");
