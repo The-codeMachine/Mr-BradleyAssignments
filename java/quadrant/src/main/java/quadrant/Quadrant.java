@@ -1,7 +1,5 @@
 package quadrant;
 
-import static common.MathUtils.clamp;
-
 /**
  * The Quadrant class consists of the following operations:
  * - Get klingons (gets the number of klingons in a quadrant)  √
@@ -73,24 +71,15 @@ public class Quadrant {
     public int stars() {
         return kbs % 10;
     }
-    
-    /**
-     *    Mutator (set) Methods need to ensure that this SHOULD be part
-    of the public? API
-    
-    Further, whenever you see the same formula or piece of code used
-    (repeated) in code, you need to factor that code so there is ONLY
-    one place for it to be maintains and tested!
-    */
    
-   /**
-    * Sets the klingon to a new value, and clamps it.
-    * It ensures none of the other values are changed √
-   !! This last point is very important! -- Well done!
-   * 
-   * @param newValue
-   */
-  void setKlingons(int newValue) {
+    /**
+        * Sets the klingon to a new value, and clamps it.
+        * It ensures none of the other values are changed √
+    !! This last point is very important! -- Well done!
+    * 
+    * @param newValue
+    */
+    public void setKlingons(int newValue) {
       setContent(newValue, bases(), stars());
     }
     
@@ -100,7 +89,7 @@ public class Quadrant {
      * 
      * @param newValue
     */
-   void setBases(int newValue) {
+    public void setBases(int newValue) {
        setContent(klingons(), newValue, stars());
     }
     
@@ -110,7 +99,7 @@ public class Quadrant {
      * 
      * @param newValue
     */
-   void setStars(int newValue) {
+    public void setStars(int newValue) {
        setContent(klingons(), bases(), newValue);
     }
     
@@ -120,18 +109,21 @@ public class Quadrant {
     -> other methods remain un-tested!
     
     */
-   void whiteBoxTest() {
-       int value = clampKBS(318);    // 319 incorrect --> 318
-       assert value == 318  : "Value did not clamp correctly";
-       
-       value = clampKBS(500);
-       assert value == 301 : "Value did not clamp correctly";
-       
-       value = clampKBS(257);
-       assert value == 217 : "Value did not clamp correctly";
-       
-       value = clampKBS(233);
-       assert value == 213  : "Value did not clamp correctly";
+    public void whiteBoxTest() {
+       setContent(KLINGON_MAX, BASE_MAX, STAR_MAX);
+
+       assert kbs == 318 : "setContent did not set the content correctly";
+
+       setContent(2, 1, 2);
+
+       assert kbs == 212 : "setContent did not set the content correctly";
+
+       try {
+        setContent(0, 129, 1233);
+
+       } catch (RuntimeException e) {
+        System.out.println("There was a runtime exception, success");
+       }
     }
     
     /**
@@ -154,43 +146,13 @@ public class Quadrant {
         if (klingons > KLINGON_MAX || klingons < KLINGON_MIN)
             throw new RuntimeException("Klingon exceed MAX, or dropped under MIN");
 
-        if (klingons > KLINGON_MAX || klingons < KLINGON_MIN)
+        if (bases > BASE_MAX || bases < BASE_MIN)
             throw new RuntimeException("Klingon exceed MAX, or dropped under MIN");
 
-        if (klingons > KLINGON_MAX || klingons < KLINGON_MIN)
+        if (stars > STAR_MAX || stars < STAR_MIN)
             throw new RuntimeException("Klingon exceed MAX, or dropped under MIN");
-
-        klingons = clamp(klingons, KLINGON_MIN, KLINGON_MAX);
-        bases = clamp(bases, BASE_MIN, BASE_MAX);
-        stars = clamp(stars, STAR_MIN, STAR_MAX);
 
         kbs = klingons * 100 + bases * 10 + stars;
-    }
-    
-    /**
-     * This is a good example where clamping may not be the correct choice.
-    -> we would prefer not to use the KBS values directly (via parameters)
-    -> if the user (programmers) attempt to set an invalid KBS value, they
-    should be notified that it is invalid!; as this is an error in programming!
-    -> silent correction of values need to be done with careful thought. 
-    It can lead to very difficult to trace/debug.
-    
-    * @param kbs
-    * @return kbs formatted to ensure that none of the values exceed its limit
-    */
-   private int clampKBS(int kbs) {
-       int k = kbs / 100; // gets the number of klingons
-       int b = (kbs / 10) % 10; // gets the number of bases
-       int s = kbs % 10; // gets the number of stars
-       
-       k = clamp(k, KLINGON_MIN, KLINGON_MAX);
-       b = clamp(b, BASE_MIN, BASE_MAX);
-       s = clamp(s, STAR_MIN, STAR_MAX);
-       
-       // for example: 581 becomes 311
-       // another example: 000 becomes 001
-       
-       return k * 100 + b * 10 + s;        // fifth encoding formula
     }
     
     // Data
