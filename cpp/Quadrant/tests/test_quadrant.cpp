@@ -5,30 +5,30 @@
 
 // generate a quadrant with all the constructors, and ensures they work
 void testQuadrantConstructors() {
-    Quadrant q;
+    try {
+        Quadrant q;
 
-    std::cout << q << "\n";
+        std::cout << q << "\n";
 
-    Quadrant qw(312);
+        Quadrant qw(3, 1, 2);
 
-    std::cout << qw << "\n";
+        std::cout << qw << "\n";
 
-    Quadrant qe(3, 1, 2);
+        Quadrant qe(3, 1, 2);
 
-    std::cout << qe << "\n";
+        std::cout << qe << "\n";
 
-    Quadrant qr(493);
+        Quadrant qr(4, 9, 3);
 
-    std::cout << qr << "\n";
-
-    Quadrant qt(5, 4, 3);
-
-    std::cout << qt << "\n";
+        std::cout << qr << "\n";
+    } catch (const std::exception& e) {
+        std::cout << "There was a runtime exception: " << e.what() << "\n";
+    }
 }
 
 // ensures all the getters are working correctly
 void testQuadrantGetters() {
-    Quadrant q(319);
+    Quadrant q(3, 1, 8);
 
     std::cout << "Klingons: " << q.klingons() << "\n";
     std::cout << "Bases: " << q.bases() << "\n";
@@ -37,7 +37,7 @@ void testQuadrantGetters() {
 
 // ensures all the setters are working corretly
 void testQuadrantSetters() {
-    Quadrant q(319);
+    Quadrant q(3, 1, 8);
 
     std::cout << q << "\n";
 
@@ -82,16 +82,16 @@ int main() {
 
 /* Sample Output
 
-Klingons: 1, Bases: 1, Stars: 8 <- this one can change
+Klingons: 2, Bases: 1, Stars: 6 <- this may change
 Klingons: 3, Bases: 1, Stars: 2
 Klingons: 3, Bases: 1, Stars: 2
-Klingons: 3, Bases: 1, Stars: 3
-Klingons: 3, Bases: 1, Stars: 3
+There was a runtime exception: Klingon exceed MAX, or dropped under MIN
 Klingons: 3
 Bases: 1
-Stars: 9
-Klingons: 3, Bases: 1, Stars: 9
+Stars: 8
+Klingons: 3, Bases: 1, Stars: 8
 Klingons: 1, Bases: 0, Stars: 7
-Time taken: 51 ms <- this one can change
+Time taken: 51 ms <- this may change
+There was a runtime exception, success
 
  */
