@@ -34,17 +34,26 @@ public class Main {
         System.out.printf("Stars: %d\n", q.stars());
     }
 
-    // ensures all the setters are working correctly
-    private static void testQuadrantSetters() {
-        Quadrant q = new Quadrant(3, 1, 8);
+    private static void testReduceKlingons() {
+        Quadrant q = new Quadrant(3, 0, 1);
 
-        System.out.println(q);
+        try {
+            q.reduceKlingons();
+            
+            System.out.println(q);
 
-        q.setKlingons(1);
-        q.setBases(0);
-        q.setStars(7);
+            q.reduceKlingons();
+                        
+            System.out.println(q);
 
-        System.out.println(q);
+            q.reduceKlingons();
+            
+            System.out.println(q);
+
+            q.reduceKlingons();
+        } catch (RuntimeException e) {
+            System.out.println("Runtime exception occurred");
+        }
     }
 
     // stress tests the random number generator
@@ -65,7 +74,7 @@ public class Main {
     public static void main(String args[]) {
         testQuadrantConstructors();
         testQuadrantGetters();
-        testQuadrantSetters();
+        testReduceKlingons();
         stressTestRandomGenerator();
 
         Quadrant q = new Quadrant();
@@ -76,16 +85,18 @@ public class Main {
 /*
  * Sample Output
  * 
- * Klingons: 0, Bases: 0, Stars: 3 <- this one can change
- * Klingons: 3, Bases: 1, Stars: 2
- * Klingons: 3, Bases: 1, Stars: 2
+ * 207 <- this one may change
+ * 312
+ * 312
  * There was a runtime exception
  * Klingons: 3
  * Bases: 1
  * Stars: 8
- * Klingons: 3, Bases: 1, Stars: 8
- * Klingons: 1, Bases: 0, Stars: 7
- * Time taken: 51 ms <- this one can change
+ * 201
+ * 101
+ * 001
+ * Time taken: 48 ms <- this one may change
+ * There was a runtime exception, success: java.lang.RuntimeException: Base exceed MAX, or dropped under MIN
  * There was a runtime exception, success
  * 
  */

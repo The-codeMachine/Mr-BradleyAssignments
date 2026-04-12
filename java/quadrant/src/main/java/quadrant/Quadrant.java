@@ -108,7 +108,7 @@ public class Quadrant {
         kbs = setContent(0, 129, 1233);
 
        } catch (RuntimeException e) {
-        System.out.println("There was a runtime exception, success");
+        System.out.println("There was a runtime exception, success: " + e);
        }
 
        try {
