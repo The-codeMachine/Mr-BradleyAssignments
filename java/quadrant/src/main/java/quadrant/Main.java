@@ -34,6 +34,7 @@ public class Main {
         System.out.printf("Stars: %d\n", q.stars());
     }
 
+    // tests that the reduceKlingon function removes klingons correctly
     private static void testReduceKlingons() {
         Quadrant q = new Quadrant(3, 0, 1);
 

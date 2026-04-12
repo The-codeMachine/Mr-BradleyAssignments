@@ -3,19 +3,33 @@
 #include <ostream>
 
 /**
- * The Quadrant class consists of the following operations:
- * - Get klingons (gets the number of klingons in a quadrant)  √
- * - Get bases (gets the number of bases in a quadrant)        √
- * - Get stars (gets the number of stars in a quadrant)        √
- * - Set a new value for each type (set a new klingon number, base number, or stars number) √
- * 
- * The Quadrant class can be constructed from:
- * - Nothing, will use a RNG to make a new random quadrant √
- * - From klingons, bases, and stars, with the correct clamping  √
- * 
- * There can be between 0-3 klingons per quadrant, 0-1 bases per quadrant, and 1-8 stars per quadrant [1 -> 318]
- * NB: Stars cap out at 8. [0..318]
- * 
+ * A Quadrant_00 holds the contents of the quadrant in terms
+ * of the number of each item present. Each Quadrant_00 may
+ * hold Klingons [0..3], Bases [0..1], and Stars [1..8].
+ *
+ * The contents are packed into a 32-bit data type (int)
+ * whose valid range is [1..318].
+ *
+ * The Klingons  value is stored in the 100's position
+ * The StarBases value is stored in the  10's position
+ * and the Stars value is stored in the   1's position
+ *
+ * The number of Klingons in the Quadrant_00 is the only
+ * value that may change, at this time.
+ *
+ * Operations
+ *
+ *  o Construct a Quadrant_00( k, b, s )
+ *  o return the current number of Klingons
+ *  o return the number of Star Bases
+ *  o return the number of Stars
+ *  o provide a textual presentation of the Quadrant_00 for
+ *      use with displaying the Galactic Map eg, "318", or "001"
+ *      
+ *  o provides the ability to decrement the number of Klingons    
+ *
+ * @author Mr. Bradley
+ * @version SPRING 2026
  */
 
 class Quadrant {
@@ -27,9 +41,7 @@ public:
     int bases() const;
     int stars() const;
 
-    void setKlingons(int newValue);
-    void setBases(int newValue);
-    void setStars(int newValue);
+    void reduceKlingons();
 
     #ifndef NDEBUG
 
@@ -40,7 +52,7 @@ public:
     friend std::ostream& operator<<(std::ostream& os, const Quadrant& qu);
 
 private:
-    void setContent(int klingons, int bases, int stars);
+    int setContent(int klingons, int bases, int stars);
 
 private:
     // Data

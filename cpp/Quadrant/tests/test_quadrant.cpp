@@ -35,19 +35,6 @@ void testQuadrantGetters() {
     std::cout << "Stars: " << q.stars() << "\n";
 }
 
-// ensures all the setters are working corretly
-void testQuadrantSetters() {
-    Quadrant q(3, 1, 8);
-
-    std::cout << q << "\n";
-
-    q.setKlingons(1);
-    q.setBases(0);
-    q.setStars(7);
-
-    std::cout << q << "\n";
-}
-
 // stress tests the random number generator
 void stressTestRandomGenerator() {
     auto start = std::chrono::steady_clock::now();
@@ -63,10 +50,33 @@ void stressTestRandomGenerator() {
     std::cout << "Time taken: " << duration.count() << " ms\n";
 }
 
+// test that the reduceKlingon function removes klingons correctly
+void testRemoveKlingons() {
+    Quadrant q(3, 0, 1);
+
+    try {
+        q.reduceKlingons();
+        
+        std::cout << q << "\n";
+
+        q.reduceKlingons();
+                    
+        std::cout << q << "\n";
+
+
+        q.reduceKlingons();
+        
+        std::cout << q << "\n";
+
+        q.reduceKlingons();
+    } catch (const std::exception& e) {
+        std::cout << "Runtime exception occurred\n";
+    }
+}
+
 int main() {
     testQuadrantConstructors();
     testQuadrantGetters();
-    testQuadrantSetters();
     stressTestRandomGenerator();
 
     #ifndef NDEBUG
@@ -82,16 +92,16 @@ int main() {
 
 /* Sample Output
 
-Klingons: 2, Bases: 1, Stars: 6 <- this may change
-Klingons: 3, Bases: 1, Stars: 2
-Klingons: 3, Bases: 1, Stars: 2
+315 <- this one may change
+312
+312
 There was a runtime exception: Klingon exceed MAX, or dropped under MIN
 Klingons: 3
 Bases: 1
 Stars: 8
-Klingons: 3, Bases: 1, Stars: 8
-Klingons: 1, Bases: 0, Stars: 7
-Time taken: 51 ms <- this may change
+Time taken: 51 ms <- this one may change
 There was a runtime exception, success
+There was a runtime exception, success: Klingon exceed MAX, or dropped under MIN
+318
 
  */
