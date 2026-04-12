@@ -9,10 +9,9 @@ package quadrant;
  * 
  * The Quadrant class can be constructed from:
  * - Nothing, will use a RNG to make a new random quadrant √
- * - From an initial value, which content is set to        √
  * - From klingons, bases, and stars, with the correct clamping  √
  * 
- * There can be between 0-3 klingons per quadrant, 0-1 bases per quadrant, and 1-9 stars per quadrant [1 -> 319]
+ * There can be between 0-3 klingons per quadrant, 0-1 bases per quadrant, and 1-8 stars per quadrant [1 -> 318]
  * NB: Stars cap out at 8. [0..318]
  * 
  */
@@ -132,7 +131,7 @@ public class Quadrant {
     }
     
     /**
-     * Sets the raw KBS value to a new value (clamps it)
+     * Sets the raw KBS value to a new value (ensures it is in a valid range)
      * 
      * @param newValue
      */
@@ -141,10 +140,10 @@ public class Quadrant {
             throw new RuntimeException("Klingon exceed MAX, or dropped under MIN");
 
         if (bases > BASE_MAX || bases < BASE_MIN)
-            throw new RuntimeException("Klingon exceed MAX, or dropped under MIN");
+            throw new RuntimeException("Base exceed MAX, or dropped under MIN");
 
         if (stars > STAR_MAX || stars < STAR_MIN)
-            throw new RuntimeException("Klingon exceed MAX, or dropped under MIN");
+            throw new RuntimeException("Star exceed MAX, or dropped under MIN");
 
         kbs = klingons * 100 + bases * 10 + stars;
     }

@@ -11,7 +11,6 @@
  * 
  * The Quadrant class can be constructed from:
  * - Nothing, will use a RNG to make a new random quadrant √
- * - From an initial value, which content is set to        √
  * - From klingons, bases, and stars, with the correct clamping  √
  * 
  * There can be between 0-3 klingons per quadrant, 0-1 bases per quadrant, and 1-8 stars per quadrant [1 -> 318]
