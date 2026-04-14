@@ -62,6 +62,8 @@ void Quadrant::reduceKlingons() {
 
     // Tests the setContent function
     void Quadrant::whiteBoxTest() {
+        std::cout << "Quadrant whitebox test\n";
+
         int test_kbs = 0; 
         test_kbs = setContent(KLINGON_MAX, BASE_MAX, STAR_MAX);
 

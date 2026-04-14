@@ -4,32 +4,78 @@
 #include <cassert>
 #include <chrono>
 
+// ensures all the getters are working correctly
+void testQuadrantGetters() {
+    std::cout << "Testing Quadrant getters\n";
+
+    Quadrant q(3, 1, 8);
+
+    assert(q.klingons() == 3 && q.bases() == 1 && q.stars() == 8);
+
+    std::cout << "Quadrant getters success\n";
+}
+
 // generate a quadrant with all the constructors, and ensures they work
 void testQuadrantConstructors() {
+    std::cout << "Testing Quadrant constructors\n";
+
     Quadrant q;
 
-    std::cout << q << "\n";
+    assert(q.klingons() <= 3 && q.klingons() >= 0);
+    assert(q.bases() <= 1 && q.bases() >= 0);
+    assert(q.stars() <= 9 && q.stars() >= 1);
 
     Quadrant qw(3, 1, 2);
 
-    std::cout << qw << "\n";
+    assert(qw.klingons() == 3 && qw.bases() == 1 && qw.stars() == 2);
 
-    Quadrant qe(3, 1, 2);
-
-    std::cout << qe << "\n";
+    std::cout << "Quadrant constructor success\n";
 }
 
-// ensures all the getters are working correctly
-void testQuadrantGetters() {
-    Quadrant q(3, 1, 8);
+// tests that the << operator works correctly
+void testOperator() {
+    std::cout << "Testing Quadrant << operator\n";
 
-    std::cout << "Klingons: " << q.klingons() << "\n";
-    std::cout << "Bases: " << q.bases() << "\n";
-    std::cout << "Stars: " << q.stars() << "\n";
+    Quadrant q(3, 1, 8);
+    
+    std::cout << q << "\n";
+    
+    Quadrant qu(0, 0, 1);
+    
+    std::cout << qu << "\n";
+
+    std::cout << "Quadrant << operator success\n";
+}
+
+// test that the reduceKlingon function removes klingons correctly
+void testRemoveKlingons() {
+    std::cout << "Testing Quadrant reduceKlingons\n";
+
+    Quadrant q(3, 0, 1);
+    
+    q.reduceKlingons();
+    
+    assert(q.klingons() == 2);
+    
+    q.reduceKlingons();
+    
+    assert(q.klingons() == 1);
+    
+    q.reduceKlingons();
+    
+    assert(q.klingons() == 0);
+    
+    q.reduceKlingons();
+    
+    assert(q.klingons() == 0);
+
+    std::cout << "Quadrant reduceKlingons success\n";
 }
 
 // stress tests the random number generator
 void stressTestRandomGenerator() {
+    std::cout << "Quadrant stress test\n";
+
     auto start = std::chrono::steady_clock::now();
     
     for (size_t j = 0; j < 1000000; ++j) {
@@ -41,43 +87,17 @@ void stressTestRandomGenerator() {
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
 
     std::cout << "Time taken: " << duration.count() << " ms\n";
-}
 
-// test that the reduceKlingon function removes klingons correctly
-void testRemoveKlingons() {
-    Quadrant q(3, 0, 1);
+    std::cout << "Quadrant stress test success\n";
 
-    q.reduceKlingons();
-    
-    std::cout << q << "\n";
-
-    q.reduceKlingons();
-                
-    std::cout << q << "\n";
-
-
-    q.reduceKlingons();
-    
-    std::cout << q << "\n";
-
-    q.reduceKlingons();
-}
-
-void testOperator() {
-    Quadrant q(3, 1, 8);
-
-    std::cout << q << "\n";
-
-    Quadrant qu(0, 0, 1);
-
-    std::cout << qu << "\n";
 }
 
 int main() {
-    testQuadrantConstructors();
     testQuadrantGetters();
-    stressTestRandomGenerator();
+    testQuadrantConstructors();
     testOperator();
+    testRemoveKlingons();
+    stressTestRandomGenerator();
 
     #ifndef NDEBUG
 
@@ -90,15 +110,21 @@ int main() {
 
 /* Sample Output
 
-003 <- this one may change
-312
-312
-Klingons: 3
-Bases: 1
-Stars: 8
-Time taken: 9 ms <- this one may change
+Testing Quadrant getters
+Quadrant getters success
+Testing Quadrant constructors
+Quadrant constructor success
+Testing Quadrant << operator
 318
 001
-Assertion failed: klingons >= KLINGON_MIN && klingons <= KLINGON_MAX && "Klingon out of range", file D:\Developer\Mr-BradleyAssignments\cpp\Quadrant\src\quadrant.cpp, line 81 <- this one may change based off where your file is located
+Quadrant << operator success
+Testing Quadrant reduceKlingons
+Quadrant reduceKlingons success
+Quadrant stress test
+Time taken: 9 ms
+Quadrant stress test success
+Quadrant whitebox test
+Assertion failed: klingons >= KLINGON_MIN && klingons <= KLINGON_MAX && "Klingon out of range", 
+file D:\Developer\Mr-BradleyAssignments\cpp\Quadrant\src\quadrant.cpp, line 83 <- this one may change (it is expected)
 
  */

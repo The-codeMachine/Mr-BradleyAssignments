@@ -94,6 +94,8 @@ public class Quadrant {
      * Tests the setContent function 
     */
     public static void whiteBoxTest() {
+       System.out.println("Quadrant whitebox test");
+
        int kbs = 0; // testing kbs
         
        kbs = setContent(KLINGON_MAX, BASE_MAX, STAR_MAX);
