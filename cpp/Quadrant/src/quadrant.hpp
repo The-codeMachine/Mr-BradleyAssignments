@@ -20,6 +20,7 @@
  * Operations
  *
  *  o Construct a Quadrant( k, b, s )
+ *  o Construct a Quadrant() // uses an RNG to generate a random quadrant
  *  o return the current number of Klingons
  *  o return the number of Star Bases
  *  o return the number of Stars

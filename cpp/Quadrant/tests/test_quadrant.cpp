@@ -121,10 +121,9 @@ Quadrant << operator success
 Testing Quadrant reduceKlingons
 Quadrant reduceKlingons success
 Quadrant stress test
-Time taken: 9 ms
+Time taken: 9 ms <- this one may change depending on your system hardware
 Quadrant stress test success
 Quadrant whitebox test
-Assertion failed: klingons >= KLINGON_MIN && klingons <= KLINGON_MAX && "Klingon out of range", 
-file D:\Developer\Mr-BradleyAssignments\cpp\Quadrant\src\quadrant.cpp, line 83 <- this one may change (it is expected)
+Quadrant whitebox test success
 
  */

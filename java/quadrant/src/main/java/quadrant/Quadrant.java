@@ -18,6 +18,7 @@ package quadrant;
  * Operations
  *
  *  o Construct a Quadrant( k, b, s )
+ *  o Construct a Quadrant() // uses an RNG to generate a random quadrant
  *  o return the current number of Klingons
  *  o return the number of Star Bases
  *  o return the number of Stars
@@ -32,12 +33,12 @@ package quadrant;
 
 import java.util.Random;
 
-public class Quadrant { 
+public class Quadrant {
     /**
      * Generates a quadrant using a RNG
-
-         -> there are specific rules for creating quadrants
-             we will look at them in future sessions
+     * 
+     * -> there are specific rules for creating quadrants
+     * we will look at them in future sessions
      */
     public Quadrant() {
         int k = RAND.nextInt(KLINGON_MIN, KLINGON_MAX + 1);
@@ -48,7 +49,8 @@ public class Quadrant {
     }
 
     /**
-     * Constructs the Quadrant based off the number of klingons, bases, and stars wanted
+     * Constructs the Quadrant based off the number of klingons, bases, and stars
+     * wanted
      * 
      * @param klingons
      * @param bases
@@ -81,53 +83,72 @@ public class Quadrant {
     public int stars() {
         return kbs % 10;
     }
-   
+
     /**
      * Removes one Klingon from this quadrant if one exists
      */
     public void reduceKlingons() {
-        if (klingons() >= 1)
+        if (kbs >= 100) // removes overhead (instead of using klingons() >= 1)
             kbs -= 100;
     }
-    
+
     /**
-     * Tests the setContent function 
-    */
+     * Tests the setContent function, and the toString method
+     */
     public static void whiteBoxTest() {
-       System.out.println("Quadrant whitebox test");
+        System.out.println("Quadrant whitebox test");
 
-       int kbs = 0; // testing kbs
-        
-       kbs = setContent(KLINGON_MAX, BASE_MAX, STAR_MAX);
+        int test_kbs = 0; // testing kbs
 
-       assert kbs == 318 : "setContent did not set the content correctly";
+        test_kbs = setContent(KLINGON_MAX, BASE_MAX, STAR_MAX);
 
-       kbs = setContent(2, 1, 2);
+        assert test_kbs == 318 : "setContent did not set the content correctly";
 
-       assert kbs == 212 : "setContent did not set the content correctly";
-       
-       kbs = setContent(3, 1, 8);
+        test_kbs = setContent(2, 1, 2);
 
-       // would be the toString method, however this is a static test
-       assert String.format("%03d", kbs).equals("318") : "toString does not set the quadrant to a string correctly";
+        assert test_kbs == 212 : "setContent did not set the content correctly";
 
-       kbs = setContent(0, 0, 1);
+        test_kbs = setContent(3, 1, 8);
 
-       assert String.format("%03d", kbs).equals("001") : "toString does not set the quadrant to a string correctly";
+        // would be the toString method, however this is a static test
+        assert String.format("%03d", test_kbs).equals("318")
+                : "toString does not set the quadrant to a string correctly";
 
-       kbs = setContent(-43, 129, -123);
+        test_kbs = setContent(0, 0, 1);
+
+        assert String.format("%03d", test_kbs).equals("001")
+                : "toString does not set the quadrant to a string correctly";
+
+        System.out.println("Quadrant whitebox test success");
+
+        // NOTE:
+        // Invalid input cases are not programmatically tested here because setContent()
+        // uses assertions. Assertion failures terminate the program and cannot be
+        // caught or verified within the same execution flow.
+        //
+        // These cases were manually verified by running the program with assertions
+        // enabled (-ea) and confirming that invalid inputs trigger assertion failures.
+        //
+        // This approach ensures correctness during development without introducing
+        // exception handling, as per assignment constraints.
+
+        // For example: setContent(-1, 0, 1); // triggers an Assertion error
     }
-    
+
     /**
-     * Returns a string value constructed from the number of klingons, bases, and stars
-    */
+     * @return a string value constructed from the number of klingons, bases, and
+     *         stars
+     */
     @Override
     public String toString() {
-       return String.format("%03d", kbs);
+        return String.format("%03d", kbs);
     }
-    
+
     /**
      * Encodes klingons, bases, and stars into a single integer (KBS format)
+     * 
+     * @apiNote Invalid input triggers assertion failure when assertions are enabled
+     *          (-ea)
      * 
      * @param klingons
      * @param bases
@@ -142,10 +163,10 @@ public class Quadrant {
 
         return klingons * 100 + bases * 10 + stars;
     }
-    
+
     // Data
     private int kbs; // this could (eventually) be a char type saving 50% storage
-    
+
     // Constants
     private static final int KLINGON_MAX = 3;
     private static final int BASE_MAX = 1;

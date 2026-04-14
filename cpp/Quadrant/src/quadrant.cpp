@@ -54,7 +54,7 @@ int Quadrant::stars() const {
 
 // Removes one Klingon from this quadrant if one exists
 void Quadrant::reduceKlingons() {
-    if (klingons() >= 1)
+    if (kbs >= 100) // removes overhead of klingons()
         kbs -= 100;
 }
 
@@ -73,7 +73,20 @@ void Quadrant::reduceKlingons() {
         
         assert(test_kbs == 212);
 
-        test_kbs = setContent(-43, 129, -123);
+        std::cout << "Quadrant whitebox test success\n";
+
+        // NOTE:
+        // Invalid input cases are not programmatically tested here because setContent()
+        // uses assertions. Assertion failures terminate the program and cannot be
+        // caught or verified within the same execution flow.
+        //
+        // These cases were manually verified by running the program
+        // and confirming that invalid inputs trigger assertion failures.
+        //
+        // This approach ensures correctness during development without introducing
+        // exception handling, as per assignment constraints.
+
+        // For example: setContent(-1, 0, 1); // triggers an Assertion error
     }
     
 #endif

@@ -1,14 +1,14 @@
 package quadrant;
 
 public class Main {
-    
+
     // ensures all the getters and working correctly
     private static void testQuadrantGetters() {
         System.out.println("Testing Quadrant getters");
 
         Quadrant q = new Quadrant(3, 1, 8);
 
-        assert(q.klingons() == 3 && q.bases() == 1 && q.stars() == 8);
+        assert (q.klingons() == 3 && q.bases() == 1 && q.stars() == 8);
 
         System.out.println("Quadrant getters success");
     }
@@ -19,13 +19,13 @@ public class Main {
 
         Quadrant q = new Quadrant();
 
-        assert(q.klingons() <= 3 && q.klingons() >= 0);
-        assert(q.bases() <= 1 && q.bases() >= 0);
-        assert(q.stars() <= 9 && q.stars() >= 1);
+        assert (q.klingons() <= 3 && q.klingons() >= 0);
+        assert (q.bases() <= 1 && q.bases() >= 0);
+        assert (q.stars() <= 9 && q.stars() >= 1);
 
         Quadrant qw = new Quadrant(3, 1, 2);
 
-        assert(qw.klingons() == 3 && qw.bases() == 1 && qw.stars() == 2);
+        assert (qw.klingons() == 3 && qw.bases() == 1 && qw.stars() == 2);
 
         System.out.println("Quadrant constructor success");
     }
@@ -37,20 +37,20 @@ public class Main {
         Quadrant q = new Quadrant(3, 0, 1);
 
         q.reduceKlingons();
-        
-        assert(q.klingons() == 2);
 
-        q.reduceKlingons();
-                    
-        assert(q.klingons() == 1);
-
-        q.reduceKlingons();
-        
-        assert(q.klingons() == 0);
+        assert (q.klingons() == 2);
 
         q.reduceKlingons();
 
-        assert(q.klingons() == 0);
+        assert (q.klingons() == 1);
+
+        q.reduceKlingons();
+
+        assert (q.klingons() == 0);
+
+        q.reduceKlingons();
+
+        assert (q.klingons() == 0);
 
         System.out.println("Quadrant reduceKlingons success");
     }
@@ -94,12 +94,9 @@ public class Main {
  * Testing Quadrant reduceKlingons
  * Quadrant reduceKlingons success
  * Quadrant stress test
- * Time taken: 13 ms
+ * Time taken: 13 ms <- this one may change depending on your system hardware
  * Quadrant stress test success
  * Quadrant whitebox test
- * Exception in thread "main" java.lang.AssertionError: Klingon out of range <- this is expected
-        at quadrant.Quadrant.setContent(Quadrant.java:139)
-        at quadrant.Quadrant.whiteBoxTest(Quadrant.java:118)
-        at quadrant.Main.main(Main.java:83)
+ * Quadrant whitebox test success
  * 
  */
