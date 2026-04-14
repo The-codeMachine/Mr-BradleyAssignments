@@ -26,14 +26,15 @@
  *  o return the number of Stars
  *  o provide a textual presentation of the Quadrant for
  *      use with displaying the Galactic Map eg, "318", or "001"
- *      
- *  o provides the ability to decrement the number of Klingons    
+ *
+ *  o provides the ability to decrement the number of Klingons
  *
  * @author Mr. Bradley
  * @version SPRING 2026
  */
 
-class Quadrant {
+class Quadrant
+{
 public:
     Quadrant();
     Quadrant(int klingons, int bases, int stars);
@@ -44,13 +45,13 @@ public:
 
     void reduceKlingons();
 
-    #ifndef NDEBUG
+#ifndef NDEBUG
 
     static void whiteBoxTest();
-    
-    #endif
 
-    friend std::ostream& operator<<(std::ostream& os, const Quadrant& qu);
+#endif
+
+    friend std::ostream &operator<<(std::ostream &os, const Quadrant &qu);
 
 private:
     static int setContent(int klingons, int bases, int stars);

@@ -136,8 +136,8 @@ public class Quadrant {
     }
 
     /**
-     * @return a string value constructed from the number of klingons, bases, and
-     *         stars
+     * @return a 3-digit string (with leading zeros if necessary) representing
+     *          the quadrant contents in KBS format
      */
     @Override
     public String toString() {
@@ -167,6 +167,8 @@ public class Quadrant {
     // Data
     private int kbs; // this could (eventually) be a char type saving 50% storage
 
+    private static final Random RAND = new Random();
+
     // Constants
     private static final int KLINGON_MAX = 3;
     private static final int BASE_MAX = 1;
@@ -174,6 +176,4 @@ public class Quadrant {
     private static final int KLINGON_MIN = 0;
     private static final int BASE_MIN = 0;
     private static final int STAR_MIN = 1;
-
-    private static final Random RAND = new Random();
 }

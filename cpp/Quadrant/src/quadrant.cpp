@@ -7,92 +7,100 @@
 #include <string>
 
 // Constructs a quadrant using a random number generator
-Quadrant::Quadrant() {
+Quadrant::Quadrant()
+{
     // Initializes a static 32-bit MT19937 engine
     // using a lambda for static initialization, ensuring the generator is seeded
     // only once with a non-deterministic seed from std::random_device
-    static std::mt19937 gen([]{
+    static std::mt19937 gen([]
+                            {
         std::random_device rd;
-        return std::mt19937(rd());
-    }());
+        return std::mt19937(rd()); }());
 
     // draws a single 32-bit random integer to extract multiple sub-values
     // reduces overhead of multiple PRNG engine calls
-    uint32_t r = static_cast<uint32_t>(gen()); 
+    uint32_t r = static_cast<uint32_t>(gen());
 
     // Use bitwise AND to extract the first 2 bits (mask 0b11) to get a value from 0–3.
-    int k = r & 3; 
+    int k = r & 3;
 
     // Right-shift by 2 bits and extract the next single bit (mask 0b1) for a 0–1 toggle.
-    int b = (r >> 2) & 1; 
+    int b = (r >> 2) & 1;
 
     // Right-shift by 3 bits and extract 3 bits (mask 0b111), then offset by 1 for a 1–8 range.
-    int s = ((r >> 3) & 7) + 1; 
+    int s = ((r >> 3) & 7) + 1;
 
     kbs = setContent(k, b, s);
 }
 
 // Constructs a new quadrant based off the number of klingons, bases, and stars
-Quadrant::Quadrant(int klingons, int bases, int stars) {
+Quadrant::Quadrant(int klingons, int bases, int stars)
+{
     kbs = setContent(klingons, bases, stars);
 }
 
 // Gets the number of klingons inside the quadrant
-int Quadrant::klingons() const {
+int Quadrant::klingons() const
+{
     return kbs / 100;
 }
 
 // Gets the number of bases inside the quadrant
-int Quadrant::bases() const {
+int Quadrant::bases() const
+{
     return (kbs / 10) % 10;
 }
 
 // Gets the number of stars inside the quadrant
-int Quadrant::stars() const {
+int Quadrant::stars() const
+{
     return kbs % 10;
 }
 
 // Removes one Klingon from this quadrant if one exists
-void Quadrant::reduceKlingons() {
+void Quadrant::reduceKlingons()
+{
     if (kbs >= 100) // removes overhead of klingons()
         kbs -= 100;
 }
 
 #ifndef NDEBUG
 
-    // Tests the setContent function
-    void Quadrant::whiteBoxTest() {
-        std::cout << "Quadrant whitebox test\n";
+// Tests the setContent function
+void Quadrant::whiteBoxTest()
+{
+    std::cout << "Quadrant whitebox test\n";
 
-        int test_kbs = 0; 
-        test_kbs = setContent(KLINGON_MAX, BASE_MAX, STAR_MAX);
+    int test_kbs = 0;
+    test_kbs = setContent(KLINGON_MAX, BASE_MAX, STAR_MAX);
 
-        assert(test_kbs == 318);
+    assert(test_kbs == 318);
 
-        test_kbs = setContent(2, 1, 2);
-        
-        assert(test_kbs == 212);
+    test_kbs = setContent(2, 1, 2);
 
-        std::cout << "Quadrant whitebox test success\n";
+    assert(test_kbs == 212);
 
-        // NOTE:
-        // Invalid input cases are not programmatically tested here because setContent()
-        // uses assertions. Assertion failures terminate the program and cannot be
-        // caught or verified within the same execution flow.
-        //
-        // These cases were manually verified by running the program
-        // and confirming that invalid inputs trigger assertion failures.
-        //
-        // This approach ensures correctness during development without introducing
-        // exception handling, as per assignment constraints.
+    std::cout << "Quadrant whitebox test success\n";
 
-        // For example: setContent(-1, 0, 1); // triggers an Assertion error
-    }
-    
+    // NOTE:
+    // Invalid input cases are not programmatically tested here because setContent()
+    // uses assertions. Assertion failures terminate the program and cannot be
+    // caught or verified within the same execution flow.
+    //
+    // These cases were manually verified by running the program
+    // and confirming that invalid inputs trigger assertion failures.
+    //
+    // This approach ensures correctness during development without introducing
+    // exception handling, as per assignment constraints.
+
+    // For example: setContent(-1, 0, 1); // triggers an Assertion error
+}
+
 #endif
 
 // Encodes klingons, bases, and stars into a single integer (KBS format)
-int Quadrant::setContent(int klingons, int bases, int stars) {
+int Quadrant::setContent(int klingons, int bases, int stars)
+{
     assert(klingons >= KLINGON_MIN && klingons <= KLINGON_MAX && "Klingon out of range");
     assert(bases >= BASE_MIN && bases <= BASE_MAX && "Base out of range");
     assert(stars >= STAR_MIN && stars <= STAR_MAX && "Star out of range");
@@ -100,8 +108,11 @@ int Quadrant::setContent(int klingons, int bases, int stars) {
     return klingons * 100 + bases * 10 + stars;
 }
 
-std::ostream& operator<<(std::ostream& os, const Quadrant& qu) {
+// returns a 3-digit string (with leading zeros if necessary) representing
+// the quadrant contents in KBS format
+std::ostream &operator<<(std::ostream &os, const Quadrant &qu)
+{
     // could be changed to std::format("%03d", qu.kbs) but that requires C++20
-    os << qu.klingons() << qu.bases() << qu.stars(); 
+    os << qu.klingons() << qu.bases() << qu.stars();
     return os;
 }

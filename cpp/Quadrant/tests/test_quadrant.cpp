@@ -5,7 +5,8 @@
 #include <chrono>
 
 // ensures all the getters are working correctly
-void testQuadrantGetters() {
+void testQuadrantGetters()
+{
     std::cout << "Testing Quadrant getters\n";
 
     Quadrant q(3, 1, 8);
@@ -16,7 +17,8 @@ void testQuadrantGetters() {
 }
 
 // generate a quadrant with all the constructors, and ensures they work
-void testQuadrantConstructors() {
+void testQuadrantConstructors()
+{
     std::cout << "Testing Quadrant constructors\n";
 
     Quadrant q;
@@ -33,52 +35,56 @@ void testQuadrantConstructors() {
 }
 
 // tests that the << operator works correctly
-void testOperator() {
+void testOperator()
+{
     std::cout << "Testing Quadrant << operator\n";
 
     Quadrant q(3, 1, 8);
-    
+
     std::cout << q << "\n";
-    
+
     Quadrant qu(0, 0, 1);
-    
+
     std::cout << qu << "\n";
 
     std::cout << "Quadrant << operator success\n";
 }
 
 // test that the reduceKlingon function removes klingons correctly
-void testRemoveKlingons() {
+void testRemoveKlingons()
+{
     std::cout << "Testing Quadrant reduceKlingons\n";
 
     Quadrant q(3, 0, 1);
-    
+
     q.reduceKlingons();
-    
+
     assert(q.klingons() == 2);
-    
+
     q.reduceKlingons();
-    
+
     assert(q.klingons() == 1);
-    
+
     q.reduceKlingons();
-    
+
     assert(q.klingons() == 0);
-    
+
     q.reduceKlingons();
-    
+
     assert(q.klingons() == 0);
 
     std::cout << "Quadrant reduceKlingons success\n";
 }
 
 // stress tests the random number generator
-void stressTestRandomGenerator() {
+void stressTestRandomGenerator()
+{
     std::cout << "Quadrant stress test\n";
 
     auto start = std::chrono::steady_clock::now();
-    
-    for (size_t j = 0; j < 1000000; ++j) {
+
+    for (size_t j = 0; j < 1000000; ++j)
+    {
         Quadrant q;
     }
 
@@ -89,21 +95,21 @@ void stressTestRandomGenerator() {
     std::cout << "Time taken: " << duration.count() << " ms\n";
 
     std::cout << "Quadrant stress test success\n";
-
 }
 
-int main() {
+int main()
+{
     testQuadrantGetters();
     testQuadrantConstructors();
     testOperator();
     testRemoveKlingons();
     stressTestRandomGenerator();
 
-    #ifndef NDEBUG
+#ifndef NDEBUG
 
-        Quadrant::whiteBoxTest();
+    Quadrant::whiteBoxTest();
 
-    #endif
+#endif
 
     return 0;
 }
