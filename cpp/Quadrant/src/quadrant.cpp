@@ -4,17 +4,32 @@
 #include <cassert>
 #include <stdexcept>
 #include <iostream>
+#include <string>
 
 // Constructs a quadrant using a random number generator
 Quadrant::Quadrant() {
-    static std::random_device rd;
-    static std::mt19937 gen(rd());
+    // Initializes a static 32-bit MT19937 engine
+    // using a lambda for static initialization, ensuring the generator is seeded
+    // only once with a non-deterministic seed from std::random_device
+    static std::mt19937 gen([]{
+        std::random_device rd;
+        return std::mt19937(rd());
+    }());
 
-    static std::uniform_int_distribution<> klingons(KLINGON_MIN, KLINGON_MAX);
-    static std::uniform_int_distribution<> bases(BASE_MIN, BASE_MAX);
-    static std::uniform_int_distribution<> stars(STAR_MIN, STAR_MAX);
+    // draws a single 32-bit random integer to extract multiple sub-values
+    // reduces overhead of multiple PRNG engine calls
+    uint32_t r = static_cast<uint32_t>(gen()); 
 
-    kbs = setContent(klingons(gen), bases(gen), stars(gen));
+    // Use bitwise AND to extract the first 2 bits (mask 0b11) to get a value from 0–3.
+    int k = r & 3; 
+
+    // Right-shift by 2 bits and extract the next single bit (mask 0b1) for a 0–1 toggle.
+    int b = (r >> 2) & 1; 
+
+    // Right-shift by 3 bits and extract 3 bits (mask 0b111), then offset by 1 for a 1–8 range.
+    int s = ((r >> 3) & 7) + 1; 
+
+    kbs = setContent(k, b, s);
 }
 
 // Constructs a new quadrant based off the number of klingons, bases, and stars
@@ -37,7 +52,7 @@ int Quadrant::stars() const {
     return kbs % 10;
 }
 
-// Reduces the klingons by 1
+// Removes one Klingon from this quadrant if one exists
 void Quadrant::reduceKlingons() {
     if (klingons() >= 1)
         kbs -= 100;
@@ -47,49 +62,31 @@ void Quadrant::reduceKlingons() {
 
     // Tests the setContent function
     void Quadrant::whiteBoxTest() {
-        kbs = setContent(KLINGON_MAX, BASE_MAX, STAR_MAX);
+        int test_kbs = 0; 
+        test_kbs = setContent(KLINGON_MAX, BASE_MAX, STAR_MAX);
 
-        assert(kbs == 318);
+        assert(test_kbs == 318);
 
-        kbs = setContent(2, 1, 2);
+        test_kbs = setContent(2, 1, 2);
         
-        assert(kbs == 212);
+        assert(test_kbs == 212);
 
-        try {
-            setContent(0, 129, 1233);
-        } catch (const std::exception& e) {
-            std::cout << "There was a runtime exception, success\n";
-        }
-        
-        
-        try {
-            kbs = setContent(-42, -432, -123);
-        } catch (const std::exception& e) {
-            std::cout << "There was a runtime exception, success: " << e.what() << "\n";
-        }
-
-        kbs = setContent(KLINGON_MAX, BASE_MAX, STAR_MAX);
-
-        std::cout << *this << "\n";
+        test_kbs = setContent(-43, 129, -123);
     }
     
 #endif
 
-// Sets the raw kbs value (ensures it is in a valid range)
+// Encodes klingons, bases, and stars into a single integer (KBS format)
 int Quadrant::setContent(int klingons, int bases, int stars) {
-    if (klingons > KLINGON_MAX || klingons < KLINGON_MIN)
-        throw std::runtime_error("Klingon exceed MAX, or dropped under MIN");
-
-    if (bases > BASE_MAX || bases < BASE_MIN)
-        throw std::runtime_error("Base exceed MAX, or dropped under MIN");
-
-    if (stars > STAR_MAX || stars < STAR_MIN)
-        throw std::runtime_error("Star exceed MAX, or dropped under MIN");
+    assert(klingons >= KLINGON_MIN && klingons <= KLINGON_MAX && "Klingon out of range");
+    assert(bases >= BASE_MIN && bases <= BASE_MAX && "Base out of range");
+    assert(stars >= STAR_MIN && stars <= STAR_MAX && "Star out of range");
 
     return klingons * 100 + bases * 10 + stars;
 }
 
 std::ostream& operator<<(std::ostream& os, const Quadrant& qu) {
-    os << qu.klingons() << qu.bases() << qu.stars();
+    // could be changed to std::format("%03d", qu.kbs) but that requires C++20
+    os << qu.klingons() << qu.bases() << qu.stars(); 
     return os;
 }

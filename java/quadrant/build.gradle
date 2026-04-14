@@ -6,6 +6,10 @@ dependencies {
     implementation project(':common')
 }
 
+tasks.withType(JavaExec).configureEach {
+    enableAssertions = true
+}
+
 application {
     mainClass = 'quadrant.Main'
 }

@@ -3,8 +3,8 @@
 #include <ostream>
 
 /**
- * A Quadrant_00 holds the contents of the quadrant in terms
- * of the number of each item present. Each Quadrant_00 may
+ * A Quadrant holds the contents of the quadrant in terms
+ * of the number of each item present. Each Quadrant may
  * hold Klingons [0..3], Bases [0..1], and Stars [1..8].
  *
  * The contents are packed into a 32-bit data type (int)
@@ -14,16 +14,16 @@
  * The StarBases value is stored in the  10's position
  * and the Stars value is stored in the   1's position
  *
- * The number of Klingons in the Quadrant_00 is the only
+ * The number of Klingons in the Quadrant is the only
  * value that may change, at this time.
  *
  * Operations
  *
- *  o Construct a Quadrant_00( k, b, s )
+ *  o Construct a Quadrant( k, b, s )
  *  o return the current number of Klingons
  *  o return the number of Star Bases
  *  o return the number of Stars
- *  o provide a textual presentation of the Quadrant_00 for
+ *  o provide a textual presentation of the Quadrant for
  *      use with displaying the Galactic Map eg, "318", or "001"
  *      
  *  o provides the ability to decrement the number of Klingons    
@@ -45,14 +45,14 @@ public:
 
     #ifndef NDEBUG
 
-    void whiteBoxTest();
+    static void whiteBoxTest();
     
     #endif
 
     friend std::ostream& operator<<(std::ostream& os, const Quadrant& qu);
 
 private:
-    int setContent(int klingons, int bases, int stars);
+    static int setContent(int klingons, int bases, int stars);
 
 private:
     // Data

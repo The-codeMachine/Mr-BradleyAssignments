@@ -1,8 +1,8 @@
 package quadrant;
 
 /**
- * A Quadrant_00 holds the contents of the quadrant in terms
- * of the number of each item present. Each Quadrant_00 may
+ * A Quadrant holds the contents of the quadrant in terms
+ * of the number of each item present. Each Quadrant may
  * hold Klingons [0..3], Bases [0..1], and Stars [1..8].
  *
  * The contents are packed into a 32-bit data type (int)
@@ -12,16 +12,16 @@ package quadrant;
  * The StarBases value is stored in the  10's position
  * and the Stars value is stored in the   1's position
  *
- * The number of Klingons in the Quadrant_00 is the only
+ * The number of Klingons in the Quadrant is the only
  * value that may change, at this time.
  *
  * Operations
  *
- *  o Construct a Quadrant_00( k, b, s )
+ *  o Construct a Quadrant( k, b, s )
  *  o return the current number of Klingons
  *  o return the number of Star Bases
  *  o return the number of Stars
- *  o provide a textual presentation of the Quadrant_00 for
+ *  o provide a textual presentation of the Quadrant for
  *      use with displaying the Galactic Map eg, "318", or "001"
  *      
  *  o provides the ability to decrement the number of Klingons    
@@ -32,9 +32,7 @@ package quadrant;
 
 import java.util.Random;
 
-public class Quadrant {
-    Random rand = new Random();
-    
+public class Quadrant { 
     /**
      * Generates a quadrant using a RNG
 
@@ -42,9 +40,9 @@ public class Quadrant {
              we will look at them in future sessions
      */
     public Quadrant() {
-        int k = rand.nextInt(KLINGON_MIN, KLINGON_MAX);
-        int b = rand.nextInt(BASE_MIN, BASE_MAX);
-        int s = rand.nextInt(STAR_MIN, STAR_MAX);
+        int k = RAND.nextInt(KLINGON_MIN, KLINGON_MAX + 1);
+        int b = RAND.nextInt(BASE_MIN, BASE_MAX + 1);
+        int s = RAND.nextInt(STAR_MIN, STAR_MAX + 1); // upper bound adjusted to make range inclusive
 
         kbs = setContent(k, b, s);
     }
@@ -85,7 +83,7 @@ public class Quadrant {
     }
    
     /**
-     * Removes one klingon from each quadrant
+     * Removes one Klingon from this quadrant if one exists
      */
     public void reduceKlingons() {
         if (klingons() >= 1)
@@ -95,7 +93,9 @@ public class Quadrant {
     /**
      * Tests the setContent function 
     */
-    public void whiteBoxTest() {
+    public static void whiteBoxTest() {
+       int kbs = 0; // testing kbs
+        
        kbs = setContent(KLINGON_MAX, BASE_MAX, STAR_MAX);
 
        assert kbs == 318 : "setContent did not set the content correctly";
@@ -103,24 +103,17 @@ public class Quadrant {
        kbs = setContent(2, 1, 2);
 
        assert kbs == 212 : "setContent did not set the content correctly";
+       
+       kbs = setContent(3, 1, 8);
 
-       try {
-        kbs = setContent(0, 129, 1233);
+       // would be the toString method, however this is a static test
+       assert String.format("%03d", kbs).equals("318") : "toString does not set the quadrant to a string correctly";
 
-       } catch (RuntimeException e) {
-        System.out.println("There was a runtime exception, success: " + e);
-       }
+       kbs = setContent(0, 0, 1);
 
-       try {
-        kbs = setContent(-43, -432, -123);
+       assert String.format("%03d", kbs).equals("001") : "toString does not set the quadrant to a string correctly";
 
-       } catch (RuntimeException e) {
-        System.out.println("There was a runtime exception, success");
-       }
-
-       kbs = setContent(KLINGON_MAX, BASE_MAX, STAR_MAX);
-
-       assert toString() == "318" : "toString does not set the quadrant to a string correctly";
+       kbs = setContent(-43, 129, -123);
     }
     
     /**
@@ -128,25 +121,22 @@ public class Quadrant {
     */
     @Override
     public String toString() {
-       return String.format("%d%d%d", klingons(), bases(), stars());
+       return String.format("%03d", kbs);
     }
     
     /**
-     * Sets the raw KBS value to a new value (ensures it is in a valid range)
+     * Encodes klingons, bases, and stars into a single integer (KBS format)
      * 
-     * @param newValue
+     * @param klingons
+     * @param bases
+     * @param stars
      * 
      * @return Returns a formatted KBS value
      */
     static private int setContent(int klingons, int bases, int stars) {
-        if (klingons > KLINGON_MAX || klingons < KLINGON_MIN)
-            throw new RuntimeException("Klingon exceed MAX, or dropped under MIN");
-
-        if (bases > BASE_MAX || bases < BASE_MIN)
-            throw new RuntimeException("Base exceed MAX, or dropped under MIN");
-
-        if (stars > STAR_MAX || stars < STAR_MIN)
-            throw new RuntimeException("Star exceed MAX, or dropped under MIN");
+        assert klingons >= KLINGON_MIN && klingons <= KLINGON_MAX : "Klingon out of range";
+        assert bases >= BASE_MIN && bases <= BASE_MAX : "Base out of range";
+        assert stars >= STAR_MIN && stars <= STAR_MAX : "Star out of range";
 
         return klingons * 100 + bases * 10 + stars;
     }
@@ -155,10 +145,12 @@ public class Quadrant {
     private int kbs; // this could (eventually) be a char type saving 50% storage
     
     // Constants
-    static final int KLINGON_MAX = 3;
-    static final int BASE_MAX = 1;
-    static final int STAR_MAX = 8;
-    static final int KLINGON_MIN = 0;
-    static final int BASE_MIN = 0;
-    static final int STAR_MIN = 1;
+    private static final int KLINGON_MAX = 3;
+    private static final int BASE_MAX = 1;
+    private static final int STAR_MAX = 8;
+    private static final int KLINGON_MIN = 0;
+    private static final int BASE_MIN = 0;
+    private static final int STAR_MIN = 1;
+
+    private static final Random RAND = new Random();
 }

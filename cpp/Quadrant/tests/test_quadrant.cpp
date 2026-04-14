@@ -1,29 +1,22 @@
 #include "../src/quadrant.hpp"
 
 #include <iostream>
+#include <cassert>
 #include <chrono>
 
 // generate a quadrant with all the constructors, and ensures they work
 void testQuadrantConstructors() {
-    try {
-        Quadrant q;
+    Quadrant q;
 
-        std::cout << q << "\n";
+    std::cout << q << "\n";
 
-        Quadrant qw(3, 1, 2);
+    Quadrant qw(3, 1, 2);
 
-        std::cout << qw << "\n";
+    std::cout << qw << "\n";
 
-        Quadrant qe(3, 1, 2);
+    Quadrant qe(3, 1, 2);
 
-        std::cout << qe << "\n";
-
-        Quadrant qr(4, 9, 3);
-
-        std::cout << qr << "\n";
-    } catch (const std::exception& e) {
-        std::cout << "There was a runtime exception: " << e.what() << "\n";
-    }
+    std::cout << qe << "\n";
 }
 
 // ensures all the getters are working correctly
@@ -54,36 +47,41 @@ void stressTestRandomGenerator() {
 void testRemoveKlingons() {
     Quadrant q(3, 0, 1);
 
-    try {
-        q.reduceKlingons();
-        
-        std::cout << q << "\n";
+    q.reduceKlingons();
+    
+    std::cout << q << "\n";
 
-        q.reduceKlingons();
-                    
-        std::cout << q << "\n";
+    q.reduceKlingons();
+                
+    std::cout << q << "\n";
 
 
-        q.reduceKlingons();
-        
-        std::cout << q << "\n";
+    q.reduceKlingons();
+    
+    std::cout << q << "\n";
 
-        q.reduceKlingons();
-    } catch (const std::exception& e) {
-        std::cout << "Runtime exception occurred\n";
-    }
+    q.reduceKlingons();
+}
+
+void testOperator() {
+    Quadrant q(3, 1, 8);
+
+    std::cout << q << "\n";
+
+    Quadrant qu(0, 0, 1);
+
+    std::cout << qu << "\n";
 }
 
 int main() {
     testQuadrantConstructors();
     testQuadrantGetters();
     stressTestRandomGenerator();
+    testOperator();
 
     #ifndef NDEBUG
 
-        Quadrant q;
-
-        q.whiteBoxTest();
+        Quadrant::whiteBoxTest();
 
     #endif
 
@@ -92,16 +90,15 @@ int main() {
 
 /* Sample Output
 
-315 <- this one may change
+003 <- this one may change
 312
 312
-There was a runtime exception: Klingon exceed MAX, or dropped under MIN
 Klingons: 3
 Bases: 1
 Stars: 8
-Time taken: 51 ms <- this one may change
-There was a runtime exception, success
-There was a runtime exception, success: Klingon exceed MAX, or dropped under MIN
+Time taken: 9 ms <- this one may change
 318
+001
+Assertion failed: klingons >= KLINGON_MIN && klingons <= KLINGON_MAX && "Klingon out of range", file D:\Developer\Mr-BradleyAssignments\cpp\Quadrant\src\quadrant.cpp, line 81 <- this one may change based off where your file is located
 
  */

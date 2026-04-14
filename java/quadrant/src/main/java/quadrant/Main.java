@@ -4,25 +4,17 @@ public class Main {
 
     // generate a quadrant with all the constructors, and ensures they work
     private static void testQuadrantConstructors() {
-        try {
-            Quadrant q = new Quadrant();
+        Quadrant q = new Quadrant();
 
-            System.out.println(q);
+        System.out.println(q);
 
-            Quadrant qw = new Quadrant(3, 1, 2);
+        Quadrant qw = new Quadrant(3, 1, 2);
 
-            System.out.println(qw);
+        System.out.println(qw);
 
-            Quadrant qe = new Quadrant(3, 1, 2);
+        Quadrant qe = new Quadrant(3, 1, 2);
 
-            System.out.println(qe);
-
-            Quadrant qr = new Quadrant(4, 9, 3);
-
-            System.out.println(qr);
-        } catch (RuntimeException e) {
-            System.out.println("There was a runtime exception");
-        }
+        System.out.println(qe);
     }
 
     // ensures all the getters and working correctly
@@ -38,23 +30,19 @@ public class Main {
     private static void testReduceKlingons() {
         Quadrant q = new Quadrant(3, 0, 1);
 
-        try {
-            q.reduceKlingons();
-            
-            System.out.println(q);
+        q.reduceKlingons();
+        
+        System.out.println(q);
 
-            q.reduceKlingons();
-                        
-            System.out.println(q);
+        q.reduceKlingons();
+                    
+        System.out.println(q);
 
-            q.reduceKlingons();
-            
-            System.out.println(q);
+        q.reduceKlingons();
+        
+        System.out.println(q);
 
-            q.reduceKlingons();
-        } catch (RuntimeException e) {
-            System.out.println("Runtime exception occurred");
-        }
+        q.reduceKlingons();
     }
 
     // stress tests the random number generator
@@ -62,7 +50,7 @@ public class Main {
         long start = System.nanoTime();
 
         for (long j = 0; j < 1000000; ++j) {
-            Quadrant q = new Quadrant();
+            new Quadrant();
         }
 
         long end = System.nanoTime();
@@ -78,26 +66,27 @@ public class Main {
         testReduceKlingons();
         stressTestRandomGenerator();
 
-        Quadrant q = new Quadrant();
-        q.whiteBoxTest();
+        Quadrant.whiteBoxTest();
     }
 }
 
 /*
  * Sample Output
  * 
- * 207 <- this one may change
+ * Task :quadrant:run FAILED
+ * 111 <- this one may change
  * 312
  * 312
- * There was a runtime exception
  * Klingons: 3
  * Bases: 1
  * Stars: 8
  * 201
  * 101
  * 001
- * Time taken: 48 ms <- this one may change
- * There was a runtime exception, success: java.lang.RuntimeException: Base exceed MAX, or dropped under MIN
- * There was a runtime exception, success
+ * Time taken: 14 ms <- this one may change
+ * Exception in thread "main" java.lang.AssertionError: Klingon out of range
+        at quadrant.Quadrant.setContent(Quadrant.java:137)
+        at quadrant.Quadrant.whiteBoxTest(Quadrant.java:116)
+        at quadrant.Main.main(Main.java:69)
  * 
  */
