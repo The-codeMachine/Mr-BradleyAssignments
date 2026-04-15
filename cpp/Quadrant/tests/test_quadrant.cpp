@@ -1,6 +1,7 @@
 #include "../src/quadrant.hpp"
 
 #include <iostream>
+#include <sstream>
 #include <cassert>
 #include <chrono>
 
@@ -38,14 +39,24 @@ void testQuadrantConstructors()
 void testOperator()
 {
     std::cout << "Testing Quadrant << operator\n";
-
+    
     Quadrant q(3, 1, 8);
 
-    std::cout << q << "\n";
+    std::ostringstream oss;
+    oss << q;
+
+    std::string result = oss.str();
+
+    assert(result == "318");
 
     Quadrant qu(0, 0, 1);
 
-    std::cout << qu << "\n";
+    oss.clear();
+    oss << qu;
+
+    result = oss.str();
+
+    assert(result == "001");
 
     std::cout << "Quadrant << operator success\n";
 }

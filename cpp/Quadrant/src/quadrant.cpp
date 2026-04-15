@@ -1,25 +1,16 @@
 #include "quadrant.hpp"
 
+#include <common/random.hpp>
+
 #include <random>
 #include <cassert>
-#include <stdexcept>
 #include <iostream>
 #include <string>
 
 // Constructs a quadrant using a random number generator
 Quadrant::Quadrant()
 {
-    // Initializes a static 32-bit MT19937 engine
-    // using a lambda for static initialization, ensuring the generator is seeded
-    // only once with a non-deterministic seed from std::random_device
-    static std::mt19937 gen([]
-                            {
-        std::random_device rd;
-        return std::mt19937(rd()); }());
-
-    // draws a single 32-bit random integer to extract multiple sub-values
-    // reduces overhead of multiple PRNG engine calls
-    uint32_t r = static_cast<uint32_t>(gen());
+    uint32_t r = generateRandom32();
 
     // Use bitwise AND to extract the first 2 bits (mask 0b11) to get a value from 0–3.
     int k = r & 3;
