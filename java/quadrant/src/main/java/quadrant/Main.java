@@ -9,6 +9,9 @@ public class Main {
         Quadrant q = new Quadrant(3, 1, 8);
 
         assert (q.klingons() == 3 && q.bases() == 1 && q.stars() == 8);
+        System.out.printf("Got %d klingons, expected 3\n", q.klingons());
+        System.out.printf("Got %d bases, expected 1\n", q.bases());
+        System.out.printf("Got %d stars, expected 9\n", q.stars());
 
         System.out.println("Quadrant getters success");
     }
@@ -20,8 +23,13 @@ public class Main {
         Quadrant q = new Quadrant();
 
         assert (q.klingons() <= 3 && q.klingons() >= 0);
+        System.out.printf("Got %d klingons, expected between 0-3\n", q.klingons());
+
         assert (q.bases() <= 1 && q.bases() >= 0);
+        System.out.printf("Got %d bases, expected between 0-1\n", q.bases());
+        
         assert (q.stars() <= 9 && q.stars() >= 1);
+        System.out.printf("Got %d stars, expected between 1-9\n", q.stars());
 
         Quadrant qw = new Quadrant(3, 1, 2);
 
@@ -39,18 +47,22 @@ public class Main {
         q.reduceKlingons();
 
         assert (q.klingons() == 2);
+        System.out.printf("Got %d klingons, expected 2\n", q.klingons());
 
         q.reduceKlingons();
 
         assert (q.klingons() == 1);
+        System.out.printf("Got %d klingons, expected 1\n", q.klingons());
 
         q.reduceKlingons();
 
         assert (q.klingons() == 0);
+        System.out.printf("Got %d klingons, expected 0\n", q.klingons());
 
         q.reduceKlingons();
 
         assert (q.klingons() == 0);
+        System.out.printf("Got %d klingons, expected 0\n", q.klingons());
 
         System.out.println("Quadrant reduceKlingons success");
     }
@@ -88,15 +100,29 @@ public class Main {
  * Sample Output
  * 
  * Testing Quadrant getters
+ * Got 3 klingons, expected 3
+ * Got 1 bases, expected 1
+ * Got 8 stars, expected 9
  * Quadrant getters success
  * Testing Quadrant constructors
+ * Got 3 klingons, expected between 0-3
+ * Got 0 bases, expected between 0-1
+ * Got 1 stars, expected between 1-9
  * Quadrant constructor success
  * Testing Quadrant reduceKlingons
+ * Got 2 klingons, expected 2
+ * Got 1 klingons, expected 1
+ * Got 0 klingons, expected 0
+ * Got 0 klingons, expected 0
  * Quadrant reduceKlingons success
  * Quadrant stress test
- * Time taken: 13 ms <- this one may change depending on your system hardware
+ * Time taken: 13 ms
  * Quadrant stress test success
  * Quadrant whitebox test
+ * Got 318, expected 318
+ * Got 212, expected 212
+ * Got 318, expected "318"
+ * Got 001, expected "001"
  * Quadrant whitebox test success
  * 
  */

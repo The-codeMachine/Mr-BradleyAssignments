@@ -98,26 +98,30 @@ public class Quadrant {
     public static void whiteBoxTest() {
         System.out.println("Quadrant whitebox test");
 
-        int test_kbs = 0; // testing kbs
+        Quadrant q = new Quadrant();
 
-        test_kbs = setContent(KLINGON_MAX, BASE_MAX, STAR_MAX);
+        q.kbs = setContent(KLINGON_MAX, BASE_MAX, STAR_MAX);
 
-        assert test_kbs == 318 : "setContent did not set the content correctly";
+        assert q.kbs == 318 : "setContent did not set the content correctly";
+        System.out.printf("Got %d, expected 318\n", q.kbs);
 
-        test_kbs = setContent(2, 1, 2);
+        q.kbs = setContent(2, 1, 2);
 
-        assert test_kbs == 212 : "setContent did not set the content correctly";
+        assert q.kbs == 212 : "setContent did not set the content correctly";
+        System.out.printf("Got %d, expected 212\n", q.kbs);
 
-        test_kbs = setContent(3, 1, 8);
+        q.kbs = setContent(3, 1, 8);
 
         // would be the toString method, however this is a static test
-        assert String.format("%03d", test_kbs).equals("318")
+        assert "318".equals(q.toString())
                 : "toString does not set the quadrant to a string correctly";
+        System.out.printf("Got %s, expected \"318\"\n", q.toString());
 
-        test_kbs = setContent(0, 0, 1);
+        q.kbs = setContent(0, 0, 1);
 
-        assert String.format("%03d", test_kbs).equals("001")
+        assert "001".equals(q.toString())
                 : "toString does not set the quadrant to a string correctly";
+        System.out.printf("Got %s, expected \"001\"\n", q.toString());
 
         System.out.println("Quadrant whitebox test success");
 
