@@ -58,7 +58,7 @@ private:
 
 private:
     // Data
-    int kbs;
+    uint16_t kbs;
 
     // Constants
     static inline constexpr int KLINGON_MAX = 3;

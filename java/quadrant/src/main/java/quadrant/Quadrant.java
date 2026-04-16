@@ -103,12 +103,12 @@ public class Quadrant {
         q.kbs = setContent(KLINGON_MAX, BASE_MAX, STAR_MAX);
 
         assert q.kbs == 318 : "setContent did not set the content correctly";
-        System.out.printf("Got %d, expected 318\n", q.kbs);
+        System.out.printf("Got %d, expected 318\n", (int)(q.kbs));
 
         q.kbs = setContent(2, 1, 2);
 
         assert q.kbs == 212 : "setContent did not set the content correctly";
-        System.out.printf("Got %d, expected 212\n", q.kbs);
+        System.out.printf("Got %d, expected 212\n", (int)(q.kbs));
 
         q.kbs = setContent(3, 1, 8);
 
@@ -145,7 +145,7 @@ public class Quadrant {
      */
     @Override
     public String toString() {
-        return String.format("%03d", kbs);
+        return String.format("%03d", (int)kbs);
     }
 
     /**
@@ -160,16 +160,16 @@ public class Quadrant {
      * 
      * @return Returns a formatted KBS value
      */
-    static private int setContent(int klingons, int bases, int stars) {
+    static private char setContent(int klingons, int bases, int stars) {
         assert klingons >= KLINGON_MIN && klingons <= KLINGON_MAX : "Klingon out of range";
         assert bases >= BASE_MIN && bases <= BASE_MAX : "Base out of range";
         assert stars >= STAR_MIN && stars <= STAR_MAX : "Star out of range";
 
-        return klingons * 100 + bases * 10 + stars;
+        return (char)(klingons * 100 + bases * 10 + stars);
     }
 
     // Data
-    private int kbs; // this could (eventually) be a char type saving 50% storage
+    private char kbs; // this could (eventually) be a char type saving 50% storage
 
     private static final Random RAND = new Random();
 
