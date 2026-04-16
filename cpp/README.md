@@ -20,30 +20,32 @@ Again, to ensure that everything will build correctly, have CMake installed, as 
 
 ### Running an Assignment
 
-Each assignment has its own folder. Each folder has its own ```CMakeLists.txt``` file. To run one:
+Each assignment has its own folder. To run these commands, do this from the C++ root directory. Each folder has its own ```CMakeLists.txt``` file. To run one:
 ```powershell
-cd assignmentX # go inside assignment sub directory
-
-mkdir build # make and go inside a build sub directory
 cd build
+cmake .. # constructs cache, only need to do this once
 
-cmake .. # building using CMake
-cmake --build .
+cmake --build . # or from the root directory cmake --build build
+
+./assignmentX/Debug/assignmentX # run the program
+
 ```
 
 This command was taken from the cpp/ sub directory.
 
-The .exe file will be found inside (from the assignment sub directory) ```build/Debug/assignmentX.exe```.
+The .exe file will be found inside (from the root directory) ```build/assignmentX/Debug/assignmentX.exe```.
 
 ## Adding a new Assignment
 
 - Create a folder with the assignment's name
 - Add CMakeLists.txt, example usage:
 ```CMake
-cmake_minimum_required(VERSION 3.18)
-project(assignmentX CXX)
+add_executable(assignmentX tests/test_driver.cpp src/src_file.cpp)
 
-add_executable(assignmentX src/main.cpp)
+target_link_libraries(assignmentX PRIVATE common)
+
+target_include_directories(assignmentX PRIVATE src) # for headers
+target_include_directories(assignmentX PRIVATE ../common/include)
 ```
 
 - Put all of your source files inside a ```src/``` sub directory (optional).

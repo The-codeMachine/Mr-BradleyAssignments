@@ -11,7 +11,7 @@ public class Main {
         assert (q.klingons() == 3 && q.bases() == 1 && q.stars() == 8);
         System.out.printf("Got %d klingons, expected 3\n", q.klingons());
         System.out.printf("Got %d bases, expected 1\n", q.bases());
-        System.out.printf("Got %d stars, expected 9\n", q.stars());
+        System.out.printf("Got %d stars, expected 8\n", q.stars());
 
         System.out.println("Quadrant getters success");
     }
@@ -27,13 +27,16 @@ public class Main {
 
         assert (q.bases() <= 1 && q.bases() >= 0);
         System.out.printf("Got %d bases, expected between 0-1\n", q.bases());
-        
+
         assert (q.stars() <= 9 && q.stars() >= 1);
-        System.out.printf("Got %d stars, expected between 1-9\n", q.stars());
+        System.out.printf("Got %d stars, expected between 1-8\n", q.stars());
 
         Quadrant qw = new Quadrant(3, 1, 2);
 
         assert (qw.klingons() == 3 && qw.bases() == 1 && qw.stars() == 2);
+        System.out.printf(
+                "Got Quadrant: Klingons(%d), Bases(%d), Stars(%d), expected Quadrant: Klingons(3), Bases(1), Stars(2)\n",
+                qw.klingons(), qw.bases(), qw.stars());
 
         System.out.println("Quadrant constructor success");
     }
@@ -102,12 +105,13 @@ public class Main {
  * Testing Quadrant getters
  * Got 3 klingons, expected 3
  * Got 1 bases, expected 1
- * Got 8 stars, expected 9
+ * Got 8 stars, expected 8
  * Quadrant getters success
  * Testing Quadrant constructors
- * Got 3 klingons, expected between 0-3
+ * Got 1 klingons, expected between 0-3
  * Got 0 bases, expected between 0-1
- * Got 1 stars, expected between 1-9
+ * Got 1 stars, expected between 1-8
+ * Got Quadrant: Klingons(3), Bases(1), Stars(2), expected Quadrant: Klingons(3), Bases(1), Stars(2)
  * Quadrant constructor success
  * Testing Quadrant reduceKlingons
  * Got 2 klingons, expected 2
@@ -116,7 +120,7 @@ public class Main {
  * Got 0 klingons, expected 0
  * Quadrant reduceKlingons success
  * Quadrant stress test
- * Time taken: 13 ms
+ * Time taken: 14 ms
  * Quadrant stress test success
  * Quadrant whitebox test
  * Got 318, expected 318

@@ -2,7 +2,6 @@
 
 #include <common/random.hpp>
 
-#include <random>
 #include <cassert>
 #include <iostream>
 #include <string>
@@ -62,14 +61,15 @@ void Quadrant::whiteBoxTest()
 {
     std::cout << "Quadrant whitebox test\n";
 
-    int test_kbs = 0;
-    test_kbs = setContent(KLINGON_MAX, BASE_MAX, STAR_MAX);
+    Quadrant q(3, 1, 8);
 
-    assert(test_kbs == 318);
+    assert(q.kbs == 318);
+    std::cout << "Got " << q.kbs << ", expected 318\n"; 
 
-    test_kbs = setContent(2, 1, 2);
+    q.kbs = setContent(2, 1, 2);
 
-    assert(test_kbs == 212);
+    assert(q.kbs == 212);
+    std::cout << "Got " << q.kbs << ", expected 212\n";
 
     std::cout << "Quadrant whitebox test success\n";
 

@@ -1,7 +1,7 @@
 add_library(common STATIC)
 
 target_sources(common 
-    PRIVATE_HEADER
+    PRIVATE
         src/random.cpp
 )
 
