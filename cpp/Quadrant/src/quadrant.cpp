@@ -9,7 +9,7 @@
 // Constructs a quadrant using a random number generator
 Quadrant::Quadrant()
 {
-    uint32_t r = generateRandom32();
+    uint32_t r = common::generateRandom32();
 
     // Use bitwise AND to extract the first 2 bits (mask 0b11) to get a value from 0–3.
     int k = r & 3;
