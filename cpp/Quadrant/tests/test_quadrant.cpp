@@ -103,25 +103,51 @@ void testRemoveKlingons()
     std::cout << "Quadrant reduceKlingons success\n";
 }
 
-// stress tests the random number generator
-void stressTestRandomGenerator()
+// generates a galaxy
+void generatesAGalaxy()
 {
-    std::cout << "Quadrant stress test\n";
+    std::cout << "Quadrant galaxy construction test\n";
 
     auto start = std::chrono::steady_clock::now();
 
-    for (size_t j = 0; j < 1000000; ++j)
+    static constexpr int ITERATIONS = 1000000; // iterations high to reduce noise 
+    int numOf1Klingons = 0;
+    int numOf2Klingons = 0;
+    int numOf3Klingons = 0;
+    int numOfBases = 0;
+    for (size_t i = 0; i < ITERATIONS; ++i)
     {
         Quadrant q;
+
+        if (q.klingons() == 1)
+            numOf1Klingons++;
+        else if (q.klingons() == 2)
+            numOf2Klingons++;
+        else if (q.klingons() == 3)
+            numOf3Klingons++;
+
+        if (q.bases() == 1)
+            numOfBases++;
     }
-
+    
     auto end = std::chrono::steady_clock::now();
-
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+    
+    assert(numOfBases >= 1 && numOfBases <= 2);
+    
+    float percent1 = numOf1Klingons * 100 / ITERATIONS;
+    float percent2 = numOf2Klingons * 100 / ITERATIONS;
+    float percent3 = numOf3Klingons * 100 / ITERATIONS;
+    float percent4 = numOfBases * 100 / ITERATIONS;
+
+    std::cout << "Number of quadrants with 1 klingon: "  << percent1 << "%\n";
+    std::cout << "Number of quadrants with 2 klingon: "  << percent2 << "%\n";
+    std::cout << "Number of quadrants with 3 klingon: "  << percent3 << "%\n";
+    std::cout << "Number of quadrants with bases: "  << percent4 << "%\n";
 
     std::cout << "Time taken: " << duration.count() << " ms\n";
 
-    std::cout << "Quadrant stress test success\n";
+    std::cout << "Quadrant galaxy construction success\n";
 }
 
 int main()
@@ -130,7 +156,7 @@ int main()
     testQuadrantConstructors();
     testOperator();
     testRemoveKlingons();
-    stressTestRandomGenerator();
+    generatesAGalaxy();
 
 #ifndef NDEBUG
 
@@ -149,9 +175,9 @@ Got 1 bases, expected 1
 Got 8 stars, expected 8
 Quadrant getters success
 Testing Quadrant constructors
-Got 1 klingons, expected between 0-3
-Got 1 bases, expected between 0-1
-Got 1 stars, expected between 1-8
+Got 0 klingons, expected between 0-3
+Got 0 bases, expected between 0-1
+Got 5 stars, expected between 1-8
 Got Quadrant: Klingons(3), Bases(1), Stars(2), expected Quadrant: Klingons(3), Bases(1), Stars(2)
 Quadrant constructor success
 Testing Quadrant << operator
@@ -164,9 +190,13 @@ Got 1 klingons, expected 1
 Got 0 klingons, expected 0
 Got 0 klingons, expected 0
 Quadrant reduceKlingons success
-Quadrant stress test
-Time taken: 9 ms
-Quadrant stress test success
+Quadrant galaxy construction test
+Number of quadrants with 1 klingon: 20% <- this one may change by 1% due to noise
+Number of quadrants with 2 klingon: 4% <- this one may change by 1% due to noise
+Number of quadrants with 3 klingon: 2% <- this one may change by 1% due to noise
+Number of quadrants with bases: 0% <- this one may change by 1% due to iterations + noise
+Time taken: 53 ms <- this one may change due to the amonut of iterations
+Quadrant galaxy construction success
 Quadrant whitebox test
 Got 318, expected 318
 Got 212, expected 212

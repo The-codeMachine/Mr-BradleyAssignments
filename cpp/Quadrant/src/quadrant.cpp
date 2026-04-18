@@ -9,16 +9,36 @@
 // Constructs a quadrant using a random number generator
 Quadrant::Quadrant()
 {
-    uint32_t r = common::generateRandom32();
+    static int totalBase = 0;
+    static int totalQuadrants = 0;
+    int k = 0;
+    uint32_t s = common::generateRandom32Range(1, 100);
 
-    // Use bitwise AND to extract the first 2 bits (mask 0b11) to get a value from 0–3.
-    int k = r & 3;
+    if (s <= 20)
+        k = 1;
+    else if (s > 20 && s <= 24)
+        k = 2;
+    else if (s > 24 && s <= 26)
+        k = 3;
 
-    // Right-shift by 2 bits and extract the next single bit (mask 0b1) for a 0–1 toggle.
-    int b = (r >> 2) & 1;
+    int b = 0;
+    if (totalBase < 2)
+    {
+        uint32_t s = common::generateRandom32Range(1, 100);
+        if (s > 0 && s <= 4)
+        {
+            b = 1;
+            totalBase++;
+        }
+    }
 
-    // Right-shift by 3 bits and extract 3 bits (mask 0b111), then offset by 1 for a 1–8 range.
-    int s = ((r >> 3) & 7) + 1;
+    totalQuadrants++;
+    if (totalQuadrants == 64 && totalBase == 0) {
+        b = 1;
+        totalBase++;
+    }
+
+    s = common::generateRandom32Range(1, 8);
 
     kbs = setContent(k, b, s);
 }
@@ -64,7 +84,7 @@ void Quadrant::whiteBoxTest()
     Quadrant q(3, 1, 8);
 
     assert(q.kbs == 318);
-    std::cout << "Got " << q.kbs << ", expected 318\n"; 
+    std::cout << "Got " << q.kbs << ", expected 318\n";
 
     q.kbs = setContent(2, 1, 2);
 
