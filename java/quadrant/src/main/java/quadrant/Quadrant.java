@@ -41,9 +41,34 @@ public class Quadrant {
      * we will look at them in future sessions
      */
     public Quadrant() {
-        int k = RAND.nextInt(KLINGON_MIN, KLINGON_MAX + 1);
-        int b = RAND.nextInt(BASE_MIN, BASE_MAX + 1);
-        int s = RAND.nextInt(STAR_MIN, STAR_MAX + 1); // upper bound adjusted to make range inclusive
+
+        int k = 0;
+        int s = RAND.nextInt(1, 100);
+
+        if (s <= 20) {
+            k = 1;
+        } else if (s > 20 && s <= 24) {
+            k = 2;
+        } else if (s > 24 && s <= 26) {
+            k = 3;
+        }
+
+        int b = 0;
+        if (totalBase < 2) {
+            s = RAND.nextInt(1, 100);
+            if (s > 0 && s <= 4) {
+                b = 1;
+                totalBase++;
+            }
+        }
+
+        totalQuadrants++;
+        if (totalQuadrants == 64 && totalBase == 0) {
+            b = 1;
+            totalBase++;
+        }
+
+        s = RAND.nextInt(1, 8);
 
         kbs = setContent(k, b, s);
     }
@@ -103,12 +128,12 @@ public class Quadrant {
         q.kbs = setContent(KLINGON_MAX, BASE_MAX, STAR_MAX);
 
         assert q.kbs == 318 : "setContent did not set the content correctly";
-        System.out.printf("Got %d, expected 318\n", (int)(q.kbs));
+        System.out.printf("Got %d, expected 318\n", (int) (q.kbs));
 
         q.kbs = setContent(2, 1, 2);
 
         assert q.kbs == 212 : "setContent did not set the content correctly";
-        System.out.printf("Got %d, expected 212\n", (int)(q.kbs));
+        System.out.printf("Got %d, expected 212\n", (int) (q.kbs));
 
         q.kbs = setContent(3, 1, 8);
 
@@ -141,11 +166,11 @@ public class Quadrant {
 
     /**
      * @return a 3-digit string (with leading zeros if necessary) representing
-     *          the quadrant contents in KBS format
+     *         the quadrant contents in KBS format
      */
     @Override
     public String toString() {
-        return String.format("%03d", (int)kbs);
+        return String.format("%03d", (int) kbs);
     }
 
     /**
@@ -165,11 +190,14 @@ public class Quadrant {
         assert bases >= BASE_MIN && bases <= BASE_MAX : "Base out of range";
         assert stars >= STAR_MIN && stars <= STAR_MAX : "Star out of range";
 
-        return (char)(klingons * 100 + bases * 10 + stars);
+        return (char) (klingons * 100 + bases * 10 + stars);
     }
 
     // Data
-    private char kbs; // this could (eventually) be a char type saving 50% storage
+    private char kbs;
+
+    static int totalBase = 0;
+    static int totalQuadrants = 0;
 
     private static final Random RAND = new Random();
 

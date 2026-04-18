@@ -70,33 +70,60 @@ public class Main {
         System.out.println("Quadrant reduceKlingons success");
     }
 
-    // stress tests the random number generator
-    private static void stressTestRandomGenerator() {
+    // generates a new galaxy (tests that the quadrant's constraints are correct)
+    private static void generatesAGalaxy() {
         System.out.println("Quadrant stress test");
 
         long start = System.nanoTime();
 
-        for (long j = 0; j < 1000000; ++j) {
-            new Quadrant();
+        int numOf1Klingons = 0;
+        int numOf2Klingons = 0;
+        int numOf3Klingons = 0;
+        int numOfBases = 0; 
+        for (long i = 0; i < 1000000; ++i) {
+            Quadrant q = new Quadrant();
+
+            if (q.klingons() == 1)
+                numOf1Klingons++;
+            else if (q.klingons() == 2)
+                numOf2Klingons++;
+            else if (q.klingons() == 3)
+                numOf3Klingons++;
+
+            if (q.bases() == 1)
+                numOfBases++;
         }
-
+        
         long end = System.nanoTime();
-
         long duration = (end - start) / 1000000;
 
-        System.out.printf("Time taken: %d ms\n", duration);
+        assert numOfBases >= 1 && numOfBases <= 2 : "Bases did not generate with the correct range";
 
+        float percent1 = numOf1Klingons * 100 / ITERATIONS;
+        float percent2 = numOf2Klingons * 100 / ITERATIONS;
+        float percent3 = numOf3Klingons * 100 / ITERATIONS;
+        float percent4 = numOfBases * 100 / ITERATIONS;
+
+        System.out.printf("Number of quadrants with 1 klingon: %.2f%% \n", percent1);
+        System.out.printf("Number of quadrants with 2 klingon: %.2f%% \n", percent2);
+        System.out.printf("Number of quadrants with 3 klingon: %.2f%% \n", percent3);
+        System.out.printf("Number of quadrants with 1 base: %.2f%% \n", percent4);
+        
+        System.out.printf("Time taken: %d ms\n", duration);
+        
         System.out.println("Quadrant stress test success");
     }
-
+    
     public static void main(String args[]) {
         testQuadrantGetters();
         testQuadrantConstructors();
         testReduceKlingons();
-        stressTestRandomGenerator();
-
+        generatesAGalaxy();
+        
         Quadrant.whiteBoxTest();
     }
+
+    private static final int ITERATIONS = 1000000;
 }
 
 /*
@@ -108,7 +135,7 @@ public class Main {
  * Got 8 stars, expected 8
  * Quadrant getters success
  * Testing Quadrant constructors
- * Got 1 klingons, expected between 0-3
+ * Got 0 klingons, expected between 0-3
  * Got 0 bases, expected between 0-1
  * Got 1 stars, expected between 1-8
  * Got Quadrant: Klingons(3), Bases(1), Stars(2), expected Quadrant: Klingons(3), Bases(1), Stars(2)
@@ -120,7 +147,11 @@ public class Main {
  * Got 0 klingons, expected 0
  * Quadrant reduceKlingons success
  * Quadrant stress test
- * Time taken: 14 ms
+ * Number of quadrants with 1 klingon: 20.00% <- this one may change by 1% due to noise
+ * Number of quadrants with 2 klingon: 4.00% <- this one may change by 1% due to noise
+ * Number of quadrants with 3 klingon: 2.00% <- this one may change by 1% due to noise
+ * Number of quadrants with 1 base: 0.00% <- this one may change by 1% due to iterations + noise
+ * Time taken: 15 ms <- this one may change due to the amonut of iterations
  * Quadrant stress test success
  * Quadrant whitebox test
  * Got 318, expected 318

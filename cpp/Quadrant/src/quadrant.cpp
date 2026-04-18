@@ -24,7 +24,7 @@ Quadrant::Quadrant()
     int b = 0;
     if (totalBase < 2)
     {
-        uint32_t s = common::generateRandom32Range(1, 100);
+        s = common::generateRandom32Range(1, 100);
         if (s > 0 && s <= 4)
         {
             b = 1;
