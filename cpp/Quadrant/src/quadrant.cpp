@@ -12,20 +12,18 @@ Quadrant::Quadrant()
     static int totalBase = 0;
     static int totalQuadrants = 0;
     int k = 0;
-    uint32_t s = common::generateRandom32Range(1, 100);
-
-    if (s <= 20)
-        k = 1;
-    else if (s > 20 && s <= 24)
-        k = 2;
-    else if (s > 24 && s <= 26)
-        k = 3;
-
     int b = 0;
+
+    // determine klingons
+    uint32_t r = common::generateRandom32Range(1, 100);
+    if (r <= 20)      k = 1;
+    else if (r <= 24) k = 2;
+    else if (r <= 26) k = 3;
+
+    // determine bases
     if (totalBase < 2)
     {
-        s = common::generateRandom32Range(1, 100);
-        if (s > 0 && s <= 4)
+        if (common::generateRandom32Range(1, 100) <= 4)
         {
             b = 1;
             totalBase++;
@@ -38,8 +36,7 @@ Quadrant::Quadrant()
         totalBase++;
     }
 
-    s = common::generateRandom32Range(1, 8);
-
+    uint32_t s = common::generateRandom32Range(1, 8);
     kbs = setContent(k, b, s);
 }
 

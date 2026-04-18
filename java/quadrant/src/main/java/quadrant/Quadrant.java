@@ -43,20 +43,17 @@ public class Quadrant {
     public Quadrant() {
 
         int k = 0;
-        int s = RAND.nextInt(1, 100);
-
-        if (s <= 20) {
-            k = 1;
-        } else if (s > 20 && s <= 24) {
-            k = 2;
-        } else if (s > 24 && s <= 26) {
-            k = 3;
-        }
-
         int b = 0;
+        int r = RAND.nextInt(1, 100);
+
+        // determine klingons
+        if (r <= 20)      k = 1;
+        else if (r <= 24) k = 2;
+        else if (r <= 26) k = 3;
+        
+        // determine bases
         if (totalBase < 2) {
-            s = RAND.nextInt(1, 100);
-            if (s > 0 && s <= 4) {
+            if (RAND.nextInt(1, 100) <= 4) {
                 b = 1;
                 totalBase++;
             }
@@ -68,8 +65,7 @@ public class Quadrant {
             totalBase++;
         }
 
-        s = RAND.nextInt(1, 8);
-
+        int s = RAND.nextInt(1, 8);
         kbs = setContent(k, b, s);
     }
 

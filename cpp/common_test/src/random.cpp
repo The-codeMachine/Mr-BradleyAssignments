@@ -23,6 +23,16 @@ int main() {
     assert(num >= 204 && num <= 10012);
     std::cout << "Num: " << num << ", expected between 204 and 10012\n";
 
+    float f_num = common::generateRandomPercent();
+    assert(f_num >= 0.0f && f_num <= 1.0f);
+
+    std::cout << "Random floating point number: " << f_num << ", expected between 0, and 1\n";
+
+    f_num = common::generateRandomPercent();
+    assert(f_num >= 0.0f && f_num <= 1.0f);
+
+    std::cout << "Random floating point number: " << f_num << ", expected between 0, and 1\n";
+
     std::cout << "Random number generation success\n";
 
     return 0;
@@ -31,10 +41,12 @@ int main() {
 /* Sample Output
 
 Testing random number generation
-2692175046
-3808816226
-Num: 11, expected between 1 and 100
-Num: 3710, expected between 204 and 10012
+1633244240
+1818941541
+Num: 16, expected between 1 and 100
+Num: 7402, expected between 204 and 10012
+Random floating point number: 0.0459369, expected between 0, and 1
+Random floating point number: 0.487281, expected between 0, and 1
 Random number generation success
 
 */

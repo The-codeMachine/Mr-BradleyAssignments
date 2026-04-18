@@ -31,4 +31,10 @@ namespace common
         return dist(gen);
     }
 
+    // Generates a random float number between 0, and 1
+    float generateRandomPercent() {
+        static std::uniform_real_distribution<float> dist(0.0f, 1.0f);
+        return dist(gen);
+    }
+
 } // namespace common

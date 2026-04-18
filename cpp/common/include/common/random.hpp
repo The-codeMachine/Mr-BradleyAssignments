@@ -8,6 +8,7 @@
  * Current operations include:
  *  - Generating a random 32-bit unsigned integer without a given range
  *  - Generating a random 32-bit unsigned integer with a given range (min, and a max)
+ *  - Generating a random float between 0, and 1
  * 
  * Both PRNG functions use mt19937 which is a Mersenne Twister PRNG. It has a period of 2^19937-1
  * 
@@ -23,4 +24,7 @@ namespace common
 
     uint32_t generateRandom32();
     uint32_t generateRandom32Range(int min, int max);
+
+    float generateRandomPercent();
+
 } // namespace common
