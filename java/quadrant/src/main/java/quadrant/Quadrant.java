@@ -163,17 +163,31 @@ public class Quadrant {
         return (char) (klingons * 100 + bases * 10 + stars);
     }
 
+    /**
+     * Generates the number of klingons in a quadrant using the following rules:
+     * - 20% for 1 klingon to generate 
+     * - 4% for 2 klingons to generate
+     * - 2% for 3 klingons to generate
+     * 
+     * @return the number of klingons for 1 quadrant
+     */
     static private int genKlingons() {
         int r = RAND.nextInt(1, 100);
-        int k = 0;
         
-        if (r <= 20)      k = 1; // 20% chance of 1 klingon to exist in this quadrant
-        else if (r <= 24) k = 2; // 4% chance of 2 klingon to exist in this quadrant
-        else if (r <= 26) k = 3; // 2% chance of 3 klingon to exist in this quadrant
+        if (r <= 20)      return 1; // 20% chance of 1 klingon to exist in this quadrant
+        else if (r <= 24) return 2; // 4% chance of 2 klingon to exist in this quadrant
+        else if (r <= 26) return 3; // 2% chance of 3 klingon to exist in this quadrant
 
-        return k;
+        return 0;
     }
 
+    /**
+     * Generates the number of bases in a quadrant using the following rules:
+     * - 4% chance for one base inside the quadrant
+     *  - No more than 2 per galaxy
+     * 
+     * @return the number of bases for 1 quadrant
+     */
     static private int genBases() {
         if (totalBases < BASE_MAX_GALAXY) {
             // 4% chance of a quadrant having a base
@@ -193,6 +207,11 @@ public class Quadrant {
         return 0;
     }
 
+    /**
+     * Randomly generates a random number of stars between 1-8
+     *  
+     * @return number of stars for 1 quadrant
+     */
     static private int genStars() {
         return RAND.nextInt(STAR_MIN, STAR_MAX);
     }

@@ -9,40 +9,14 @@
 // Constructs a quadrant using a random number generator
 Quadrant::Quadrant()
 {
-    static int totalBase = 0;
-    static int totalQuadrants = 0;
-    int k = 0;
-    int b = 0;
-
-    // determine klingons
-    uint32_t r = common::generateRandom32Range(1, 100);
-    if (r <= 20)      k = 1;
-    else if (r <= 24) k = 2;
-    else if (r <= 26) k = 3;
-
-    // determine bases
-    if (totalBase < 2)
-    {
-        if (common::generateRandom32Range(1, 100) <= 4)
-        {
-            b = 1;
-            totalBase++;
-        }
-    }
-
     totalQuadrants++;
-    if (totalQuadrants == 64 && totalBase == 0) {
-        b = 1;
-        totalBase++;
-    }
-
-    uint32_t s = common::generateRandom32Range(1, 8);
-    kbs = setContent(k, b, s);
+    kbs = setContent(genKlingons(), genBases(), genStars());
 }
 
 // Constructs a new quadrant based off the number of klingons, bases, and stars
 Quadrant::Quadrant(int klingons, int bases, int stars)
 {
+    totalQuadrants++;
     kbs = setContent(klingons, bases, stars);
 }
 
@@ -105,6 +79,53 @@ void Quadrant::whiteBoxTest()
 }
 
 #endif
+
+// Generates the number of klingons in a quadrant
+int Quadrant::genKlingons()
+{
+    uint32_t r = common::generateRandom32Range(1, 100);
+
+    if (r <= 20)
+        return 1; // 20% chance of 1 klingon to exist in this quadrant
+    else if (r <= 24)
+        return 2; // 4% chance of 2 klingon to exist in this quadrant
+    else if (r <= 26)
+        return 3; // 2% chance of 3 klingon to exist in this quadrant
+
+    return 0;
+}
+
+// Generates the number of bases in a quadrant 
+int Quadrant::genBases()
+{
+    static int totalBases = 0;
+
+    if (totalBases < BASE_MAX_GALAXY)
+    {
+        // 4% chance of a quadrant having a base
+        if (common::generateRandom32Range(1, 100) <= BASE_CHANCE)
+        {
+            totalBases++;
+            return 1;
+        }
+    }
+
+    // checks if there has not been any bases generated yet,
+    // if not then add one to the last quadrant
+    if (totalQuadrants == AMOUNT_OF_QUADRANTS && totalBases == 0)
+    {
+        totalBases++;
+        return 1;
+    }
+
+    return 0;
+}
+
+// Randomly generates a random number of stars between 1-8
+int Quadrant::genStars()
+{
+    return common::generateRandom32Range(STAR_MIN, STAR_MAX);
+}
 
 // Encodes klingons, bases, and stars into a single integer (KBS format)
 int Quadrant::setContent(int klingons, int bases, int stars)

@@ -54,11 +54,16 @@ public:
     friend std::ostream &operator<<(std::ostream &os, const Quadrant &qu);
 
 private:
+    static int genKlingons();
+    static int genBases();
+    static int genStars();
+
     static int setContent(int klingons, int bases, int stars);
 
 private:
     // Data
     uint16_t kbs;
+    static inline int totalQuadrants = 0;
 
     // Constants
     static inline constexpr int KLINGON_MAX = 3;
@@ -67,4 +72,9 @@ private:
     static inline constexpr int KLINGON_MIN = 0;
     static inline constexpr int BASE_MIN = 0;
     static inline constexpr int STAR_MIN = 1;
+
+    static inline constexpr int BASE_MAX_GALAXY = 2;
+    static inline constexpr int BASE_CHANCE = 4;
+
+    static inline constexpr int AMOUNT_OF_QUADRANTS = 64;
 };
