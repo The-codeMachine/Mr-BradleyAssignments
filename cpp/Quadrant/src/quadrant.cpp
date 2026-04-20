@@ -85,17 +85,17 @@ int Quadrant::genKlingons()
 {
     uint32_t r = common::generateRandom32Range(1, 100);
 
-    if (r <= 20)
+    if (r <= KLINGON_CHANCE_1)
         return 1; // 20% chance of 1 klingon to exist in this quadrant
-    else if (r <= 24)
+    else if (r <= KLINGON_CHANCE_1 + KLINGON_CHANCE_2)
         return 2; // 4% chance of 2 klingon to exist in this quadrant
-    else if (r <= 26)
+    else if (r <= KLINGON_CHANCE_1 + KLINGON_CHANCE_2 + KLINGON_CHANCE_3)
         return 3; // 2% chance of 3 klingon to exist in this quadrant
 
     return 0;
 }
 
-// Generates the number of bases in a quadrant 
+// Generates the number of bases in a quadrant
 int Quadrant::genBases()
 {
     static int totalBases = 0;

@@ -174,9 +174,12 @@ public class Quadrant {
     static private int genKlingons() {
         int r = RAND.nextInt(1, 100);
         
-        if (r <= 20)      return 1; // 20% chance of 1 klingon to exist in this quadrant
-        else if (r <= 24) return 2; // 4% chance of 2 klingon to exist in this quadrant
-        else if (r <= 26) return 3; // 2% chance of 3 klingon to exist in this quadrant
+        if (r <= KLINGON_CHANCE_1)                                            
+            return 1; // 20% chance of 1 klingon to exist in this quadrant
+        else if (r <= KLINGON_CHANCE_1 + KLINGON_CHANCE_2)                    
+            return 2; // 4% chance of 2 klingon to exist in this quadrant
+        else if (r <= KLINGON_CHANCE_1 + KLINGON_CHANCE_2 + KLINGON_CHANCE_3) 
+            return 3; // 2% chance of 3 klingon to exist in this quadrant
 
         return 0;
     }
@@ -219,21 +222,27 @@ public class Quadrant {
     // Data
     private char kbs;
 
-    static int totalBases = 0;
-    static int totalQuadrants = 0;
+    private static int totalBases = 0;
+    private static int totalQuadrants = 0;
 
     private static final Random RAND = new Random();
 
     // Constants
     private static final int KLINGON_MAX = 3;
-    private static final int BASE_MAX = 1;
-    private static final int STAR_MAX = 8;
     private static final int KLINGON_MIN = 0;
+
+    private static final int BASE_MAX = 1;
     private static final int BASE_MIN = 0;
+    
+    private static final int STAR_MAX = 8;
     private static final int STAR_MIN = 1;
 
     private static final int BASE_MAX_GALAXY = 2;
     private static final int BASE_CHANCE = 4;
+
+    private static final int KLINGON_CHANCE_1 = 20;
+    private static final int KLINGON_CHANCE_2 = 4;
+    private static final int KLINGON_CHANCE_3 = 2;
     
     private static final int AMOUNT_OF_QUADRANTS = 64;
     

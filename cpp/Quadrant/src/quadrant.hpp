@@ -67,14 +67,18 @@ private:
 
     // Constants
     static inline constexpr int KLINGON_MAX = 3;
-    static inline constexpr int BASE_MAX = 1;
-    static inline constexpr int STAR_MAX = 8;
     static inline constexpr int KLINGON_MIN = 0;
+    static inline constexpr int BASE_MAX = 1;
     static inline constexpr int BASE_MIN = 0;
+    static inline constexpr int STAR_MAX = 8;
     static inline constexpr int STAR_MIN = 1;
 
     static inline constexpr int BASE_MAX_GALAXY = 2;
     static inline constexpr int BASE_CHANCE = 4;
+
+    static inline constexpr int KLINGON_CHANCE_1 = 20;
+    static inline constexpr int KLINGON_CHANCE_2 = 4;
+    static inline constexpr int KLINGON_CHANCE_3 = 2;
 
     static inline constexpr int AMOUNT_OF_QUADRANTS = 64;
 };
