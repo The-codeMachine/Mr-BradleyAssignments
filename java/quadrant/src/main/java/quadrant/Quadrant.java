@@ -36,37 +36,10 @@ import java.util.Random;
 public class Quadrant {
     /**
      * Generates a quadrant using a RNG
-     * 
-     * -> there are specific rules for creating quadrants
-     * we will look at them in future sessions
      */
     public Quadrant() {
-
-        int k = 0;
-        int b = 0;
-        int r = RAND.nextInt(1, 100);
-
-        // determine klingons
-        if (r <= 20)      k = 1;
-        else if (r <= 24) k = 2;
-        else if (r <= 26) k = 3;
-        
-        // determine bases
-        if (totalBase < 2) {
-            if (RAND.nextInt(1, 100) <= 4) {
-                b = 1;
-                totalBase++;
-            }
-        }
-
         totalQuadrants++;
-        if (totalQuadrants == 64 && totalBase == 0) {
-            b = 1;
-            totalBase++;
-        }
-
-        int s = RAND.nextInt(1, 8);
-        kbs = setContent(k, b, s);
+        kbs = setContent(genKlingons(), genBases(), genStars());
     }
 
     /**
@@ -78,6 +51,7 @@ public class Quadrant {
      * @param stars
      */
     public Quadrant(int klingons, int bases, int stars) {
+        totalQuadrants++;
         kbs = setContent(klingons, bases, stars);
     }
 
@@ -189,10 +163,44 @@ public class Quadrant {
         return (char) (klingons * 100 + bases * 10 + stars);
     }
 
+    static private int genKlingons() {
+        int r = RAND.nextInt(1, 100);
+        int k = 0;
+        
+        if (r <= 20)      k = 1; // 20% chance of 1 klingon to exist in this quadrant
+        else if (r <= 24) k = 2; // 4% chance of 2 klingon to exist in this quadrant
+        else if (r <= 26) k = 3; // 2% chance of 3 klingon to exist in this quadrant
+
+        return k;
+    }
+
+    static private int genBases() {
+        if (totalBases < BASE_MAX_GALAXY) {
+            // 4% chance of a quadrant having a base
+            if (RAND.nextInt(1, 100) <= BASE_CHANCE) {
+                totalBases++;
+                return 1;
+            }
+        }
+
+        // checks if there has not been any bases generated yet, 
+        // if not then add one to the last quadrant
+        if (totalQuadrants == AMOUNT_OF_QUADRANTS && totalBases == 0) {
+            totalBases++;
+            return 1;
+        }
+
+        return 0;
+    }
+
+    static private int genStars() {
+        return RAND.nextInt(STAR_MIN, STAR_MAX);
+    }
+
     // Data
     private char kbs;
 
-    static int totalBase = 0;
+    static int totalBases = 0;
     static int totalQuadrants = 0;
 
     private static final Random RAND = new Random();
@@ -204,4 +212,10 @@ public class Quadrant {
     private static final int KLINGON_MIN = 0;
     private static final int BASE_MIN = 0;
     private static final int STAR_MIN = 1;
+
+    private static final int BASE_MAX_GALAXY = 2;
+    private static final int BASE_CHANCE = 4;
+    
+    private static final int AMOUNT_OF_QUADRANTS = 64;
+    
 }
