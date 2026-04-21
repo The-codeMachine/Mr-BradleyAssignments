@@ -16,7 +16,14 @@
  *
  * The number of Klingons in the Quadrant is the only
  * value that may change, at this time.
+ * 
+ * There can only be 2 bases for the entire galaxy,
+ * and there must be at least 1 base for the galaxy. 
+ * There is a 4% chance for a base to generate inside a quadrant. 
  *
+ * There is a 20% chance for there to be 1 klingon in a quadrant,
+ * 4% chance for 2 klingons, and 2% chance for 3 klingons in the quadrant. 
+ * 
  * Operations
  *
  *  o Construct a Quadrant( k, b, s )
@@ -26,8 +33,8 @@
  *  o return the number of Stars
  *  o provide a textual presentation of the Quadrant for
  *      use with displaying the Galactic Map eg, "318", or "001"
- *
- *  o provides the ability to decrement the number of Klingons
+ *      
+ *  o provides the ability to decrement the number of Klingons    
  *
  * @author Mr. Bradley
  * @version SPRING 2026
