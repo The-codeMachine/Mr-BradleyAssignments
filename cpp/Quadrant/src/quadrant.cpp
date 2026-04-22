@@ -4,6 +4,7 @@
 
 #include <cassert>
 #include <iostream>
+#include <iomanip>
 #include <string>
 
 // Constructs a quadrant using a random number generator
@@ -142,6 +143,6 @@ int Quadrant::setContent(int klingons, int bases, int stars)
 std::ostream &operator<<(std::ostream &os, const Quadrant &qu)
 {
     // could be changed to std::format("%03d", qu.kbs) but that requires C++20
-    os << qu.klingons() << qu.bases() << qu.stars();
+    os << std::setw(3) << std::setfill('0') << qu.kbs;
     return os;
 }

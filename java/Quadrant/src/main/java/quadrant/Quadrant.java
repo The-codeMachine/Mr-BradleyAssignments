@@ -90,7 +90,7 @@ public class Quadrant {
      * Removes one Klingon from this quadrant if one exists
      */
     public void reduceKlingons() {
-        if (kbs >= 100) // removes overhead (instead of using klingons() >= 1)
+        if (klingons() >= 1) // removes overhead (instead of using klingons() >= 1)
             kbs -= 100;
     }
 
@@ -179,7 +179,7 @@ public class Quadrant {
      * @return the number of klingons for 1 quadrant
      */
     static private int genKlingons() {
-        int r = RAND.nextInt(1, 100);
+        int r = RAND.nextInt(1, 101);
         
         if (r <= KLINGON_CHANCE_1)                                            
             return 1; // 20% chance of 1 klingon to exist in this quadrant
@@ -201,7 +201,7 @@ public class Quadrant {
     static private int genBases() {
         if (totalBases < BASE_MAX_GALAXY) {
             // 4% chance of a quadrant having a base
-            if (RAND.nextInt(1, 100) <= BASE_CHANCE) {
+            if (RAND.nextInt(1, 101) <= BASE_CHANCE) {
                 totalBases++;
                 return 1;
             }
@@ -223,7 +223,7 @@ public class Quadrant {
      * @return number of stars for 1 quadrant
      */
     static private int genStars() {
-        return RAND.nextInt(STAR_MIN, STAR_MAX);
+        return RAND.nextInt(STAR_MIN, STAR_MAX + 1);
     }
 
     // Data
