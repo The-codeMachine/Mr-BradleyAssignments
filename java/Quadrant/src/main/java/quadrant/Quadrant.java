@@ -45,8 +45,7 @@ public class Quadrant {
      * Generates a quadrant using a RNG
      */
     public Quadrant() {
-        totalQuadrants++;
-        kbs = setContent(genKlingons(), genBases(), genStars());
+        this(genKlingons(), genBases(), genStars());
     }
 
     /**
@@ -91,7 +90,7 @@ public class Quadrant {
      */
     public void reduceKlingons() {
         if (klingons() >= 1) // removes overhead (instead of using klingons() >= 1)
-            kbs -= 100;
+            kbs = setContent(klingons() - 1, bases(), stars());
     }
 
     /**
@@ -102,7 +101,7 @@ public class Quadrant {
 
         Quadrant q = new Quadrant();
 
-        q.kbs = setContent(KLINGON_MAX, BASE_MAX, STAR_MAX);
+        q.kbs = setContent(3, 1, 8);
 
         assert q.kbs == 318 : "setContent did not set the content correctly";
         System.out.printf("Got %d, expected 318\n", (int) (q.kbs));
@@ -163,6 +162,12 @@ public class Quadrant {
      * @return Returns a formatted KBS value
      */
     static private char setContent(int klingons, int bases, int stars) {
+        final int BASE_MIN = 0;
+        final int BASE_MAX = 1;
+
+        final int KLINGON_MAX = 3;
+        final int KLINGON_MIN = 0;
+
         assert klingons >= KLINGON_MIN && klingons <= KLINGON_MAX : "Klingon out of range";
         assert bases >= BASE_MIN && bases <= BASE_MAX : "Base out of range";
         assert stars >= STAR_MIN && stars <= STAR_MAX : "Star out of range";
@@ -179,6 +184,10 @@ public class Quadrant {
      * @return the number of klingons for 1 quadrant
      */
     static private int genKlingons() {
+        final int KLINGON_CHANCE_1 = 20;
+        final int KLINGON_CHANCE_2 = 4;
+        final int KLINGON_CHANCE_3 = 2;
+
         int r = RAND.nextInt(1, 101);
         
         if (r <= KLINGON_CHANCE_1)                                            
@@ -199,6 +208,10 @@ public class Quadrant {
      * @return the number of bases for 1 quadrant
      */
     static private int genBases() {
+        final int BASE_MAX_GALAXY = 2;
+        final int BASE_CHANCE = 4;
+        final int AMOUNT_OF_QUADRANTS = 64;
+
         if (totalBases < BASE_MAX_GALAXY) {
             // 4% chance of a quadrant having a base
             if (RAND.nextInt(1, 101) <= BASE_CHANCE) {
@@ -235,22 +248,42 @@ public class Quadrant {
     private static final Random RAND = new Random();
 
     // Constants
-    private static final int KLINGON_MAX = 3;
-    private static final int KLINGON_MIN = 0;
-
-    private static final int BASE_MAX = 1;
-    private static final int BASE_MIN = 0;
-    
     private static final int STAR_MAX = 8;
-    private static final int STAR_MIN = 1;
-
-    private static final int BASE_MAX_GALAXY = 2;
-    private static final int BASE_CHANCE = 4;
-
-    private static final int KLINGON_CHANCE_1 = 20;
-    private static final int KLINGON_CHANCE_2 = 4;
-    private static final int KLINGON_CHANCE_3 = 2;
-    
-    private static final int AMOUNT_OF_QUADRANTS = 64;
-    
+    private static final int STAR_MIN = 1;    
 }
+
+/*
+ * Sample Output
+ * 
+ * Testing Quadrant getters
+ * Got 3 klingons, expected 3
+ * Got 1 bases, expected 1
+ * Got 8 stars, expected 8
+ * Quadrant getters success
+ * Testing Quadrant constructors
+ * Got 0 klingons, expected between 0-3
+ * Got 0 bases, expected between 0-1
+ * Got 1 stars, expected between 1-8
+ * Got Quadrant: Klingons(3), Bases(1), Stars(2), expected Quadrant: Klingons(3), Bases(1), Stars(2)
+ * Quadrant constructor success
+ * Testing Quadrant reduceKlingons
+ * Got 2 klingons, expected 2
+ * Got 1 klingons, expected 1
+ * Got 0 klingons, expected 0
+ * Got 0 klingons, expected 0
+ * Quadrant reduceKlingons success
+ * Quadrant stress test
+ * Number of quadrants with 1 klingon: 20.00% <- this one may change by 1% due to noise
+ * Number of quadrants with 2 klingon: 4.00% <- this one may change by 1% due to noise
+ * Number of quadrants with 3 klingon: 2.00% <- this one may change by 1% due to noise
+ * Number of quadrants with 1 base: 0.00% <- this one may change by 1% due to iterations + noise
+ * Time taken: 15 ms <- this one may change due to the amonut of iterations
+ * Quadrant stress test success
+ * Quadrant whitebox test
+ * Got 318, expected 318
+ * Got 212, expected 212
+ * Got 318, expected "318"
+ * Got 001, expected "001"
+ * Quadrant whitebox test success
+ * 
+ */
