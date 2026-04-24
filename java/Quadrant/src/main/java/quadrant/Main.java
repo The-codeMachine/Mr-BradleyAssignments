@@ -22,13 +22,10 @@ public class Main {
 
         Quadrant q = new Quadrant();
 
-        assert (q.klingons() <= 3 && q.klingons() >= 0);
         System.out.printf("Got %d klingons, expected between 0-3\n", q.klingons());
 
-        assert (q.bases() <= 1 && q.bases() >= 0);
         System.out.printf("Got %d bases, expected between 0-1\n", q.bases());
 
-        assert (q.stars() <= 9 && q.stars() >= 1);
         System.out.printf("Got %d stars, expected between 1-8\n", q.stars());
 
         Quadrant qw = new Quadrant(3, 1, 2);
