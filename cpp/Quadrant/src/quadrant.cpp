@@ -8,11 +8,7 @@
 #include <string>
 
 // Constructs a quadrant using a random number generator
-Quadrant::Quadrant()
-{
-    totalQuadrants++;
-    kbs = setContent(genKlingons(), genBases(), genStars());
-}
+Quadrant::Quadrant() : Quadrant(genKlingons(), genBases(), genStars()) {}
 
 // Constructs a new quadrant based off the number of klingons, bases, and stars
 Quadrant::Quadrant(int klingons, int bases, int stars)
@@ -43,7 +39,7 @@ int Quadrant::stars() const
 void Quadrant::reduceKlingons()
 {
     if (kbs >= 100) // removes overhead of klingons()
-        kbs -= 100;
+        kbs = setContent(klingons() - 1, bases(), stars());
 }
 
 #ifndef NDEBUG
@@ -83,7 +79,11 @@ void Quadrant::whiteBoxTest()
 
 // Generates the number of klingons in a quadrant
 int Quadrant::genKlingons()
-{
+{ 
+    static constexpr int KLINGON_CHANCE_1 = 20;
+    static constexpr int KLINGON_CHANCE_2 = 4;
+    static constexpr int KLINGON_CHANCE_3 = 2;
+
     uint32_t r = common::generateRandom32Range(1, 100);
 
     if (r <= KLINGON_CHANCE_1)
@@ -100,6 +100,8 @@ int Quadrant::genKlingons()
 int Quadrant::genBases()
 {
     static int totalBases = 0;
+    static constexpr int BASE_MAX_GALAXY = 2;
+    static constexpr int BASE_CHANCE = 4;
 
     if (totalBases < BASE_MAX_GALAXY)
     {
@@ -110,6 +112,8 @@ int Quadrant::genBases()
             return 1;
         }
     }
+
+    static constexpr int AMOUNT_OF_QUADRANTS = 64;
 
     // checks if there has not been any bases generated yet,
     // if not then add one to the last quadrant
@@ -131,6 +135,12 @@ int Quadrant::genStars()
 // Encodes klingons, bases, and stars into a single integer (KBS format)
 int Quadrant::setContent(int klingons, int bases, int stars)
 {
+    static constexpr int KLINGON_MAX = 3;
+    static constexpr int KLINGON_MIN = 0;
+
+    static constexpr int BASE_MAX = 1;
+    static constexpr int BASE_MIN = 0;
+
     assert(klingons >= KLINGON_MIN && klingons <= KLINGON_MAX && "Klingon out of range");
     assert(bases >= BASE_MIN && bases <= BASE_MAX && "Base out of range");
     assert(stars >= STAR_MIN && stars <= STAR_MAX && "Star out of range");

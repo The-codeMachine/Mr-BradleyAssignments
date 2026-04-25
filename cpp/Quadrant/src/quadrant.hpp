@@ -73,19 +73,43 @@ private:
     static inline int totalQuadrants = 0;
 
     // Constants
-    static inline constexpr int KLINGON_MAX = 3;
-    static inline constexpr int KLINGON_MIN = 0;
-    static inline constexpr int BASE_MAX = 1;
-    static inline constexpr int BASE_MIN = 0;
     static inline constexpr int STAR_MAX = 8;
     static inline constexpr int STAR_MIN = 1;
-
-    static inline constexpr int BASE_MAX_GALAXY = 2;
-    static inline constexpr int BASE_CHANCE = 4;
-
-    static inline constexpr int KLINGON_CHANCE_1 = 20;
-    static inline constexpr int KLINGON_CHANCE_2 = 4;
-    static inline constexpr int KLINGON_CHANCE_3 = 2;
-
-    static inline constexpr int AMOUNT_OF_QUADRANTS = 64;
 };
+
+/* Sample Output
+
+Testing Quadrant getters
+Got 3 klingons, expected 3
+Got 1 bases, expected 1
+Got 8 stars, expected 8
+Quadrant getters success
+Testing Quadrant constructors
+Got 0 klingons, expected between 0-3
+Got 0 bases, expected between 0-1
+Got 5 stars, expected between 1-8
+Got Quadrant: Klingons(3), Bases(1), Stars(2), expected Quadrant: Klingons(3), Bases(1), Stars(2)
+Quadrant constructor success
+Testing Quadrant << operator
+Got 318, expected "318"
+Got 001, expected "001"
+Quadrant << operator success
+Testing Quadrant reduceKlingons
+Got 2 klingons, expected 2
+Got 1 klingons, expected 1
+Got 0 klingons, expected 0
+Got 0 klingons, expected 0
+Quadrant reduceKlingons success
+Quadrant galaxy construction test
+Number of quadrants with 1 klingon: 20% <- this one may change by 1% due to noise
+Number of quadrants with 2 klingon: 4% <- this one may change by 1% due to noise
+Number of quadrants with 3 klingon: 2% <- this one may change by 1% due to noise
+Number of quadrants with bases: 0% <- this one may change by 1% due to iterations + noise
+Time taken: 53 ms <- this one may change due to the amonut of iterations
+Quadrant galaxy construction success
+Quadrant whitebox test
+Got 318, expected 318
+Got 212, expected 212
+Quadrant whitebox test success
+
+ */
