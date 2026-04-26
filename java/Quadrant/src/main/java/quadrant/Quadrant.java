@@ -17,7 +17,7 @@ package quadrant;
  * 
  * There can only be 2 bases for the entire galaxy,
  * and there must be at least 1 base for the galaxy. 
- * There is a 4% chance for a base to generate inside a quadrant.  
+ * There is a 5% chance for a base to generate inside a quadrant.  
  *
  * There is a 20% chance for there to be 1 klingon in a quadrant,
  * 5% chance for 2 klingons, and 2% chance for 3 klingons in the quadrant. 
@@ -178,7 +178,7 @@ public class Quadrant {
     /**
      * Generates the number of klingons in a quadrant using the following rules:
      * - 20% for 1 klingon to generate 
-     * - 4% for 2 klingons to generate
+     * - 5% for 2 klingons to generate
      * - 2% for 3 klingons to generate
      * 
      * @return the number of klingons for 1 quadrant
@@ -193,7 +193,7 @@ public class Quadrant {
         if (r <= KLINGON_CHANCE_1)                                            
             return 1; // 20% chance of 1 klingon to exist in this quadrant
         else if (r <= KLINGON_CHANCE_1 + KLINGON_CHANCE_2 && r > KLINGON_CHANCE_1)                    
-            return 2; // 4% chance of 2 klingon to exist in this quadrant
+            return 2; // 5% chance of 2 klingon to exist in this quadrant
         else if (r <= KLINGON_CHANCE_1 + KLINGON_CHANCE_2 + KLINGON_CHANCE_3 && r > KLINGON_CHANCE_1 + KLINGON_CHANCE_2) 
             return 3; // 2% chance of 3 klingon to exist in this quadrant
 

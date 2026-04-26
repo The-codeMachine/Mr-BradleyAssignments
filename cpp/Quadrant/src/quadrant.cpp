@@ -80,17 +80,17 @@ void Quadrant::whiteBoxTest()
 // Generates the number of klingons in a quadrant
 int Quadrant::genKlingons()
 { 
-    static constexpr int KLINGON_CHANCE_1 = 20;
-    static constexpr int KLINGON_CHANCE_2 = 4;
-    static constexpr int KLINGON_CHANCE_3 = 2;
+    static constexpr float KLINGON_CHANCE_1 = 0.2;
+    static constexpr float KLINGON_CHANCE_2 = 0.05;
+    static constexpr float KLINGON_CHANCE_3 = 0.02;
 
-    uint32_t r = common::generateRandom32Range(1, 100);
+    float r = common::generateRandomPercent();
 
     if (r <= KLINGON_CHANCE_1)
         return 1; // 20% chance of 1 klingon to exist in this quadrant
-    else if (r <= KLINGON_CHANCE_1 + KLINGON_CHANCE_2)
-        return 2; // 4% chance of 2 klingon to exist in this quadrant
-    else if (r <= KLINGON_CHANCE_1 + KLINGON_CHANCE_2 + KLINGON_CHANCE_3)
+    else if (r <= KLINGON_CHANCE_1 + KLINGON_CHANCE_2 && r > KLINGON_CHANCE_1)
+        return 2; // 5% chance of 2 klingon to exist in this quadrant
+    else if (r <= KLINGON_CHANCE_1 + KLINGON_CHANCE_2 + KLINGON_CHANCE_3 && r > KLINGON_CHANCE_1 + KLINGON_CHANCE_2)
         return 3; // 2% chance of 3 klingon to exist in this quadrant
 
     return 0;
@@ -101,12 +101,12 @@ int Quadrant::genBases()
 {
     static int totalBases = 0;
     static constexpr int BASE_MAX_GALAXY = 2;
-    static constexpr int BASE_CHANCE = 4;
+    static constexpr float BASE_CHANCE = 0.04;
 
     if (totalBases < BASE_MAX_GALAXY)
     {
         // 4% chance of a quadrant having a base
-        if (common::generateRandom32Range(1, 100) <= BASE_CHANCE)
+        if (common::generateRandomPercent() <= BASE_CHANCE)
         {
             totalBases++;
             return 1;
@@ -155,4 +155,21 @@ std::ostream &operator<<(std::ostream &os, const Quadrant &qu)
     // could be changed to std::format("%03d", qu.kbs) but that requires C++20
     os << std::setw(3) << std::setfill('0') << qu.kbs;
     return os;
+}
+
+// Populates a Quadrant with klingons, bases, and stars
+uint16_t populate() {
+    /*
+        Rules:
+        
+        - 20% chance that 1 klingon is present 
+        - 5% chance that 2 klingons is present 
+        - 2% chance that 3 klingons is present 
+        - 73% chance that 0 klingons is present
+      
+        - 4% chance that 1 star base is present
+        - Max of 1 per quadrant, and no more than 2 for each galaxy
+    */
+
+    return Quadrant::setContent(Quadrant::genKlingons(), Quadrant::genBases(), Quadrant::genStars());
 }

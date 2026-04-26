@@ -7,7 +7,7 @@
  * of the number of each item present. Each Quadrant may
  * hold Klingons [0..3], Bases [0..1], and Stars [1..8].
  *
- * The contents are packed into a 32-bit data type (int)
+ * The contents are packed into a 16-bit data type (uint16_t)
  * whose valid range is [1..318].
  *
  * The Klingons  value is stored in the 100's position
@@ -22,7 +22,7 @@
  * There is a 4% chance for a base to generate inside a quadrant. 
  *
  * There is a 20% chance for there to be 1 klingon in a quadrant,
- * 4% chance for 2 klingons, and 2% chance for 3 klingons in the quadrant. 
+ * 5% chance for 2 klingons, and 2% chance for 3 klingons in the quadrant. 
  * 
  * Operations
  *
@@ -59,6 +59,7 @@ public:
 #endif
 
     friend std::ostream &operator<<(std::ostream &os, const Quadrant &qu);
+    friend uint16_t populate();
 
 private:
     static int genKlingons();
@@ -87,7 +88,7 @@ Quadrant getters success
 Testing Quadrant constructors
 Got 0 klingons, expected between 0-3
 Got 0 bases, expected between 0-1
-Got 5 stars, expected between 1-8
+Got 8 stars, expected between 1-8
 Got Quadrant: Klingons(3), Bases(1), Stars(2), expected Quadrant: Klingons(3), Bases(1), Stars(2)
 Quadrant constructor success
 Testing Quadrant << operator
@@ -101,11 +102,11 @@ Got 0 klingons, expected 0
 Got 0 klingons, expected 0
 Quadrant reduceKlingons success
 Quadrant galaxy construction test
-Number of quadrants with 1 klingon: 20% <- this one may change by 1% due to noise
-Number of quadrants with 2 klingon: 4% <- this one may change by 1% due to noise
-Number of quadrants with 3 klingon: 2% <- this one may change by 1% due to noise
-Number of quadrants with bases: 0% <- this one may change by 1% due to iterations + noise
-Time taken: 53 ms <- this one may change due to the amonut of iterations
+Number of quadrants with 1 klingon: 20% <- these may change due to statistical noise
+Number of quadrants with 2 klingon: 5% <- these may change due to statistical noise
+Number of quadrants with 3 klingon: 2% <- these may change due to statistical noise
+Number of quadrants with bases: 0% <- these may change due to statistical noise
+Time taken: 49 ms <- this one may change based off your system's hardware
 Quadrant galaxy construction success
 Quadrant whitebox test
 Got 318, expected 318
