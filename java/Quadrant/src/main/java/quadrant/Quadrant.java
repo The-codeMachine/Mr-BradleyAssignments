@@ -5,7 +5,7 @@ package quadrant;
  * of the number of each item present. Each Quadrant may
  * hold Klingons [0..3], Bases [0..1], and Stars [1..8].
  *
- * The contents are packed into a 32-bit data type (int)
+ * The contents are packed into a 16-bit data type (char)
  * whose valid range is [1..318].
  *
  * The Klingons  value is stored in the 100's position
@@ -20,7 +20,7 @@ package quadrant;
  * There is a 4% chance for a base to generate inside a quadrant.  
  *
  * There is a 20% chance for there to be 1 klingon in a quadrant,
- * 4% chance for 2 klingons, and 2% chance for 3 klingons in the quadrant. 
+ * 5% chance for 2 klingons, and 2% chance for 3 klingons in the quadrant. 
  * 
  * Operations
  *
@@ -184,17 +184,17 @@ public class Quadrant {
      * @return the number of klingons for 1 quadrant
      */
     static private int genKlingons() {
-        final int KLINGON_CHANCE_1 = 20;
-        final int KLINGON_CHANCE_2 = 4;
-        final int KLINGON_CHANCE_3 = 2;
+        final double KLINGON_CHANCE_1 = 0.20;
+        final double KLINGON_CHANCE_2 = 0.05;
+        final double KLINGON_CHANCE_3 = 0.02;
 
-        int r = RAND.nextInt(1, 101);
+        double r = Math.random();
         
         if (r <= KLINGON_CHANCE_1)                                            
             return 1; // 20% chance of 1 klingon to exist in this quadrant
-        else if (r <= KLINGON_CHANCE_1 + KLINGON_CHANCE_2)                    
+        else if (r <= KLINGON_CHANCE_1 + KLINGON_CHANCE_2 && r > KLINGON_CHANCE_1)                    
             return 2; // 4% chance of 2 klingon to exist in this quadrant
-        else if (r <= KLINGON_CHANCE_1 + KLINGON_CHANCE_2 + KLINGON_CHANCE_3) 
+        else if (r <= KLINGON_CHANCE_1 + KLINGON_CHANCE_2 + KLINGON_CHANCE_3 && r > KLINGON_CHANCE_1 + KLINGON_CHANCE_2) 
             return 3; // 2% chance of 3 klingon to exist in this quadrant
 
         return 0;
@@ -209,12 +209,12 @@ public class Quadrant {
      */
     static private int genBases() {
         final int BASE_MAX_GALAXY = 2;
-        final int BASE_CHANCE = 4;
+        final double BASE_CHANCE = 0.04;
         final int AMOUNT_OF_QUADRANTS = 64;
 
         if (totalBases < BASE_MAX_GALAXY) {
             // 4% chance of a quadrant having a base
-            if (RAND.nextInt(1, 101) <= BASE_CHANCE) {
+            if (Math.random() <= BASE_CHANCE) {
                 totalBases++;
                 return 1;
             }
@@ -236,7 +236,29 @@ public class Quadrant {
      * @return number of stars for 1 quadrant
      */
     static private int genStars() {
+        final Random RAND = new Random();
         return RAND.nextInt(STAR_MIN, STAR_MAX + 1);
+    }
+
+    /**
+     * Populates a Quadrant with Klingons, bases, and stars
+     *
+     * Rules:
+     * 
+     * - 20% chance that 1 klingon is present 
+     * - 5% chance that 2 klingons is present 
+     * - 2% chance that 3 klingons is present 
+     * - 73% chance that 0 klingons is present
+     * 
+     * - 4% chance that 1 star base is present
+     * - Max of 1 per quadrant, and no more than 2 for each galaxy
+     *  
+     * @apiNote default visibility so that galaxy can use it when constructing itself
+     * 
+     * @return the Quadrant's new populated value
+     */
+    static char populate() {
+        return setContent(genKlingons(), genBases(), genStars());
     }
 
     // Data
@@ -244,8 +266,6 @@ public class Quadrant {
 
     private static int totalBases = 0;
     private static int totalQuadrants = 0;
-
-    private static final Random RAND = new Random();
 
     // Constants
     private static final int STAR_MAX = 8;
