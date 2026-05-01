@@ -60,7 +60,7 @@ public class GameLib {
         if (total <= 0)
             throw new IllegalArgumentException("Total weight must be > 0");
 
-        double r = Math.random() * total;
+        double r = random() * total;
         double cumulative = 0.0;
 
         for (int i = 0; i < weights.length; ++i) {
@@ -163,9 +163,10 @@ public class GameLib {
         int numOf1Klingons = 0;
         int numOf2Klingons = 0;
         int numOf3Klingons = 0;
-        int numOfBases = 0;
         for (long i = 0; i < 1000000; ++i) {
             int r = genKlingons();
+
+            totalQuadrants++;
 
             if (r == 1)
                 numOf1Klingons++;
@@ -174,19 +175,18 @@ public class GameLib {
             else if (r == 3)
                 numOf3Klingons++;
 
-            if (genBases() == 1)
-                numOfBases++;
+            genBases();
         }
 
         long end = System.nanoTime();
         long duration = (end - start) / 1000000;
 
-        assert numOfBases >= 1 && numOfBases <= 2 : "Bases did not generate with the correct range";
+        assert totalBases >= 1 && totalBases <= 2 : "Bases did not generate with the correct range";
 
         float percent1 = numOf1Klingons * 100 / 1000000;
         float percent2 = numOf2Klingons * 100 / 1000000;
         float percent3 = numOf3Klingons * 100 / 1000000;
-        float percent4 = numOfBases * 100 / 1000000;
+        float percent4 = totalBases * 100 / 1000000;
 
         System.out.printf("Number of quadrants with 1 klingon: %.2f%% \n", percent1);
         System.out.printf("Number of quadrants with 2 klingon: %.2f%% \n", percent2);
@@ -194,32 +194,42 @@ public class GameLib {
         System.out.printf("Number of quadrants with 1 base: %.2f%% \n", percent4);
 
         System.out.printf("Time taken: %d ms\n", duration);
+        totalQuadrants = 0; // reset value
 
         System.out.println("Generation test success");
     }
 
     public static void testDriver() {
+        System.out.println("GameLib test driver run");
+
         randomTestDriver();
         genTestDriver();
+
+        System.out.println("GameLib test driver run success");
     }
 
+    // Will be made part of galaxy once galaxy is made
     private static int totalBases = 0;
-    private static int totalQuadrants = 0;
+    public static int totalQuadrants = 0;
 }
 
-/**
+/*
+ * Sample Output
+ * 
+ * GameLib test driver run
  * Random test
- * New random number: 0.87
- * New random number (between 1, and 100): 77.00
- * Second new random number (between 1, and 100): 51.00
+ * New random number: 0.74 <- these may change due to randomness
+ * New random number (between 1, and 100): 93.00
+ * Second new random number (between 1, and 100): 31.00
+ * Weighted choice output: 0 
  * Weighted choice output: 1
- * Weighted choice output: 0
  * Random test success
  * Generation test
- * Number of quadrants with 1 klingon: 19.00% 
- * Number of quadrants with 2 klingon: 4.00% 
- * Number of quadrants with 3 klingon: 1.00% 
- * Number of quadrants with 1 base: 0.00% 
- * Time taken: 15 ms
+ * Number of quadrants with 1 klingon: 19.00% <- this one may change by 1% due to noise
+ * Number of quadrants with 2 klingon: 4.00% <- this one may change by 1% due to noise
+ * Number of quadrants with 3 klingon: 2.00% <- this one may change by 1% due to noise
+ * Number of quadrants with 1 base: 0.00% <- this one may change by 1% due to noise
+ * Time taken: 14 ms <- this one may change due to system hardware
  * Generation test success
+ * GameLib test driver run success
  */

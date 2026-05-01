@@ -135,7 +135,7 @@ public class Main {
  * Got 8 stars, expected 8
  * Quadrant getters success
  * Testing Quadrant constructors
- * Got 0 klingons, expected between 0-3
+ * Got 2 klingons, expected between 0-3
  * Got 0 bases, expected between 0-1
  * Got 1 stars, expected between 1-8
  * Got Quadrant: Klingons(3), Bases(1), Stars(2), expected Quadrant: Klingons(3), Bases(1), Stars(2)
@@ -148,10 +148,10 @@ public class Main {
  * Quadrant reduceKlingons success
  * Quadrant stress test
  * Number of quadrants with 1 klingon: 20.00% <- this one may change by 1% due to noise
- * Number of quadrants with 2 klingon: 4.00% <- this one may change by 1% due to noise
- * Number of quadrants with 3 klingon: 2.00% <- this one may change by 1% due to noise
- * Number of quadrants with 1 base: 0.00% <- this one may change by 1% due to iterations + noise
- * Time taken: 15 ms <- this one may change due to the amonut of iterations
+ * Number of quadrants with 2 klingon: 5.00% <- this one may change by 1% due to noise
+ * Number of quadrants with 3 klingon: 1.00% <- this one may change by 1% due to noise
+ * Number of quadrants with 1 base: 0.00% <- this one may change by 1% due to noise
+ * Time taken: 56 ms <- this may change due to system hardware
  * Quadrant stress test success
  * Quadrant whitebox test
  * Got 318, expected 318
@@ -159,5 +159,21 @@ public class Main {
  * Got 318, expected "318"
  * Got 001, expected "001"
  * Quadrant whitebox test success
+ * GameLib test driver run
+ * Random test
+ * New random number: 0.74 <- these may change due to randomness
+ * New random number (between 1, and 100): 93.00
+ * Second new random number (between 1, and 100): 31.00
+ * Weighted choice output: 0 
+ * Weighted choice output: 1
+ * Random test success
+ * Generation test
+ * Number of quadrants with 1 klingon: 19.00% <- this one may change by 1% due to noise
+ * Number of quadrants with 2 klingon: 4.00% <- this one may change by 1% due to noise
+ * Number of quadrants with 3 klingon: 2.00% <- this one may change by 1% due to noise
+ * Number of quadrants with 1 base: 0.00% <- this one may change by 1% due to noise
+ * Time taken: 14 ms <- this one may change due to system hardware
+ * Generation test success
+ * GameLib test driver run success
  * 
  */

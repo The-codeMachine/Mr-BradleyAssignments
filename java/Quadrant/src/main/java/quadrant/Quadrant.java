@@ -38,6 +38,8 @@ package quadrant;
  * @version SPRING 2026
  */
 
+import common.GameLib;
+
 import java.util.Random;
 
 public class Quadrant {
@@ -45,7 +47,7 @@ public class Quadrant {
      * Generates a quadrant using a RNG
      */
     public Quadrant() {
-        this(genKlingons(), genBases(), genStars());
+        this(GameLib.genKlingons(), GameLib.genBases(), GameLib.genStars());
     }
 
     /**
@@ -57,7 +59,7 @@ public class Quadrant {
      * @param stars
      */
     public Quadrant(int klingons, int bases, int stars) {
-        totalQuadrants++;
+        GameLib.totalQuadrants++;
         kbs = setContent(klingons, bases, stars);
     }
 
@@ -162,82 +164,20 @@ public class Quadrant {
      * @return Returns a formatted KBS value
      */
     static private char setContent(int klingons, int bases, int stars) {
+        final int KLINGON_MIN = 0;
+        final int KLINGON_MAX = 3;
+        
         final int BASE_MIN = 0;
         final int BASE_MAX = 1;
-
-        final int KLINGON_MAX = 3;
-        final int KLINGON_MIN = 0;
+        
+        final int STAR_MAX = 8;
+        final int STAR_MIN = 1;
 
         assert klingons >= KLINGON_MIN && klingons <= KLINGON_MAX : "Klingon out of range";
         assert bases >= BASE_MIN && bases <= BASE_MAX : "Base out of range";
         assert stars >= STAR_MIN && stars <= STAR_MAX : "Star out of range";
 
         return (char) (klingons * 100 + bases * 10 + stars);
-    }
-
-    /**
-     * Generates the number of klingons in a quadrant using the following rules:
-     * - 20% for 1 klingon to generate 
-     * - 5% for 2 klingons to generate
-     * - 2% for 3 klingons to generate
-     * 
-     * @return the number of klingons for 1 quadrant
-     */
-    static private int genKlingons() {
-        final double KLINGON_CHANCE_1 = 0.20;
-        final double KLINGON_CHANCE_2 = 0.05;
-        final double KLINGON_CHANCE_3 = 0.02;
-
-        double r = Math.random();
-        
-        if (r <= KLINGON_CHANCE_1)                                            
-            return 1; // 20% chance of 1 klingon to exist in this quadrant
-        else if (r <= KLINGON_CHANCE_1 + KLINGON_CHANCE_2 && r > KLINGON_CHANCE_1)                    
-            return 2; // 5% chance of 2 klingon to exist in this quadrant
-        else if (r <= KLINGON_CHANCE_1 + KLINGON_CHANCE_2 + KLINGON_CHANCE_3 && r > KLINGON_CHANCE_1 + KLINGON_CHANCE_2) 
-            return 3; // 2% chance of 3 klingon to exist in this quadrant
-
-        return 0;
-    }
-
-    /**
-     * Generates the number of bases in a quadrant using the following rules:
-     * - 4% chance for one base inside the quadrant
-     *  - No more than 2 per galaxy
-     * 
-     * @return the number of bases for 1 quadrant
-     */
-    static private int genBases() {
-        final int BASE_MAX_GALAXY = 2;
-        final double BASE_CHANCE = 0.04;
-        final int AMOUNT_OF_QUADRANTS = 64;
-
-        if (totalBases < BASE_MAX_GALAXY) {
-            // 4% chance of a quadrant having a base
-            if (Math.random() <= BASE_CHANCE) {
-                totalBases++;
-                return 1;
-            }
-        }
-
-        // checks if there has not been any bases generated yet, 
-        // if not then add one to the last quadrant
-        if (totalQuadrants == AMOUNT_OF_QUADRANTS && totalBases == 0) {
-            totalBases++;
-            return 1;
-        }
-
-        return 0;
-    }
-
-    /**
-     * Randomly generates a random number of stars between 1-8
-     *  
-     * @return number of stars for 1 quadrant
-     */
-    static private int genStars() {
-        final Random RAND = new Random();
-        return RAND.nextInt(STAR_MIN, STAR_MAX + 1);
     }
 
     /**
@@ -258,18 +198,11 @@ public class Quadrant {
      * @return the Quadrant's new populated value
      */
     static char populate() {
-        return setContent(genKlingons(), genBases(), genStars());
+        return setContent(GameLib.genKlingons(), GameLib.genBases(), GameLib.genStars());
     }
 
     // Data
     private char kbs;
-
-    private static int totalBases = 0;
-    private static int totalQuadrants = 0;
-
-    // Constants
-    private static final int STAR_MAX = 8;
-    private static final int STAR_MIN = 1;    
 }
 
 /*
