@@ -1,5 +1,7 @@
 package quadrant;
 
+import common.GameLib;
+
 public class Main {
 
     // ensures all the getters and working correctly
@@ -118,6 +120,7 @@ public class Main {
         generatesAGalaxy();
         
         Quadrant.whiteBoxTest();
+        GameLib.testDriver();
     }
 
     private static final int ITERATIONS = 1000000;

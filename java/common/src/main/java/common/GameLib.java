@@ -1,13 +1,14 @@
 package common;
 
 import java.util.Random;
-import java.util.Arrays;
 
 public class GameLib {
 
+    // Random helper functions
+
     /**
      * 
-     * Generates a random number between 0, and 1. With double precision. 
+     * Generates a random number between 0, and 1. With double precision.
      * 
      * @return a random number between 0 and 1
      */
@@ -26,11 +27,11 @@ public class GameLib {
      * @return a number between min, and max (inclusive)
      */
     public static int randomInt(int min, int max) {
-        assert min > max : "Max must be greater than min";
+        assert min < max : "Max must be greater than min";
 
         final Random RAND = new Random();
-        
-        // min is inclusive, but max is exclusive, so +1 makes it inclusive as well 
+
+        // min is inclusive, but max is exclusive, so +1 makes it inclusive as well
         return RAND.nextInt(min, max + 1);
     }
 
@@ -39,36 +40,53 @@ public class GameLib {
      * Makes a weighted choice outputting the array's index for that chance
      * 
      * @apiNote returns 0 for an error
+     * @apiNote the total number of all the weights combined must = 100% (might
+     *          change later)
      * 
      * @param weights
      * @return an int representing the array's index for that chance
      */
     public static int weightedChoice(double[] weights) {
-        double r = random();
+        if (weights == null || weights.length == 0)
+            throw new IllegalArgumentException("Weights array is empty");
+
+        double total = 0.0;
+        for (double w : weights) {
+            if (w < 0)
+                throw new IllegalArgumentException("Weights must be non-negative");
+            total += w;
+        }
+
+        if (total <= 0)
+            throw new IllegalArgumentException("Total weight must be > 0");
+
+        double r = Math.random() * total;
+        double cumulative = 0.0;
 
         for (int i = 0; i < weights.length; ++i) {
-            if (r < weights[i])
+            cumulative += weights[i];
+            if (r < cumulative)
                 return i;
         }
 
-        return 0; 
+        // Due to floating point precision, fallback to last index
+        return weights.length - 1;
     }
 
-
-
+    // Quadrant generation functions
 
     /**
      * Generates the number of klingons in a quadrant using the following rules:
-     * - 20% for 1 klingon to generate 
+     * - 20% for 1 klingon to generate
      * - 5% for 2 klingons to generate
      * - 2% for 3 klingons to generate
      * 
      * @return the number of klingons for 1 quadrant
      */
     public static int genKlingons() {
-        //                                    0     1      2    3
-        //                                   73%   20%    5%    2%
-        int r = weightedChoice(new double[] {0.73, 0.2, 0.05, 0.02});
+        // klingons: 0 1 2 3
+        // 73% 20% 5% 2%
+        int r = weightedChoice(new double[] { 0.73, 0.2, 0.05, 0.02 });
 
         return r;
     }
@@ -76,7 +94,7 @@ public class GameLib {
     /**
      * Generates the number of bases in a quadrant using the following rules:
      * - 4% chance for one base inside the quadrant
-     *  - No more than 2 per galaxy
+     * - No more than 2 per galaxy
      * 
      * @return the number of bases for 1 quadrant
      */
@@ -89,7 +107,7 @@ public class GameLib {
             }
         }
 
-        // checks if there has not been any bases generated yet, 
+        // checks if there has not been any bases generated yet,
         // if not then add one to the last quadrant
         if (totalQuadrants == 64 && totalBases == 0) {
             totalBases++;
@@ -101,14 +119,107 @@ public class GameLib {
 
     /**
      * Randomly generates a random number of stars between 1-8
-     *  
+     * 
      * @return number of stars for 1 quadrant
      */
     public static int genStars() {
-        //              star min, star max
+        // star min, star max
         return randomInt(1, 8);
+    }
+
+    // tests the random number generators functions work
+    private static void randomTestDriver() {
+        System.out.println("Random test");
+
+        double r = random();
+        assert r >= 0 && r <= 1 : "New random number is not between 1, and 0";
+        System.out.printf("New random number: %.2f\n", r);
+
+        double ra = randomInt(1, 100);
+        assert ra >= 1 && ra <= 100 : "New random int is not generated within parameters";
+        System.out.printf("New random number (between 1, and 100): %.2f\n", ra);
+
+        double rb = randomInt(1, 100);
+        assert rb >= 1 && rb <= 100 : "Second new random int is not generated within parameters";
+        System.out.printf("Second new random number (between 1, and 100): %.2f\n", rb);
+
+        int i = weightedChoice(new double[] { 0.73, 0.2, 0.05, 0.02 });
+        assert i >= 0 && i <= 3 : "Weighted choice did not generate within parameters";
+        System.out.printf("Weighted choice output: %d\n", i);
+
+        int ii = weightedChoice(new double[] { 0.43, 0.4, 0.17 });
+        assert ii >= 0 && ii <= 2 : "Weighted choice did not generate within parameters";
+        System.out.printf("Weighted choice output: %d\n", ii);
+
+        System.out.println("Random test success");
+    }
+
+    // tests that the generation functions work properly
+    private static void genTestDriver() {
+        System.out.println("Generation test");
+
+        long start = System.nanoTime();
+
+        int numOf1Klingons = 0;
+        int numOf2Klingons = 0;
+        int numOf3Klingons = 0;
+        int numOfBases = 0;
+        for (long i = 0; i < 1000000; ++i) {
+            int r = genKlingons();
+
+            if (r == 1)
+                numOf1Klingons++;
+            else if (r == 2)
+                numOf2Klingons++;
+            else if (r == 3)
+                numOf3Klingons++;
+
+            if (genBases() == 1)
+                numOfBases++;
+        }
+
+        long end = System.nanoTime();
+        long duration = (end - start) / 1000000;
+
+        assert numOfBases >= 1 && numOfBases <= 2 : "Bases did not generate with the correct range";
+
+        float percent1 = numOf1Klingons * 100 / 1000000;
+        float percent2 = numOf2Klingons * 100 / 1000000;
+        float percent3 = numOf3Klingons * 100 / 1000000;
+        float percent4 = numOfBases * 100 / 1000000;
+
+        System.out.printf("Number of quadrants with 1 klingon: %.2f%% \n", percent1);
+        System.out.printf("Number of quadrants with 2 klingon: %.2f%% \n", percent2);
+        System.out.printf("Number of quadrants with 3 klingon: %.2f%% \n", percent3);
+        System.out.printf("Number of quadrants with 1 base: %.2f%% \n", percent4);
+
+        System.out.printf("Time taken: %d ms\n", duration);
+
+        System.out.println("Generation test success");
+    }
+
+    public static void testDriver() {
+        randomTestDriver();
+        genTestDriver();
     }
 
     private static int totalBases = 0;
     private static int totalQuadrants = 0;
 }
+
+/**
+ * Random test
+ * New random number: 0.87
+ * New random number (between 1, and 100): 77.00
+ * Second new random number (between 1, and 100): 51.00
+ * Weighted choice output: 1
+ * Weighted choice output: 0
+ * Random test success
+ * Generation test
+ * Number of quadrants with 1 klingon: 19.00% 
+ * Number of quadrants with 2 klingon: 4.00% 
+ * Number of quadrants with 3 klingon: 1.00% 
+ * Number of quadrants with 1 base: 0.00% 
+ * Time taken: 15 ms
+ * Generation test success
+ */
