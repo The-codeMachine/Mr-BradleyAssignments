@@ -1,6 +1,7 @@
 #include "quadrant.hpp"
 
 #include <common/random.hpp>
+#include <common/GameLib.hpp>
 
 #include <cassert>
 #include <iostream>
@@ -8,12 +9,12 @@
 #include <string>
 
 // Constructs a quadrant using a random number generator
-Quadrant::Quadrant() : Quadrant(genKlingons(), genBases(), genStars()) {}
+Quadrant::Quadrant() : Quadrant(common::genKlingons(), common::genBases(), common::genStars()) {}
 
 // Constructs a new quadrant based off the number of klingons, bases, and stars
 Quadrant::Quadrant(int klingons, int bases, int stars)
 {
-    totalQuadrants++;
+    common::totalQuadrants++;
     kbs = setContent(klingons, bases, stars);
 }
 
@@ -77,61 +78,6 @@ void Quadrant::whiteBoxTest()
 
 #endif
 
-// Generates the number of klingons in a quadrant
-int Quadrant::genKlingons()
-{ 
-    static constexpr float KLINGON_CHANCE_1 = 0.2;
-    static constexpr float KLINGON_CHANCE_2 = 0.05;
-    static constexpr float KLINGON_CHANCE_3 = 0.02;
-
-    float r = common::random();
-
-    if (r <= KLINGON_CHANCE_1)
-        return 1; // 20% chance of 1 klingon to exist in this quadrant
-    else if (r <= KLINGON_CHANCE_1 + KLINGON_CHANCE_2 && r > KLINGON_CHANCE_1)
-        return 2; // 5% chance of 2 klingon to exist in this quadrant
-    else if (r <= KLINGON_CHANCE_1 + KLINGON_CHANCE_2 + KLINGON_CHANCE_3 && r > KLINGON_CHANCE_1 + KLINGON_CHANCE_2)
-        return 3; // 2% chance of 3 klingon to exist in this quadrant
-
-    return 0;
-}
-
-// Generates the number of bases in a quadrant
-int Quadrant::genBases()
-{
-    static int totalBases = 0;
-    static constexpr int BASE_MAX_GALAXY = 2;
-    static constexpr float BASE_CHANCE = 0.04;
-
-    if (totalBases < BASE_MAX_GALAXY)
-    {
-        // 4% chance of a quadrant having a base
-        if (common::random() <= BASE_CHANCE)
-        {
-            totalBases++;
-            return 1;
-        }
-    }
-
-    static constexpr int AMOUNT_OF_QUADRANTS = 64;
-
-    // checks if there has not been any bases generated yet,
-    // if not then add one to the last quadrant
-    if (totalQuadrants == AMOUNT_OF_QUADRANTS && totalBases == 0)
-    {
-        totalBases++;
-        return 1;
-    }
-
-    return 0;
-}
-
-// Randomly generates a random number of stars between 1-8
-int Quadrant::genStars()
-{
-    return common::randomInt(STAR_MIN, STAR_MAX);
-}
-
 // Encodes klingons, bases, and stars into a single integer (KBS format)
 int Quadrant::setContent(int klingons, int bases, int stars)
 {
@@ -171,5 +117,5 @@ uint16_t populate() {
         - Max of 1 per quadrant, and no more than 2 for each galaxy
     */
 
-    return Quadrant::setContent(Quadrant::genKlingons(), Quadrant::genBases(), Quadrant::genStars());
+    return Quadrant::setContent(common::genKlingons(), common::genBases(), common::genStars());
 }

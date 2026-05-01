@@ -1,6 +1,6 @@
-add_executable(random_test src/random.cpp)
+add_executable(common_test src/main.cpp)
 
-target_link_libraries(random_test PRIVATE common)
+target_link_libraries(common_test PRIVATE common)
 
-target_include_directories(random_test PRIVATE src)
-target_include_directories(random_test PRIVATE ../common/include)
+target_include_directories(common_test PRIVATE src)
+target_include_directories(common_test PRIVATE ../common/include)
