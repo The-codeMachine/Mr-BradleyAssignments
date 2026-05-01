@@ -1,5 +1,6 @@
 #pragma once
 #include <cstdint>
+#include <vector>
 
 /**
  * random.hpp includes operations for generating pseudo-random numbers
@@ -22,9 +23,15 @@
 namespace common
 {
 
+    double random();
+
     uint32_t generateRandom32();
-    uint32_t generateRandom32Range(int min, int max);
+    int randomInt(int min, int max);
 
     float generateRandomPercent();
+
+    int weightChoice(const std::vector<double>& weights);
+
+    void randomTestDriver();
 
 } // namespace common

@@ -84,7 +84,7 @@ int Quadrant::genKlingons()
     static constexpr float KLINGON_CHANCE_2 = 0.05;
     static constexpr float KLINGON_CHANCE_3 = 0.02;
 
-    float r = common::generateRandomPercent();
+    float r = common::random();
 
     if (r <= KLINGON_CHANCE_1)
         return 1; // 20% chance of 1 klingon to exist in this quadrant
@@ -106,7 +106,7 @@ int Quadrant::genBases()
     if (totalBases < BASE_MAX_GALAXY)
     {
         // 4% chance of a quadrant having a base
-        if (common::generateRandomPercent() <= BASE_CHANCE)
+        if (common::random() <= BASE_CHANCE)
         {
             totalBases++;
             return 1;
@@ -129,7 +129,7 @@ int Quadrant::genBases()
 // Randomly generates a random number of stars between 1-8
 int Quadrant::genStars()
 {
-    return common::generateRandom32Range(STAR_MIN, STAR_MAX);
+    return common::randomInt(STAR_MIN, STAR_MAX);
 }
 
 // Encodes klingons, bases, and stars into a single integer (KBS format)

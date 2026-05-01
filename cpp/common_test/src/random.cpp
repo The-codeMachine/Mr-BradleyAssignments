@@ -13,12 +13,12 @@ int main() {
 
     std::cout << num << "\n";
 
-    num = common::generateRandom32Range(1, 100);
+    num = common::randomInt(1, 100);
 
     assert(num >= 1 && num <= 100);
     std::cout << "Num: " << num << ", expected between 1 and 100\n";
 
-    num = common::generateRandom32Range(204, 10012);
+    num = common::randomInt(204, 10012);
 
     assert(num >= 204 && num <= 10012);
     std::cout << "Num: " << num << ", expected between 204 and 10012\n";
