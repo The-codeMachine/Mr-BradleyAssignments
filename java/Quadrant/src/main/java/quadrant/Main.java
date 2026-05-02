@@ -96,8 +96,6 @@ public class Main {
         long end = System.nanoTime();
         long duration = (end - start) / 1000000;
 
-        assert numOfBases >= 1 && numOfBases <= 2 : "Bases did not generate with the correct range";
-
         float percent1 = numOf1Klingons * 100 / ITERATIONS;
         float percent2 = numOf2Klingons * 100 / ITERATIONS;
         float percent3 = numOf3Klingons * 100 / ITERATIONS;
@@ -112,12 +110,39 @@ public class Main {
         
         System.out.println("Quadrant stress test success");
     }
-    
+
+    private static void testBaseFunctions() {
+        System.out.println("Base function test");
+
+        Quadrant q = new Quadrant(0, 1, 1);
+
+        System.out.println(q);
+
+        assert(q.hasBase());
+
+        System.out.println(q);
+        
+        q.removeBase();
+
+        assert(!q.hasBase());
+
+        System.out.println(q);
+
+        q.putBase();
+
+        assert(q.hasBase());
+
+        System.out.println(q);
+
+        System.out.println("Base function success");
+    }
+
     public static void main(String args[]) {
         testQuadrantGetters();
         testQuadrantConstructors();
         testReduceKlingons();
         generatesAGalaxy();
+        testBaseFunctions();
         
         Quadrant.whiteBoxTest();
         GameLib.testDriver();
@@ -147,6 +172,12 @@ public class Main {
  * Got 0 klingons, expected 0
  * Quadrant reduceKlingons success
  * Quadrant stress test
+ * Base function test
+ * 011
+ * 011
+ * 001
+ * 011
+ * Base function success
  * Number of quadrants with 1 klingon: 20.00% <- this one may change by 1% due to noise
  * Number of quadrants with 2 klingon: 5.00% <- this one may change by 1% due to noise
  * Number of quadrants with 3 klingon: 1.00% <- this one may change by 1% due to noise

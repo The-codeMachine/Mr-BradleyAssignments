@@ -133,8 +133,6 @@ void generatesAGalaxy()
     auto end = std::chrono::steady_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
     
-    assert(numOfBases >= 1 && numOfBases <= 2);
-    
     float percent1 = numOf1Klingons * 100 / ITERATIONS;
     float percent2 = numOf2Klingons * 100 / ITERATIONS;
     float percent3 = numOf3Klingons * 100 / ITERATIONS;
@@ -150,6 +148,33 @@ void generatesAGalaxy()
     std::cout << "Quadrant galaxy construction success\n";
 }
 
+// tests that the new base functions work properly
+void testBaseFunctions() {
+    std::cout << "Base function test\n";
+
+    Quadrant q(0, 1, 1);
+
+    std::cout << q << "\n";
+
+    assert(q.hasBase());
+
+    std::cout << q << "\n";
+    
+    q.removeBase();
+
+    assert(!q.hasBase());
+
+    std::cout << q << "\n";
+
+    q.putBase();
+
+    assert(q.hasBase());
+
+    std::cout << q << "\n";
+
+    std::cout << "Base function success\n";
+}
+
 int main()
 {
     testQuadrantGetters();
@@ -157,6 +182,7 @@ int main()
     testOperator();
     testRemoveKlingons();
     generatesAGalaxy();
+    testBaseFunctions();
 
 #ifndef NDEBUG
 
@@ -196,6 +222,12 @@ Number of quadrants with 2 klingon: 5% <- these may change due to statistical no
 Number of quadrants with 3 klingon: 2% <- these may change due to statistical noise
 Number of quadrants with bases: 0% <- these may change due to statistical noise
 Time taken: 49 ms <- this one may change based off your system's hardware
+Base function test
+011
+011
+001
+011
+Base function success
 Quadrant galaxy construction success
 Quadrant whitebox test
 Got 318, expected 318

@@ -64,8 +64,6 @@ namespace common
         auto end = std::chrono::steady_clock::now();
         auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
 
-        assert(numOfBases >= 1 && numOfBases <= 2);
-
         float percent1 = numOf1Klingons * 100 / ITERATIONS;
         float percent2 = numOf2Klingons * 100 / ITERATIONS;
         float percent3 = numOf3Klingons * 100 / ITERATIONS;

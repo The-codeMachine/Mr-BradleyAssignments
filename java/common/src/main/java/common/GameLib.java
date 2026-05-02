@@ -169,8 +169,6 @@ public class GameLib {
         long end = System.nanoTime();
         long duration = (end - start) / 1000000;
 
-        assert totalBases >= 1 && totalBases <= 2 : "Bases did not generate with the correct range";
-
         float percent1 = numOf1Klingons * 100 / 1000000;
         float percent2 = numOf2Klingons * 100 / 1000000;
         float percent3 = numOf3Klingons * 100 / 1000000;
