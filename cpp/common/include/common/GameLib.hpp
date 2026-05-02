@@ -17,10 +17,7 @@ namespace common {
 
     void genTestDriver();
     void testDriver();
-
-    extern int totalQuadrants;
-    extern int totalBases;
-
+    
 } // namespace common
 
 /*

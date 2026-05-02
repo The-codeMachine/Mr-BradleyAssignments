@@ -5,7 +5,7 @@ package quadrant;
  * of the number of each item present. Each Quadrant may
  * hold Klingons [0..3], Bases [0..1], and Stars [1..8].
  *
- * The contents are packed into a 16-bit data type (char)
+ * The contents are packed into a 16-bit data type (uint16_t)
  * whose valid range is [1..318].
  *
  * The Klingons  value is stored in the 100's position
@@ -17,7 +17,7 @@ package quadrant;
  * 
  * There can only be 2 bases for the entire galaxy,
  * and there must be at least 1 base for the galaxy. 
- * There is a 5% chance for a base to generate inside a quadrant.  
+ * There is a 4% chance for a base to generate inside a quadrant. 
  *
  * There is a 20% chance for there to be 1 klingon in a quadrant,
  * 5% chance for 2 klingons, and 2% chance for 3 klingons in the quadrant. 
@@ -33,6 +33,8 @@ package quadrant;
  *      use with displaying the Galactic Map eg, "318", or "001"
  *      
  *  o provides the ability to decrement the number of Klingons    
+ *  o ability to check if there is a base inside the quadrant
+ *  o ability to remove, or add a base 
  *
  * @author Mr. Bradley
  * @version SPRING 2026
@@ -107,6 +109,13 @@ public class Quadrant {
      */
     public void putBase() {
         kbs = setContent(klingons(), bases() + 1, stars());
+    }
+
+    /**
+     * Removes a base from a quadrant (to ensure it does not exceed 2 per galaxy)
+     */
+    public void removeBase() {
+        kbs = setContent(klingons(), 0, stars());
     }
 
     /**

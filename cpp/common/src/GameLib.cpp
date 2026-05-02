@@ -6,7 +6,6 @@
 namespace common
 {
 
-    int totalQuadrants = 0;
     int totalBases = 0;
 
     // Generates the number of klingons in a quadrant
@@ -21,27 +20,9 @@ namespace common
     // Generates the number of bases in a quadrant
     int genBases()
     {
-        static int totalBases = 0;
-        static constexpr int BASE_MAX_GALAXY = 2;
-        static constexpr float BASE_CHANCE = 0.04;
-
-        if (totalBases < BASE_MAX_GALAXY)
+        // 4% chance of a quadrant having a base
+        if (common::random() <= 0.04)
         {
-            // 4% chance of a quadrant having a base
-            if (common::random() <= BASE_CHANCE)
-            {
-                totalBases++;
-                return 1;
-            }
-        }
-
-        static constexpr int AMOUNT_OF_QUADRANTS = 64;
-
-        // checks if there has not been any bases generated yet,
-        // if not then add one to the last quadrant
-        if (totalQuadrants == AMOUNT_OF_QUADRANTS && totalBases == 0)
-        {
-            totalBases++;
             return 1;
         }
 
@@ -96,8 +77,6 @@ namespace common
         std::cout << "Number of quadrants with bases: " << percent4 << "%\n";
 
         std::cout << "Time taken: " << duration.count() << " ms\n";
-        totalQuadrants = 0;
-        totalBases = 0;
 
         std::cout << "Generation test success\n";
     }

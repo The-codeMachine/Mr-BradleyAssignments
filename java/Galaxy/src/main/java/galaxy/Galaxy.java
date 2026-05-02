@@ -18,6 +18,7 @@ import common.GameLib;
 
 public class Galaxy {
     public Galaxy() {
+        totalBases = 0;
         populateGalaxy();
     }
 
@@ -63,17 +64,17 @@ public class Galaxy {
      */
     @Override
     public String toString() {
-        String s = "";
+        StringBuilder sb = new StringBuilder();
 
         for (int i = 0; i < 8; ++i) {
             for (int j = 0; j < 8; ++j) {
-                s += map[i][j].toString() + " ";
+                sb.append(map[i][j]).append(" ");
             }
 
-            s += "\n";
+            sb.append("\n");
         }
 
-        return s;
+        return sb.toString();
     }
 
     /**
@@ -81,17 +82,29 @@ public class Galaxy {
      * It ensures it has at least one base, and a max of two bases
      */
     private void populateGalaxy() {
+        totalBases = 0;
+
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                map[i][j] = new Quadrant(); 
+                map[i][j] = new Quadrant();
+
+                if (map[i][j].hasBase()) {
+                    if (totalBases < 2) {
+                        totalBases++;
+                    } else {
+                        map[i][j].removeBase();
+                    }
+                }
             }
         }
 
-        if (GameLib.totalBases < 1) {
+        // Ensure at least 1 base exists
+        if (totalBases < 1) {
             int i = GameLib.randomInt(0, 7);
             int j = GameLib.randomInt(0, 7);
 
             map[i][j].putBase();
+            totalBases = 1;
         }
     }
 
@@ -133,10 +146,10 @@ public class Galaxy {
             }
         }
 
-        double klingon1Percent = klingon1 * 100 / 64;
-        double klingon2Percent = klingon2 * 100 / 64;
-        double klingon3Percent = klingon3 * 100 / 64;
-        double basePercent = bases * 100 / 64;
+        double klingon1Percent = klingon1 * 100.0 / 64;
+        double klingon2Percent = klingon2 * 100.0 / 64;
+        double klingon3Percent = klingon3 * 100.0 / 64;
+        double basePercent = bases * 100.0 / 64;
 
         System.out.printf("Percent of 1 Klingons: %.2f%%\n", klingon1Percent);
         System.out.printf("Percent of 2 Klingons: %.2f%%\n", klingon2Percent);
@@ -148,6 +161,7 @@ public class Galaxy {
 
     // Data
     private Quadrant[][] map = new Quadrant[8][8];
+    private int totalBases;
 }
 
 /**

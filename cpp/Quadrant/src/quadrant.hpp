@@ -35,6 +35,8 @@
  *      use with displaying the Galactic Map eg, "318", or "001"
  *      
  *  o provides the ability to decrement the number of Klingons    
+ *  o ability to check if there is a base inside the quadrant
+ *  o ability to remove, or add a base 
  *
  * @author Mr. Bradley
  * @version SPRING 2026
@@ -51,6 +53,10 @@ public:
     int stars() const;
 
     void reduceKlingons();
+
+    void putBase();
+    bool hasBase() const;
+    void removeBase();
 
 #ifndef NDEBUG
 

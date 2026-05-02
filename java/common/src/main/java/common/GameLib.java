@@ -97,12 +97,9 @@ public class GameLib {
      * @return the number of bases for 1 quadrant
      */
     public static int genBases() {
-        if (totalBases < 2) {
-            // 4% chance of a quadrant having a base
-            if (random() <= 0.04) {
-                totalBases++;
-                return 1;
-            }
+        // 4% chance of a quadrant having a base
+        if (random() <= 0.04) {
+            return 1;
         }
 
         return 0;
@@ -154,6 +151,7 @@ public class GameLib {
         int numOf1Klingons = 0;
         int numOf2Klingons = 0;
         int numOf3Klingons = 0;
+        int totalBases = 0;
         for (long i = 0; i < 1000000; ++i) {
             int r = genKlingons();
 
@@ -164,7 +162,8 @@ public class GameLib {
             else if (r == 3)
                 numOf3Klingons++;
 
-            genBases();
+            if (genBases() == 1) 
+                totalBases++;
         }
 
         long end = System.nanoTime();
@@ -183,7 +182,6 @@ public class GameLib {
         System.out.printf("Number of quadrants with 1 base: %.2f%% \n", percent4);
 
         System.out.printf("Time taken: %d ms\n", duration);
-        totalBases = 0;
 
         System.out.println("Generation test success");
     }
@@ -196,9 +194,6 @@ public class GameLib {
 
         System.out.println("GameLib test driver run success");
     }
-
-    // Will be made part of galaxy once galaxy is made
-    public static int totalBases = 0;
 }
 
 /*

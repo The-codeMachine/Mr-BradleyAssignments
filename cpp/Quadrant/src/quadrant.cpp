@@ -14,7 +14,6 @@ Quadrant::Quadrant() : Quadrant(common::genKlingons(), common::genBases(), commo
 // Constructs a new quadrant based off the number of klingons, bases, and stars
 Quadrant::Quadrant(int klingons, int bases, int stars)
 {
-    common::totalQuadrants++;
     kbs = setContent(klingons, bases, stars);
 }
 
@@ -41,6 +40,25 @@ void Quadrant::reduceKlingons()
 {
     if (kbs >= 100) // removes overhead of klingons()
         kbs = setContent(klingons() - 1, bases(), stars());
+}
+
+// Puts a base into the quadrant (to fix if there are no bases)
+void Quadrant::putBase() {
+    int base = bases();
+
+    if (base < 1) {
+        kbs = setContent(klingons(), base + 1, stars()); 
+    }
+}
+
+// Returns true if the quadrant has a base
+bool Quadrant::hasBase() const {
+    return bases() == 1;
+}
+
+// Removes all bases from a quadrant
+void Quadrant::removeBase() {
+    kbs = setContent(klingons(), 0, stars());
 }
 
 #ifndef NDEBUG
