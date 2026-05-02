@@ -1,15 +1,13 @@
 /**
  * A galaxy holds 64 Quadrants, using an 8 by 8 grid. 
  * A galaxy can only have 2 bases at most, and a minimum
- * of one base.
+ * of 1 base.
  * 
  * Operations include:
  *  - Constructing a galaxy (creates 64 quadrants, and ensures it has at least 1 base, and at most 2)
  *  - index the quadrant using a 2d map 
  *  - printing the map 
  *  - formats the map into a string
- * 
- * Contains a Quadrant variable named map which is a 8 by 8 grid of quadrants. 
  * 
  */
 
@@ -26,26 +24,26 @@ public class Galaxy {
     /**
      * Gets the quadrant located at [index][index2]
      * 
-     * @param index
+     * @param index 
      * @param index2
      * 
-     * @return a Quadrant located at [@index][@index2]
+     * @apiNote index, and index2 must be between 0-7 (referencing an 8 by 8 grid)
+     * @apiNote index represents the row
+     * @apiNote index2 represents the column
+     * 
+     * @return a Quadrant located at [index][index2]
      */
     public Quadrant getQuadrant(int index, int index2) {
+        assert index >= 0 && index <= 7 && index2 >= 0 && index2 <= 7 : "Index must be within given parameters (an 8, by 8 grid)";
+
         return map[index][index2];
     } 
 
     /**
-     * Prints this map into the console
+     * Prints the map into the console
      */
     public void printMap() {
-        for (int i = 0; i < 8; ++i) {
-            for (int j = 0; j < 8; ++j) {
-                System.out.printf(map[i][j].toString() + " ");
-            }
-
-            System.out.printf("\n");
-        }
+        System.out.println(this.toString());
     }
 
     /**
@@ -97,12 +95,88 @@ public class Galaxy {
         }
     }
 
+    /**
+     * tests the internal private functions
+     */
     public static void whiteBoxTest() {
+        System.out.println("White box test");
+
         Galaxy g = new Galaxy();
 
         g.printMap();
+
+        System.out.printf("\n\n"); // padding between the maps
+
+        System.out.println(g);
+
+        // verifies there is the correct number of klingons, and bases
+        int klingon1 = 0;
+        int klingon2 = 0;
+        int klingon3 = 0;
+        int bases = 0;
+        for (int i = 0; i < 8; ++i) {
+            for (int j = 0; j < 8; ++j) {
+                Quadrant q = g.getQuadrant(i, j);
+                
+                if (q.hasBase()) {
+                    bases++;
+                }
+
+                int klingons = q.klingons();
+                if (klingons == 1) {
+                    klingon1++;
+                } else if (klingons == 2) {
+                    klingon2++;
+                } else if (klingons == 3) {
+                    klingon3++;
+                }
+            }
+        }
+
+        double klingon1Percent = klingon1 * 100 / 64;
+        double klingon2Percent = klingon2 * 100 / 64;
+        double klingon3Percent = klingon3 * 100 / 64;
+        double basePercent = bases * 100 / 64;
+
+        System.out.printf("Percent of 1 Klingons: %.2f%%\n", klingon1Percent);
+        System.out.printf("Percent of 2 Klingons: %.2f%%\n", klingon2Percent);
+        System.out.printf("Percent of 3 Klingons: %.2f%%\n", klingon3Percent);
+        System.out.printf("Percent of Bases: %.2f%%\n", basePercent);
+
+        System.out.println("White box test success");
     }
 
     // Data
     private Quadrant[][] map = new Quadrant[8][8];
 }
+
+/**
+ * Sample Output
+ * 
+ * White box test
+ * 006 105 004 202 005 107 002 008 <- maps may vary 
+ * 002 007 015 105 003 108 002 007 
+ * 005 106 106 107 115 106 103 008 
+ * 002 006 003 008 002 003 101 005 
+ * 006 001 304 008 005 008 002 001 
+ * 001 002 003 005 105 005 102 108 
+ * 005 107 003 006 005 101 108 002 
+ * 004 005 102 007 001 002 001 301 
+ * 
+ * 
+ * 006 105 004 202 005 107 002 008 
+ * 002 007 015 105 003 108 002 007 
+ * 005 106 106 107 115 106 103 008 
+ * 002 006 003 008 002 003 101 005 
+ * 006 001 304 008 005 008 002 001 
+ * 001 002 003 005 105 005 102 108 
+ * 005 107 003 006 005 101 108 002 
+ * 004 005 102 007 001 002 001 301 
+ * 
+ * Percent of 1 Klingons: 28.00% <- may vary due to only generating 64 quadrants
+ * Percent of 2 Klingons: 1.00%
+ * Percent of 3 Klingons: 3.00%
+ * Percent of Bases: 3.00% 
+ * White box test success
+ * 
+ */
