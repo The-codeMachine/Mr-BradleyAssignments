@@ -79,7 +79,7 @@ public class Main {
         int numOf2Klingons = 0;
         int numOf3Klingons = 0;
         int numOfBases = 0; 
-        for (long i = 0; i < 1000000; ++i) {
+        for (long i = 0; i < ITERATIONS; ++i) {
             Quadrant q = new Quadrant();
 
             if (q.klingons() == 1)

@@ -59,7 +59,6 @@ public class Quadrant {
      * @param stars
      */
     public Quadrant(int klingons, int bases, int stars) {
-        GameLib.totalQuadrants++;
         kbs = setContent(klingons, bases, stars);
     }
 
@@ -93,6 +92,21 @@ public class Quadrant {
     public void reduceKlingons() {
         if (klingons() >= 1) // removes overhead (instead of using klingons() >= 1)
             kbs = setContent(klingons() - 1, bases(), stars());
+    }
+
+    /**
+     * @return true if this quadrant has a base
+     */
+    public boolean hasBase() {
+        return bases() == 1;
+    }
+
+    /**
+     * Puts a base inside this quadrant, to ensure that there are at least 1
+     * base inside a galaxy
+     */
+    public void putBase() {
+        kbs = setContent(klingons(), bases() + 1, stars());
     }
 
     /**

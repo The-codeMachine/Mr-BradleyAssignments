@@ -39,9 +39,7 @@ public class GameLib {
      * 
      * Makes a weighted choice outputting the array's index for that chance
      * 
-     * @apiNote returns 0 for an error
-     * @apiNote the total number of all the weights combined must = 100% (might
-     *          change later)
+     * @apiNote throws an IllegalArgumentException if there are any errors
      * 
      * @param weights
      * @return an int representing the array's index for that chance
@@ -107,13 +105,6 @@ public class GameLib {
             }
         }
 
-        // checks if there has not been any bases generated yet,
-        // if not then add one to the last quadrant
-        if (totalQuadrants == 64 && totalBases == 0) {
-            totalBases++;
-            return 1;
-        }
-
         return 0;
     }
 
@@ -166,8 +157,6 @@ public class GameLib {
         for (long i = 0; i < 1000000; ++i) {
             int r = genKlingons();
 
-            totalQuadrants++;
-
             if (r == 1)
                 numOf1Klingons++;
             else if (r == 2)
@@ -194,7 +183,7 @@ public class GameLib {
         System.out.printf("Number of quadrants with 1 base: %.2f%% \n", percent4);
 
         System.out.printf("Time taken: %d ms\n", duration);
-        totalQuadrants = 0; // reset value
+        totalBases = 0;
 
         System.out.println("Generation test success");
     }
@@ -209,8 +198,7 @@ public class GameLib {
     }
 
     // Will be made part of galaxy once galaxy is made
-    private static int totalBases = 0;
-    public static int totalQuadrants = 0;
+    public static int totalBases = 0;
 }
 
 /*

@@ -1,0 +1,16 @@
+plugins {
+    id 'application'
+}
+
+dependencies {
+    implementation project(':common')
+    implementation project(':quadrant')
+}
+
+tasks.withType(JavaExec).configureEach {
+    enableAssertions = true
+}
+
+application {
+    mainClass = 'galaxy.Main'
+}
