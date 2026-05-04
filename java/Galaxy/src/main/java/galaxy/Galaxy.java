@@ -111,7 +111,7 @@ public class Galaxy {
     /**
      * tests the internal private functions
      */
-    public static void whiteBoxTest() {
+    static void whiteBoxTest() {
         System.out.println("White box test");
 
         Galaxy g = new Galaxy();

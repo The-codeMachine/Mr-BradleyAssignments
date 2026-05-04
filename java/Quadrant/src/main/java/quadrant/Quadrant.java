@@ -49,7 +49,7 @@ public class Quadrant {
      * Generates a quadrant using a RNG
      */
     public Quadrant() {
-        this(GameLib.genKlingons(), GameLib.genBases(), GameLib.genStars());
+        this(genKlingons(), genBases(), genStars());
     }
 
     /**
@@ -92,7 +92,7 @@ public class Quadrant {
      * Removes one Klingon from this quadrant if one exists
      */
     public void reduceKlingons() {
-        if (klingons() >= 1) // removes overhead (instead of using klingons() >= 1)
+        if (klingons() > 0)
             kbs = setContent(klingons() - 1, bases(), stars());
     }
 
@@ -100,8 +100,15 @@ public class Quadrant {
      * @return true if this quadrant has a base
      */
     public boolean hasBase() {
-        return bases() == 1;
+        return bases() >= 1;
     }
+
+    /*
+    Could not put the bases functions inside Galaxy 
+    because they cannot effect the Quadrant's private 
+    values. I cannot put it as default visibility because
+    Galaxy and Quadrant are in different packages.
+    */
 
     /**
      * Puts a base inside this quadrant, to ensure that there are at least 1
@@ -118,10 +125,53 @@ public class Quadrant {
         kbs = setContent(klingons(), 0, stars());
     }
 
+    
+    /**
+     * Generates the number of klingons in a quadrant using the following rules:
+     * - 20% for 1 klingon to generate
+     * - 5% for 2 klingons to generate
+     * - 2% for 3 klingons to generate
+     * 
+     * @return the number of klingons for 1 quadrant
+     */
+    private static int genKlingons() {
+        // klingons: 0 1 2 3
+        // 73% 20% 5% 2%
+        int r = GameLib.weightedChoice(new double[] { 0.73, 0.2, 0.05, 0.02 });
+
+        return r;
+    }
+
+    /**
+     * Generates the number of bases in a quadrant using the following rules:
+     * - 4% chance for one base inside the quadrant
+     * - No more than 2 per galaxy
+     * 
+     * @return the number of bases for 1 quadrant
+     */
+    private static int genBases() {
+        // 4% chance of a quadrant having a base
+        if (GameLib.chanceOf() <= 0.04) {
+            return 1;
+        }
+
+        return 0;
+    }
+
+    /**
+     * Randomly generates a random number of stars between 1-8
+     * 
+     * @return number of stars for 1 quadrant
+     */
+    private static int genStars() {
+        // star min, star max
+        return GameLib.randomInt(1, 8);
+    }
+
     /**
      * Tests the setContent function, and the toString method
      */
-    public static void whiteBoxTest() {
+    static void whiteBoxTest() {
         System.out.println("Quadrant whitebox test");
 
         Quadrant q = new Quadrant();
@@ -221,7 +271,7 @@ public class Quadrant {
      * @return the Quadrant's new populated value
      */
     static char populate() {
-        return setContent(GameLib.genKlingons(), GameLib.genBases(), GameLib.genStars());
+        return setContent(genKlingons(), genBases(), genStars());
     }
 
     // Data

@@ -1,6 +1,18 @@
 package common;
 
-import java.util.Random;
+/**
+ * 
+ * GameLib holds a bunch of random number generation functions, 
+ * as well as a few test drivers, and verification tests. 
+ * 
+ * Operations include:
+ *  - Generate a random number between 0, and 1
+ *  - Generate a random int between min, and max
+ *  - Generate a random number between min, and max
+ *  - Make a weighted choice 
+ *  - Check if a number is between two
+ * 
+ */
 
 public class GameLib {
 
@@ -12,7 +24,7 @@ public class GameLib {
      * 
      * @return a random number between 0 and 1
      */
-    public static double random() {
+    public static double chanceOf() {
         return Math.random();
     }
 
@@ -29,10 +41,23 @@ public class GameLib {
     public static int randomInt(int min, int max) {
         assert min < max : "Max must be greater than min";
 
-        final Random RAND = new Random();
+        return (int)(min + (max - min) * Math.random());
+    }
 
-        // min is inclusive, but max is exclusive, so +1 makes it inclusive as well
-        return RAND.nextInt(min, max + 1);
+    /**
+     * 
+     * Generates a random double between min, and max
+     * 
+     * @apiNote max must be greater than min (checks via assert)
+     * 
+     * @param min (inclusive)
+     * @param max (inclusive)
+     * @return a random double between min, and max
+     */
+    public static double randomInRange(double min, double max) {
+        assert min < max : "Max must be greater than min";
+
+        return min + (max - min) * Math.random();
     }
 
     /**
@@ -58,7 +83,7 @@ public class GameLib {
         if (total <= 0)
             throw new IllegalArgumentException("Total weight must be > 0");
 
-        double r = random() * total;
+        double r = chanceOf() * total;
         double cumulative = 0.0;
 
         for (int i = 0; i < weights.length; ++i) {
@@ -71,55 +96,45 @@ public class GameLib {
         return weights.length - 1;
     }
 
-    // Quadrant generation functions
-
+    private static double _rnd;
     /**
-     * Generates the number of klingons in a quadrant using the following rules:
-     * - 20% for 1 klingon to generate
-     * - 5% for 2 klingons to generate
-     * - 2% for 3 klingons to generate
-     * 
-     * @return the number of klingons for 1 quadrant
+     * This function is the MS BASIC function of the same name
+     * Specifically, if RND is called with a non-zero value a new random
+     * value will be generated and stored in _rnd static variable (retaining its value)
+     * across calls. If RND is called with a zero value, the last random value
+     * generated is returned.
+     *  
+     * NB: support for setting the seed ( < 0 parameter value) has been omitted.
      */
-    public static int genKlingons() {
-        // klingons: 0 1 2 3
-        // 73% 20% 5% 2%
-        int r = weightedChoice(new double[] { 0.73, 0.2, 0.05, 0.02 });
-
-        return r;
+    private static double RND( int n ) {
+        if( n != 0 ) 
+            _rnd = Math.random();  // generates a new rand
+        
+        return _rnd;                        // otherwise returns last
+    }
+    
+    private static double RND() { 
+        return RND(1); 
     }
 
     /**
-     * Generates the number of bases in a quadrant using the following rules:
-     * - 4% chance for one base inside the quadrant
-     * - No more than 2 per galaxy
      * 
-     * @return the number of bases for 1 quadrant
-     */
-    public static int genBases() {
-        // 4% chance of a quadrant having a base
-        if (random() <= 0.04) {
-            return 1;
-        }
-
-        return 0;
-    }
-
-    /**
-     * Randomly generates a random number of stars between 1-8
+     * Determines if a value is between low, and high
      * 
-     * @return number of stars for 1 quadrant
+     * @param value
+     * @param low (inclusive)
+     * @param high (inclusive)
+     * @return determines if a value is between low, and high
      */
-    public static int genStars() {
-        // star min, star max
-        return randomInt(1, 8);
+    private static boolean isBetween(double value, double low, double high) {
+        return low <= value && value <= high;
     }
 
     // tests the random number generators functions work
     private static void randomTestDriver() {
         System.out.println("Random test");
 
-        double r = random();
+        double r = chanceOf();
         assert r >= 0 && r <= 1 : "New random number is not between 1, and 0";
         System.out.printf("New random number: %.2f\n", r);
 
@@ -130,6 +145,10 @@ public class GameLib {
         double rb = randomInt(1, 100);
         assert rb >= 1 && rb <= 100 : "Second new random int is not generated within parameters";
         System.out.printf("Second new random number (between 1, and 100): %.2f\n", rb);
+
+        double rc = randomInRange(1, 100);
+        assert rc >= 1 && rc <= 100 : "Second new random int is not generated within parameters";
+        System.out.printf("Second new random number (between 1, and 100): %.2f\n", rc);
 
         int i = weightedChoice(new double[] { 0.73, 0.2, 0.05, 0.02 });
         assert i >= 0 && i <= 3 : "Weighted choice did not generate within parameters";
@@ -142,53 +161,24 @@ public class GameLib {
         System.out.println("Random test success");
     }
 
-    // tests that the generation functions work properly
-    private static void genTestDriver() {
-        System.out.println("Generation test");
+    // tests that the isBetween function works correctly
+    private static void isBetweenTest() {
+        System.out.println("Is between test");
 
-        long start = System.nanoTime();
+        assert isBetween(4, 1, 10) : "Is between has false positive";
 
-        int numOf1Klingons = 0;
-        int numOf2Klingons = 0;
-        int numOf3Klingons = 0;
-        int totalBases = 0;
-        for (long i = 0; i < 1000000; ++i) {
-            int r = genKlingons();
+        assert !isBetween(-4, 1, 10) : "Is between did not detect an invalid value";
 
-            if (r == 1)
-                numOf1Klingons++;
-            else if (r == 2)
-                numOf2Klingons++;
-            else if (r == 3)
-                numOf3Klingons++;
+        assert !isBetween(14, 1, 10) : "Is between did not detect an invalid value";
 
-            if (genBases() == 1) 
-                totalBases++;
-        }
-
-        long end = System.nanoTime();
-        long duration = (end - start) / 1000000;
-
-        float percent1 = numOf1Klingons * 100 / 1000000;
-        float percent2 = numOf2Klingons * 100 / 1000000;
-        float percent3 = numOf3Klingons * 100 / 1000000;
-        float percent4 = totalBases * 100 / 1000000;
-
-        System.out.printf("Number of quadrants with 1 klingon: %.2f%% \n", percent1);
-        System.out.printf("Number of quadrants with 2 klingon: %.2f%% \n", percent2);
-        System.out.printf("Number of quadrants with 3 klingon: %.2f%% \n", percent3);
-        System.out.printf("Number of quadrants with 1 base: %.2f%% \n", percent4);
-
-        System.out.printf("Time taken: %d ms\n", duration);
-
-        System.out.println("Generation test success");
+        System.out.println("Is between test success");
     }
 
     public static void testDriver() {
         System.out.println("GameLib test driver run");
 
         randomTestDriver();
-        genTestDriver();
+        isBetweenTest();
 
         System.out.println("GameLib test driver run success");
     }
@@ -197,20 +187,15 @@ public class GameLib {
 /*
  * Sample Output
  * 
- * GameLib test driver run
  * Random test
- * New random number: 0.74 <- these may change due to randomness
- * New random number (between 1, and 100): 93.00
- * Second new random number (between 1, and 100): 31.00
- * Weighted choice output: 0 
- * Weighted choice output: 1
+ * New random number: 0.43 <- random numbers, so they may change
+ * New random number (between 1, and 100): 25.00
+ * Second new random number (between 1, and 100): 43.00
+ * Second new random number (between 1, and 100): 63.84
+ * Weighted choice output: 0
+ * Weighted choice output: 2
  * Random test success
- * Generation test
- * Number of quadrants with 1 klingon: 19.00% <- this one may change by 1% due to noise
- * Number of quadrants with 2 klingon: 4.00% <- this one may change by 1% due to noise
- * Number of quadrants with 3 klingon: 2.00% <- this one may change by 1% due to noise
- * Number of quadrants with 1 base: 0.00% <- this one may change by 1% due to noise
- * Time taken: 14 ms <- this one may change due to system hardware
- * Generation test success
+ * Is between test
+ * Is between test success
  * GameLib test driver run success
  */
