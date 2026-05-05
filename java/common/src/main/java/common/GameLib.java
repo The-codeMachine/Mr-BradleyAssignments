@@ -106,13 +106,13 @@ public class GameLib {
      *  
      * NB: support for setting the seed ( < 0 parameter value) has been omitted.
      */
-    private static double RND( int n ) {
-        if( n != 0 ) 
+    private static double RND(int n) {
+        if(n != 0) 
             _rnd = Math.random();  // generates a new rand
         
         return _rnd;                        // otherwise returns last
     }
-    
+
     private static double RND() { 
         return RND(1); 
     }
@@ -147,8 +147,8 @@ public class GameLib {
         System.out.printf("Second new random number (between 1, and 100): %.2f\n", rb);
 
         double rc = randomInRange(1, 100);
-        assert rc >= 1 && rc <= 100 : "Second new random int is not generated within parameters";
-        System.out.printf("Second new random number (between 1, and 100): %.2f\n", rc);
+        assert rc >= 1 && rc <= 100 : "Third new random double is not generated within parameters";
+        System.out.printf("Third new random number (between 1, and 100): %.2f\n", rc);
 
         int i = weightedChoice(new double[] { 0.73, 0.2, 0.05, 0.02 });
         assert i >= 0 && i <= 3 : "Weighted choice did not generate within parameters";
