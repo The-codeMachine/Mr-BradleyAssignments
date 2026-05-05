@@ -26,14 +26,17 @@
 namespace common
 {
 
-    double random();
+    double chanceOf();
 
     uint32_t generateRandom32();
     int randomInt(int min, int max);
+    double randomInRange(double min, double max);
 
     float generateRandomPercent();
 
     int weightChoice(const std::vector<double>& weights);
+
+    double RND();
 
     void randomTestDriver();
 

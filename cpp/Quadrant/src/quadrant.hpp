@@ -68,6 +68,10 @@ public:
     friend uint16_t populate();
 
 private:
+    static int genKlingons();
+    static int genBases();
+    static int genStars();
+
     static int setContent(int klingons, int bases, int stars);
 
 private:

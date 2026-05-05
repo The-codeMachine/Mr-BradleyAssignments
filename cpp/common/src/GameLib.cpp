@@ -6,77 +6,21 @@
 namespace common
 {
 
-    int totalBases = 0;
-
-    // Generates the number of klingons in a quadrant
-    int genKlingons()
-    {
-        // klingons: 0 1 2 3
-        // 73% 20% 5% 2%
-        int r = weightChoice({0.73, 0.2, 0.05, 0.02});
-        return r;
+    bool isBetween(double value, double low, double high) {
+        return low <= value && value <= high;
     }
 
-    // Generates the number of bases in a quadrant
-    int genBases()
+    void isBetweenTest()
     {
-        // 4% chance of a quadrant having a base
-        if (common::random() <= 0.04)
-        {
-            return 1;
-        }
+        std::cout << "Is between test\n";
 
-        return 0;
-    }
+        assert(isBetween(4, 1, 10));
 
-    // Randomly generates a random number of stars between 1-8
-    int genStars()
-    {
-        return common::randomInt(1, 8);
-    }
+        assert(!isBetween(-4, 1, 10));
 
-    void genTestDriver()
-    {
-        std::cout << "Generation test\n";
+        assert(!isBetween(14, 1, 10));
 
-        auto start = std::chrono::steady_clock::now();
-
-        static constexpr int ITERATIONS = 1000000; // iterations high to reduce noise
-        int numOf1Klingons = 0;
-        int numOf2Klingons = 0;
-        int numOf3Klingons = 0;
-        int numOfBases = 0;
-        for (size_t i = 0; i < ITERATIONS; ++i)
-        {
-            double r = genKlingons();
-
-            if (r == 1)
-                numOf1Klingons++;
-            else if (r == 2)
-                numOf2Klingons++;
-            else if (r == 3)
-                numOf3Klingons++;
-
-            if (genBases() == 1)
-                numOfBases++;
-        }
-
-        auto end = std::chrono::steady_clock::now();
-        auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-
-        float percent1 = numOf1Klingons * 100 / ITERATIONS;
-        float percent2 = numOf2Klingons * 100 / ITERATIONS;
-        float percent3 = numOf3Klingons * 100 / ITERATIONS;
-        float percent4 = numOfBases * 100 / ITERATIONS;
-
-        std::cout << "Number of quadrants with 1 klingon: " << percent1 << "%\n";
-        std::cout << "Number of quadrants with 2 klingon: " << percent2 << "%\n";
-        std::cout << "Number of quadrants with 3 klingon: " << percent3 << "%\n";
-        std::cout << "Number of quadrants with bases: " << percent4 << "%\n";
-
-        std::cout << "Time taken: " << duration.count() << " ms\n";
-
-        std::cout << "Generation test success\n";
+        std::cout << "Is between test succes\n";
     }
 
     void testDriver()
@@ -84,7 +28,7 @@ namespace common
         std::cout << "GameLib test driver run\n";
 
         randomTestDriver();
-        genTestDriver();
+        isBetweenTest();
 
         std::cout << "GameLib test driver run success\n";
     }

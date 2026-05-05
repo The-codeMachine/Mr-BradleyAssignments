@@ -9,7 +9,7 @@
 #include <string>
 
 // Constructs a quadrant using a random number generator
-Quadrant::Quadrant() : Quadrant(common::genKlingons(), common::genBases(), common::genStars()) {}
+Quadrant::Quadrant() : Quadrant(genKlingons(), genBases(), genStars()) {}
 
 // Constructs a new quadrant based off the number of klingons, bases, and stars
 Quadrant::Quadrant(int klingons, int bases, int stars)
@@ -42,23 +42,61 @@ void Quadrant::reduceKlingons()
         kbs = setContent(klingons() - 1, bases(), stars());
 }
 
+/*
+Could not put the bases functions inside Galaxy
+because they cannot effect the Quadrant's private
+values. I cannot put it as default visibility because
+Galaxy and Quadrant are in different packages.
+*/
+
 // Puts a base into the quadrant (to fix if there are no bases)
-void Quadrant::putBase() {
+void Quadrant::putBase()
+{
     int base = bases();
 
-    if (base < 1) {
-        kbs = setContent(klingons(), base + 1, stars()); 
+    if (base < 1)
+    {
+        kbs = setContent(klingons(), base + 1, stars());
     }
 }
 
 // Returns true if the quadrant has a base
-bool Quadrant::hasBase() const {
+bool Quadrant::hasBase() const
+{
     return bases() == 1;
 }
 
 // Removes all bases from a quadrant
-void Quadrant::removeBase() {
+void Quadrant::removeBase()
+{
     kbs = setContent(klingons(), 0, stars());
+}
+
+// Generates the number of klingons in a quadrant
+int Quadrant::genKlingons()
+{
+    // klingons: 0 1 2 3
+    // 73% 20% 5% 2%
+    int r = common::weightChoice({0.73, 0.2, 0.05, 0.02});
+    return r;
+}
+
+// Generates the number of bases in a quadrant
+int Quadrant::genBases()
+{
+    // 4% chance of a quadrant having a base
+    if (common::chanceOf() <= 0.04)
+    {
+        return 1;
+    }
+
+    return 0;
+}
+
+// Randomly generates a random number of stars between 1-8
+int Quadrant::genStars()
+{
+    return common::randomInt(1, 8);
 }
 
 #ifndef NDEBUG
@@ -122,18 +160,19 @@ std::ostream &operator<<(std::ostream &os, const Quadrant &qu)
 }
 
 // Populates a Quadrant with klingons, bases, and stars
-uint16_t populate() {
+uint16_t populate()
+{
     /*
         Rules:
-        
-        - 20% chance that 1 klingon is present 
-        - 5% chance that 2 klingons is present 
-        - 2% chance that 3 klingons is present 
+
+        - 20% chance that 1 klingon is present
+        - 5% chance that 2 klingons is present
+        - 2% chance that 3 klingons is present
         - 73% chance that 0 klingons is present
-      
+
         - 4% chance that 1 star base is present
         - Max of 1 per quadrant, and no more than 2 for each galaxy
     */
 
-    return Quadrant::setContent(common::genKlingons(), common::genBases(), common::genStars());
+    return Quadrant::setContent(Quadrant::genKlingons(), Quadrant::genBases(), Quadrant::genStars());
 }

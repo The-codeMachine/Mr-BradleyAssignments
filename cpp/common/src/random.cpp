@@ -16,7 +16,7 @@ namespace common
     return std::mt19937(rd()); }());
 
     // generates a random number between 0, and 1
-    double random() {
+    double chanceOf() {
         static std::uniform_real_distribution<double> dist(0.0, 1.0);
 
         return dist(gen);
@@ -37,6 +37,13 @@ namespace common
         // if this is used a lot you could add caching for the dist
 
         return dist(gen);
+    }
+
+    // Generates a random double between min, and max
+    double randomInRange(double min, double max) {
+        assert(min < max);
+
+        return min + (max - min) * chanceOf();
     }
 
     // Generates a random float number between 0, and 1
@@ -61,7 +68,7 @@ namespace common
         if (total <= 0) 
             std::runtime_error("Total weight must be > 0");
 
-        double r = random() * total;
+        double r = chanceOf() * total;
         double cumulative = 0.0;
 
         for (int i = 0; i < weights.size(); ++i) {
@@ -75,11 +82,32 @@ namespace common
         return weights.size() - 1;
     }
 
+    double _rnd;
+    /**
+     * This function is the MS BASIC function of the same name
+     * Specifically, if RND is called with a non-zero value a new random
+     * value will be generated and stored in _rnd static variable (retaining its value)
+     * across calls. If RND is called with a zero value, the last random value
+     * generated is returned.
+     *  
+     * NB: support for setting the seed ( < 0 parameter value) has been omitted.
+     */
+    double RND(int n) {
+        if( n != 0 ) 
+            _rnd = chanceOf();  // generates a new rand
+        
+        return _rnd;                        // otherwise returns last
+    }
+    
+    double RND() { 
+        return RND(1); 
+    }
+
     // tests the random number generators functions work
     void randomTestDriver() {
         std::cout << "Random test\n";
 
-        double r = random();
+        double r = chanceOf();
         assert(r >= 0 && r <= 1);
         std::cout << "New random number: " << r << "\n";
 
@@ -90,6 +118,10 @@ namespace common
         double rb = randomInt(1, 100);
         assert(rb >= 1 && rb <= 100);
         std::cout << "New random number (between 1, and 100): " << rb << "\n";
+
+        double rc = randomInRange(1, 100);
+        assert(rc >= 1 && rc <= 100);
+        std::cout << "Third new random number (between 1, and 100): " << rc << "\n";
 
         int i = weightChoice({0.73, 0.2, 0.05, 0.02});
         assert(i >= 0 && i <= 3);
