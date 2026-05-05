@@ -58,6 +58,8 @@ public:
     bool hasBase() const;
     void removeBase();
 
+    std::string to_string() const;
+
 #ifndef NDEBUG
 
     static void whiteBoxTest();
