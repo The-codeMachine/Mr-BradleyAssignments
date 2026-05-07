@@ -41,7 +41,7 @@ public class GameLib {
     public static int randomInt(int min, int max) {
         assert min < max : "Max must be greater than min";
 
-        return (int)(min + (max - min) * Math.random());
+        return (int)(min + (max - min) * Math.random());    // I believe this is incorrect - testing should reveal this
     }
 
     /**
