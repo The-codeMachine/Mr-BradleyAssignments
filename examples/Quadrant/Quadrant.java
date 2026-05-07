@@ -246,7 +246,7 @@ public class Quadrant
      * 
      * NB:  .999999999 - .980000001 ~ 2 %
      */
-    private static boolean chanceOf( int percent ) {
+    private static boolean chanceOf( double percent ) {
         double r = Math.random();    // [0..1)
         return r < percent/100.0;    // 100% --> [0..99] < 100
     }
