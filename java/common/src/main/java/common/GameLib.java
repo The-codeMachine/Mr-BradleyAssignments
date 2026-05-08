@@ -24,8 +24,10 @@ public class GameLib {
      * 
      * @return a random number between 0 and 1
      */
-    public static double chanceOf() {
-        return Math.random();
+    public static boolean chanceOf(int percent) {
+        double r = Math.random();
+        
+        return (r / 100) <= percent;
     }
 
     /**
@@ -41,7 +43,7 @@ public class GameLib {
     public static int randomInt(int min, int max) {
         assert min < max : "Max must be greater than min";
 
-        return (int)(min + (max - min) * Math.random());    // I believe this is incorrect - testing should reveal this
+        return (int)(min + (max - min + 1) * Math.random());
     }
 
     /**
