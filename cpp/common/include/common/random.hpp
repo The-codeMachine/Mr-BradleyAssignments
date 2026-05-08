@@ -26,7 +26,9 @@
 namespace common
 {
 
-    double chanceOf();
+    double random();
+
+    bool chanceOf(double percent);
 
     uint32_t generateRandom32();
     int randomInt(int min, int max);
