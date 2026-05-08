@@ -15,11 +15,19 @@ namespace common
     std::random_device rd; // non-deterministic seed source
     return std::mt19937(rd()); }());
 
+
     // generates a random number between 0, and 1
-    double chanceOf() {
+    double random() {
         static std::uniform_real_distribution<double> dist(0.0, 1.0);
 
         return dist(gen);
+    }
+
+    // returns if the random number between 0 and 1 is <= percent
+    double chanceOf(double percent) {
+        double r = random();
+
+        return r <= percent;
     }
 
     // generates a random 32-bit unsigned integer (without any range)
@@ -43,7 +51,7 @@ namespace common
     double randomInRange(double min, double max) {
         assert(min < max);
 
-        return min + (max - min) * chanceOf();
+        return min + (max - min) * random();
     }
 
     // Generates a random float number between 0, and 1
@@ -68,7 +76,7 @@ namespace common
         if (total <= 0) 
             std::runtime_error("Total weight must be > 0");
 
-        double r = chanceOf() * total;
+        double r = random() * total;
         double cumulative = 0.0;
 
         for (int i = 0; i < weights.size(); ++i) {
@@ -94,7 +102,7 @@ namespace common
      */
     double RND(int n) {
         if( n != 0 ) 
-            _rnd = chanceOf();  // generates a new rand
+            _rnd = random();  // generates a new rand
         
         return _rnd;                        // otherwise returns last
     }
@@ -107,7 +115,7 @@ namespace common
     void randomTestDriver() {
         std::cout << "Random test\n";
 
-        double r = chanceOf();
+        double r = random();
         assert(r >= 0 && r <= 1);
         std::cout << "New random number: " << r << "\n";
 
