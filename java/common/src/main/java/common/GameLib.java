@@ -21,13 +21,14 @@ public class GameLib {
     /**
      * 
      * Generates a random number between 0, and 1. With double precision.
+     * Checks if the random number is <= percent
      * 
-     * @return a random number between 0 and 1
+     * @return if the random number between 0 and 1 is <= percent
      */
-    public static boolean chanceOf(int percent) {
+    public static boolean chanceOf(double percent) {
         double r = Math.random();
         
-        return (r / 100) <= percent;
+        return r <= percent;
     }
 
     /**
