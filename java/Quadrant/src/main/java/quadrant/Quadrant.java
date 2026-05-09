@@ -40,7 +40,7 @@ package quadrant;
  * @version SPRING 2026
  */
 
-import common.GameLib;
+import common.*;
 
 import java.util.Random;
 
@@ -221,7 +221,8 @@ public class Quadrant {
      */
     @Override
     public String toString() {
-        return String.format("%03d", (int) kbs);
+        String inMessage = String.valueOf(klingons()) + String.valueOf(bases()) + String.valueOf(stars());
+        return StringUtils.zeroFill(inMessage, 3);
     }
 
     /**
