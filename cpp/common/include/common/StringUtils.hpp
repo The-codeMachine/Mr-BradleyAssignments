@@ -1,6 +1,17 @@
 #pragma once
-
 #include <string>
+
+/**
+ * 
+ * This holds string utilities. Operations include:
+ *  - padding a message to the left
+ *  - padding a message to the right
+ *  - padding a message to the center
+ * 
+ *  - zero filling an integer (e.g. 12 (with size 3) becomes 012)
+ *  - a test driver to test that all the functions are working
+ * 
+ */
 
 namespace common {
 

@@ -29,6 +29,7 @@ namespace common {
         return std::string(size - in.length(), '0') + in;
     }
 
+    // tests that the string utils works correctly
     void stringUtilsTestDriver() {
         std::cout << "String utils test \n";
 
