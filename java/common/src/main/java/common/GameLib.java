@@ -19,6 +19,15 @@ public class GameLib {
     // Random helper functions
 
     /**
+     * Generates a random double between 0, and 1
+     * 
+     * @return a random number between 0, and 1
+     */
+    public static double random() {
+        return Math.random();
+    }
+
+    /**
      * 
      * Generates a random number between 0, and 1. With double precision.
      * Checks if the random number is <= percent
@@ -26,7 +35,7 @@ public class GameLib {
      * @return if the random number between 0 and 1 is <= percent
      */
     public static boolean chanceOf(double percent) {
-        double r = Math.random();
+        double r = random();
         
         return r <= percent;
     }
@@ -44,7 +53,7 @@ public class GameLib {
     public static int randomInt(int min, int max) {
         assert min < max : "Max must be greater than min";
 
-        return (int)(min + (max - min + 1) * Math.random());
+        return (int)(min + (max - min + 1) * random());
     }
 
     /**
@@ -60,7 +69,7 @@ public class GameLib {
     public static double randomInRange(double min, double max) {
         assert min < max : "Max must be greater than min";
 
-        return min + (max - min) * Math.random();
+        return min + (max - min) * random();
     }
 
     /**
@@ -86,7 +95,7 @@ public class GameLib {
         if (total <= 0)
             throw new IllegalArgumentException("Total weight must be > 0");
 
-        double r = chanceOf() * total;
+        double r = random() * total;
         double cumulative = 0.0;
 
         for (int i = 0; i < weights.length; ++i) {
@@ -111,7 +120,7 @@ public class GameLib {
      */
     private static double RND(int n) {
         if(n != 0) 
-            _rnd = Math.random();  // generates a new rand
+            _rnd = random();  // generates a new rand
         
         return _rnd;                        // otherwise returns last
     }
@@ -137,9 +146,12 @@ public class GameLib {
     private static void randomTestDriver() {
         System.out.println("Random test");
 
-        double r = chanceOf();
+        double r = random();
         assert r >= 0 && r <= 1 : "New random number is not between 1, and 0";
         System.out.printf("New random number: %.2f\n", r);
+
+        boolean chance = chanceOf(0.24);
+        System.out.printf("New random chance: %b\n", chance);
 
         double ra = randomInt(1, 100);
         assert ra >= 1 && ra <= 100 : "New random int is not generated within parameters";
@@ -192,6 +204,7 @@ public class GameLib {
  * 
  * Random test
  * New random number: 0.43 <- random numbers, so they may change
+ * New random chance: true 
  * New random number (between 1, and 100): 25.00
  * Second new random number (between 1, and 100): 43.00
  * Second new random number (between 1, and 100): 63.84

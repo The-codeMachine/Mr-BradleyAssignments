@@ -24,7 +24,7 @@ namespace common
     }
 
     // returns if the random number between 0 and 1 is <= percent
-    double chanceOf(double percent) {
+    bool chanceOf(double percent) {
         double r = random();
 
         return r <= percent;

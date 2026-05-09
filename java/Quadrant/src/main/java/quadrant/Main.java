@@ -193,6 +193,7 @@ public class Main {
  * GameLib test driver run
  * Random test
  * New random number: 0.74 <- these may change due to randomness
+ * New random chance: true
  * New random number (between 1, and 100): 93.00
  * Second new random number (between 1, and 100): 31.00
  * Weighted choice output: 0 
