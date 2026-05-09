@@ -4,6 +4,7 @@ target_sources(common
     PRIVATE
         src/random.cpp
         src/GameLib.cpp
+        src/StringUtils.cpp
 )
 
 target_include_directories(common PUBLIC $(CMAKE_CURRENT_SOURCE_DIR)/include)

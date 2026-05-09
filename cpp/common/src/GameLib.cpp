@@ -29,6 +29,7 @@ namespace common
 
         randomTestDriver();
         isBetweenTest();
+        stringUtilsTestDriver();
 
         std::cout << "GameLib test driver run success\n";
     }

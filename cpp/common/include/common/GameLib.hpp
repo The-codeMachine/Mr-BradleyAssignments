@@ -1,5 +1,6 @@
 #pragma once
 #include "random.hpp"
+#include "StringUtils.hpp"
 
 /**
  * 
@@ -29,16 +30,23 @@ namespace common {
 
 Sample Output
 
+GameLib test driver run
 Random test
-New random number: 0.43 <- random numbers, so they may change
-New random number (between 1, and 100): 25.00
-Second new random number (between 1, and 100): 43.00
-Second new random number (between 1, and 100): 63.84
+New random number: 0.393681
+New random number (between 1, and 100): 49
+New random number (between 1, and 100): 92
+Third new random number (between 1, and 100): 90.5353
 Weighted choice output: 0
-Weighted choice output: 2
+Weighted choice output: 0
 Random test success
 Is between test
-Is between test success
+Is between test succes
+String utils test 
+Message padded left:    something cool
+Message padded right: something cool
+Message padded center:  something cool
+Zero filled (str): 0189
+String utils test success
 GameLib test driver run success
 
 */
