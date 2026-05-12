@@ -19,7 +19,7 @@ public class StringUtils {
      * Pads a message to the left
      * 
      * @param message
-     * @param width the width of the message plus padding
+     * @param width   the width of the message plus padding
      * @return a string with the message padded to the left
      */
     public static String padLeft(String message, int width) {
@@ -35,7 +35,7 @@ public class StringUtils {
      * Pads a message to the right
      * 
      * @param message
-     * @param width the width of the message plus padding
+     * @param width   the width of the message plus padding
      * @return a string with the message padded to the right
      */
     public static String padRight(String message, int width) {
@@ -54,7 +54,7 @@ public class StringUtils {
      *          space not be accounted for
      * 
      * @param message
-     * @param width the width of the message plus padding
+     * @param width   the width of the message plus padding
      * @return a string with the message padded to the center
      */
     public static String padCenter(String message, int width) {
@@ -66,12 +66,14 @@ public class StringUtils {
     }
 
     /**
-     * 
-     * Zero fills a message with size many zeros
-     * 
-     * @param in
-     * @param width
-     * @return the message zero filled (size many zeros)
+     * Left-pads a string with leading zeros until it reaches the specified width.
+     * If the input string is already wider than or equal to the specified width,
+     * the original string is returned.
+     *
+     * @param in    the original string to be padded
+     * @param width the desired total length of the resulting string
+     * @return the zero-filled string, or the original string if no padding is
+     *         needed
      */
     public static String zeroFill(String in, int width) {
         if (in.length() >= width)
@@ -110,9 +112,9 @@ public class StringUtils {
  * Sample Output
  * 
  * String utils test
- * Message padded left:     something cool
- * Message padded right: something cool      
- * Message padded center:    something cool   
+ * Message padded left: something cool
+ * Message padded right: something cool
+ * Message padded center: something cool
  * Zero filled (str): 0189
  * String utils test success
  * 
