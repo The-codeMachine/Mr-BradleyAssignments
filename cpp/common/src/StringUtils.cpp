@@ -6,19 +6,28 @@
 
 namespace common {
 
-    // pads the message to the left (e.g. "something" becomes "   something")
-    std::string padLeft(const std::string& message) {
-        return "\t" + message;
+    // pads the message to the left (e.g. "something" becomes "   something", based off the width)
+    std::string padLeft(const std::string& message, int width) {
+        assert(width > message.length());
+        
+        std::string s(width - message.length(), ' ');
+        return s + message;
     }
 
-    // pads the message to the right (e.g. "something" becomes "something   ")
-    std::string padRight(const std::string& message) {
-        return message + "\t";
+    // pads the message to the right (e.g. "something" becomes "something   ", based off the width)
+    std::string padRight(const std::string& message, int width) {
+        assert(width > message.length());
+
+        std::string s(width - message.length(), ' ');
+        return message + s;
     }
 
-    // pads the message to the center (e.g. "something" becomes "   something   ")
-    std::string padCenter(const std::string& message) {
-        return "\t" + message + "\t";
+    // pads the message to the center (e.g. "something" becomes "   something   ", based off the width)
+    std::string padCenter(const std::string& message, int width) {
+        assert(width > message.length());
+        
+        std::string s((width - message.length()) / 2, ' ');
+        return s + message + s;
     }
 
     // fills a string with zeros (e.g. 12, (size 3) becomes (012))
@@ -33,16 +42,16 @@ namespace common {
     void stringUtilsTestDriver() {
         std::cout << "String utils test \n";
 
-        std::string msgLeftPadded = padLeft("something cool");
-        assert(msgLeftPadded == "\tsomething cool");
+        std::string msgLeftPadded = padLeft("something cool", 18);
+        assert(msgLeftPadded == "    something cool");
         std::cout << "Message padded left: " << msgLeftPadded << "\n";
 
-        std::string msgRightPadded = padRight("something cool");
-        assert(msgRightPadded == "something cool\t");
+        std::string msgRightPadded = padRight("something cool", 20);
+        assert(msgRightPadded == "something cool      ");
         std::cout << "Message padded right: " << msgRightPadded << "\n";
 
-        std::string msgCenterPadded = padCenter("something cool");
-        assert(msgCenterPadded == "\tsomething cool\t");
+        std::string msgCenterPadded = padCenter("something cool", 21);
+        assert(msgCenterPadded == "   something cool   ");
         std::cout << "Message padded center: " << msgCenterPadded << "\n";
 
         std::string zeroFillStr = zeroFill("189", 4);
