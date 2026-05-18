@@ -31,7 +31,9 @@ namespace common {
     }
 
     // fills a string with zeros (e.g. 12, (size 3) becomes (012))
-    std::string zeroFill(std::string in, size_t size) {
+    std::string zeroFill(int input, size_t size) {
+        std::string in = std::to_string(input);
+        
         if (in.length() >= size)
             return in;
 
@@ -44,19 +46,19 @@ namespace common {
 
         std::string msgLeftPadded = padLeft("something cool", 18);
         assert(msgLeftPadded == "    something cool");
-        std::cout << "Message padded left: " << msgLeftPadded << "\n";
+        std::cout << "Message padded left: >" << msgLeftPadded << "<\n";
 
         std::string msgRightPadded = padRight("something cool", 20);
         assert(msgRightPadded == "something cool      ");
-        std::cout << "Message padded right: " << msgRightPadded << "\n";
+        std::cout << "Message padded right: >" << msgRightPadded << "<\n";
 
         std::string msgCenterPadded = padCenter("something cool", 21);
         assert(msgCenterPadded == "   something cool   ");
-        std::cout << "Message padded center: " << msgCenterPadded << "\n";
+        std::cout << "Message padded center: >" << msgCenterPadded << "<\n";
 
-        std::string zeroFillStr = zeroFill("189", 4);
+        std::string zeroFillStr = zeroFill(123, 5);
         std::cout << "Zero filled (str): " << zeroFillStr << "\n";
-        assert(zeroFillStr == "0189");
+        assert(zeroFillStr == "00123");
 
         std::cout << "String utils test success\n";
     }

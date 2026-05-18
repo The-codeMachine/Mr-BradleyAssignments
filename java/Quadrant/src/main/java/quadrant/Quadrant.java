@@ -190,7 +190,7 @@ public class Quadrant {
 
         // would be the toString method, however this is a static test
         assert "318".equals(q.toString())
-                : "toString does not set the quadrant to a string correctly";
+        : "toString does not set the quadrant to a string correctly";
         System.out.printf("Got %s, expected \"318\"\n", q.toString());
 
         q.kbs = setContent(0, 0, 1);
@@ -221,8 +221,7 @@ public class Quadrant {
      */
     @Override
     public String toString() {
-        String inMessage = String.valueOf(klingons()) + String.valueOf(bases()) + String.valueOf(stars());
-        return StringUtils.zeroFill(inMessage, 3);
+        return StringUtils.zeroFill((int)kbs, 3);
     }
 
     /**

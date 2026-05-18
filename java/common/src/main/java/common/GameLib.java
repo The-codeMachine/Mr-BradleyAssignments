@@ -205,21 +205,21 @@ public class GameLib {
  * 
  * GameLib test driver run
  * Random test
- * New random number: 0.20
+ * New random number: 0.01
  * New random chance: false
- * New random number (between 1, and 100): 50.00
- * Second new random number (between 1, and 100): 60.00
- * Third new random number (between 1, and 100): 50.90
+ * New random number (between 1, and 100): 38.00
+ * Second new random number (between 1, and 100): 15.00
+ * Third new random number (between 1, and 100): 85.36
  * Weighted choice output: 0
- * Weighted choice output: 1
+ * Weighted choice output: 0
  * Random test success
  * Is between test
  * Is between test success
  * String utils test
- * Message padded left:     something cool
- * Message padded right: something cool      
- * Message padded center:    something cool   
- * Zero filled (str): 0189
+ * Message padded left: >    something cool<
+ * Message padded right: >something cool      <
+ * Message padded center: >   something cool   <
+ * Zero filled (str): 00123
  * String utils test success
  * GameLib test driver run success
  * 

@@ -70,12 +70,14 @@ public class StringUtils {
      * If the input string is already wider than or equal to the specified width,
      * the original string is returned.
      *
-     * @param in    the original string to be padded
+     * @param input the original number to be padded
      * @param width the desired total length of the resulting string
      * @return the zero-filled string, or the original string if no padding is
      *         needed
      */
-    public static String zeroFill(String in, int width) {
+    public static String zeroFill(int input, int width) {
+        String in = Integer.toString(input);
+
         if (in.length() >= width)
             return in;
 
@@ -88,19 +90,19 @@ public class StringUtils {
         // 14 characters is "something cool"
         String msgLeftPadded = padLeft("something cool", 18);
         assert msgLeftPadded.equals("    something cool") : "Message was not padded correctly";
-        System.out.printf("Message padded left: %s\n", msgLeftPadded);
+        System.out.printf("Message padded left: >%s<\n", msgLeftPadded);
 
         String msgRightPadded = padRight("something cool", 20);
         assert msgRightPadded.equals("something cool      ") : "Message was not padded correctly";
-        System.out.printf("Message padded right: %s\n", msgRightPadded);
+        System.out.printf("Message padded right: >%s<\n", msgRightPadded);
 
         String msgCenterPadded = padCenter("something cool", 21);
         assert msgCenterPadded.equals("   something cool   ") : "Message was not padded correctly";
-        System.out.printf("Message padded center: %s\n", msgCenterPadded);
+        System.out.printf("Message padded center: >%s<\n", msgCenterPadded);
 
-        String zeroFillStr = zeroFill("189", 4);
+        String zeroFillStr = zeroFill(123, 5);
+        assert zeroFillStr.equals("00123") : "Zero fill did not return a correct zero fill string";
         System.out.printf("Zero filled (str): %s\n", zeroFillStr);
-        assert zeroFillStr.equals("0189") : "Zero fill did not return a correct zero fill string";
 
         System.out.println("String utils test success");
     }
@@ -112,10 +114,11 @@ public class StringUtils {
  * Sample Output
  * 
  * String utils test
- * Message padded left: something cool
- * Message padded right: something cool
- * Message padded center: something cool
- * Zero filled (str): 0189
+ * Message padded left: >    something cool<
+ * Message padded right: >something cool      <
+ * Message padded center: >   something cool   <
+ * Zero filled (str): 00123
+ * String utils test success
  * String utils test success
  * 
  */

@@ -136,7 +136,7 @@ void Quadrant::whiteBoxTest()
 
 // Turns the KBS value into a string (zero padded)
 std::string Quadrant::to_string() const {
-    return common::zeroFill(std::to_string(kbs), 3);
+    return common::zeroFill(kbs, 3);
 }
 
 // Encodes klingons, bases, and stars into a single integer (KBS format)

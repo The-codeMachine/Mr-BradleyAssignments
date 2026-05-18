@@ -42,10 +42,10 @@ Random test success
 Is between test
 Is between test succes
 String utils test 
-Message padded left:     something cool
-Message padded right: something cool      
-Message padded center:    something cool   
-Zero filled (str): 0189
+Message padded left: >    something cool<
+Message padded right: >something cool      <
+Message padded center: >   something cool   <
+Zero filled (str): 00123
 String utils test success
 GameLib test driver run success
 
