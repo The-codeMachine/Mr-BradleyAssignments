@@ -1,0 +1,15 @@
+plugins {
+    id 'application'
+}
+
+dependencies {
+    implementation project(':common')
+}
+
+tasks.withType(JavaExec).configureEach {
+    enableAssertions = true
+}
+
+application {
+    mainClass = 'devices.Main'
+}
