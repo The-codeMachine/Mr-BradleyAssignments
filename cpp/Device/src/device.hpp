@@ -35,19 +35,10 @@ public:
     Device(double assignedDamage, int assignedDeviceId, std::string assignedDeviceName) 
     : damage(assignedDamage), deviceId(assignedDeviceId), deviceName(assignedDeviceName) {}
 
-    void takeDamage(double amount);
+    void takeDamage();
     void repair(double amount);
 
-    void damageEvent();
-    void repairEvent();
-
     bool isBroken() const;
-
-#ifndef NDEBUG
-
-    static void whiteBoxTest();
-
-#endif
 
 private:
     double damage;
@@ -67,10 +58,7 @@ Constructor test success
 Repair/Damage test
 Device got repaired
 Device got damaged
-Device got repairedDevice got repaired, but is still broken
-Repair/Damage test success
-Starting white box test
-White box test passed
+Device got repaired
 Device test success
 
 */

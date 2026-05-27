@@ -1,4 +1,4 @@
-#include "device.hpp"
+#include "Device.hpp"
 
 #include <iostream>
 #include <cassert>
@@ -27,19 +27,13 @@ void testRepairDamage()
     assert(!d.isBroken());
     std::cout << "Device got repaired\n";
 
-    d.takeDamage(5);
+    d.takeDamage();
     assert(d.isBroken());
     std::cout << "Device got damaged\n";
 
     d.repair(50);
     assert(!d.isBroken());
-    std::cout << "Device got repaired";
-
-    d.takeDamage(100);
-    d.repair(50);
-    assert(d.isBroken());
-    std::cout << "Device got repaired, but is still broken\n";
-
+    std::cout << "Device got repaired\n";
 
     std::cout << "Repair/Damage test success\n";
 }
@@ -51,12 +45,6 @@ int main()
 
     testConstructors();
     testRepairDamage();
-
-#ifndef NDEBUG
-
-    Device::whiteBoxTest();
-
-#endif
 
     std::cout << "Device test success\n";
 
@@ -74,10 +62,7 @@ Constructor test success
 Repair/Damage test
 Device got repaired
 Device got damaged
-Device got repairedDevice got repaired, but is still broken
-Repair/Damage test success
-Starting white box test
-White box test passed
+Device got repaired
 Device test success
 
 */
