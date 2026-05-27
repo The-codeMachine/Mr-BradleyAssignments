@@ -11,5 +11,5 @@ tasks.withType(JavaExec).configureEach {
 }
 
 application {
-    mainClass = 'devices.Main'
+    mainClass = 'device.Main'
 }
