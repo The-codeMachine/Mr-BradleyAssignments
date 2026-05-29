@@ -1,49 +1,29 @@
 package device;
 
 public class Main {
-    private static void testConstructors() {
-        System.out.println("Constructor test");
+    private static void testGetters() {
+        System.out.println("Getters test");
 
-        Device d = new Device(1, "cool_name");
-        assert !d.isBroken() : "Device started without the correct damage";
-        System.out.println("Device is created with 0 damage when specified");
+        Device d = new Device(1, "Test Device");
 
-        Device dd = new Device(10, 1, "cooler_name");
-        assert dd.isBroken() : "Device started without the specified damage";
-        System.out.println("Device is started with the specified damage");
-    
-        System.out.println("Constructor test success");
-    }
+        System.out.println("Device constructed with specs: " + d.toString());
 
-    private static void testRepairDamage() {
-        System.out.println("Repair/Damage test");
+        assert d.getId() == 1 : "Device has not constructed with id == 1";
+        System.out.printf("Device id: %d \n", d.getId());
 
-        Device d = new Device(10, 1, "cool_name");
-        d.repair(10);
-        assert !d.isBroken() : "Device did not get repaired";
-        System.out.println("Device got repaired");
+        assert d.getName().equals("Test Device") : "Device has not constructed with name == \"Test Device\"";
+        System.out.printf("Device id: %s \n", d.getName());
 
-        d.takeDamage(5);
-        assert d.isBroken() : "Device did not get damaged";
-        System.out.println("Device got damaged");
+        assert d.getDamage() == 0.0 : "Device has not constructed with damage == 0.0";
+        System.out.printf("Device id: %f \n", d.getDamage());
 
-        d.repair(50);
-        assert !d.isBroken() : "Device did not get repaired correctly";
-        System.out.println("Device got repaired");
-
-        d.takeDamage(100);
-        d.repair(50);
-        assert d.isBroken() : "Device should still be broken";
-        System.out.println("Device got repaired, but is still broken");
-
-        System.out.println("Repair/Damage test success");
+        System.out.println("Getters test success");
     }
     
     public static void main(String[] args) {
         System.out.println("Device Test");
         
-        testConstructors();
-        testRepairDamage();
+        testGetters();
 
         Device.whiteBoxTest();
 
@@ -55,18 +35,18 @@ public class Main {
  * Sample Output
  * 
  * Device Test
- * Constructor test
- * Device is created with 0 damage when specified
- * Device is started with the specified damage
- * Constructor test success
- * Repair/Damage test
- * Device got repaired
- * Device got damaged
- * Device got repaired
- * Device got repaired, but is still broken
- * Repair/Damage test success
- * Starting white box test
- * White box test passed
+ * Getters test
+ * Device constructed with specs: [1], Test Device, Damage: 0.0
+ * Device id: 1
+ * Device name: Test Device
+ * Device damage: 0
+ * Getters test success
+ * Device white box test
+ * Device is fully working, and not damaged: [1], Warp Engines, Damage: 0.0
+ * Device is not operational because it has 2.5 damage: [1], Warp Engines, Damage: -2.5
+ * Device has 1.5 damage: [1], Warp Engines, Damage: -1.5
+ * Device is repair fully, and operational again: [1], Warp Engines, Damage: 0.0
+ * Device white box test success
  * Device test success
  * 
  */

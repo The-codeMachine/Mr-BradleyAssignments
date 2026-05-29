@@ -3,6 +3,7 @@
 #include <cassert>
 #include <iostream>
 
+// tests the ship's getters
 void testGetters()
 {
     std::cout << "Getters test\n";
@@ -42,6 +43,7 @@ void testGetters()
     std::cout << "Getters test success\n";
 }
 
+// tests the ship's damage functions
 void testDamage()
 {
     std::cout << "Damage test\n";
@@ -97,7 +99,7 @@ Getters test
 Ship constructed with specs:
 Health: 200.000000
 Shields: 100.000000
-Position: (3, 5) 
+Position: (3, 5)
 Devices
   [1], Warp Engines, Damage: 0.000000
   [2], Shield Control, Damage: 0.000000
@@ -112,13 +114,13 @@ Damage test
 Ship after taking 25 damage:
 Health: 200.000000
 Shields: 75.000000
-Position: (0, 0) 
+Position: (0, 0)
 Devices
 
 Ship after taking 100 damage:
 Health: 175.000000
 Shields: 0.000000
-Position: (0, 0) 
+Position: (0, 0)
 Devices
 
 Damage test success
@@ -126,7 +128,7 @@ Damage test success
 Ship white box test
 Health: 100.000000
 Shields: 80.000000
-Position: (0, 0) 
+Position: (0, 0)
 Devices
   [1], Warp Engines, Damage: -1.950934
   [2], Sensors, Damage: 0.000000

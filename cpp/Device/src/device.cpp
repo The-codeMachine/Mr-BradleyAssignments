@@ -80,7 +80,7 @@ void Device::whiteBoxTest()
 
     assert(d.getDamage() == 0.0);
     assert(d.isOperational());
-    std::cout << "Device is repair fully, and operational again: " << d << "\n";
+    std::cout << "Device is repaired fully, and operational again: " << d << "\n";
 
     std::cout << "Device white box test success\n";
 }

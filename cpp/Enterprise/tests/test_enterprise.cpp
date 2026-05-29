@@ -3,134 +3,142 @@
 #include <cassert>
 #include <iostream>
 
-void testGetters() {
-    std::cout << "Getters test\n";
+// tests the enterprise's getters
+void testGetters()
+{
+  std::cout << "Getters test\n";
 
-    Enterprise e(1000.0, 500.0, 2, 4);
+  Enterprise e(1000.0, 500.0, 2, 4);
 
-    std::cout << "Enterprise constructed with specs:\n";
-    std::cout << e.toString() << "\n";
+  std::cout << "Enterprise constructed with specs:\n";
+  std::cout << e.toString() << "\n";
 
-    assert(e.getShields() == 1000.0);
-    std::cout << "Enterprise shields: "
-              << e.getShields() << "\n";
+  assert(e.getShields() == 1000.0);
+  std::cout << "Enterprise shields: "
+            << e.getShields() << "\n";
 
-    assert(e.getHealth() == 500.0);
-    std::cout << "Enterprise health: "
-              << e.getHealth() << "\n";
+  assert(e.getHealth() == 500.0);
+  std::cout << "Enterprise health: "
+            << e.getHealth() << "\n";
 
-    assert(e.getEnergy() == 3000);
-    std::cout << "Enterprise energy: "
-              << e.getEnergy() << "\n";
+  assert(e.getEnergy() == 3000);
+  std::cout << "Enterprise energy: "
+            << e.getEnergy() << "\n";
 
-    assert(e.getTorpedoes() == 10);
-    std::cout << "Enterprise torpedoes: "
-              << e.getTorpedoes() << "\n";
+  assert(e.getTorpedoes() == 10);
+  std::cout << "Enterprise torpedoes: "
+            << e.getTorpedoes() << "\n";
 
-    assert(e.totalDevices() == 8);
-    std::cout << "Enterprise devices: "
-              << e.totalDevices() << "\n";
+  assert(e.totalDevices() == 8);
+  std::cout << "Enterprise devices: "
+            << e.totalDevices() << "\n";
 
-    std::cout << "Getters test success\n";
+  std::cout << "Getters test success\n";
 }
 
-void testMovement() {
-    std::cout << "Movement test\n";
+// tests the enterprise's movement
+void testMovement()
+{
+  std::cout << "Movement test\n";
 
-    Enterprise e(1000.0, 500.0, 0, 0);
+  Enterprise e(1000.0, 500.0, 0, 0);
 
-    e.move(5, 7, 3);
+  e.move(5, 7, 3);
 
-    assert(e.getX() == 5);
-    assert(e.getY() == 7);
+  assert(e.getX() == 5);
+  assert(e.getY() == 7);
 
-    std::cout << "Enterprise moved to: ("
-              << e.getX() << ", "
-              << e.getY() << ")\n";
+  std::cout << "Enterprise moved to: ("
+            << e.getX() << ", "
+            << e.getY() << ")\n";
 
-    std::cout << e.toString() << "\n";
+  std::cout << e.toString() << "\n";
 
-    std::cout << "Movement test success\n";
+  std::cout << "Movement test success\n";
 }
 
-void testWeapons() {
-    std::cout << "Weapons test\n";
+// tests the enterprise's weapons
+void testWeapons()
+{
+  std::cout << "Weapons test\n";
 
-    Enterprise e(1000.0, 500.0, 0, 0);
+  Enterprise e(1000.0, 500.0, 0, 0);
 
-    e.firePhasers(500);
+  e.firePhasers(500);
 
-    assert(e.getEnergy() == 2500);
+  assert(e.getEnergy() == 2500);
 
-    std::cout << "Enterprise fired 500 phaser energy\n";
-    std::cout << "Remaining energy: "
-              << e.getEnergy() << "\n";
+  std::cout << "Enterprise fired 500 phaser energy\n";
+  std::cout << "Remaining energy: "
+            << e.getEnergy() << "\n";
 
-    e.fireTorpedo();
+  e.fireTorpedo();
 
-    assert(e.getTorpedoes() == 9);
+  assert(e.getTorpedoes() == 9);
 
-    std::cout << "Enterprise fired 1 torpedo\n";
-    std::cout << "Remaining torpedoes: "
-              << e.getTorpedoes() << "\n";
+  std::cout << "Enterprise fired 1 torpedo\n";
+  std::cout << "Remaining torpedoes: "
+            << e.getTorpedoes() << "\n";
 
-    std::cout << "Weapons test success\n";
+  std::cout << "Weapons test success\n";
 }
 
-void testDocking() {
-    std::cout << "Docking test\n";
+// tests the docking of the enterprise
+void testDocking()
+{
+  std::cout << "Docking test\n";
 
-    Enterprise e(1000.0, 500.0, 0, 0);
+  Enterprise e(1000.0, 500.0, 0, 0);
 
-    e.firePhasers(1000);
-    e.fireTorpedo();
+  e.firePhasers(1000);
+  e.fireTorpedo();
 
-    e.getDevice(0).damage(3.0);
+  e.getDevice(0).damage(3.0);
 
-    std::cout << "Enterprise before docking:\n";
-    std::cout << e.toString() << "\n";
+  std::cout << "Enterprise before docking:\n";
+  std::cout << e.toString() << "\n";
 
-    e.dock();
+  e.dock();
 
-    assert(e.getEnergy() == 3000);
-    assert(e.getTorpedoes() == 10);
-    assert(e.getDevice(0).getDamage() == 0.0);
+  assert(e.getEnergy() == 3000);
+  assert(e.getTorpedoes() == 10);
+  assert(e.getDevice(0).getDamage() == 0.0);
 
-    std::cout << "Enterprise after docking:\n";
-    std::cout << e.toString() << "\n";
+  std::cout << "Enterprise after docking:\n";
+  std::cout << e.toString() << "\n";
 
-    std::cout << "Docking test success\n";
+  std::cout << "Docking test success\n";
 }
 
 int main()
 {
-    std::cout << "Enterprise Test\n";
+  std::cout << "Enterprise Test\n";
 
-    testGetters();
+  testGetters();
 
-    std::cout << "\n";
+  std::cout << "\n";
 
-    testMovement();
+  testMovement();
 
-    std::cout << "\n";
+  std::cout << "\n";
 
-    testWeapons();
+  testWeapons();
 
-    std::cout << "\n";
+  std::cout << "\n";
 
-    testDocking();
+  testDocking();
 
 #ifndef NDEBUG
 
-    std::cout << "\n";
+  std::cout << "\n";
 
-    Enterprise::whiteBoxTest();
+  Enterprise::whiteBoxTest();
 
 #endif
 
-    std::cout << "Enterprise test success\n";
+  std::cout << "Enterprise test success\n";
 
-    return 0;
+  return 0;
 }
 
 /*
@@ -141,7 +149,7 @@ Getters test
 Enterprise constructed with specs:
 Health: 500.000000
 Shields: 1000.000000
-Position: (2, 4) 
+Position: (2, 4)
 Devices
   [1], Warp Engines, Damage: 0.000000
   [2], Short Range Sensors, Damage: 0.000000
@@ -166,7 +174,7 @@ Movement test
 Enterprise moved to: (5, 7)
 Health: 500.000000
 Shields: 1000.000000
-Position: (5, 7) 
+Position: (5, 7)
 Devices
   [1], Warp Engines, Damage: 0.000000
   [2], Short Range Sensors, Damage: 0.000000
@@ -193,7 +201,7 @@ Docking test
 Enterprise before docking:
 Health: 500.000000
 Shields: 1000.000000
-Position: (0, 0) 
+Position: (0, 0)
 Devices
   [1], Warp Engines, Damage: -3.000000
   [2], Short Range Sensors, Damage: 0.000000
@@ -210,7 +218,7 @@ Docked: No
 Enterprise after docking:
 Health: 500.000000
 Shields: 1000.000000
-Position: (0, 0) 
+Position: (0, 0)
 Devices
   [1], Warp Engines, Damage: 0.000000
   [2], Short Range Sensors, Damage: 0.000000
@@ -229,7 +237,7 @@ Docking test success
 Enterprise white box test
 Health: 1000.000000
 Shields: 1000.000000
-Position: (5, 5) 
+Position: (5, 5)
 Devices
   [1], Warp Engines, Damage: 0.000000
   [2], Short Range Sensors, Damage: 0.000000

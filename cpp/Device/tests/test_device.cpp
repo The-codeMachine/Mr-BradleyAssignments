@@ -3,6 +3,7 @@
 #include <cassert>
 #include <iostream>
 
+// tests the device's getters
 void testGetters() {
     std::cout << "Getters test\n";
 
@@ -29,6 +30,8 @@ int main()
 
     testGetters();
 
+    std::cout << "\n";
+
 #ifndef NDEBUG
 
     Device::whiteBoxTest();
@@ -50,6 +53,7 @@ Device id: 1
 Device name: Test Device
 Device damage: 0
 Getters test success
+
 Device white box test
 Device is fully working, and not damaged: [1], Warp Engines, Damage: 0.000000
 Device is not operational because it has 2.5 damage: [1], Warp Engines, Damage: -2.500000

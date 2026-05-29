@@ -3,176 +3,173 @@ package device;
 import common.*;
 
 /**
- * 
- * The device holds the functionality to damage, and repair
- * itself. It allows the Enterprise's gameplay mechanics to
- * work (e.g. if the warp engines are broken, then the player
- * cannot use the warping functionality). Each device has its
- * own name, and id. 
+ * A device represents one of the Enterprise's ship systems.
+ *
+ * Rules:
+ *  - Damage is represented as a NEGATIVE value.
+ *  - 0.0 means fully operational.
+ *  - The more negative the value, the more damaged the device is.
+ *
  * Operations include:
- *  - Constructing with a specified: id, name
- *  - Constructing with a specified: damage, id, name
  *  - damaging the device
  *  - repairing the device
- *  - damage/repair event (60%/40% chance respectively for each)
- *  - checking if the device is damaged
- * 
- * Damage is a double value so that the device may repair during 
- * warp as necessary. 
- * 
+ *  - checking operational status
+ *  - printing device information
+ *
  */
-
 public class Device {
+    public Device() {
+        id = 0;
+        name = "UNKNOWN";
+        damageLevel = 0.0;
+    }
 
-    /**
-     * 
-     * Creates a new device with a fully working system (damage = 0), and a 
-     * custom deviceId, and name.
-     * 
-     */
-    public Device(int assignedDeviceId, String assignedDeviceName) {
-        damage = 0;
-        deviceId = assignedDeviceId;
-        deviceName = assignedDeviceName;
+    public Device(int assignedId, String assignedName) {
+        id = assignedId;
+        name = assignedName;
+        damageLevel = 0.0;
     }
 
     /**
      * 
-     * Creates a device with a specified damage, id, and name.
+     * Gets the device's id
      * 
      */
-    public Device(int assignedDamage, int assignedDeviceId, String assignedDeviceName) {
-        damage = assignedDamage;
-        deviceId = assignedDeviceId;
-        deviceName = assignedDeviceName;
+    int getId() {
+        return id;
     }
 
     /**
      * 
-     * Makes the device take damage by an amount
+     * Gets the device's name
+     * 
+     */
+    String getName() {
+        return name;
+    }
+
+    /**
+     * 
+     * Gets the device's damage
+     * 
+     */
+    double getDamage() {
+        return damageLevel;
+    }
+
+    /**
+     * 
+     * Checks if the device is operational
+     * 
+     */
+    boolean isOperational() {
+        return damageLevel == 0.0;
+    }
+
+    /**
+     * 
+     * Damages the device by an amount
      * 
      * @param amount
      * 
      */
-    public void takeDamage(double amount) {
-        assert amount > 0 : "Amount must be a positive number";
+    void damage(double amount) {
+        assert amount >= 0.0;
 
-        damage += amount;
+        damageLevel -= amount;
     }
 
     /**
      * 
-     * Repairs the device by an amount. Ensures it
-     * does not exceed 0
+     * Repairs the device by an amount
      * 
      * @param amount
      * 
      */
-    public void repair(double amount) {
-        assert amount > 0 : "Amount must be a positive number";
+    void repair(double amount) {
+        assert amount >= 0.0;
 
-        damage -= amount;
-       
-        if (damage < 0) 
-            damage = 0;
+        damageLevel += amount;
+        if (damageLevel > 0.0)
+            damageLevel = 0;
     }
 
     /**
      * 
-     * Makes the device take damage (60% chance). If it succeeds, 
-     * there will be between 1 to 5 damage. 
+     * Resets the device's damage level
      * 
      */
-    public void damageEvent() {
-        if (GameLib.chanceOf(0.6))
-            takeDamage(GameLib.randomInt(1, 5));
-        
+    void reset() {
+        damageLevel = 0.0;
     }
 
     /**
      * 
-     * Makes the device repair (40% chance). If it succeeds then it 
-     * repairs the device between 1 to 3 damage. 
+     * Checks that all of the functions work properly
      * 
      */
-    public void repairEvent() {
-        if (GameLib.chanceOf(0.4)) 
-            repair(GameLib.randomInt(1, 3));
-    }
-
-    /**
-     * 
-     * Checks if the device is broken
-     * 
-     */
-    public boolean isBroken() {
-        return damage != 0.0;
-    }
-
     public static void whiteBoxTest() {
-        System.out.println("Starting white box test");
+        System.out.println("Device white box test");
 
-        Device d = new Device(10, 1, "test_device");
+        Device d = new Device(1, "Warp Engines");
 
-        boolean damageOccurred = false;
-        boolean repairOccurred = false;
+        assert "[1], Warp Engines, Damage: 0.0".equals(d.toString()) : "String conversion function does not work properly";
+        assert d.isOperational() : "Device did not start operational";
+        assert d.getDamage() == 0.0 : "Device did not begin with 0.0 damage";
 
-        for (int i = 0; i < 10000; i++) {
-            double previousDamage = d.damage;
-            d.damageEvent();
+        System.out.println("Device is fully working, and not damaged: " + d.toString());
 
-            if (d.damage > previousDamage) {
-              damageOccurred = true;
-                double difference = d.damage - previousDamage;
+        d.damage(2.5);
 
-                assert difference >= 1 && difference <= 5 : "Damage event caused invalid damage amount";
-            }
+        assert !d.isOperational() : "Device is operational after taking damage";
+        assert d.getDamage() == -2.5 : "Device damage is not correct";
 
-            previousDamage = d.damage;
-            d.repairEvent();
+        System.out.println("Device is not operational because it has 2.5 damage: " + d.toString());
 
-            if (d.damage < previousDamage) {
-                repairOccurred = true;
-                double difference = previousDamage - d.damage;
+        d.repair(1.0);
 
-                assert difference >= 1 && difference <= 3 : "Repair event repaired invalid amount";
-            }
+        assert d.getDamage() == -1.5 : "Device does not have 1.5 damage";
+        
+        System.out.println("Device has 1.5 damage: " + d.toString());
 
-            assert d.damage >= 0 : "Damage became negative";
+        d.repair(100.0);
 
-            if (damageOccurred && repairOccurred)
-                break;
-        }
+        assert d.getDamage() == 0.0 : "Device did not repair correctly";
+        assert d.isOperational() : "Device is not operational after being fully repaired";
 
-        assert damageOccurred : "Damage event never triggered";
+        System.out.println("Device is repaired fully, and operationl again: " + d.toString());
 
-        assert repairOccurred : "Repair event never triggered";
 
-        System.out.println("White box test passed");
+        System.out.println("Device white box test success");
     }
 
-    private double damage;
+    @Override
+    public String toString() {
+        return "[" + Integer.toString(id) + "], " + name + ", Damage: " + Double.toString(damageLevel);
+    }
 
-    private int deviceId;
-    private String deviceName;
+    private double damageLevel;
+
+    private int id;
+    private String name;
 }
 
 /**
  * Sample Output
  * 
  * Device Test
- * Constructor test
- * Device is created with 0 damage when specified
- * Device is started with the specified damage
- * Constructor test success
- * Repair/Damage test
- * Device got repaired
- * Device got damaged
- * Device got repaired
- * Device got repaired, but is still broken
- * Repair/Damage test success
- * Starting white box test
- * White box test passed
+ * Getters test
+ * Device constructed with specs: [1], Test Device, Damage: 0.0
+ * Device id: 1
+ * Device name: Test Device
+ * Device damage: 0
+ * Getters test success
+ * Device white box test
+ * Device is fully working, and not damaged: [1], Warp Engines, Damage: 0.0
+ * Device is not operational because it has 2.5 damage: [1], Warp Engines, Damage: -2.5
+ * Device has 1.5 damage: [1], Warp Engines, Damage: -1.5
+ * Device is repair fully, and operational again: [1], Warp Engines, Damage: 0.0
+ * Device white box test success
  * Device test success
  * 
  */

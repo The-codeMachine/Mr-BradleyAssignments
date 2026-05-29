@@ -80,19 +80,6 @@ void Enterprise::fireTorpedo()
     torpedoes--;
 }
 
-// converts the enterprise's information to a string
-std::string Enterprise::toString() const {
-    std::string out;
-
-    out += static_cast<const Ship&>(*this).toString();
-
-    out += "Energy: " + std::to_string(energy) + "\n";
-    out += "Torpedoes: " + std::to_string(torpedoes) + "\n";
-    out += "Docked: " + std::string(docked ? "Yes" : "No") + "\n";
-
-    return out;
-}
-
 #ifndef NDEBUG
 
 // tests the enterprise's private functions
@@ -129,6 +116,19 @@ void Enterprise::whiteBoxTest()
 }
 
 #endif
+
+// converts the enterprise's information to a string
+std::string Enterprise::toString() const {
+    std::string out;
+
+    out += static_cast<const Ship&>(*this).toString();
+
+    out += "Energy: " + std::to_string(energy) + "\n";
+    out += "Torpedoes: " + std::to_string(torpedoes) + "\n";
+    out += "Docked: " + std::string(docked ? "Yes" : "No") + "\n";
+
+    return out;
+}
 
 std::ostream& operator<<(std::ostream& os, const Enterprise& e)
 {

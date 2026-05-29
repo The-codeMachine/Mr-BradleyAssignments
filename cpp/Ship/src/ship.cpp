@@ -137,31 +137,14 @@ int Ship::totalDevices() const
     return devices.size();
 }
 
-// converts the ship's information to a string
-std::string Ship::toString() const
-{
-    std::string out;
-
-    out += "Health: " + std::to_string(health) + "\n";
-    out += "Shields: " + std::to_string(shields) + "\n";
-    out += "Position: (" + std::to_string(x) + ", " + std::to_string(y) + ") \n";
-
-    out += "Devices\n";
-
-    for (const Device &d : devices)
-    {
-        out += "  " + d.toString() + "\n";
-    }
-
-    return out;
-}
-
 #ifndef NDEBUG
 
+// adds a device to the ship (for testing)
 void Ship::addDevice(const Device& d) {
     devices.push_back(d);
 }
 
+// tests the ship's private functions
 void Ship::whiteBoxTest()
 {
     std::cout << "Ship white box test\n";
@@ -183,6 +166,25 @@ void Ship::whiteBoxTest()
 }
 
 #endif
+
+// converts the ship's information to a string
+std::string Ship::toString() const
+{
+    std::string out;
+
+    out += "Health: " + std::to_string(health) + "\n";
+    out += "Shields: " + std::to_string(shields) + "\n";
+    out += "Position: (" + std::to_string(x) + ", " + std::to_string(y) + ") \n";
+
+    out += "Devices\n";
+
+    for (const Device &d : devices)
+    {
+        out += "  " + d.toString() + "\n";
+    }
+
+    return out;
+}
 
 std::ostream &operator<<(std::ostream &os, const Ship &s)
 {
