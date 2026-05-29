@@ -1,13 +1,11 @@
 #include "Enterprise.hpp"
 
-#include <common/random.hpp>
+#include <cassert>
+#include <iostream>
 
-// Generates the super class, and all the devices
-Enterprise::Enterprise(double shields, double health, int x, int y) : Ship(shields, health, x, y)
+Enterprise::Enterprise(double shields, double health, int x, int y)
+    : Ship(shields, health, x, y), energy(3000), torpedoes(10), docked(false)
 {
-    energy = 3000;
-    torpedoes = 10;
-
     devices.reserve(8);
 
     devices.push_back(Device(1, "Warp Engines"));
@@ -20,59 +18,121 @@ Enterprise::Enterprise(double shields, double health, int x, int y) : Ship(shiel
     devices.push_back(Device(8, "Computer Systems"));
 }
 
-void Enterprise::takeFire(double phaserEnergy, double distance)
+// get's the enterprise's energy
+int Enterprise::getEnergy() const
 {
-    double hitDamage = phaserEnergy / distance;
-    double hitToShieldRatio = hitDamage / shields;
-
-    if (hitToShieldRatio >= 0.02) {
-        Device d = devices[common::randomInt(1, 8)];
-        d.takeDamage();
-    }
+    return energy;
 }
 
-// Docks the enterprise and resupplies all of its
-// stuff (e.g. energy, torpedoes, repairs all devices)
+// get's the enterprise's torpedoes
+int Enterprise::getTorpedoes() const
+{
+    return torpedoes;
+}
+
+// get's the enterprise's dock status
+bool Enterprise::isDocked() const
+{
+    return docked;
+}
+
+// moves the enterprise
+void Enterprise::move(int newX, int newY, int warpFactor)
+{
+    assert(warpFactor >= 0);
+
+    x = newX;
+    y = newY;
+
+    energy -= warpFactor * 10;
+
+    // travelling repairs devices
+    repairAllDevices(warpFactor);
+
+    randomDeviceEvent();
+}
+
+// docks the enterprise
 void Enterprise::dock()
 {
+    docked = true;
+
     energy = 3000;
     torpedoes = 10;
 
-    // repairs all devices
-    for (Device d : devices)
-    {
-        d.repair(9999);
-    }
+    resetDevices();
 }
 
-// Gives a 20% chance for an event to occur, if an
-// event occurs there is a 60%/40% split for it to 
-// be a damage/repair event
-void Enterprise::event()
+// fires the enterprise's phaser (does not actually deal damage yet)
+void Enterprise::firePhasers(int amount)
 {
-    if (common::chanceOf(0.8))
-        return;
+    assert(amount >= 0);
+    assert(amount <= energy);
 
-    if (common::chanceOf(0.6))
-    {
-        // damage event
-        Device d = devices[common::randomInt(1, 8)];
-        d.takeDamage();
-    }
-    else
-    {
-        // repair event
-        Device d = devices[common::randomInt(1, 8)];
-        d.repair(common::randomInt(1, 3));
-    }
+    energy -= amount;
 }
 
-// Repairs the devices during warp 
-void Enterprise::warpRepair(double warpFactor)
+// fires the enterprise's torpedoes (does not actually do damage yet)
+void Enterprise::fireTorpedo()
 {
-    double repairAmount = warpFactor > 1 ? 1 : warpFactor;
+    assert(torpedoes > 0);
 
-    for (Device d : devices) {
-        d.repair(repairAmount);
-    }
+    torpedoes--;
+}
+
+// converts the enterprise's information to a string
+std::string Enterprise::toString() const {
+    std::string out;
+
+    out += static_cast<const Ship&>(*this).toString();
+
+    out += "Energy: " + std::to_string(energy) + "\n";
+    out += "Torpedoes: " + std::to_string(torpedoes) + "\n";
+    out += "Docked: " + std::string(docked ? "Yes" : "No") + "\n";
+
+    return out;
+}
+
+#ifndef NDEBUG
+
+// tests the enterprise's private functions
+void Enterprise::whiteBoxTest()
+{
+    std::cout << "Enterprise white box test\n";
+
+    Enterprise e(1000.0, 1000.0, 0, 0);
+
+    assert(e.getEnergy() == 3000);
+    assert(e.getTorpedoes() == 10);
+
+    e.firePhasers(500);
+
+    assert(e.getEnergy() == 2500);
+
+    e.fireTorpedo();
+
+    assert(e.getTorpedoes() == 9);
+
+    e.move(5, 5, 3);
+
+    assert(e.getX() == 5);
+    assert(e.getY() == 5);
+
+    e.dock();
+
+    assert(e.getEnergy() == 3000);
+    assert(e.getTorpedoes() == 10);
+
+    std::cout << e << "\n";
+
+    std::cout << "Enterprise white box test success\n";
+}
+
+#endif
+
+std::ostream& operator<<(std::ostream& os, const Enterprise& e)
+{
+    os << e.toString();
+
+    return os;
 }

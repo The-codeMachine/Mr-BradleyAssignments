@@ -1,41 +1,25 @@
 #include "Device.hpp"
 
-#include <iostream>
 #include <cassert>
+#include <iostream>
 
-void testConstructors()
-{
-    std::cout << "Constructor test\n";
+void testGetters() {
+    std::cout << "Getters test\n";
 
-    Device d(1, "cool_name");
-    assert(!d.isBroken());
-    std::cout << "Device is created with 0 damage when specified\n";
+    Device d(1, "Test Device");
 
-    Device dd(10, 1, "cooler_name");
-    assert(dd.isBroken());
-    std::cout << "Device started with the specified damage\n";
+    std::cout << "Device constructed with specs: " << d << "\n";
 
-    std::cout << "Constructor test success\n";
-}
+    assert(d.getId() == 1);
+    std::cout << "Device id: " << d.getId() << "\n";
 
-void testRepairDamage()
-{
-    std::cout << "Repair/Damage test\n";
+    assert(d.getName() == "Test Device");
+    std::cout << "Device name: " << d.getName() << "\n";
 
-    Device d(10, 1, "cool_name");
-    d.repair(10);
-    assert(!d.isBroken());
-    std::cout << "Device got repaired\n";
+    assert(d.getDamage() == 0.0);
+    std::cout << "Device damage: " << d.getDamage() << "\n";
 
-    d.takeDamage();
-    assert(d.isBroken());
-    std::cout << "Device got damaged\n";
-
-    d.repair(50);
-    assert(!d.isBroken());
-    std::cout << "Device got repaired\n";
-
-    std::cout << "Repair/Damage test success\n";
+    std::cout << "Getters test success\n";
 }
 
 int main()
@@ -43,8 +27,13 @@ int main()
 
     std::cout << "Device Test\n";
 
-    testConstructors();
-    testRepairDamage();
+    testGetters();
+
+#ifndef NDEBUG
+
+    Device::whiteBoxTest();
+
+#endif
 
     std::cout << "Device test success\n";
 
@@ -55,14 +44,18 @@ int main()
 Sample Output
 
 Device Test
-Constructor test
-Device is created with 0 damage when specified
-Device started with the specified damage
-Constructor test success
-Repair/Damage test
-Device got repaired
-Device got damaged
-Device got repaired
+Getters test
+Device constructed with specs: [1], Test Device, Damage: 0.000000
+Device id: 1
+Device name: Test Device
+Device damage: 0
+Getters test success
+Device white box test
+Device is fully working, and not damaged: [1], Warp Engines, Damage: 0.000000
+Device is not operational because it has 2.5 damage: [1], Warp Engines, Damage: -2.500000
+Device has 1.5 damage: [1], Warp Engines, Damage: -1.500000
+Device is repair fully, and operational again: [1], Warp Engines, Damage: 0.000000
+Device white box test success
 Device test success
 
 */

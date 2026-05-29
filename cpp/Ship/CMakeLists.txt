@@ -1,4 +1,4 @@
-add_executable(ship tests/test_ship.cpp src/ship.cpp)
+add_executable(ship tests/test_ship.cpp src/ship.cpp ../Device/src/Device.cpp)
 
 target_link_libraries(ship PRIVATE common)
 

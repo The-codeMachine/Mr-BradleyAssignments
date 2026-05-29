@@ -1,48 +1,161 @@
 #pragma once
 
-#include <Device.hpp>
 #include <Ship.hpp>
 
-#include <vector>
-
 /**
+ * The Enterprise is the player's ship.
  *
- * The Enterprise is the player. It can move,
- * attack, defend, and dock at space stations.
- * The player may contorl the Enterprise. The
- * Enterprise inherits some functionality from
- * the ship super class (which klingons also
- * inherit from). The Enterprise holds 8
- * devices, each responsible for a specific
- * ability:
- *  - Warp Engines (1, "Navigate and Move")
- *  - Short Range Sensors (2, "Quadrant scan to see what is there")
- *  - Long Range Sensors (3, "Galactic scan to see what is nearby")
- *  - Phaser Control (4, "Shoot energy phasers at enemy ships")
- *  - Torpedo Control (5, "Fire 1-shot torpedoes at enemy ship")
- *  - Shield Control (6, "Power a shield against phaser fire")
- *  - Damage Control (7, "Status and repair devices")
- *  - Computer Systems (8, "Computer aid in navigation/weapons")
+ * Additional functionality:
+ *  - energy
+ *  - torpedoes
+ *  - docking
+ *  - movement
  *
  */
-
-class Enterprise : Ship
+class Enterprise : public Ship
 {
+public:
     Enterprise(double shields, double health, int x, int y);
 
-    void takeFire(double phaserEnergy, double distance);
+    int getEnergy() const;
+    int getTorpedoes() const;
+
+    bool isDocked() const;
+
+    void move(int newX, int newY, int warpFactor);
 
     void dock();
 
-    void event();
+    void firePhasers(int energy);
+    void fireTorpedo();
 
-private:
-    void warpRepair(double warpFactor);
+#ifndef NDEBUG
+
+    static void whiteBoxTest();
+
+#endif
+
+    std::string toString() const;
+
+    friend std::ostream &operator<<(std::ostream &os, const Enterprise &e);
 
 private:
     int energy;
     int torpedoes;
 
-    std::vector<Device> devices;
-
+    bool docked;
 };
+
+/*
+Sample Output
+
+Enterprise Test
+Getters test
+Enterprise constructed with specs:
+Health: 500.000000
+Shields: 1000.000000
+Position: (2, 4) 
+Devices
+  [1], Warp Engines, Damage: 0.000000
+  [2], Short Range Sensors, Damage: 0.000000
+  [3], Long Range Sensors, Damage: 0.000000
+  [4], Phaser Control, Damage: 0.000000
+  [5], Torpedo Control, Damage: 0.000000
+  [6], Shield Control, Damage: 0.000000
+  [7], Damage Control, Damage: 0.000000
+  [8], Computer Systems, Damage: 0.000000
+Energy: 3000
+Torpedoes: 10
+Docked: No
+
+Enterprise shields: 1000
+Enterprise health: 500
+Enterprise energy: 3000
+Enterprise torpedoes: 10
+Enterprise devices: 8
+Getters test success
+
+Movement test
+Enterprise moved to: (5, 7)
+Health: 500.000000
+Shields: 1000.000000
+Position: (5, 7) 
+Devices
+  [1], Warp Engines, Damage: 0.000000
+  [2], Short Range Sensors, Damage: 0.000000
+  [3], Long Range Sensors, Damage: 0.000000
+  [4], Phaser Control, Damage: 0.000000
+  [5], Torpedo Control, Damage: 0.000000
+  [6], Shield Control, Damage: 0.000000
+  [7], Damage Control, Damage: 0.000000
+  [8], Computer Systems, Damage: 0.000000
+Energy: 2970
+Torpedoes: 10
+Docked: No
+
+Movement test success
+
+Weapons test
+Enterprise fired 500 phaser energy
+Remaining energy: 2500
+Enterprise fired 1 torpedo
+Remaining torpedoes: 9
+Weapons test success
+
+Docking test
+Enterprise before docking:
+Health: 500.000000
+Shields: 1000.000000
+Position: (0, 0) 
+Devices
+  [1], Warp Engines, Damage: -3.000000
+  [2], Short Range Sensors, Damage: 0.000000
+  [3], Long Range Sensors, Damage: 0.000000
+  [4], Phaser Control, Damage: 0.000000
+  [5], Torpedo Control, Damage: 0.000000
+  [6], Shield Control, Damage: 0.000000
+  [7], Damage Control, Damage: 0.000000
+  [8], Computer Systems, Damage: 0.000000
+Energy: 2000
+Torpedoes: 9
+Docked: No
+
+Enterprise after docking:
+Health: 500.000000
+Shields: 1000.000000
+Position: (0, 0) 
+Devices
+  [1], Warp Engines, Damage: 0.000000
+  [2], Short Range Sensors, Damage: 0.000000
+  [3], Long Range Sensors, Damage: 0.000000
+  [4], Phaser Control, Damage: 0.000000
+  [5], Torpedo Control, Damage: 0.000000
+  [6], Shield Control, Damage: 0.000000
+  [7], Damage Control, Damage: 0.000000
+  [8], Computer Systems, Damage: 0.000000
+Energy: 3000
+Torpedoes: 10
+Docked: Yes
+
+Docking test success
+
+Enterprise white box test
+Health: 1000.000000
+Shields: 1000.000000
+Position: (5, 5) 
+Devices
+  [1], Warp Engines, Damage: 0.000000
+  [2], Short Range Sensors, Damage: 0.000000
+  [3], Long Range Sensors, Damage: 0.000000
+  [4], Phaser Control, Damage: 0.000000
+  [5], Torpedo Control, Damage: 0.000000
+  [6], Shield Control, Damage: 0.000000
+  [7], Damage Control, Damage: 0.000000
+  [8], Computer Systems, Damage: 0.000000
+Energy: 3000
+Torpedoes: 10
+Docked: Yes
+
+Enterprise white box test success
+Enterprise test success
+*/

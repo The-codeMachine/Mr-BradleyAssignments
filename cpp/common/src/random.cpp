@@ -39,7 +39,10 @@ namespace common
     // Generates a random 32-bit unsigned integer with a specific range
     int randomInt(int min, int max)
     {
-        assert(min < max);
+        assert(min <= max);
+
+        if (min == max)
+            return min;
 
         std::uniform_int_distribution<int> dist(min, max);
         // if this is used a lot you could add caching for the dist
@@ -49,7 +52,7 @@ namespace common
 
     // Generates a random double between min, and max
     double randomInRange(double min, double max) {
-        assert(min < max);
+        assert(min <= max);
 
         return min + (max - min) * random();
     }

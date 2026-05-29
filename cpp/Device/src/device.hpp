@@ -1,64 +1,76 @@
 #pragma once
+
 #include <common/random.hpp>
 
 #include <string>
+#include <ostream>
 
 /**
+ * A device represents one of the Enterprise's ship systems.
  *
- * The device holds the functionality to damage, and repair
- * itself. It allows the Enterprise's gameplay mechanics to
- * work (e.g. if the warp engines are broken, then the player
- * cannot use the warping functionality). Each device has its
- * own name, and id.
+ * Rules:
+ *  - Damage is represented as a NEGATIVE value.
+ *  - 0.0 means fully operational.
+ *  - The more negative the value, the more damaged the device is.
+ *
  * Operations include:
- *  - Constructing with a specified: id, name
- *  - Constructing with a specified: damage, id, name
  *  - damaging the device
  *  - repairing the device
- *  - damage/repair event (60%/40% chance respectively for each)
- *  - checking if the device is damaged
- *
- * Damage is a double value so that the device may repair during
- * warp as necessary.
+ *  - checking operational status
+ *  - printing device information
  *
  */
-
 class Device
 {
 public:
-    // Creates a new device with a fully working system (damage = 0), and a
-    // custom deviceId, and name.
-    Device(int assignedDeviceId, std::string assignedDeviceName) 
-    : damage(0), deviceId(assignedDeviceId), deviceName(assignedDeviceName) {}
+    Device();
+    Device(int id, const std::string &name);
 
-    // Creates a device with a specified damage, id, and name.
-    Device(double assignedDamage, int assignedDeviceId, std::string assignedDeviceName) 
-    : damage(assignedDamage), deviceId(assignedDeviceId), deviceName(assignedDeviceName) {}
+    int getId() const;
+    const std::string &getName() const;
+    double getDamage() const;
+    bool isOperational() const;
 
-    void takeDamage();
+    void damage(double amount);
     void repair(double amount);
 
-    bool isBroken() const;
+    void reset();
+
+#ifndef NDEBUG
+
+    static void whiteBoxTest();
+
+#endif
+
+    std::string toString() const;
+
+    friend std::ostream& operator<<(std::ostream& os, const Device& d);
 
 private:
-    double damage;
+    int id;
+    std::string name;
 
-    int deviceId;
-    std::string deviceName;
+    // 0.0 = healthy
+    // negative = damaged
+    double damageLevel;
 };
 
 /*
 Sample Output
 
 Device Test
-Constructor test
-Device is created with 0 damage when specified
-Device started with the specified damage
-Constructor test success
-Repair/Damage test
-Device got repaired
-Device got damaged
-Device got repaired
+Getters test
+Device constructed with specs: [1], Test Device, Damage: 0.000000
+Device id: 1
+Device name: Test Device
+Device damage: 0
+Getters test success
+Device white box test
+Device is fully working, and not damaged: [1], Warp Engines, Damage: 0.000000
+Device is not operational because it has 2.5 damage: [1], Warp Engines, Damage: -2.500000
+Device has 1.5 damage: [1], Warp Engines, Damage: -1.500000
+Device is repair fully, and operational again: [1], Warp Engines, Damage: 0.000000
+Device white box test success
 Device test success
 
 */

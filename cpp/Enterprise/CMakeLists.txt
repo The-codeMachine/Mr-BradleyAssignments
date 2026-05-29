@@ -1,4 +1,4 @@
-add_executable(enterprise tests/test_enterprise.cpp src/enterprise.cpp ../Device/src/Device.cpp)
+add_executable(enterprise tests/test_enterprise.cpp src/enterprise.cpp ../Device/src/Device.cpp ../Ship/src/Ship.cpp)
 
 target_link_libraries(enterprise PRIVATE common)
 
