@@ -24,9 +24,9 @@ public class Device {
         damageLevel = 0.0;
     }
 
-    public Device(int assignedId, String assignedName) {
-        id = assignedId;
-        name = assignedName;
+    public Device(int id, String name) {
+        this.id = id;
+        this.name = name;
         damageLevel = 0.0;
     }
 
@@ -35,7 +35,7 @@ public class Device {
      * Gets the device's id
      * 
      */
-    int getId() {
+    public int getId() {
         return id;
     }
 
@@ -44,7 +44,7 @@ public class Device {
      * Gets the device's name
      * 
      */
-    String getName() {
+    public String getName() {
         return name;
     }
 
@@ -53,7 +53,7 @@ public class Device {
      * Gets the device's damage
      * 
      */
-    double getDamage() {
+    public double getDamage() {
         return damageLevel;
     }
 
@@ -62,7 +62,7 @@ public class Device {
      * Checks if the device is operational
      * 
      */
-    boolean isOperational() {
+    public boolean isOperational() {
         return damageLevel == 0.0;
     }
 
@@ -73,7 +73,7 @@ public class Device {
      * @param amount
      * 
      */
-    void damage(double amount) {
+    public void damage(double amount) {
         assert amount >= 0.0;
 
         damageLevel -= amount;
@@ -86,7 +86,7 @@ public class Device {
      * @param amount
      * 
      */
-    void repair(double amount) {
+    public void repair(double amount) {
         assert amount >= 0.0;
 
         damageLevel += amount;
@@ -99,7 +99,7 @@ public class Device {
      * Resets the device's damage level
      * 
      */
-    void reset() {
+    public void reset() {
         damageLevel = 0.0;
     }
 

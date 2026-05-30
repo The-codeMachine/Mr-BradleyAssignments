@@ -51,7 +51,7 @@ public class GameLib {
      * @return a number between min, and max (inclusive)
      */
     public static int randomInt(int min, int max) {
-        assert min < max : "Max must be greater than min";
+        assert min <= max : "Max must be greater than min";
 
         return (int)(min + (max - min + 1) * random());
     }
@@ -67,7 +67,7 @@ public class GameLib {
      * @return a random double between min, and max
      */
     public static double randomInRange(double min, double max) {
-        assert min < max : "Max must be greater than min";
+        assert min <= max : "Max must be greater than min";
 
         return min + (max - min) * random();
     }

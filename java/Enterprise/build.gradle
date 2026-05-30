@@ -1,0 +1,17 @@
+plugins {
+    id 'application'
+}
+
+dependencies {
+    implementation project(':common')
+    implementation project(':device')
+    implementation project(':ship')
+}
+
+tasks.withType(JavaExec).configureEach {
+    enableAssertions = true
+}
+
+application {
+    mainClass = 'enterprise.Main'
+}
