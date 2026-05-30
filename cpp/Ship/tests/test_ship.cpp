@@ -50,14 +50,14 @@ void testDamage()
 
     Ship s(100.0, 200.0, 0, 0);
 
-    s.takeDamage(25.0);
+    s.takeDamage(25.0, 1.0);
 
     assert(s.getShields() == 75.0);
 
     std::cout << "Ship after taking 25 damage:\n";
     std::cout << s.toString() << "\n";
 
-    s.takeDamage(100.0);
+    s.takeDamage(100.0, 1.0);
 
     assert(s.getShields() == 0.0);
     assert(s.getHealth() == 175.0);

@@ -37,14 +37,14 @@ public class Main {
 
         Ship s = new Ship(100.0, 200.0, 0, 0);
 
-        s.takeDamage(25.0);
+        s.takeDamage(25.0, 1.0);
 
         assert s.getShields() == 75.0 : "Ship does not have correct shields amount";
 
         System.out.println("Ship after taking 25 damage");
         System.out.println(s);
 
-        s.takeDamage(100.0);
+        s.takeDamage(100.0, 1.0);
 
         assert s.getShields() == 0.0 : "Ship does not have correct shields amount";
         assert s.getHealth() == 175.0 : "Ship does not have correct health amount";
@@ -53,9 +53,7 @@ public class Main {
         System.out.println(s);
 
         System.out.println("Damage test success");
-
     }
-
 
     public static void main(String args[]) {
         System.out.println("Ship test");

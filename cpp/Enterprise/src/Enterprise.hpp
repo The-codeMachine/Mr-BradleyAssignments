@@ -24,6 +24,8 @@ public:
 
     void move(int newX, int newY, int warpFactor);
 
+    void takeDamage(double phaserEnergy, double distance) override;
+
     void dock();
 
     void firePhasers(int energy);

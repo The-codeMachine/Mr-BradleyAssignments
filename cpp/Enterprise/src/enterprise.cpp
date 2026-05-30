@@ -47,9 +47,17 @@ void Enterprise::move(int newX, int newY, int warpFactor)
     energy -= warpFactor * 10;
 
     // travelling repairs devices
-    repairAllDevices(warpFactor);
+    repairAllDevices(std::min(warpFactor, 1));
 
     randomDeviceEvent();
+}
+
+// makes the enterprise take damage
+void Enterprise::takeDamage(double phaserEnergy, double distance) {
+    if (docked)
+        return;
+
+    Ship::takeDamage(phaserEnergy, distance);
 }
 
 // docks the enterprise
@@ -75,7 +83,8 @@ void Enterprise::firePhasers(int amount)
 // fires the enterprise's torpedoes (does not actually do damage yet)
 void Enterprise::fireTorpedo()
 {
-    assert(torpedoes > 0);
+    if (torpedoes < 1)
+        return;
 
     torpedoes--;
 }

@@ -36,7 +36,7 @@ public:
 
     bool isDestroyed() const;
 
-    void takeDamage(double amount);
+    virtual void takeDamage(double phaserEnergy, double distance);
 
     void repairAllDevices(double amount);
     void resetDevices();

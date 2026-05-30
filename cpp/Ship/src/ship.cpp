@@ -46,9 +46,11 @@ bool Ship::isDestroyed() const
 }
 
 // Makes the ship take damage
-void Ship::takeDamage(double amount)
+void Ship::takeDamage(double phaserEnergy, double distance)
 {
-    assert(amount >= 0.0);
+    assert(phaserEnergy >= 0.0 && distance >= 0.0);
+
+    double amount = phaserEnergy / distance;
 
     if (shields > 0.0)
     {
@@ -65,9 +67,26 @@ void Ship::takeDamage(double amount)
         health -= amount;
     }
 
+    if (amount / shields >= 0.02 && devices.size() > 0)
+    {
+        if (common::chanceOf(0.4))
+            return;
+
+        int index = common::randomInt(0, devices.size() - 1);
+        double damageAmount = common::randomInRange(1.0, 5.0);
+
+        devices[index].damage(damageAmount);
+
+        return;
+    }
+
     // possible device damage (60% chance)
     if (common::chanceOf(0.6) && devices.size() > 0)
     {
+        // only 60% chance that the device actually gets damaged
+        if (common::chanceOf(0.4))
+            return;
+
         int index = common::randomInt(0, devices.size() - 1);
         double damageAmount = common::randomInRange(1.0, 5.0);
 
@@ -96,6 +115,9 @@ void Ship::resetDevices()
 // Random event that occurs on a ship
 void Ship::randomDeviceEvent()
 {
+    if (devices.size() < 1)
+        return;
+
     // 20% chance
     if (common::chanceOf(0.8))
         return;
@@ -105,6 +127,10 @@ void Ship::randomDeviceEvent()
     // 60% damage, 40% repair
     if (common::chanceOf(0.6))
     {
+        // only 60% chance that the device actually gets damaged
+        if (common::chanceOf(0.4))
+            return;
+
         double amount = common::randomInRange(1.0, 5.0);
         devices[index].damage(amount);
     }
@@ -140,7 +166,8 @@ int Ship::totalDevices() const
 #ifndef NDEBUG
 
 // adds a device to the ship (for testing)
-void Ship::addDevice(const Device& d) {
+void Ship::addDevice(const Device &d)
+{
     devices.push_back(d);
 }
 
@@ -154,7 +181,7 @@ void Ship::whiteBoxTest()
     s.devices.push_back(Device(1, "Warp Engines"));
     s.devices.push_back(Device(2, "Sensors"));
 
-    s.takeDamage(20.0);
+    s.takeDamage(20.0, 1.0);
 
     assert(s.getShields() == 80.0);
 

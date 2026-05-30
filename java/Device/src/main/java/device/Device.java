@@ -73,7 +73,7 @@ public class Device {
      * @param amount
      * 
      */
-    public void damage(double amount) {
+    public void damage(double amount) {   
         assert amount >= 0.0;
 
         damageLevel -= amount;

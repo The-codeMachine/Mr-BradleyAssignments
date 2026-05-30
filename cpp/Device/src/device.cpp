@@ -1,52 +1,62 @@
 #include "Device.hpp"
 
+#include <common/random.hpp>
+
 #include <cassert>
 #include <iostream>
 #include <iomanip>
 
 Device::Device() : id(0), name("UNKNOWN"), damageLevel(0.0) {}
 
-Device::Device(int id, const std::string& name) : id(id), name(name), damageLevel(0.0) {}
+Device::Device(int id, const std::string &name) : id(id), name(name), damageLevel(0.0) {}
 
 // gets the device's id
-int Device::getId() const {
+int Device::getId() const
+{
     return id;
 }
 
 // gets the device's name
-const std::string& Device::getName() const {
+const std::string &Device::getName() const
+{
     return name;
 }
 
 // gets the device's damage
-double Device::getDamage() const {
+double Device::getDamage() const
+{
     return damageLevel;
 }
 
 // checks if the device is operational
-bool Device::isOperational() const {
+bool Device::isOperational() const
+{
     return damageLevel == 0.0;
 }
 
 // damages the device by an amount
-void Device::damage(double amount) {
+void Device::damage(double amount)
+{
     assert(amount >= 0.0);
 
     damageLevel -= amount;
 }
 
 // repairs the device by an amount
-void Device::repair(double amount) {
+void Device::repair(double amount)
+{
     assert(amount >= 0.0);
 
     damageLevel += amount;
-    if (damageLevel > 0.0) {
+    if (damageLevel > 0.0)
+    {
         damageLevel = 0.0;
     }
 }
 
 // resets the device to its original damage
-void Device::reset() {
+void Device::reset()
+{
     damageLevel = 0.0;
 }
 
@@ -88,12 +98,13 @@ void Device::whiteBoxTest()
 #endif
 
 // converts the device to a string
-std::string Device::toString() const {
+std::string Device::toString() const
+{
     return "[" + std::to_string(id) + "], " + name + ", Damage: " + std::to_string(damageLevel);
 }
 
 // prints the device's specs
-std::ostream& operator<<(std::ostream& os, const Device& d)
+std::ostream &operator<<(std::ostream &os, const Device &d)
 {
     os << d.toString();
 

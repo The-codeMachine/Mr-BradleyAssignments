@@ -74,10 +74,10 @@ public class Enterprise extends Ship {
 
         setPosition(newX, newY);
 
-        energy -= warpFactor * 10;
+        energy -= (int)(warpFactor * 10);
 
         // travelling repairs devices
-        repairAllDevices(warpFactor);
+        repairAllDevices(Math.min(warpFactor, 1));
 
         randomDeviceEvent();
     }
@@ -125,6 +125,14 @@ public class Enterprise extends Ship {
             return;
 
         torpedoes--;
+    }
+
+    @Override
+    public void takeDamage(double phaserEnergy, double distance) {
+        if (docked)
+            return;
+
+        super.takeDamage(phaserEnergy, distance);
     }
 
     /**

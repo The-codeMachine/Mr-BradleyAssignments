@@ -96,8 +96,10 @@ public class Ship {
      * @param amount
      * 
      */
-    public void takeDamage(double amount) {
-        assert amount >= 0.0;
+    public void takeDamage(double phaserEnergy, double distance) {
+        assert phaserEnergy >= 0.0 && distance >= 0.0;
+
+        double amount = phaserEnergy / distance;
 
         if (shields > 0.0) {
             shields -= amount;
@@ -110,8 +112,24 @@ public class Ship {
             health -= amount;
         }
 
+        if (amount / shields >= 0.02 && devices.size() > 0) {
+            if (GameLib.chanceOf(0.4))
+                return;
+
+            int index = GameLib.randomInt(0, devices.size() - 1);
+            double damageAmount = GameLib.randomInRange(1.0, 5.0);
+
+            devices.get(index).damage(damageAmount);
+
+            return;
+        }
+
         // possible device damage
         if (GameLib.chanceOf(0.6) && devices.size() > 0) {
+            // 60% chance that the device gets damaged 
+            if (GameLib.chanceOf(0.4))
+                return;
+
             int index = GameLib.randomInt(0, devices.size() - 1);
             double damageAmount = GameLib.randomInRange(1.0, 5.0);
 
@@ -160,6 +178,10 @@ public class Ship {
 
         // 60% damage, 40% repair
         if (GameLib.chanceOf(0.6)) {
+            // only 60% chance that the device actually gets damaged
+            if (GameLib.chanceOf(0.4))
+                return;
+
             double amount = GameLib.randomInRange(1.0, 5.0);
             devices.get(index).damage(amount);
         } else {
@@ -212,7 +234,7 @@ public class Ship {
         s.devices.add(new Device(1, "Warp Engines"));
         s.devices.add(new Device(2, "Sensors"));
 
-        s.takeDamage(20.0);
+        s.takeDamage(20.0, 1.0);
 
         assert s.getShields() == 80.0 : "Shield is not 80 like it is suppose to be";
 
