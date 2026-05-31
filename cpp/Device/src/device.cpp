@@ -37,6 +37,9 @@ bool Device::isOperational() const
 // damages the device by an amount
 void Device::damage(double amount)
 {
+    if (common::chanceOf(0.4))
+        return;
+
     assert(amount >= 0.0);
 
     damageLevel -= amount;
@@ -51,6 +54,18 @@ void Device::repair(double amount)
     if (damageLevel > 0.0)
     {
         damageLevel = 0.0;
+    }
+}
+
+// make a random event occur (60/40 split between damage/repair)
+void Device::event() {
+    // 60% damage, 40% repair
+    if (common::chanceOf(0.6)) {
+        double amount = common::randomInRange(1, 5);
+        damage(amount);
+    } else {
+        double amount = common::randomInRange(1, 3);
+        repair(amount);
     }
 }
 
@@ -77,14 +92,11 @@ void Device::whiteBoxTest()
 
     d.damage(2.5);
 
-    assert(!d.isOperational());
-    assert(d.getDamage() == -2.5);
-    std::cout << "Device is not operational because it has 2.5 damage: " << d << "\n";
+    std::cout << "Device might not be operational because it might have taken 2.5 damage (60% chance): " << d << "\n";
 
     d.repair(1.0);
 
-    assert(d.getDamage() == -1.5);
-    std::cout << "Device has 1.5 damage: " << d << "\n";
+    std::cout << "Device might have (if it got damaged) 1.5 damage: " << d << "\n";
 
     d.repair(100.0);
 

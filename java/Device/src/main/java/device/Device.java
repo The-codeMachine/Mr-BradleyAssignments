@@ -15,6 +15,7 @@ import common.*;
  *  - repairing the device
  *  - checking operational status
  *  - printing device information
+ *  - random event (damage, or repair)
  *
  */
 public class Device {
@@ -74,6 +75,9 @@ public class Device {
      * 
      */
     public void damage(double amount) {   
+        if (GameLib.chanceOf(0.4))
+            return;
+
         assert amount >= 0.0;
 
         damageLevel -= amount;
@@ -92,6 +96,22 @@ public class Device {
         damageLevel += amount;
         if (damageLevel > 0.0)
             damageLevel = 0;
+    }
+
+    /**
+     * 
+     * Make a random event occur (60/40 split between damage/repair)
+     * 
+     */
+    public void event() {
+        // 60% damage, 40% repair
+        if (GameLib.chanceOf(0.6)) {
+            double amount = GameLib.randomInRange(1, 5);
+            damage(amount);
+        } else {
+            double amount = GameLib.randomInRange(1, 3);
+            repair(amount);
+        }
     }
 
     /**
@@ -121,16 +141,11 @@ public class Device {
 
         d.damage(2.5);
 
-        assert !d.isOperational() : "Device is operational after taking damage";
-        assert d.getDamage() == -2.5 : "Device damage is not correct";
-
-        System.out.println("Device is not operational because it has 2.5 damage: " + d.toString());
+        System.out.println("Device might not be operational because it might have taken 2.5 damage (60% chance): " + d.toString());
 
         d.repair(1.0);
 
-        assert d.getDamage() == -1.5 : "Device does not have 1.5 damage";
-        
-        System.out.println("Device has 1.5 damage: " + d.toString());
+        System.out.println("Device might have (if it got damaged) 1.5 damage: " + d.toString());
 
         d.repair(100.0);
 
@@ -138,7 +153,6 @@ public class Device {
         assert d.isOperational() : "Device is not operational after being fully repaired";
 
         System.out.println("Device is repaired fully, and operationl again: " + d.toString());
-
 
         System.out.println("Device white box test success");
     }

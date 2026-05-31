@@ -69,9 +69,6 @@ void Ship::takeDamage(double phaserEnergy, double distance)
 
     if (amount / shields >= 0.02 && devices.size() > 0)
     {
-        if (common::chanceOf(0.4))
-            return;
-
         int index = common::randomInt(0, devices.size() - 1);
         double damageAmount = common::randomInRange(1.0, 5.0);
 
@@ -83,10 +80,6 @@ void Ship::takeDamage(double phaserEnergy, double distance)
     // possible device damage (60% chance)
     if (common::chanceOf(0.6) && devices.size() > 0)
     {
-        // only 60% chance that the device actually gets damaged
-        if (common::chanceOf(0.4))
-            return;
-
         int index = common::randomInt(0, devices.size() - 1);
         double damageAmount = common::randomInRange(1.0, 5.0);
 
@@ -123,22 +116,7 @@ void Ship::randomDeviceEvent()
         return;
 
     int index = common::randomInt(0, devices.size() - 1);
-
-    // 60% damage, 40% repair
-    if (common::chanceOf(0.6))
-    {
-        // only 60% chance that the device actually gets damaged
-        if (common::chanceOf(0.4))
-            return;
-
-        double amount = common::randomInRange(1.0, 5.0);
-        devices[index].damage(amount);
-    }
-    else
-    {
-        double amount = common::randomInRange(1.0, 3.0);
-        devices[index].repair(amount);
-    }
+    devices[index].event();
 }
 
 // gets a device from devices

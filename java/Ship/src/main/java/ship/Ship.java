@@ -113,9 +113,6 @@ public class Ship {
         }
 
         if (amount / shields >= 0.02 && devices.size() > 0) {
-            if (GameLib.chanceOf(0.4))
-                return;
-
             int index = GameLib.randomInt(0, devices.size() - 1);
             double damageAmount = GameLib.randomInRange(1.0, 5.0);
 
@@ -126,10 +123,6 @@ public class Ship {
 
         // possible device damage
         if (GameLib.chanceOf(0.6) && devices.size() > 0) {
-            // 60% chance that the device gets damaged 
-            if (GameLib.chanceOf(0.4))
-                return;
-
             int index = GameLib.randomInt(0, devices.size() - 1);
             double damageAmount = GameLib.randomInRange(1.0, 5.0);
 
@@ -175,19 +168,7 @@ public class Ship {
             return;
 
         int index = GameLib.randomInt(0, devices.size() - 1);
-
-        // 60% damage, 40% repair
-        if (GameLib.chanceOf(0.6)) {
-            // only 60% chance that the device actually gets damaged
-            if (GameLib.chanceOf(0.4))
-                return;
-
-            double amount = GameLib.randomInRange(1.0, 5.0);
-            devices.get(index).damage(amount);
-        } else {
-            double amount = GameLib.randomInRange(1.0, 3.0);
-            devices.get(index).repair(amount);
-        }
+        devices.get(index).event();
     }
 
     /**

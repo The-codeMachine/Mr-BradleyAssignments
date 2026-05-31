@@ -18,6 +18,7 @@
  *  - repairing the device
  *  - checking operational status
  *  - printing device information
+ *  - random event (damage, or repair)
  *
  */
 class Device
@@ -33,6 +34,8 @@ public:
 
     void damage(double amount);
     void repair(double amount);
+
+    void event();
 
     void reset();
 
