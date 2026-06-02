@@ -100,6 +100,26 @@ public class Device {
 
     /**
      * 
+     * Damages the device by a random amount (between 1 - 5.99..)
+     * 
+     */
+    public void damage() {
+        double amount = GameLib.randomInRange(1, 5);
+        damage(amount);
+    }
+
+    /**
+     * 
+     * Repairs the device by a random amount (between 1 - 3.99..)
+     * 
+     */
+    public void repair() {
+        double amount = GameLib.randomInRange(1, 3);
+        repair(amount);
+    }
+
+    /**
+     * 
      * Make a random event occur (60/40 split between damage/repair)
      * 
      */
@@ -166,6 +186,141 @@ public class Device {
 
     private int id;
     private String name;
+}
+
+public class Devices {
+    Devices() {
+        devices = new ArrayList<>();
+    }
+
+    Devices(ArrayList<Device> devices) {
+        this.devices = devices;
+    }
+
+    /**
+     * 
+     * Adds a device to the ArrayList (devices)
+     * 
+     * @param id
+     * @param name
+     * 
+     */
+    public void addDevice(int id, String name) {
+        devices.add(new Device(id, name));
+    }
+
+    /**
+     * 
+     * Removes a device from the ArrayList (devices)
+     * 
+     * @param id
+     * 
+     */
+    public void removeDevice(int id) {
+        devices.remove(id);
+    }
+
+    /**
+     * 
+     * Returns a device from the ArrayList (devices)
+     * 
+     * @param id
+     * 
+     */
+    public Device getDevice(int id) {
+        return devices.get(id);
+    }
+
+    /**
+     * 
+     * Makes a random event occur
+     * 
+     */
+    public void randomDamageRepairEvent() {
+        if (devices.size() <= 0)
+            return;
+        
+        if (GameLib.chanceOf(0.8))
+            return;
+
+        int index = GameLib.randomInt(0, devices.size() - 1);
+        devices[index].event();
+    }
+
+    /**
+     * 
+     * Damages the device with id by an amount
+     * 
+     * @param id
+     * @param amount
+     * 
+     */
+    public void damage(int id, double amount) {
+        if (devices.size() <= 0 || amount <= 0)
+            return;
+
+        int index = GameLib.randomInt(0, devices.size() - 1);
+        devices.get(index).damage(amount);
+    }
+
+    /**
+     * 
+     * Repairs the device with id by an amount
+     * 
+     * @param id
+     * @param amount
+     * 
+     */
+    public void repair(int id, double amount) {
+        if (devices.size() <= 0 || amount <= 0)
+            return;
+
+        int index = GameLib.randomInt(0, devices.size() - 1);
+        devices.get(index).repair(amount);
+    }
+
+    /**
+     * 
+     * Damages a device (with id) by a random amount (between 1-6)
+     * 
+     * @param id
+     * 
+     */
+    public void randomDamage(int id) {
+        if (devices.size() <= 0)
+            return;
+
+        int index = GameLib.randomInt(0, devices.size() - 1);
+        devices.get(index).randomDamage();
+    }
+
+    /**
+     * 
+     * Repairs a device (with id) by a random amount (between 1-4)
+     * 
+     * @param id
+     * 
+     */
+    public void randomRepair(int id) {
+        if (devices.size() <= 0)
+            return;
+
+        int index = GameLib.randomInt(0, devices.size() - 1);
+        devices.get(index).randomRepair();
+    }
+
+    @Override
+    public String toString() {
+        String out;
+
+        for (Device d : devices) {
+            out += d.toString() + "\n";
+        }
+
+        return out;
+    }
+
+    private ArrayList<Device> devices;
 }
 
 /**
