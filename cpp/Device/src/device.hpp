@@ -35,6 +35,9 @@ public:
     void damage(double amount);
     void repair(double amount);
 
+    void damage();
+    void repair();
+
     void event();
 
     void reset();
@@ -47,7 +50,7 @@ public:
 
     std::string toString() const;
 
-    friend std::ostream& operator<<(std::ostream& os, const Device& d);
+    friend std::ostream &operator<<(std::ostream &os, const Device &d);
 
 private:
     int id;
@@ -56,6 +59,53 @@ private:
     // 0.0 = healthy
     // negative = damaged
     double damageLevel;
+};
+
+/**
+ *
+ * The Devices classs manages all of the Devices. It is
+ * designed for ships, and the Enterprise. Operations include:
+ *  - Construction without an arraylist and with one
+ *  - Adding a device
+ *  - Removing a device
+ *  - Getting a device
+ *  - Damaging a device
+ *  - Repairing a device
+ *  - Damaging/repairing a random device by a random amount
+ *  - Apply the repair for moving
+ *  - Have a random damage/repair event occur
+ *  - Take damage based off the energy, distance, and shields
+ *  - Convert to string
+ *
+ */
+class Devices
+{
+public:
+    Devices();
+    Devices(const std::vector<Device> &devices);
+
+    void addDevice(int id, std::string name);
+    void removeDevice(int id);
+    Device &getDevice(int id);
+    const Device &getDevice(int id) const;
+
+    void randomDamageRepairEvent();
+
+    void damage(int id, double amount);
+    void repair(int id, double amount);
+
+    void randomDamage(int id);
+    void randomRepair(int id);
+
+    void moveRepair(double warpFactor);
+    void takeDamage(double phaserEnergy, double distance, int shields);
+
+    std::string toString() const;
+
+    friend std::ostream &operator<<(std::ostream &os, const Devices &d);
+
+private:
+    std::vector<Device> devices;
 };
 
 /*
