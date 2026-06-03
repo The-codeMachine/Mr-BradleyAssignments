@@ -153,7 +153,7 @@ public class Device {
 
         Device d = new Device(1, "Warp Engines");
 
-        assert "[1], Warp Engines, Damage: 0.0".equals(d.toString()) : "String conversion function does not work properly";
+        assert "[1] Warp Engines: 0.0".equals(d.toString()) : "String conversion function does not work properly";
         assert d.isOperational() : "Device did not start operational";
         assert d.getDamage() == 0.0 : "Device did not begin with 0.0 damage";
 
@@ -179,7 +179,7 @@ public class Device {
 
     @Override
     public String toString() {
-        return "[" + Integer.toString(id) + "], " + name + ", Damage: " + Double.toString(damageLevel);
+        return "[" + Integer.toString(id) + "] " + name + ": " + Double.toString(damageLevel);
     }
 
     private double damageLevel;
@@ -243,8 +243,12 @@ public class Devices {
         if (GameLib.chanceOf(0.8))
             return;
 
+        System.out.println(this.toString());
+
         int index = GameLib.randomInt(0, devices.size() - 1);
         devices[index].event();
+
+        System.out.println(this.toString());
     }
 
     /**
@@ -259,8 +263,12 @@ public class Devices {
         if (devices.size() <= 0 || amount <= 0)
             return;
 
+        System.out.println(this.d);
+
         int index = GameLib.randomInt(0, devices.size() - 1);
         devices.get(index).damage(amount);
+
+        System.out.println(this.d);
     }
 
     /**
@@ -275,8 +283,12 @@ public class Devices {
         if (devices.size() <= 0 || amount <= 0)
             return;
 
+        System.out.println(this.d);
+
         int index = GameLib.randomInt(0, devices.size() - 1);
         devices.get(index).repair(amount);
+        
+        System.out.println(this.d);
     }
 
     /**
@@ -290,8 +302,12 @@ public class Devices {
         if (devices.size() <= 0)
             return;
 
+        System.out.println(this.d);
+
         int index = GameLib.randomInt(0, devices.size() - 1);
         devices.get(index).randomDamage();
+
+        System.out.println(this.d);
     }
 
     /**
@@ -305,13 +321,66 @@ public class Devices {
         if (devices.size() <= 0)
             return;
 
+        System.out.println(this.d);
+
         int index = GameLib.randomInt(0, devices.size() - 1);
         devices.get(index).randomRepair();
+
+        System.out.println(this.d);
+    }
+
+    /**
+     * 
+     * Repairs all devices by an amount by the warpFactor
+     * 
+     * @param warpFactor
+     * 
+     */
+    public void moveRepair(double warpFactor) {
+        if (warpFactor > 1.0)
+            warpFactor = 1.0;
+
+        System.out.println(this.toString());
+
+        for (Device d : devices) {
+            d.repair(warpFactor);
+        }
+
+        System.out.println(this.toString());
+    }
+
+    /**
+     * 
+     * Makes the devices take damage, but only if there is enough damage
+     * 
+     * @param phaserEnergy
+     * @param distance
+     * @param shields
+     * 
+     */
+    public void takeDamage(double phaserEnergy, double distance, double shields) {
+        if (phaserEnergy < 0 || distance < 0 || shields < 0 || devices.size() <= 0)
+            return;
+
+        double hitPoints = phaserEnergy / distance;
+        if (hitPoints / shields <= 0.02)
+            return;
+
+        if (GameLib.chanceOf(0.6)) {
+            System.out.println(this.d);
+
+            int index = Gamelib.randomInt(1, devices.size())
+            devices.get(index).randomDamage();
+        }
+        
+        System.out.println(this.toString());
     }
 
     @Override
     public String toString() {
-        String out;
+        String out = "";
+
+        out += "Damage Report\n";
 
         for (Device d : devices) {
             out += d.toString() + "\n";
