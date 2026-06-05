@@ -105,25 +105,72 @@ public:
     friend std::ostream &operator<<(std::ostream &os, const Devices &d);
 
 private:
+    Device& randomDevice();
+
+private:
     std::vector<Device> devices;
 };
 
 /*
 Sample Output
 
-Device Test
 Getters test
 Device constructed with specs: [1], Test Device, Damage: 0.000000
 Device id: 1
 Device name: Test Device
 Device damage: 0
 Getters test success
+
 Device white box test
 Device is fully working, and not damaged: [1], Warp Engines, Damage: 0.000000
-Device is not operational because it has 2.5 damage: [1], Warp Engines, Damage: -2.500000
-Device has 1.5 damage: [1], Warp Engines, Damage: -1.500000
-Device is repair fully, and operational again: [1], Warp Engines, Damage: 0.000000
+Device might not be operational because it might have taken 2.5 damage (60% chance): [1], Warp Engines, Damage: -2.500000
+Device might have (if it got damaged) 1.5 damage: [1], Warp Engines, Damage: -1.500000
+Device is repaired fully, and operational again: [1], Warp Engines, Damage: 0.000000
 Device white box test success
 Device test success
+Devices test
+Devices getters test
+Damage Report
+[1], Warp Engines, Damage: 0.000000
+[2], Phaser Control, Damage: 0.000000
+
+[1], Warp Engines, Damage: 0.000000
+Devices getters test success
+Damage/Repair test
+Damage test
+Damage Report
+[1], Warp Engines, Damage: -3.000000
+[2], Phaser Control, Damage: 0.000000
+
+Repair test
+Damage Report
+[1], Warp Engines, Damage: -1.000000
+[2], Phaser Control, Damage: 0.000000
+Damage/Repair test success
+Devices random test
+Devices random damage
+Damage Report
+[1], Warp Engines, Damage: -4.032789
+[2], Phaser Control, Damage: 0.000000
+
+Devices random repair
+Damage Report
+[1], Warp Engines, Damage: -1.944652
+[2], Phaser Control, Damage: 0.000000
+Devices random test success
+Devices ship test
+Damage test
+Damage Report
+[1], Warp Engines, Damage: 0.000000
+[2], Phaser Control, Damage: -2.024373
+
+Devices random event
+
+Devices move repair
+Damage Report
+[1], Warp Engines, Damage: 0.000000
+[2], Phaser Control, Damage: -1.724373
+Devices ship test success
+Devices test success
 
 */

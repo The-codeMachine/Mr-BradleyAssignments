@@ -38,10 +38,10 @@ bool Device::isOperational() const
 void Device::damage(double amount)
 {
     if (common::chanceOf(0.4))
-        return;
-
+    return;
+    
     assert(amount >= 0.0);
-
+    
     damageLevel -= amount;
 }
 
@@ -49,7 +49,7 @@ void Device::damage(double amount)
 void Device::repair(double amount)
 {
     assert(amount >= 0.0);
-
+    
     damageLevel += amount;
     if (damageLevel > 0.0)
     {
@@ -97,29 +97,29 @@ void Device::reset()
 void Device::whiteBoxTest()
 {
     std::cout << "Device white box test\n";
-
+    
     Device d(1, "Warp Engines");
-
+    
     assert(d.toString() == "[1], Warp Engines, Damage: 0.000000");
-
+    
     assert(d.isOperational());
     assert(d.getDamage() == 0.0);
     std::cout << "Device is fully working, and not damaged: " << d << "\n";
-
+    
     d.damage(2.5);
-
+    
     std::cout << "Device might not be operational because it might have taken 2.5 damage (60% chance): " << d << "\n";
-
+    
     d.repair(1.0);
-
+    
     std::cout << "Device might have (if it got damaged) 1.5 damage: " << d << "\n";
-
+    
     d.repair(100.0);
-
+    
     assert(d.getDamage() == 0.0);
     assert(d.isOperational());
     std::cout << "Device is repaired fully, and operational again: " << d << "\n";
-
+    
     std::cout << "Device white box test success\n";
 }
 
@@ -135,12 +135,18 @@ std::string Device::toString() const
 std::ostream &operator<<(std::ostream &os, const Device &d)
 {
     os << d.toString();
-
+    
     return os;
 }
 
 Devices::Devices() {}
 Devices::Devices(const std::vector<Device> &devices) : devices(devices) {}
+
+// Gets a random device from devices
+Device& Devices::randomDevice() {
+    int index = common::randomInt(0, devices.size() - 1);
+    return devices[index];
+}
 
 // Adds a device to the vector (devices)
 void Devices::addDevice(int id, std::string name)
@@ -157,12 +163,16 @@ void Devices::removeDevice(int id)
 // Returns a device from the vector (devices)
 Device &Devices::getDevice(int id)
 {
+    assert(id >= 0 && id < devices.size());
+
     return devices[id];
 }
 
 // Returns a read-only copy of a device from the vector (devices)
 const Device &Devices::getDevice(int id) const
 {
+    assert(id >= 0 && id < devices.size());
+
     return devices[id];
 }
 
@@ -172,10 +182,7 @@ void Devices::randomDamageRepairEvent()
     if (devices.size() <= 0 || common::chanceOf(0.8))
         return;
 
-    std::cout << toString();
-
-    int index = common::randomInt(1, devices.size());
-    devices[index].event();
+    randomDevice().event();
 
     std::cout << toString();
 }
@@ -183,13 +190,10 @@ void Devices::randomDamageRepairEvent()
 // Damages the device with id by an amount
 void Devices::damage(int id, double amount)
 {
-    if (devices.size() <= 0 || amount <= 0)
+    if (devices.size() <= 0 || amount <= 0 || devices.size() <= id)
         return;
 
-    std::cout << toString();
-
-    int index = common::randomInt(1, devices.size());
-    devices[index].damage(amount);
+    devices[id].damage(amount);
 
     std::cout << toString();
 }
@@ -197,13 +201,10 @@ void Devices::damage(int id, double amount)
 // Repairs the device with id by an amount
 void Devices::repair(int id, double amount)
 {
-    if (devices.size() <= 0 || amount <= 0)
+    if (devices.size() <= 0 || amount <= 0 || devices.size() <= id)
         return;
 
-    std::cout << toString();
-
-    int index = common::randomInt(1, devices.size());
-    devices[index].repair(amount);
+    devices[id].repair(amount);
 
     std::cout << toString();
 }
@@ -214,24 +215,18 @@ void Devices::randomDamage(int id)
     if (devices.size() <= 0 || devices.size() <= id)
         return;
 
-    std::cout << toString();
-
-    int index = common::randomInt(1, devices.size());
-    devices[index].damage();
+    devices[id].damage();
 
     std::cout << toString();
 }
 
-// Damages a device (with id) by a random amount (between 1-3)
+// Repairs a device (with id) by a random amount (between 1-3)
 void Devices::randomRepair(int id)
 {
     if (devices.size() <= 0 || devices.size() <= id)
         return;
 
-    std::cout << toString();
-
-    int index = common::randomInt(1, devices.size());
-    devices[index].repair();
+    devices[id].repair();
 
     std::cout << toString();
 }
@@ -241,8 +236,6 @@ void Devices::moveRepair(double warpFactor)
 {
     if (warpFactor > 1.0)
         warpFactor = 1.0;
-
-    std::cout << toString();
 
     for (auto& d : devices) {
         d.repair(warpFactor);
@@ -254,7 +247,7 @@ void Devices::moveRepair(double warpFactor)
 // Makes the devices take damage, but only if there is enough energy
 void Devices::takeDamage(double phaserEnergy, double distance, int shields)
 {
-    if (phaserEnergy < 0 || distance < 0 || shields < 0 || devices.size() <= 0)
+    if (phaserEnergy < 0 || distance <= 0 || shields < 0 || devices.size() <= 0)
         return;
 
     double hitPoints = phaserEnergy / distance;
@@ -262,10 +255,7 @@ void Devices::takeDamage(double phaserEnergy, double distance, int shields)
         return;
 
     if (common::chanceOf(0.6)) {
-        std::cout << toString();
-
-        int index = common::randomInt(1, devices.size());
-        devices[index].damage();
+        randomDevice().damage();
 
         std::cout << toString();
     }
