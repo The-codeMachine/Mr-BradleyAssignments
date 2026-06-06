@@ -119,7 +119,6 @@ int main()
 
     std::cout << "Device test success\n";
 
-
     std::cout << "Devices test\n";
 
     testDevicesGetters();

@@ -251,14 +251,12 @@ void Devices::takeDamage(double phaserEnergy, double distance, int shields)
         return;
 
     double hitPoints = phaserEnergy / distance;
-    if (hitPoints / shields <= 0.02)
+    if (hitPoints <= 20 || hitPoints / shields <= 0.02 || common::chanceOf(0.4))
         return;
 
-    if (common::chanceOf(0.6)) {
-        randomDevice().damage();
+    randomDevice().damage();
 
-        std::cout << toString();
-    }
+    std::cout << toString();
 }
 
 std::string Devices::toString() const

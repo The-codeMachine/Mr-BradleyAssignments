@@ -177,14 +177,12 @@ public class Devices {
             return;
 
         double hitPoints = phaserEnergy / distance;
-        if (hitPoints / shields <= 0.02)
+        if (hitPoints <= 20 || hitPoints / shields <= 0.02 || GameLib.chanceOf(0.4))
             return;
 
-        if (GameLib.chanceOf(0.6)) {
-            randomDevice().damage();
+        randomDevice().damage();
 
-            System.out.println(this);
-        }        
+        System.out.println(this);
     }
 
     /**
