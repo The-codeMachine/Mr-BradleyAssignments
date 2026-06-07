@@ -160,13 +160,16 @@ void Devices::addDevice(int id, std::string name)
 // Removes a device from the vector (devices)
 void Devices::removeDevice(int index)
 {
+    if (index < 0 || index >= devices.size())
+        return;
+
     devices.erase(devices.begin() + index);
 }
 
 // Returns a device from the vector (devices)
 Device &Devices::getDevice(int index)
 {
-    assert(index >= 0 && index < devices.size());
+    assert(index >= 0 && index < devices.size() && index > 0);
 
     return devices[index];
 }
@@ -174,7 +177,7 @@ Device &Devices::getDevice(int index)
 // Returns a read-only copy of a device from the vector (devices)
 const Device &Devices::getDevice(int index) const
 {
-    assert(index >= 0 && index < devices.size());
+    assert(index >= 0 && index < devices.size() && index > 0);
 
     return devices[index];
 }
@@ -193,7 +196,7 @@ void Devices::randomDamageRepairEvent()
 // Damages the device with index by an amount
 void Devices::damage(int index, double amount)
 {
-    if (devices.size() <= 0 || amount <= 0 || devices.size() <= index)
+    if (devices.size() <= 0 || amount <= 0 || devices.size() <= index || index < 0)
         return;
 
     devices[index].damage(amount);
@@ -204,7 +207,7 @@ void Devices::damage(int index, double amount)
 // Repairs the device with index by an amount
 void Devices::repair(int index, double amount)
 {
-    if (devices.size() <= 0 || amount <= 0 || devices.size() <= index)
+    if (devices.size() <= 0 || amount <= 0 || devices.size() <= index || index < 0)
         return;
 
     devices[index].repair(amount);
@@ -215,7 +218,7 @@ void Devices::repair(int index, double amount)
 // Damages a device (with index) by a random amount (between 1-6)
 void Devices::randomDamage(int index)
 {
-    if (devices.size() <= 0 || devices.size() <= index)
+    if (devices.size() <= 0 || devices.size() <= index || index < 0)
         return;
 
     devices[index].damage();
@@ -226,7 +229,7 @@ void Devices::randomDamage(int index)
 // Repairs a device (with index) by a random amount (between 1-3)
 void Devices::randomRepair(int index)
 {
-    if (devices.size() <= 0 || devices.size() <= index)
+    if (devices.size() <= 0 || devices.size() <= index || index < 0)
         return;
 
     devices[index].repair();

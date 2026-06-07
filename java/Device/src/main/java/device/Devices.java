@@ -50,6 +50,9 @@ public class Devices {
      * 
      */
     public void removeDevice(int index) {
+        if (index < 0 || index >= devices.size())
+            return;
+
         devices.remove(index);
     }
 
@@ -61,6 +64,9 @@ public class Devices {
      * 
      */
     Device getDevice(int index) {
+        if (index < 0 || index >= devices.size())
+            return;
+
         return devices.get(index);
     }
 
@@ -87,7 +93,7 @@ public class Devices {
      * 
      */
     public void damage(int index, double amount) {
-        if (devices.size() <= 0 || amount <= 0 || devices.size() <= index)
+        if (devices.size() <= 0 || amount <= 0 || devices.size() <= index || index < 0)
             return;
 
         devices.get(index).damage(amount);
@@ -105,7 +111,7 @@ public class Devices {
      * 
      */
     public void repair(int index, double amount) {
-        if (devices.size() <= 0 || amount <= 0 || devices.size() <= index)
+        if (devices.size() <= 0 || amount <= 0 || devices.size() <= index || index < 0)
             return;
 
         devices.get(index).damage(amount);
@@ -121,7 +127,7 @@ public class Devices {
      * 
      */
     public void randomDamage(int index) {
-        if (devices.size() <= 0 || devices.size() <= index)
+        if (devices.size() <= 0 || devices.size() <= index || index < 0)
             return;
 
         devices.get(index).damage();
@@ -137,7 +143,7 @@ public class Devices {
      * 
      */
     public void randomRepair(int index) {
-        if (devices.size() <= 0 || devices.size() <= index)
+        if (devices.size() <= 0 || devices.size() <= index || index < 0)
             return;
 
         devices.get(index).repair();
