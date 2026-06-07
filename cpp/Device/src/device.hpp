@@ -85,17 +85,17 @@ public:
     Devices(const std::vector<Device> &devices);
 
     void addDevice(int id, std::string name);
-    void removeDevice(int id);
-    Device &getDevice(int id);
-    const Device &getDevice(int id) const;
+    void removeDevice(int index);
+    Device &getDevice(int index);
+    const Device &getDevice(int index) const;
 
     void randomDamageRepairEvent();
 
-    void damage(int id, double amount);
-    void repair(int id, double amount);
+    void damage(int index, double amount);
+    void repair(int index, double amount);
 
-    void randomDamage(int id);
-    void randomRepair(int id);
+    void randomDamage(int index);
+    void randomRepair(int index);
 
     void moveRepair(double warpFactor);
     void takeDamage(double phaserEnergy, double distance, int shields);

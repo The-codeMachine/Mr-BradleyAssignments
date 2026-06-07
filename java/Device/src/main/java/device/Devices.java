@@ -46,27 +46,27 @@ public class Devices {
      * 
      * Removes a device from the ArrayList (devices)
      * 
-     * @param id
+     * @param index
      * 
      */
-    public void removeDevice(int id) {
-        devices.remove(id);
+    public void removeDevice(int index) {
+        devices.remove(index);
     }
 
     /**
      * 
      * Returns a device from the ArrayList (devices)
      * 
-     * @param id
+     * @param index
      * 
      */
-    Device getDevice(int id) {
-        return devices.get(id);
+    Device getDevice(int index) {
+        return devices.get(index);
     }
 
     /**
      * 
-     * Damages the device with id by an amount
+     * Does a random damage/repair event to a random device
      * 
      */
     public void randomDamageRepairEvent() {
@@ -80,17 +80,17 @@ public class Devices {
 
     /**
      * 
-     * Damages the device with id by an amount
+     * Damages the device with index by an amount
      * 
-     * @param id
+     * @param index
      * @param amount
      * 
      */
-    public void damage(int id, double amount) {
-        if (devices.size() <= 0 || amount <= 0 || devices.size() <= id)
+    public void damage(int index, double amount) {
+        if (devices.size() <= 0 || amount <= 0 || devices.size() <= index)
             return;
 
-        devices.get(id).damage(amount);
+        devices.get(index).damage(amount);
 
         System.out.println(this);
     }
@@ -98,49 +98,49 @@ public class Devices {
 
     /**
      * 
-     * Repairs the device with id by an amount
+     * Repairs the device with index by an amount
      * 
-     * @param id
+     * @param index
      * @param amount
      * 
      */
-    public void repair(int id, double amount) {
-        if (devices.size() <= 0 || amount <= 0 || devices.size() <= id)
+    public void repair(int index, double amount) {
+        if (devices.size() <= 0 || amount <= 0 || devices.size() <= index)
             return;
 
-        devices.get(id).damage(amount);
+        devices.get(index).damage(amount);
 
         System.out.println(this);
     }
 
     /**
      * 
-     * Damages a device (with id) by a random amount (between 1-6)
+     * Damages a device (with index) by a random amount (between 1-6)
      * 
-     * @param id
+     * @param index
      * 
      */
-    public void randomDamage(int id) {
-        if (devices.size() <= 0 || devices.size() <= id)
+    public void randomDamage(int index) {
+        if (devices.size() <= 0 || devices.size() <= index)
             return;
 
-        devices.get(id).damage();
+        devices.get(index).damage();
 
         System.out.println(this);
     }
 
     /**
      * 
-     * Repairs a device (with id) by a random amonut (between 1-4)
+     * Repairs a device (with index) by a random amonut (between 1-4)
      * 
-     * @param id
+     * @param index
      * 
      */
-    public void randomRepair(int id) {
-        if (devices.size() <= 0 || devices.size() <= id)
+    public void randomRepair(int index) {
+        if (devices.size() <= 0 || devices.size() <= index)
             return;
 
-        devices.get(id).repair();
+        devices.get(index).repair();
 
         System.out.println(this);
     }
@@ -173,7 +173,7 @@ public class Devices {
      * 
      */
     public void takeDamage(double phaserEnergy, double distance, int shields) {
-        if (phaserEnergy < 0 || distance <= 0 || shields < 0 || devices.size() <= 0)
+        if (phaserEnergy < 0 || distance <= 0 || shields <= 0 || devices.size() <= 0)
             return;
 
         double hitPoints = phaserEnergy / distance;
