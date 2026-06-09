@@ -1,159 +1,40 @@
 package device;
 
-import java.util.ArrayList;
-
 import common.*;
 
 /**
  * 
- * The Devices classs manages all of the Devices. It is
- * designed for ships, and the Enterprise. Operations include:
- *  - Construction without an arraylist and with one
- *  - Adding a device
- *  - Removing a device
- *  - Getting a device
- *  - Damaging a device
- *  - Repairing a device 
- *  - Damaging/repairing a random device by a random amount
- *  - Apply the repair for moving
- *  - Have a random damage/repair event occur
- *  - Take damage based off the energy, distance, and shields 
- *  - Convert to string
+ * The Devices class holds all the information for
+ * the devices within the Enterprise. It allows the
+ * Enterprise to do certain actions. Each device
+ * index correlates to a different device:
+ * 0: WARP ENGINES
+ * 1: SHORT RANGE SENSORS
+ * 2: LONG RANGE SENSORS
+ * 3: PHASER CONTROL
+ * 4: TORPEDO CONTROL
+ * 5: SHIELD CONTROL
+ * 6: DAMAGE CONTROL
+ * 7: COMPUTER SYSTEMS
+ * 
+ * Devices' operations include:
+ *  - Construction
+ *  - Repairs the device by an amount (equal to the warp factor)
+ *  - Takes damage (based off a phaser)
+ *  - Has a random damage/repair event occur
+ *  - Repairs all the devices (for docking)
+ *  - Checks if a device is operational
+ *  - Prints a status report
  * 
  */
 public class Devices {
-    public Devices() {
-        devices = new ArrayList<>();
-    }
-
-    public Devices(ArrayList<Device> devices) {
-        this.devices = devices;
+    Devices() {
+        this.devices = new double[8];
     }
 
     /**
      * 
-     * Adds a device to the ArrayList (devices)
-     * 
-     * @param id
-     * @param name
-     * 
-     */
-    public void addDevice(int id, String name) {
-        devices.add(new Device(id, name));
-    }
-
-    /**
-     * 
-     * Removes a device from the ArrayList (devices)
-     * 
-     * @param index
-     * 
-     */
-    public void removeDevice(int index) {
-        if (index < 0 || index >= devices.size())
-            return;
-
-        devices.remove(index);
-    }
-
-    /**
-     * 
-     * Returns a device from the ArrayList (devices)
-     * 
-     * @param index
-     * 
-     */
-    Device getDevice(int index) {
-        if (index < 0 || index >= devices.size())
-            return;
-
-        return devices.get(index);
-    }
-
-    /**
-     * 
-     * Does a random damage/repair event to a random device
-     * 
-     */
-    public void randomDamageRepairEvent() {
-        if (devices.size() <= 0 || GameLib.chanceOf(0.8))
-            return;
-
-        randomDevice().event();
-
-        System.out.println(this);
-    }
-
-    /**
-     * 
-     * Damages the device with index by an amount
-     * 
-     * @param index
-     * @param amount
-     * 
-     */
-    public void damage(int index, double amount) {
-        if (devices.size() <= 0 || amount <= 0 || devices.size() <= index || index < 0)
-            return;
-
-        devices.get(index).damage(amount);
-
-        System.out.println(this);
-    }
-
-
-    /**
-     * 
-     * Repairs the device with index by an amount
-     * 
-     * @param index
-     * @param amount
-     * 
-     */
-    public void repair(int index, double amount) {
-        if (devices.size() <= 0 || amount <= 0 || devices.size() <= index || index < 0)
-            return;
-
-        devices.get(index).damage(amount);
-
-        System.out.println(this);
-    }
-
-    /**
-     * 
-     * Damages a device (with index) by a random amount (between 1-6)
-     * 
-     * @param index
-     * 
-     */
-    public void randomDamage(int index) {
-        if (devices.size() <= 0 || devices.size() <= index || index < 0)
-            return;
-
-        devices.get(index).damage();
-
-        System.out.println(this);
-    }
-
-    /**
-     * 
-     * Repairs a device (with index) by a random amonut (between 1-4)
-     * 
-     * @param index
-     * 
-     */
-    public void randomRepair(int index) {
-        if (devices.size() <= 0 || devices.size() <= index || index < 0)
-            return;
-
-        devices.get(index).repair();
-
-        System.out.println(this);
-    }
-
-    /**
-     * 
-     * Repairs all devices by an amount by the warpFactor
+     * Repairs all devices by a value equal to the warp factor
      * 
      * @param warpFactor
      * 
@@ -162,131 +43,171 @@ public class Devices {
         if (warpFactor > 1.0)
             warpFactor = 1.0;
 
-        for (Device d : devices) {
-            d.repair(warpFactor);
-        }
-
-        System.out.println(this);
+        repairAllDevices(warpFactor);
     }
 
     /**
      * 
-     * Makes the devices take damage, but only if there is enough enery
+     * Damages a device based off the amount of phaser energy,
+     * and shields remaining. 
      * 
      * @param phaserEnergy
-     * @param double
      * @param shields
      * 
      */
-    public void takeDamage(double phaserEnergy, double distance, int shields) {
-        if (phaserEnergy < 0 || distance <= 0 || shields <= 0 || devices.size() <= 0)
+    public void takeDamage(double phaserEnergy, double shields) {
+        if (phaserEnergy <= 10 || phaserEnergy / shields <= 0.02)
             return;
 
-        double hitPoints = phaserEnergy / distance;
-        if (hitPoints <= 20 || hitPoints / shields <= 0.02 || GameLib.chanceOf(0.4))
-            return;
-
-        randomDevice().damage();
-
-        System.out.println(this);
+        double damage = phaserEnergy / shields + 0.5;
+        this.damage(randomDevice(), damage);
     }
 
     /**
      * 
-     * Gets a random device from the devices ArrayList
+     * Makes a random damage/repair event occur (60%/40% split).
+     * There is a 20% chance of one occurring. Will damage a 
+     * random device by (1 to 6) or repair a random device by
+     * (1 to 4).
      * 
      */
-    private Device randomDevice() {
-        int index = GameLib.randomInt(0, devices.size() - 1);
-        return devices.get(index);
+    public void randomDamageRepairEvent() {
+        if (GameLib.chanceOf(0.8))
+            return;
+
+        // damage
+        if (GameLib.chanceOf(0.6)) {
+            damage();
+        } // repair
+        else {
+            repair();
+        }
+    }
+
+    /**
+     * 
+     * Repairs all the devices by an amount. 
+     * 
+     * @param amount
+     * 
+     */
+    public void repairAllDevices(double amount) {
+        for (int i = 0; i < 8; ++i) {
+            repair(i, amount);
+        }
+    }
+
+    /**
+     * 
+     * Checks if a device (index) is operational.
+     * 
+     * @param index
+     * 
+     * @return the operation status of a device at index
+     * 
+     */
+    public boolean isOperational(int index) {
+        if (index < 0 || index > 7)
+            return false;
+
+        return devices[index] == 0.0;
+    }
+
+    /**
+     * 
+     * Gets the damage of a device (index).
+     * Returns 1.0 for an error
+     * 
+     * @param index
+     * 
+     * @return the damage of a device at index
+     * 
+     */
+    public double getDamage(int index) {
+        if (index < 0 || index > 7)
+            return 1.0; // error
+
+        return devices[index];
+    }
+
+    /**
+     * 
+     * Damages a device at index by an amonut
+     * 
+     * @param index
+     * @param amount
+     * 
+     */
+    private void damage(int index, double amount) {
+        assert index >= 0 && index <= 7 && amount > 0;
+
+        devices[index] -= amount;
+    }
+
+    /**
+     * 
+     * Repairs a device at index by an amount
+     * 
+     * @param index
+     * @param amount
+     * 
+     */
+    private void repair(int index, double amount) {
+        assert index >= 0 && index <= 7 && amount > 0;
+
+        devices[index] += amount;
+
+        if (devices[index] > 0.0)
+            devices[index] = 0.0;
+    }
+
+    /**
+     * 
+     * Damages a random device by a random amount (between 1 and 6)
+     * 
+     */
+    private void damage() {
+        int index = randomDevice();
+        damage(index, GameLib.randomInRange(1, 6));
+    }
+
+    /**
+     * 
+     * Repairs a random device by a random amount (between 1 and 4)
+     * 
+     */
+    private void repair() {
+        int index = randomDevice();
+        repair(index, GameLib.randomInRange(1, 4));
+    }
+
+    /**
+     * 
+     * Returns a number between 0 and 7 representing a random number
+     * 
+     * @return a random device index
+     * 
+     */
+    private int randomDevice() {
+        return GameLib.randomInt(0, 7);
     }
 
     @Override
     public String toString() {
-        String out = "Damage Report\n";
+        String out;
+        out = "Status Report\n";
 
-        for (Device d : devices) {
-            out += d.toString();
-        }
+        out += "WARP ENGINES: " + Double.toString(devices[0]) + "\n";
+        out += "SHORT RANGE SENSORS: " + Double.toString(devices[1]) + "\n";
+        out += "LONG RANGE SENSORS: " + Double.toString(devices[2]) + "\n";
+        out += "PHASER CONTROL: " + Double.toString(devices[3]) + "\n";
+        out += "TORPEDO CONTROL: " + Double.toString(devices[4]) + "\n";
+        out += "SHIELD CONTROL: " + Double.toString(devices[5]) + "\n";
+        out += "DAMAGE CONTROL: " + Double.toString(devices[6]) + "\n";
+        out += "COMPUTER SYSTEMS: " + Double.toString(devices[7]) + "\n";
 
         return out;
     }
 
-    private ArrayList<Device> devices;
+    private double[] devices;
 }
-
-/**
- * Sample Output
- * 
- * Device Test
- * Getters test
- * Device constructed with specs: [1], Test Device, Damage: 0.0
- * 
- * Device id: 1 
- * Device id: Test Device 
- * Device id: 0.000000 
- * Getters test success
- * Device white box test
- * Device is fully working, and not damaged: [1], Warp Engines, Damage: 0.0
- * 
- * Device might not be operational because it might have taken 2.5 damage (60% chance): [1], Warp Engines, Damage: -2.5
- * 
- * Device might have (if it got damaged) 1.5 damage: [1], Warp Engines, Damage: -1.5
- * 
- * Device is repaired fully, and operationl again: [1], Warp Engines, Damage: 0.0
- * 
- * Device white box test success
- * Device test success
- * Devices test
- * Devices getters test
- * Damage Report
- * [1], Warp Engines, Damage: 0.0
- * [2], Phaser Control, Damage: 0.0
- * 
- * [1], Warp Engines, Damage: 0.0
- * 
- * Devices getters test success
- * Damage/Repair test
- * Damage test
- * Damage Report
- * [1], Warp Engines, Damage: -3.0
- * [2], Phaser Control, Damage: 0.0
- * 
- * 
- * Repair test
- * Damage Report
- * [1], Warp Engines, Damage: -3.0
- * [2], Phaser Control, Damage: 0.0
- * 
- * Damage/Repair test success
- * Devices random test
- * Devices random damage
- * Damage Report
- * [1], Warp Engines, Damage: -3.272119124617654
- * [2], Phaser Control, Damage: 0.0
- * 
- * 
- * Devices random repair
- * Damage Report
- * [1], Warp Engines, Damage: -1.9403896280683515
- * [2], Phaser Control, Damage: 0.0
- * 
- * Devices random test success
- * Devices ship test
- * Damage test
- * Damage Report
- * [1], Warp Engines, Damage: 0.0
- * [2], Phaser Control, Damage: -3.91346542053011
- * 
- * 
- * Devices random event
- * 
- * Devices move repair
- * Damage Report
- * [1], Warp Engines, Damage: 0.0
- * [2], Phaser Control, Damage: -3.61346542053011
- * 
- * Devices ship test success
- * Devices test success
- * 
- */
