@@ -28,6 +28,9 @@ void Devices::repair(int index, double amount)
     assert(index >= 0 && index <= 7 && amount > 0);
 
     devices[index] += amount;
+
+    if (devices[index] > 0.0)
+        devices[index] = 0.0;
 }
 
 // Damages the device (random device) by a random amount (1 <= x < 6)
@@ -35,7 +38,7 @@ void Devices::damage()
 {
     int index = randomDevice();
 
-    devices[index] -= common::randomInRange(1, 6);
+    damage(index, common::randomInRange(1, 6));
 }
 
 // Repairs the device (random device) by a random amount (1 <= x < 4)
@@ -43,7 +46,7 @@ void Devices::repair()
 {
     int index = randomDevice();
 
-    devices[index] += common::randomInRange(1, 4);
+    repair(index, common::randomInRange(1, 4));
 }
 
 // Repairs all devices by an amount equal to the warp factor
@@ -88,10 +91,7 @@ void Devices::repairAllDevices(double amount)
 {
     for (int i = 0; i < 8; ++i)
     {
-        devices[i] += amount;
-
-        if (devices[i] > 0.0)
-            devices[i] = 0.0;
+        repair(i, amount);
     }
 }
 

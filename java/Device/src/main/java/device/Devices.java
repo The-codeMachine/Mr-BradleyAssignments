@@ -211,3 +211,39 @@ public class Devices {
 
     private double[] devices;
 }
+
+/**
+ * Sample Output
+ * 
+ * Devices test
+ * Getters test
+ * Warp engines damage: 0.000000
+ * Warp engines operational status: true
+ * Getters test success
+ * Simulation test
+ * Status Report
+ * WARP ENGINES: 0.0
+ * SHORT RANGE SENSORS: 0.0
+ * LONG RANGE SENSORS: 0.0
+ * PHASER CONTROL: 0.0
+ * TORPEDO CONTROL: 0.0
+ * SHIELD CONTROL: 0.0
+ * DAMAGE CONTROL: 0.0
+ * COMPUTER SYSTEMS: 0.0
+ * 
+ * ...
+ * 
+ * Status Report
+ * WARP ENGINES: -0.6
+ * SHORT RANGE SENSORS: 0.0
+ * LONG RANGE SENSORS: 0.0
+ * PHASER CONTROL: 0.0
+ * TORPEDO CONTROL: 0.0
+ * SHIELD CONTROL: 0.0
+ * DAMAGE CONTROL: 0.0
+ * COMPUTER SYSTEMS: -2.3448315649274747
+ * 
+ * Simulation test success
+ * Devices test success
+ * 
+*/

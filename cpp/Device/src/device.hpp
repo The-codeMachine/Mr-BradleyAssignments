@@ -19,7 +19,7 @@
  * 7: COMPUTER SYSTEMS
  * 
  * Devices' operations include:
- *  - Consturction
+ *  - Construction
  *  - Repairs the devices by an amount (equal to the warp factor)
  *  - Takes damage (based off a phaser)
  *  - Has a random damage/repair event occur
