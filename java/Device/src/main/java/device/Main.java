@@ -11,6 +11,8 @@ public class Main {
         System.out.printf("Warp engines damage: %f\n", devices.getDamage(0));
         System.out.printf("Warp engines operational status: %b\n", devices.isOperational(0));
         
+        System.out.println(devices.damageReport());
+
         System.out.println("Getters test success");
 
         System.out.println("Simulation test");
@@ -46,9 +48,27 @@ public class Main {
  * Getters test
  * Warp engines damage: 0.000000
  * Warp engines operational status: true
+ * Devices Status Report
+ * WARP ENGINES: 0.0
+ * SHORT RANGE SENSORS: 0.0
+ * LONG RANGE SENSORS: 0.0
+ * PHASER CONTROL: 0.0
+ * TORPEDO CONTROL: 0.0
+ * SHIELD CONTROL: 0.0
+ * DAMAGE CONTROL: 0.0
+ * COMPUTER SYSTEMS: 0.0
+ * 
  * Getters test success
  * Simulation test
- * Status Report
+ * WARP ENGINES: 0.0
+ * SHORT RANGE SENSORS: 0.0
+ * LONG RANGE SENSORS: 0.0
+ * PHASER CONTROL: 0.0
+ * TORPEDO CONTROL: 0.0
+ * SHIELD CONTROL: 0.0
+ * DAMAGE CONTROL: 0.0
+ * COMPUTER SYSTEMS: 0.0
+ * 
  * WARP ENGINES: 0.0
  * SHORT RANGE SENSORS: 0.0
  * LONG RANGE SENSORS: 0.0
@@ -60,15 +80,14 @@ public class Main {
  * 
  * ...
  * 
- * Status Report
- * WARP ENGINES: -0.6
- * SHORT RANGE SENSORS: 0.0
+ * WARP ENGINES: 0.0
+ * SHORT RANGE SENSORS: -0.6
  * LONG RANGE SENSORS: 0.0
  * PHASER CONTROL: 0.0
  * TORPEDO CONTROL: 0.0
  * SHIELD CONTROL: 0.0
  * DAMAGE CONTROL: 0.0
- * COMPUTER SYSTEMS: -2.3448315649274747
+ * COMPUTER SYSTEMS: 0.0
  * 
  * Simulation test success
  * Devices test success

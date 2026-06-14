@@ -113,18 +113,23 @@ double Devices::getDamage(int index) const
     return devices[index];
 }
 
+// Makes a damager report of all the devices
+std::string Devices::damageReport() const {
+    return "Devices Status Report\n" + toString();
+}
+
 std::string Devices::toString() const
 {
-    std::string out = "Devices Status Report\n";
+    std::string out = "";
 
-    std::cout << "WARP ENGINES: " << devices[0] << "\n";
-    std::cout << "SHORT RANGE SENSORS: " << devices[1] << "\n";
-    std::cout << "LONG RANGE SENSORS: " << devices[2] << "\n";
-    std::cout << "PHASER CONTROL: " << devices[3] << "\n";
-    std::cout << "TORPEDO CONTROl: " << devices[4] << "\n";
-    std::cout << "SHIELD CONTROL: " << devices[5] << "\n";
-    std::cout << "DAMAGE CONTROL: " << devices[6] << "\n";
-    std::cout << "COMPUTER SYSTEMS: " << devices[7] << "\n";
+    out += "WARP ENGINES: " + std::to_string(devices[0]) + "\n";
+    out += "SHORT RANGE SENSORS: " + std::to_string(devices[1]) + "\n";
+    out += "LONG RANGE SENSORS: " + std::to_string(devices[2]) + "\n";
+    out += "PHASER CONTROL: " + std::to_string(devices[3]) + "\n";
+    out += "TORPEDO CONTROl: " + std::to_string(devices[4]) + "\n";
+    out += "SHIELD CONTROL: " + std::to_string(devices[5]) + "\n";
+    out += "DAMAGE CONTROL: " + std::to_string(devices[6]) + "\n";
+    out += "COMPUTER SYSTEMS: " + std::to_string(devices[7]) + "\n";
 
     return out;
 }
