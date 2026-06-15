@@ -34,16 +34,28 @@ public class Devices {
 
     /**
      * 
-     * Repairs all devices by a value equal to the warp factor
-     * 
-     * @param warpFactor
+     * Makes a random device take damage. 40% chance that it
+     * actually occurs. [1, 6) damage may occur. 
      * 
      */
-    public void moveRepair(double warpFactor) {
-        if (warpFactor > 1.0)
-            warpFactor = 1.0;
+    public void takeDamage() {
+        if (GameLib.chanceOf(40))
+            return;
+        
+        damage();
+    }
 
-        repairAllDevices(warpFactor);
+    /**
+     * 
+     * Makes damage occur to all devices over time. 
+     * 
+     * @param time
+     * 
+     */
+    public void damageOverTime(double time) {
+        for (int i = 0; i < devices.length; ++i) {
+            damage(i, time);
+        }
     }
 
     /**
@@ -55,33 +67,34 @@ public class Devices {
      * @param shields
      * 
      */
-    public void takeDamage(double phaserEnergy, double shields) {
-        if (phaserEnergy <= 10 || phaserEnergy / shields <= 0.02)
+    public void hitDamage(double phaserEnergy, double shields) {
+        if (phaserEnergy <= 20 || phaserEnergy / shields <= 0.02)
             return;
 
-        double damage = phaserEnergy / shields + 0.5;
+        double damage = phaserEnergy / shields + 0.5 * GameLib.random();
         this.damage(randomDevice(), damage);
     }
 
     /**
      * 
-     * Makes a random damage/repair event occur (60%/40% split).
-     * There is a 20% chance of one occurring. Will damage a 
-     * random device by (1 to 6) or repair a random device by
-     * (1 to 4).
+     * Makes a damage event occur. [1, 6) damage to a 
+     * random device. 
      * 
      */
-    public void randomDamageRepairEvent() {
-        if (GameLib.chanceOf(0.8))
-            return;
+    public void damageEvent() {
+        damage();
+    }
 
-        // damage
-        if (GameLib.chanceOf(0.6)) {
-            damage();
-        } // repair
-        else {
-            repair();
-        }
+    /**
+     * 
+     * Repairs a device by an amount
+     * 
+     * @param index
+     * @param amount
+     * 
+     */
+    public void makeRepair(int index, double amount) {
+        repair(index, amount);
     }
 
     /**
@@ -91,43 +104,53 @@ public class Devices {
      * @param amount
      * 
      */
-    public void repairAllDevices(double amount) {
-        for (int i = 0; i < 8; ++i) {
+    public void repairAll(double amount) {
+        for (int i = 0; i < devices.length; ++i) {
             repair(i, amount);
         }
     }
 
     /**
      * 
-     * Checks if a device (index) is operational.
+     * Repairs all the devices over a given time.
      * 
-     * @param index
-     * 
-     * @return the operation status of a device at index
+     * @param time
      * 
      */
-    public boolean isOperational(int index) {
-        if (index < 0 || index > 7)
-            return false;
-
-        return devices[index] == 0.0;
+    public void repairOverTime(double time) {
+        repairAll(time);
     }
 
     /**
      * 
-     * Gets the damage of a device (index).
-     * Returns 1.0 for an error
-     * 
-     * @param index
-     * 
-     * @return the damage of a device at index
+     * Makes a repair event occur. [1, 4) repair occurs
+     * to a random device. 
      * 
      */
-    public double getDamage(int index) {
-        if (index < 0 || index > 7)
-            return 1.0; // error
+    public void repairEvent() {
+        if (!anyDamaged())
+            return;
 
-        return devices[index];
+        repair();
+    }
+
+    /**
+     * 
+     * Makes a random damage/repair event occur (60%/40% split).
+     * There is a 20% chance of one occurring. Will damage a 
+     * random device by [1, 6) or repair a random device by
+     * [1, 4).
+     * 
+     */
+    public void randomEvent() {
+        if (GameLib.chanceOf(80))
+            return;
+
+        if (GameLib.chanceOf(60)) {
+            damageEvent();
+        } else { 
+            repairEvent();
+        }
     }
 
     /**
@@ -139,7 +162,8 @@ public class Devices {
      * 
      */
     private void damage(int index, double amount) {
-        assert index >= 0 && index <= 7 && amount > 0;
+        assert isValidIndex(index);
+        assert amount > 0;
 
         devices[index] -= amount;
     }
@@ -153,7 +177,11 @@ public class Devices {
      * 
      */
     private void repair(int index, double amount) {
-        assert index >= 0 && index <= 7 && amount > 0;
+        assert isValidIndex(index);
+        assert amount > 0;
+
+        if (!isDamaged(index))
+            return;
 
         devices[index] += amount;
 
@@ -194,6 +222,50 @@ public class Devices {
 
     /**
      * 
+     * Checks if the device is damaged
+     * 
+     * @param index
+     * @return true if the device is damaged and false if not
+     * 
+     */
+    public boolean isDamaged(int index) {
+        assert isValidIndex(index);
+
+        return devices[index] != 0.0;
+    }
+
+    /**
+     * 
+     * Checks if there are any devices damaged.  
+     * 
+     * @return true if even one device is damaged
+     * 
+     */
+    private boolean anyDamaged() {
+        for (int i = 0; i < devices.length; ++i) {
+            if (isDamaged(i))
+                return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * 
+     * Returns the device's damage level
+     * 
+     * @param index
+     * @return the damage level of the device
+     * 
+     */
+    public double getDamage(int index) {
+        assert isValidIndex(index);
+
+        return devices[index];
+    }
+
+    /**
+     * 
      * Returns a damage report from the devices. 
      * 
      */
@@ -201,18 +273,30 @@ public class Devices {
         return "Devices Status Report\n" + toString();
     }
 
+    /**
+     * 
+     * Checks if the index is valid.
+     * 
+     * @param index
+     * @return true if the index is valid
+     * 
+     */
+    private boolean isValidIndex(int index) {
+        return index >= 0 && index <= 7;
+    }
+
     @Override
     public String toString() {
         String out = "";
 
-        out += "WARP ENGINES: " + Double.toString(devices[0]) + "\n";
-        out += "SHORT RANGE SENSORS: " + Double.toString(devices[1]) + "\n";
-        out += "LONG RANGE SENSORS: " + Double.toString(devices[2]) + "\n";
-        out += "PHASER CONTROL: " + Double.toString(devices[3]) + "\n";
-        out += "TORPEDO CONTROL: " + Double.toString(devices[4]) + "\n";
-        out += "SHIELD CONTROL: " + Double.toString(devices[5]) + "\n";
-        out += "DAMAGE CONTROL: " + Double.toString(devices[6]) + "\n";
-        out += "COMPUTER SYSTEMS: " + Double.toString(devices[7]) + "\n";
+        out += "WARP ENGINES: " + Double.toString(getDamage(0)) + "\n";
+        out += "SHORT RANGE SENSORS: " + Double.toString(getDamage(1)) + "\n";
+        out += "LONG RANGE SENSORS: " + Double.toString(getDamage(2)) + "\n";
+        out += "PHASER CONTROL: " + Double.toString(getDamage(3)) + "\n";
+        out += "TORPEDO CONTROL: " + Double.toString(getDamage(4)) + "\n";
+        out += "SHIELD CONTROL: " + Double.toString(getDamage(5)) + "\n";
+        out += "DAMAGE CONTROL: " + Double.toString(getDamage(6)) + "\n";
+        out += "COMPUTER SYSTEMS: " + Double.toString(getDamage(7)) + "\n";
 
         return out;
     }

@@ -37,7 +37,7 @@ public class GameLib {
     public static boolean chanceOf(double percent) {
         double r = random();
         
-        return r <= percent;
+        return r <= (percent / 100);
     }
 
     /**

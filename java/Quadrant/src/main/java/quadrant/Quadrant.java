@@ -151,7 +151,7 @@ public class Quadrant {
      */
     private static int genBases() {
         // 4% chance of a quadrant having a base
-        if (GameLib.chanceOf(0.04)) {
+        if (GameLib.chanceOf(4)) {
             return 1;
         }
 
