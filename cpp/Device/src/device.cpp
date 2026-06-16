@@ -21,7 +21,7 @@ bool Devices::anyDamaged() const
     return false;
 }
 
-// Returns a random number between 0 and 7 (inclusive)
+// Returns a random number between 0 and # devices - 1 (inclusive)
 int Devices::randomDevice() const
 {
     return common::randomInt(0, std::size(devices) - 1);
@@ -162,12 +162,6 @@ bool Devices::isDamaged(int index) const {
     assert(isValidIndex(index));
 
     return devices[index] != FULLY_REPAIRED;
-}
-
-double Devices::getDamage(int index) const {
-    assert(isValidIndex(index));
-
-    return devices[index];
 }
 
 // Returns the device's damage level

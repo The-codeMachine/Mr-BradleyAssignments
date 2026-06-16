@@ -31,8 +31,21 @@ int main()
             std::cout << d << "\n";
         }
 
+        // phaser hit test
         if (i % 15 == 0) {
             d.hitDamage(300, 3000);
+            d.takeDamage();
+            std::cout << d << "\n";
+        }
+
+        // docking test
+        if (i % 50 == 0) {
+            d.repairAll(100.0);
+            std::cout << d << "\n";
+        }
+
+        if (i % 20 == 0) {
+            d.damageOverTime(1.0);
             std::cout << d << "\n";
         }
     }
@@ -83,13 +96,13 @@ COMPUTER SYSTEMS: 0.000000
 
 ...
 
-WARP ENGINES: -1.513411
+WARP ENGINES: 0.000000
 SHORT RANGE SENSORS: 0.000000
-LONG RANGE SENSORS: 0.000000
-PHASER CONTROL: -0.600000
+LONG RANGE SENSORS: -1.521801
+PHASER CONTROL: 0.000000
 TORPEDO CONTROl: 0.000000
-SHIELD CONTROL: 0.000000
-DAMAGE CONTROL: 0.000000
+SHIELD CONTROL: -0.249914
+DAMAGE CONTROL: -1.351348
 COMPUTER SYSTEMS: 0.000000
 
 Simulation test success

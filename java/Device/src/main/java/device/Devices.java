@@ -211,7 +211,7 @@ public class Devices {
 
     /**
      * 
-     * Returns a number between 0 and 7 representing a random number
+     * Returns a random number between 0 and # devices - 1 (inclusive)
      * 
      * @return a random device index
      * 
@@ -346,12 +346,12 @@ public class Devices {
  * ...
  * 
  * WARP ENGINES: 0.0
- * SHORT RANGE SENSORS: -0.6
+ * SHORT RANGE SENSORS: 0.0
  * LONG RANGE SENSORS: 0.0
- * PHASER CONTROL: 0.0
+ * PHASER CONTROL: -1.429211657491689
  * TORPEDO CONTROL: 0.0
  * SHIELD CONTROL: 0.0
- * DAMAGE CONTROL: 0.0
+ * DAMAGE CONTROL: -0.5620815408040213
  * COMPUTER SYSTEMS: 0.0
  * 
  * Simulation test success

@@ -29,9 +29,22 @@ public class Main {
                 System.out.println(d);
             }
 
+            // phaser hit test
             if (i % 15 == 0) {
                 d.hitDamage(300, 3000);
                 d.takeDamage();
+                System.out.println(d);
+            }
+
+            // docking test
+            if (i % 50 == 0) {
+                d.repairAll(100.0);
+                System.out.println(d);
+            }
+
+
+            if (i % 20 == 0) {
+                d.damageOverTime(1.0);
                 System.out.println(d);
             }
         }
@@ -82,12 +95,12 @@ public class Main {
  * ...
  * 
  * WARP ENGINES: 0.0
- * SHORT RANGE SENSORS: -0.6
+ * SHORT RANGE SENSORS: 0.0
  * LONG RANGE SENSORS: 0.0
- * PHASER CONTROL: 0.0
+ * PHASER CONTROL: -1.429211657491689
  * TORPEDO CONTROL: 0.0
  * SHIELD CONTROL: 0.0
- * DAMAGE CONTROL: 0.0
+ * DAMAGE CONTROL: -0.5620815408040213
  * COMPUTER SYSTEMS: 0.0
  * 
  * Simulation test success
