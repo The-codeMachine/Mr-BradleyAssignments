@@ -34,7 +34,7 @@ public class Devices {
 
     /**
      * 
-     * Makes a random device take damage. 40% chance that it
+     * Makes a random device take damage. 60% chance that it
      * actually occurs. [1, 6) damage may occur. 
      * 
      */
@@ -185,8 +185,8 @@ public class Devices {
 
         devices[index] += amount;
 
-        if (devices[index] > 0.0)
-            devices[index] = 0.0;
+        if (devices[index] > FULLY_REPAIRED)
+            devices[index] = FULLY_REPAIRED;
     }
 
     /**
@@ -217,7 +217,7 @@ public class Devices {
      * 
      */
     private int randomDevice() {
-        return GameLib.randomInt(0, 7);
+        return GameLib.randomInt(0, devices.length - 1);
     }
 
     /**
@@ -231,7 +231,7 @@ public class Devices {
     public boolean isDamaged(int index) {
         assert isValidIndex(index);
 
-        return devices[index] != 0.0;
+        return devices[index] != FULLY_REPAIRED;
     }
 
     /**
@@ -282,7 +282,7 @@ public class Devices {
      * 
      */
     private boolean isValidIndex(int index) {
-        return index >= 0 && index <= 7;
+        return index >= 0 && index <= devices.length - 1;
     }
 
     @Override
@@ -302,6 +302,8 @@ public class Devices {
     }
 
     private double[] devices;
+
+    private static final double FULLY_REPAIRED = 0.0;
 }
 
 /**
@@ -310,7 +312,7 @@ public class Devices {
  * Devices test
  * Getters test
  * Warp engines damage: 0.000000
- * Warp engines operational status: true
+ * Warp engines damage status: false
  * Devices Status Report
  * WARP ENGINES: 0.0
  * SHORT RANGE SENSORS: 0.0

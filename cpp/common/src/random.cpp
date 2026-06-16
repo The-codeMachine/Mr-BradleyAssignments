@@ -27,7 +27,7 @@ namespace common
     bool chanceOf(double percent) {
         double r = random();
 
-        return r <= percent;
+        return r <= (percent / 100);
     }
 
     // generates a random 32-bit unsigned integer (without any range)

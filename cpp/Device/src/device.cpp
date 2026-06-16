@@ -5,19 +5,38 @@
 #include <cassert>
 #include <iostream>
 #include <iomanip>
+#include <iterator>
 
 Devices::Devices() : devices{} {}
 
-// Returns a random number between 0 and 7 (inclusive)
-int Devices::randomDevice()
+// Checks if there are any devices damaged.
+bool Devices::anyDamaged() const
 {
-    return common::randomInt(0, 7);
+    for (int i = 0; i < std::size(devices); ++i)
+    {
+        if (isDamaged(i))
+            return true;
+    }
+
+    return false;
+}
+
+// Returns a random number between 0 and 7 (inclusive)
+int Devices::randomDevice() const
+{
+    return common::randomInt(0, std::size(devices) - 1);
+}
+
+// Checks if the index is valid.
+bool Devices::isValidIndex(int index) const
+{
+    return index >= 0 && index <= std::size(devices) - 1;
 }
 
 // Damages the device (index) by an amount
 void Devices::damage(int index, double amount)
 {
-    assert(index >= 0 && index <= 7 && amount > 0);
+    assert(isValidIndex(index) && amount > 0);
 
     devices[index] -= amount;
 }
@@ -25,12 +44,15 @@ void Devices::damage(int index, double amount)
 // Damages the device (index) by an amount
 void Devices::repair(int index, double amount)
 {
-    assert(index >= 0 && index <= 7 && amount > 0);
+    assert(isValidIndex(index) && amount > 0);
+
+    if (!isDamaged(index))
+        return;
 
     devices[index] += amount;
 
-    if (devices[index] > 0.0)
-        devices[index] = 0.0;
+    if (devices[index] > FULLY_REPAIRED)
+        devices[index] = FULLY_REPAIRED;
 }
 
 // Damages the device (random device) by a random amount (1 <= x < 6)
@@ -49,72 +71,116 @@ void Devices::repair()
     repair(index, common::randomInRange(1, 4));
 }
 
-// Repairs all devices by an amount equal to the warp factor
-void Devices::moveRepair(double warpFactor)
+// Makes a random device take damage. 60% chance that it will
+// actually occur. [1, 6) damage may occur.
+void Devices::takeDamage()
 {
-    if (warpFactor > 1.0)
-        warpFactor = 1.0;
-
-    repairAllDevices(warpFactor);
-}
-
-// Checks if there is enough damage to damage a device,
-// and if so then damage one
-void Devices::takeDamage(double phaserEnergy, int shields)
-{
-    if (phaserEnergy <= 10 || phaserEnergy / shields <= 0.02)
+    if (common::chanceOf(40))
         return;
 
-    double damage = phaserEnergy / shields + 0.5;
-    this->damage(randomDevice(), damage);
+    damage();
 }
 
-// Makes a random device event occur (60%/40% split, 20% chance)
-void Devices::randomDamageRepairEvent()
+// Makes damage occur to all devices over time.
+void Devices::damageOverTime(double time)
 {
-    if (common::chanceOf(0.8))
-        return;
-
-    // damage
-    if (common::chanceOf(0.6))
+    for (int i = 0; i < std::size(devices); ++i)
     {
-        damage();
-    } // repair
-    else
-    {
-        repair();
+        damage(i, time);
     }
 }
 
-// Repairs all devices by an amount
-void Devices::repairAllDevices(double amount)
+// Damages a device based off the amount of phaser energy,
+// and shields remaining.
+void Devices::hitDamage(double phaserEnergy, double shields)
 {
-    for (int i = 0; i < 8; ++i)
+    if (phaserEnergy <= 20 || phaserEnergy / shields <= 0.02)
+        return;
+
+    double damage = phaserEnergy / shields + 0.5 * common::random();
+    this->damage(randomDevice(), damage);
+}
+
+// Makes a damage event occur. [1, 6) damage to a random device.
+void Devices::damageEvent()
+{
+    damage();
+}
+
+// Repairs a device by an amount
+void Devices::makeRepair(int index, double amount)
+{
+    repair(index, amount);
+}
+
+// Repairs all devices by an amount
+void Devices::repairAll(double amount)
+{
+    for (int i = 0; i < std::size(devices); ++i)
     {
         repair(i, amount);
     }
 }
 
-// Checks if a device is operational
-bool Devices::isOperational(int index) const
+// Repairs all devices over a given time.
+void Devices::repairOverTime(double time)
 {
-    if (index < 0 || index > 7)
-        return false;
-
-    return devices[index] == 0.0;
+    repairAll(time);
 }
 
-// Gets the damage a device has
+// Makes a repair event occur. [1, 4) repair occurs to a random
+// device.
+void Devices::repairEvent()
+{
+    if (!anyDamaged())
+        return;
+
+    repair();
+}
+
+// Makes a random damage/repair event occur (60%/40% split).
+// There is a 20% chance of one occurring. Will damage a 
+// random device by [1, 6) or repair a random device by
+// [1, 4).
+void Devices::randomEvent()
+{
+    if (common::chanceOf(80))
+        return;
+
+    if (common::chanceOf(60))
+    {
+        damageEvent();
+    }
+    else
+    {
+        repairEvent();
+    }
+}
+
+
+bool Devices::isDamaged(int index) const {
+    assert(isValidIndex(index));
+
+    return devices[index] != FULLY_REPAIRED;
+}
+
+double Devices::getDamage(int index) const {
+    assert(isValidIndex(index));
+
+    return devices[index];
+}
+
+// Returns the device's damage level
 double Devices::getDamage(int index) const
 {
-    if (index < 0 || index > 7)
-        return 1.0; // error
+    assert(isValidIndex(index));
 
     return devices[index];
 }
 
 // Makes a damager report of all the devices
-std::string Devices::damageReport() const {
+std::string Devices::damageReport() const
+{
     return "Devices Status Report\n" + toString();
 }
 

@@ -85,7 +85,7 @@ int Quadrant::genKlingons()
 int Quadrant::genBases()
 {
     // 4% chance of a quadrant having a base
-    if (common::chanceOf(0.04))
+    if (common::chanceOf(4))
     {
         return 1;
     }

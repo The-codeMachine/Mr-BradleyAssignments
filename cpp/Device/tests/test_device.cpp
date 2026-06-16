@@ -12,7 +12,7 @@ int main()
     Devices devices;
 
     std::cout << "Warp engines damage: " << devices.getDamage(0) << "\n";
-    std::cout << "Warp engines operation status: " << devices.isOperational(0) << "\n";
+    std::cout << "Warp engines damage status: " << devices.isDamaged(0) << "\n";
 
     std::cout << devices.damageReport() << "\n";
 
@@ -22,17 +22,17 @@ int main()
     Devices d;
     for (int i = 0; i < 100; ++i) {
         if (i % 25 == 0) {
-            d.randomDamageRepairEvent();
+            d.randomEvent();
             std::cout << d << "\n";
         }
 
         if (i % 10 == 0) {
-            d.moveRepair(1.0);
+            d.repairOverTime(1.0);
             std::cout << d << "\n";
         }
 
         if (i % 15 == 0) {
-            d.takeDamage(300, 3000);
+            d.hitDamage(300, 3000);
             std::cout << d << "\n";
         }
     }
@@ -50,7 +50,7 @@ Sample Output
 Devices test
 Getters test
 Warp engines damage: 0
-Warp engines operation status: 1
+Warp engines damage status: 0
 Devices Status Report
 WARP ENGINES: 0.000000
 SHORT RANGE SENSORS: 0.000000
