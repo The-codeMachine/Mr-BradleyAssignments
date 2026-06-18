@@ -34,8 +34,6 @@ int main()
         // phaser hit test
         if (i % 15 == 0) {
             d.hitDamage(300, 3000);
-            d.takeDamage();
-            std::cout << d << "\n";
         }
 
         // docking test
@@ -96,6 +94,7 @@ COMPUTER SYSTEMS: 0.000000
 
 ...
 
+Devices Status Report
 WARP ENGINES: 0.000000
 SHORT RANGE SENSORS: 0.000000
 LONG RANGE SENSORS: -1.521801

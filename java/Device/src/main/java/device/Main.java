@@ -32,8 +32,6 @@ public class Main {
             // phaser hit test
             if (i % 15 == 0) {
                 d.hitDamage(300, 3000);
-                d.takeDamage();
-                System.out.println(d);
             }
 
             // docking test
@@ -94,6 +92,7 @@ public class Main {
  * 
  * ...
  * 
+ * Devices Status Report
  * WARP ENGINES: 0.0
  * SHORT RANGE SENSORS: 0.0
  * LONG RANGE SENSORS: 0.0

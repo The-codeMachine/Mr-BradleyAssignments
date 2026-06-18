@@ -33,10 +33,15 @@ bool Devices::isValidIndex(int index) const
     return index >= 0 && index <= std::size(devices) - 1;
 }
 
+// Checks if the amount is a valid amount
+bool Devices::isValidAmount(double amount) const {
+    return amount > 0;
+}
+
 // Damages the device (index) by an amount
 void Devices::damage(int index, double amount)
 {
-    assert(isValidIndex(index) && amount > 0);
+    assert(isValidIndex(index) && isValidAmount(amount));
 
     devices[index] -= amount;
 }
@@ -44,7 +49,7 @@ void Devices::damage(int index, double amount)
 // Damages the device (index) by an amount
 void Devices::repair(int index, double amount)
 {
-    assert(isValidIndex(index) && amount > 0);
+    assert(isValidIndex(index) && isValidAmount(amount));
 
     if (!isDamaged(index))
         return;
@@ -73,12 +78,12 @@ void Devices::repair()
 
 // Makes a random device take damage. 60% chance that it will
 // actually occur. [1, 6) damage may occur.
-void Devices::takeDamage()
+void Devices::takeDamage(int index, double amount)
 {
     if (common::chanceOf(40))
         return;
 
-    damage();
+    damage(index, amount);
 }
 
 // Makes damage occur to all devices over time.
@@ -94,11 +99,13 @@ void Devices::damageOverTime(double time)
 // and shields remaining.
 void Devices::hitDamage(double phaserEnergy, double shields)
 {
-    if (phaserEnergy <= 20 || phaserEnergy / shields <= 0.02)
+    if (phaserEnergy <= 20 || phaserEnergy / shields <= 0.02 || common::chanceOf(40))
         return;
 
     double damage = phaserEnergy / shields + 0.5 * common::random();
     this->damage(randomDevice(), damage);
+
+    std::cout << damageReport() << "\n";
 }
 
 // Makes a damage event occur. [1, 6) damage to a random device.

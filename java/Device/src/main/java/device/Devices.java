@@ -38,11 +38,11 @@ public class Devices {
      * actually occurs. [1, 6) damage may occur. 
      * 
      */
-    public void takeDamage() {
+    public void takeDamage(int index, double amount) {
         if (GameLib.chanceOf(40))
             return;
         
-        damage();
+        damage(index, amount);
     }
 
     /**
@@ -68,11 +68,13 @@ public class Devices {
      * 
      */
     public void hitDamage(double phaserEnergy, double shields) {
-        if (phaserEnergy <= 20 || phaserEnergy / shields <= 0.02)
+        if (phaserEnergy <= 20 || phaserEnergy / shields <= 0.02 || GameLib.chanceOf(40))
             return;
 
         double damage = phaserEnergy / shields + 0.5 * GameLib.random();
         this.damage(randomDevice(), damage);
+
+        System.out.println(damageReport());
     }
 
     /**
@@ -162,8 +164,7 @@ public class Devices {
      * 
      */
     private void damage(int index, double amount) {
-        assert isValidIndex(index);
-        assert amount > 0;
+        assert isValidIndex(index) && isValidAmount(amount) : "Invalid index or amount";
 
         devices[index] -= amount;
     }
@@ -177,8 +178,7 @@ public class Devices {
      * 
      */
     private void repair(int index, double amount) {
-        assert isValidIndex(index);
-        assert amount > 0;
+        assert isValidIndex(index) && isValidAmount(amount) : "Invalid index or amount";
 
         if (!isDamaged(index))
             return;
@@ -285,6 +285,17 @@ public class Devices {
         return index >= 0 && index <= devices.length - 1;
     }
 
+    /**
+     * 
+     * Checks if the amount is valid.
+     * 
+     * @param amount
+     * @return true if the amount is valid
+     */
+    private boolean isValidAmount(double amount) {
+        return amount > 0;
+    }
+
     @Override
     public String toString() {
         String out = "";
@@ -345,6 +356,7 @@ public class Devices {
  * 
  * ...
  * 
+ * Devices Status Report
  * WARP ENGINES: 0.0
  * SHORT RANGE SENSORS: 0.0
  * LONG RANGE SENSORS: 0.0

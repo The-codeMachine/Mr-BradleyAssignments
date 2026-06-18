@@ -42,7 +42,7 @@ class Devices
 public:
     Devices();
     
-    void takeDamage();
+    void takeDamage(int index, double amount);
     void damageOverTime(double time);
     void hitDamage(double phaserEnergy, double shields);
     void damageEvent();
@@ -72,6 +72,7 @@ private:
     bool anyDamaged() const;
     int randomDevice() const;
     bool isValidIndex(int index) const;
+    bool isValidAmount(double amount) const;
 
 private:
     double devices[8];  
@@ -119,6 +120,7 @@ COMPUTER SYSTEMS: 0.000000
 
 ...
 
+Devices Status Report
 WARP ENGINES: 0.000000
 SHORT RANGE SENSORS: 0.000000
 LONG RANGE SENSORS: -1.521801
