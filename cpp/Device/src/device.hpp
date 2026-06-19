@@ -2,6 +2,7 @@
 
 #include <string>
 #include <ostream>
+#include <map>
 
 /**
  *
@@ -35,27 +36,31 @@
  *  - Check if a device is damaged or not
  * 
  *  - Print a status report / Convert to string
- *
+ * 
+ * When inputting the device's name, ensure that all 
+ * characters are capitalized. 
+ * 
  */
 class Devices
 {
 public:
     Devices();
     
-    void takeDamage(int index, double amount);
+    void takeDamage(const std::string& deviceName, double amount);
     void damageOverTime(double time);
     void hitDamage(double phaserEnergy, double shields);
     void damageEvent();
 
-    void makeRepair(int index, double amount);
+    void makeRepair(const std::string& deviceName, double amount);
     void repairAll(double amount);
     void repairOverTime(double time);
     void repairEvent();
 
     void randomEvent();
 
-    bool isDamaged(int index) const;
-    double getDamage(int index) const;
+    bool isDamaged(const std::string& deviceName) const;
+    double getDamage(const std::string& deviceName) const;
+    std::string getStatus(const std::string& deviceName) const;
     
     std::string damageReport() const;
 
@@ -66,7 +71,6 @@ public:
 private:
     void damage(int index, double amount);
     void repair(int index, double amount);
-    void damage();
     void repair();
 
     bool anyDamaged() const;
@@ -74,10 +78,14 @@ private:
     bool isValidIndex(int index) const;
     bool isValidAmount(double amount) const;
 
+    static std::string convertToValidDeviceName(const std::string& org);
+    int convertToIndex(const std::string& deviceName) const;
+
 private:
-    double devices[8];  
-    
-    static constexpr double FULLY_REPAIRED = 0.0;
+    std::map<std::string, int> map; 
+    double devices[8];
+
+    static constexpr double UNDAMAGED = 0.0;
 
 };
 
@@ -88,12 +96,13 @@ Devices test
 Getters test
 Warp engines damage: 0
 Warp engines damage status: 0
+WARP ENGINES: 0.000000
 Devices Status Report
 WARP ENGINES: 0.000000
 SHORT RANGE SENSORS: 0.000000
 LONG RANGE SENSORS: 0.000000
 PHASER CONTROL: 0.000000
-TORPEDO CONTROl: 0.000000
+TORPEDO CONTROL: 0.000000
 SHIELD CONTROL: 0.000000
 DAMAGE CONTROL: 0.000000
 COMPUTER SYSTEMS: 0.000000
@@ -104,16 +113,7 @@ WARP ENGINES: 0.000000
 SHORT RANGE SENSORS: 0.000000
 LONG RANGE SENSORS: 0.000000
 PHASER CONTROL: 0.000000
-TORPEDO CONTROl: 0.000000
-SHIELD CONTROL: 0.000000
-DAMAGE CONTROL: 0.000000
-COMPUTER SYSTEMS: 0.000000
-
-WARP ENGINES: 0.000000
-SHORT RANGE SENSORS: 0.000000
-LONG RANGE SENSORS: 0.000000
-PHASER CONTROL: 0.000000
-TORPEDO CONTROl: 0.000000
+TORPEDO CONTROL: 0.000000
 SHIELD CONTROL: 0.000000
 DAMAGE CONTROL: 0.000000
 COMPUTER SYSTEMS: 0.000000
@@ -123,11 +123,11 @@ COMPUTER SYSTEMS: 0.000000
 Devices Status Report
 WARP ENGINES: 0.000000
 SHORT RANGE SENSORS: 0.000000
-LONG RANGE SENSORS: -1.521801
+LONG RANGE SENSORS: 0.000000
 PHASER CONTROL: 0.000000
-TORPEDO CONTROl: 0.000000
-SHIELD CONTROL: -0.249914
-DAMAGE CONTROL: -1.351348
+TORPEDO CONTROL: 0.000000
+SHIELD CONTROL: 0.000000
+DAMAGE CONTROL: -0.101284
 COMPUTER SYSTEMS: 0.000000
 
 Simulation test success

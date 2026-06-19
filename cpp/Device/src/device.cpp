@@ -6,16 +6,29 @@
 #include <iostream>
 #include <iomanip>
 #include <iterator>
+#include <cctype>
 
-Devices::Devices() : devices{} {}
+Devices::Devices() : devices{}
+{
+    map["WARP ENGINES"] = 0;
+    map["SHORT RANGE SENSORS"] = 1;
+    map["LONG RANGE SENSORS"] = 2;
+    map["PHASER CONTROL"] = 3;
+    map["TORPEDO CONTROL"] = 4;
+    map["SHIELD CONTROL"] = 5;
+    map["DAMAGE CONTROL"] = 6;
+    map["COMPUTER SYSTEMS"] = 7;
+}
 
 // Checks if there are any devices damaged.
 bool Devices::anyDamaged() const
 {
     for (int i = 0; i < std::size(devices); ++i)
     {
-        if (isDamaged(i))
-            return true;
+        if (devices[i] == UNDAMAGED)
+            continue;
+
+        return true;
     }
 
     return false;
@@ -34,7 +47,8 @@ bool Devices::isValidIndex(int index) const
 }
 
 // Checks if the amount is a valid amount
-bool Devices::isValidAmount(double amount) const {
+bool Devices::isValidAmount(double amount) const
+{
     return amount > 0;
 }
 
@@ -51,21 +65,13 @@ void Devices::repair(int index, double amount)
 {
     assert(isValidIndex(index) && isValidAmount(amount));
 
-    if (!isDamaged(index))
+    if (devices[index] == UNDAMAGED)
         return;
 
     devices[index] += amount;
 
-    if (devices[index] > FULLY_REPAIRED)
-        devices[index] = FULLY_REPAIRED;
-}
-
-// Damages the device (random device) by a random amount (1 <= x < 6)
-void Devices::damage()
-{
-    int index = randomDevice();
-
-    damage(index, common::randomInRange(1, 6));
+    if (devices[index] > UNDAMAGED)
+        devices[index] = UNDAMAGED;
 }
 
 // Repairs the device (random device) by a random amount (1 <= x < 4)
@@ -76,14 +82,28 @@ void Devices::repair()
     repair(index, common::randomInRange(1, 4));
 }
 
+// Converts a string to all capital characters
+std::string Devices::convertToValidDeviceName(const std::string& org) {
+    std::string out = org;
+    
+    for (char& c : out) {
+        c = std::toupper(static_cast<unsigned char>(c));
+    }
+    
+    return out;
+}
+
+// Converts a device name to an index
+int Devices::convertToIndex(const std::string& deviceName) const {
+    return map.at(convertToValidDeviceName(deviceName));
+}
+
 // Makes a random device take damage. 60% chance that it will
 // actually occur. [1, 6) damage may occur.
-void Devices::takeDamage(int index, double amount)
+void Devices::takeDamage(const std::string &deviceName, double amount)
 {
-    if (common::chanceOf(40))
-        return;
-
-    damage(index, amount);
+    if (common::chanceOf(60))
+        damage(convertToIndex(deviceName), amount);
 }
 
 // Makes damage occur to all devices over time.
@@ -99,25 +119,30 @@ void Devices::damageOverTime(double time)
 // and shields remaining.
 void Devices::hitDamage(double phaserEnergy, double shields)
 {
-    if (phaserEnergy <= 20 || phaserEnergy / shields <= 0.02 || common::chanceOf(40))
+    if (phaserEnergy <= 20 || phaserEnergy / shields <= 0.02)
         return;
 
-    double damage = phaserEnergy / shields + 0.5 * common::random();
-    this->damage(randomDevice(), damage);
+    if (common::chanceOf(60))
+    {
+        double damage = phaserEnergy / shields + 0.5 * common::random();
+        this->damage(randomDevice(), damage);
 
-    std::cout << damageReport() << "\n";
+        std::cout << damageReport() << "\n";
+    }
 }
 
 // Makes a damage event occur. [1, 6) damage to a random device.
 void Devices::damageEvent()
 {
-    damage();
+    int index = randomDevice();
+
+    damage(index, common::randomInRange(1, 6));
 }
 
 // Repairs a device by an amount
-void Devices::makeRepair(int index, double amount)
+void Devices::makeRepair(const std::string &deviceName, double amount)
 {
-    repair(index, amount);
+    repair(convertToIndex(deviceName), amount);
 }
 
 // Repairs all devices by an amount
@@ -139,44 +164,51 @@ void Devices::repairOverTime(double time)
 // device.
 void Devices::repairEvent()
 {
-    if (!anyDamaged())
-        return;
-
-    repair();
+    if (anyDamaged())
+        repair();
 }
 
 // Makes a random damage/repair event occur (60%/40% split).
-// There is a 20% chance of one occurring. Will damage a 
+// There is a 20% chance of one occurring. Will damage a
 // random device by [1, 6) or repair a random device by
 // [1, 4).
 void Devices::randomEvent()
 {
-    if (common::chanceOf(80))
-        return;
-
-    if (common::chanceOf(60))
+    if (common::chanceOf(20))
     {
-        damageEvent();
-    }
-    else
-    {
-        repairEvent();
+        if (common::chanceOf(60))
+        {
+            damageEvent();
+        }
+        else
+        {
+            repairEvent();
+        }
     }
 }
 
+// Checks if a device is damaged
+bool Devices::isDamaged(const std::string &deviceName) const
+{
+    assert(isValidIndex(convertToIndex(deviceName)));
 
-bool Devices::isDamaged(int index) const {
-    assert(isValidIndex(index));
-
-    return devices[index] != FULLY_REPAIRED;
+    return devices[convertToIndex(deviceName)] != UNDAMAGED;
 }
 
 // Returns the device's damage level
-double Devices::getDamage(int index) const
+double Devices::getDamage(const std::string &deviceName) const
 {
-    assert(isValidIndex(index));
+    assert(isValidIndex(convertToIndex(deviceName)));
 
-    return devices[index];
+    return devices[convertToIndex(deviceName)];
+}
+
+// Returns a device's status as a string
+std::string Devices::getStatus(const std::string &deviceName) const
+{
+    assert(isValidIndex(convertToIndex(deviceName)));
+
+    return deviceName + ": " + std::to_string(devices[convertToIndex(deviceName)]);
 }
 
 // Makes a damager report of all the devices
@@ -187,16 +219,16 @@ std::string Devices::damageReport() const
 
 std::string Devices::toString() const
 {
-    std::string out = "";
+    std::string out;
 
-    out += "WARP ENGINES: " + std::to_string(devices[0]) + "\n";
-    out += "SHORT RANGE SENSORS: " + std::to_string(devices[1]) + "\n";
-    out += "LONG RANGE SENSORS: " + std::to_string(devices[2]) + "\n";
-    out += "PHASER CONTROL: " + std::to_string(devices[3]) + "\n";
-    out += "TORPEDO CONTROl: " + std::to_string(devices[4]) + "\n";
-    out += "SHIELD CONTROL: " + std::to_string(devices[5]) + "\n";
-    out += "DAMAGE CONTROL: " + std::to_string(devices[6]) + "\n";
-    out += "COMPUTER SYSTEMS: " + std::to_string(devices[7]) + "\n";
+    out += getStatus("WARP ENGINES") + "\n";
+    out += getStatus("SHORT RANGE SENSORS") + "\n";
+    out += getStatus("LONG RANGE SENSORS") + "\n";
+    out += getStatus("PHASER CONTROL") + "\n";
+    out += getStatus("TORPEDO CONTROL") + "\n";
+    out += getStatus("SHIELD CONTROL") + "\n";
+    out += getStatus("DAMAGE CONTROL") + "\n";
+    out += getStatus("COMPUTER SYSTEMS") + "\n";
 
     return out;
 }
