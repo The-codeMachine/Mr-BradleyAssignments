@@ -4,27 +4,13 @@
 
 #include <cassert>
 
-QuadrantMap::QuadrantMap(uint16_t kbs)
-{
-    uint8_t klingons = kbs / 100;
-    uint8_t bases = kbs / 10 % 10;
-    uint8_t stars = kbs % 10;
-
-    QuadrantMap(klingons, bases, stars);
-}
-
-QuadrantMap::QuadrantMap(uint8_t klingons, uint8_t bases, uint8_t stars)
-{
+QuadrantMap::QuadrantMap(Quadrant& q) : quadrant(q) {
     quadrantString.resize(192, ' ');
     
-    insertValues(klingons, "+K+");
-    insertValues(bases, ">!<");
-    insertValues(stars, " * ");
+    insertValues(q.klingons(), "+K+");
+    insertValues(q.bases(), ">!<");
+    insertValues(q.stars(), " * ");
     insertValues(1, "<*>"); // enterprise
-}
-
-QuadrantMap::QuadrantMap(const Quadrant& q) {
-    QuadrantMap(q.klingons(), q.bases(), q.stars());
 }
 
 // Generates a random x, and y position based off the quadrant map's size
@@ -69,8 +55,12 @@ void QuadrantMap::moveEnterprise(int x, int y, int newX, int newY) {
 
 // Removes the klingon from the quadrant
 void QuadrantMap::removeKlingon(int x, int y) {
+    if (klingons() <= 0)
+        return;
+
     if (at(x, y) == "+K+") {
         clear(x, y);
+        quadrant.reduceKlingons();
     }
 }
 
@@ -87,6 +77,21 @@ std::string QuadrantMap::at(int x, int y) const
     }
 
     return out;
+}
+
+// Gets the number of klingons in the quadrant
+int QuadrantMap::klingons() const {
+    return quadrant.klingons();
+}
+
+// Gets the number of bases in the quadrant
+int QuadrantMap::bases() const {
+    return quadrant.bases();
+}
+
+// Gets the number of stars in the quadrant
+int QuadrantMap::stars() const {
+    return quadrant.stars();
 }
 
 // Checks if (x, y) is empty ("   ")
@@ -127,7 +132,10 @@ std::string QuadrantMap::toString() const {
     std::string out;
 
     for (size_t i = 0; i < ROWS; ++i) {
-        out += "----------------------------------\n";
+        for (size_t j = 0; j < COLS * (SYMBOL_SIZE + 1); ++j) {
+            out += '-';
+        }
+        out += "\n";
 
         for (size_t j = 0; j < COLS; ++j) {
             out += at(j, i) + "|";
@@ -135,6 +143,10 @@ std::string QuadrantMap::toString() const {
 
         out += "\n";
     }
+
+    out += "Klingons: " + std::to_string(klingons()) + 
+    ", Bases: " + std::to_string(bases()) + 
+    ", Stars: " + std::to_string(stars());
 
     return out;
 }

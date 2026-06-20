@@ -7,7 +7,7 @@
 #include <cstdint>
 
 /**
- * QuadrantMap handles all of the movement and positional 
+ * QuadrantMap handles all of the movement and positional
  * status for Klingons, bases, stars, and the Enterprise
  * within a Quadrant. It allows you to remove a klingon,
  * and move the Enterprise. Operations include:
@@ -16,68 +16,94 @@
  *  - Remove a klingon
  *  - Check what the value of a sector is
  *  - Check if a sector is empty
+ *  - Get the number of klingons/bases/stars in the Quadrant
  *  - Convert the map to a string
- * 
+ *
  * Currently, there are 8 rows and 8 columns, with each
- * symbol being 3 big. 
- * 
+ * symbol being 3 big.
+ *
  */
-class QuadrantMap {
+class QuadrantMap
+{
 public:
-    QuadrantMap(uint16_t kbs);
-    QuadrantMap(uint8_t klingons, uint8_t bases, uint8_t stars);
-    QuadrantMap(const Quadrant& q);
+   QuadrantMap(Quadrant &q);
 
-    void moveEnterprise(int x, int y, int newX, int newY);
-    void removeKlingon(int x, int y);
+   void moveEnterprise(int x, int y, int newX, int newY);
+   void removeKlingon(int x, int y);
 
-    std::string at(int x, int y) const;
-    bool empty(int x, int y) const;
+   std::string at(int x, int y) const;
+   bool empty(int x, int y) const;
 
-    std::string toString() const;
-    
-    friend std::ostream &operator<<(std::ostream &os, const QuadrantMap &m);
-    
-private:
-    void clear(int x, int y);
-    void insert(int x, int y, std::string value);
-    void insertValues(int amount, const std::string& value);
+   int klingons() const;
+   int bases() const;
+   int stars() const;
 
-    static void generateRandomPosition(int& x, int& y);
-    static bool validPos(int x, int y);
+   std::string toString() const;
+
+   friend std::ostream &operator<<(std::ostream &os, const QuadrantMap &m);
 
 private:
-    std::string quadrantString;
+   void clear(int x, int y);
+   void insert(int x, int y, std::string value);
+   void insertValues(int amount, const std::string &value);
 
-    static inline constexpr size_t ROWS = 8;
-    static inline constexpr size_t COLS = 8;
-    static inline constexpr size_t SYMBOL_SIZE = 3;
+   static void generateRandomPosition(int &x, int &y);
+   static bool validPos(int x, int y);
 
+private:
+   std::string quadrantString;
+   Quadrant &quadrant;
+
+   static inline constexpr size_t ROWS = 8;
+   static inline constexpr size_t COLS = 8;
+   static inline constexpr size_t SYMBOL_SIZE = 3;
 };
 
 /*
 Sample Output
 
 QuadrantMap test
-----------------------------------
-   |   |   |   |   |   |>!<|   |
-----------------------------------
-   | * |   |   |+K+|   |   |   |
-----------------------------------
+--------------------------------
    |   |   |   |+K+|   |   |   |
-----------------------------------
-   |   |<*>|   |   |   |   |   |
-----------------------------------
-   |   |   |+K+|   |   |   |   |
-----------------------------------
-   | * |   |   |   |   |   |   |
-----------------------------------
+--------------------------------
    |   |   |   |   |   |   |   |
-----------------------------------
+--------------------------------
+   |   |   |   |   |   | * |   |
+--------------------------------
    |   |   |   |   |   |   |   |
+--------------------------------
+   |   |   |   |   |   |   |   |
+--------------------------------
+   |   |   |   |   |   |   |   |
+--------------------------------
+   |   |<*>|   | * |   |   |   |
+--------------------------------
+   |   |   |   |   |   |   |   |
+Klingons: 1, Bases: 0, Stars: 2
+(4, 2): <     >
+Is (4, 2) empty: 1
 
-(4, 2): < +K+ >
-Is (4, 2) empty: 0
+Klingons: 1
+Bases: 0
+Stars: 2
+Enter (x, y) for a klingon: 4 0
+--------------------------------
+   |   |   |   |+K+|   |   |   |
+--------------------------------
+   |   |   |   |   |   |   |   |
+--------------------------------
+   |   |   |   |   |   | * |   |
+--------------------------------
+   |   |   |   |   |   |   |   |
+--------------------------------
+   |   |   |   |   |   |   |   |
+--------------------------------
+   |   |   |   |   |   |   |   |
+--------------------------------
+   |   |<*>|   | * |   |   |   |
+--------------------------------
+   |   |   |   |   |   |   |   |
+Klingons: 0, Bases: 0, Stars: 2
 QuadrantMap test success
 
 */
