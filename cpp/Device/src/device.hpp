@@ -37,9 +37,6 @@
  * 
  *  - Print a status report / Convert to string
  * 
- * When inputting the device's name, ensure that all 
- * characters are capitalized. 
- * 
  */
 class Devices
 {
@@ -109,6 +106,15 @@ COMPUTER SYSTEMS: 0.000000
 
 Getters test success
 Simulation test
+WARP ENGINES: 0.000000
+SHORT RANGE SENSORS: 0.000000
+LONG RANGE SENSORS: 0.000000
+PHASER CONTROL: 0.000000
+TORPEDO CONTROL: 0.000000
+SHIELD CONTROL: 0.000000
+DAMAGE CONTROL: 0.000000
+COMPUTER SYSTEMS: 0.000000
+
 WARP ENGINES: 0.000000
 SHORT RANGE SENSORS: 0.000000
 LONG RANGE SENSORS: 0.000000

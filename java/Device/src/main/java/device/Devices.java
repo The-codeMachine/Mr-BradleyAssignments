@@ -1,6 +1,8 @@
 package device;
 
 import common.*;
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * 
@@ -30,6 +32,16 @@ import common.*;
 public class Devices {
     Devices() {
         this.devices = new double[8];
+        this.map = new TreeMap<>();
+
+        map.put("WARP ENGINES", 0);
+        map.put("SHORT RANGE SENSORS", 1);
+        map.put("LONG RANGE SENSORS", 2);
+        map.put("PHASER CONTROL", 3);
+        map.put("TORPEDO CONTROL", 4);
+        map.put("SHIELD CONTROL", 5);
+        map.put("DAMAGE CONTROL", 6);
+        map.put("COMPUTER SYSTEMS", 7);
     }
 
     /**
@@ -38,11 +50,10 @@ public class Devices {
      * actually occurs. [1, 6) damage may occur. 
      * 
      */
-    public void takeDamage(int index, double amount) {
-        if (GameLib.chanceOf(40))
-            return;
-        
-        damage(index, amount);
+    public void takeDamage(String deviceName, double amount) {        
+        if (GameLib.chanceOf(60)) {
+            damage(convertToIndex(deviceName), amount);
+        }
     }
 
     /**
@@ -68,23 +79,25 @@ public class Devices {
      * 
      */
     public void hitDamage(double phaserEnergy, double shields) {
-        if (phaserEnergy <= 20 || phaserEnergy / shields <= 0.02 || GameLib.chanceOf(40))
+        if (phaserEnergy <= 20 || phaserEnergy / shields <= 0.02)
             return;
 
-        double damage = phaserEnergy / shields + 0.5 * GameLib.random();
-        this.damage(randomDevice(), damage);
+        if (GameLib.chanceOf(60)) {
+            double damage = phaserEnergy / shields + 0.5 * GameLib.random();
+            this.damage(randomDevice(), damage);
 
-        System.out.println(damageReport());
+            System.out.println(damageReport());
+        }
     }
 
     /**
      * 
-     * Makes a damage event occur. [1, 6) damage to a 
-     * random device. 
+     * Damages a random device by a random amount (between 1 and 6)
      * 
      */
     public void damageEvent() {
-        damage();
+        int index = randomDevice();
+        damage(index, GameLib.randomInRange(1, 6));
     }
 
     /**
@@ -95,8 +108,8 @@ public class Devices {
      * @param amount
      * 
      */
-    public void makeRepair(int index, double amount) {
-        repair(index, amount);
+    public void makeRepair(String deviceName, double amount) {
+        repair(convertToIndex(deviceName), amount);
     }
 
     /**
@@ -130,10 +143,8 @@ public class Devices {
      * 
      */
     public void repairEvent() {
-        if (!anyDamaged())
-            return;
-
-        repair();
+        if (anyDamaged())
+            repair();
     }
 
     /**
@@ -145,13 +156,12 @@ public class Devices {
      * 
      */
     public void randomEvent() {
-        if (GameLib.chanceOf(80))
-            return;
-
-        if (GameLib.chanceOf(60)) {
-            damageEvent();
-        } else { 
-            repairEvent();
+        if (GameLib.chanceOf(20)) {
+            if (GameLib.chanceOf(60)) {
+                damageEvent();
+            } else { 
+                repairEvent();
+            }
         }
     }
 
@@ -180,23 +190,13 @@ public class Devices {
     private void repair(int index, double amount) {
         assert isValidIndex(index) && isValidAmount(amount) : "Invalid index or amount";
 
-        if (!isDamaged(index))
+        if (devices[index] == UNDAMAGED)
             return;
 
         devices[index] += amount;
-
-        if (devices[index] > FULLY_REPAIRED)
-            devices[index] = FULLY_REPAIRED;
-    }
-
-    /**
-     * 
-     * Damages a random device by a random amount (between 1 and 6)
-     * 
-     */
-    private void damage() {
-        int index = randomDevice();
-        damage(index, GameLib.randomInRange(1, 6));
+        
+        if (devices[index] > UNDAMAGED)
+            devices[index] = UNDAMAGED;
     }
 
     /**
@@ -228,10 +228,10 @@ public class Devices {
      * @return true if the device is damaged and false if not
      * 
      */
-    public boolean isDamaged(int index) {
-        assert isValidIndex(index);
+    public boolean isDamaged(String deviceName) {
+        assert isValidIndex(convertToIndex(deviceName));
 
-        return devices[index] != FULLY_REPAIRED;
+        return devices[convertToIndex(deviceName)] != UNDAMAGED;
     }
 
     /**
@@ -243,8 +243,10 @@ public class Devices {
      */
     private boolean anyDamaged() {
         for (int i = 0; i < devices.length; ++i) {
-            if (isDamaged(i))
-                return true;
+            if (devices[i] == UNDAMAGED)
+                continue;
+
+            return true;
         }
 
         return false;
@@ -258,10 +260,21 @@ public class Devices {
      * @return the damage level of the device
      * 
      */
-    public double getDamage(int index) {
-        assert isValidIndex(index);
+    public double getDamage(String deviceName) {
+        assert isValidIndex(convertToIndex(deviceName));
 
-        return devices[index];
+        return devices[convertToIndex(deviceName)];
+    }
+
+    /**
+     * 
+     * Gets the status of the device and returns it as a string
+     * 
+     * @param deviceName
+     * @return a string consisting of the device name and its damage
+     */
+    public String getStatus(String deviceName) {
+        return deviceName + ": " + devices[convertToIndex(deviceName)];
     }
 
     /**
@@ -296,25 +309,48 @@ public class Devices {
         return amount > 0;
     }
 
+    /**
+     * 
+     * Converts a string to a valid device name.
+     * 
+     * @param org
+     * @return the original string in all Uppercase
+     */
+    private static String convertToValidDeviceName(String org) {
+        return org.toUpperCase();
+    } 
+
+    /**
+     * 
+     * Returns an index based off the device's name
+     * 
+     * @param deviceName
+     * @return the device's index based off the name
+     */
+    private int convertToIndex(String deviceName) {
+        return map.get(convertToValidDeviceName(deviceName));
+    }
+
     @Override
     public String toString() {
         String out = "";
 
-        out += "WARP ENGINES: " + Double.toString(getDamage(0)) + "\n";
-        out += "SHORT RANGE SENSORS: " + Double.toString(getDamage(1)) + "\n";
-        out += "LONG RANGE SENSORS: " + Double.toString(getDamage(2)) + "\n";
-        out += "PHASER CONTROL: " + Double.toString(getDamage(3)) + "\n";
-        out += "TORPEDO CONTROL: " + Double.toString(getDamage(4)) + "\n";
-        out += "SHIELD CONTROL: " + Double.toString(getDamage(5)) + "\n";
-        out += "DAMAGE CONTROL: " + Double.toString(getDamage(6)) + "\n";
-        out += "COMPUTER SYSTEMS: " + Double.toString(getDamage(7)) + "\n";
+        out += getStatus("WARP ENGINES") + "\n";
+        out += getStatus("SHORT RANGE SENSORS") + "\n";
+        out += getStatus("LONG RANGE SENSORS") + "\n";
+        out += getStatus("PHASER CONTROL") + "\n";
+        out += getStatus("TORPEDO CONTROL") + "\n";
+        out += getStatus("SHIELD CONTROL") + "\n";
+        out += getStatus("DAMAGE CONTROL") + "\n";
+        out += getStatus("COMPUTER SYSTEMS") + "\n";
 
         return out;
     }
 
     private double[] devices;
+    private Map<String, Integer> map;
 
-    private static final double FULLY_REPAIRED = 0.0;
+    private static final double UNDAMAGED = 0.0;
 }
 
 /**
@@ -324,6 +360,7 @@ public class Devices {
  * Getters test
  * Warp engines damage: 0.000000
  * Warp engines damage status: false
+ * WARP ENGINES: 0.0
  * Devices Status Report
  * WARP ENGINES: 0.0
  * SHORT RANGE SENSORS: 0.0
@@ -356,14 +393,13 @@ public class Devices {
  * 
  * ...
  * 
- * Devices Status Report
  * WARP ENGINES: 0.0
  * SHORT RANGE SENSORS: 0.0
  * LONG RANGE SENSORS: 0.0
- * PHASER CONTROL: -1.429211657491689
+ * PHASER CONTROL: 0.0
  * TORPEDO CONTROL: 0.0
  * SHIELD CONTROL: 0.0
- * DAMAGE CONTROL: -0.5620815408040213
+ * DAMAGE CONTROL: 0.0
  * COMPUTER SYSTEMS: 0.0
  * 
  * Simulation test success

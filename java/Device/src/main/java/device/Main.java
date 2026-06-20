@@ -8,8 +8,9 @@ public class Main {
 
         Devices devices = new Devices();
 
-        System.out.printf("Warp engines damage: %f\n", devices.getDamage(0));
-        System.out.printf("Warp engines damage status: %b\n", devices.isDamaged(0));
+        System.out.printf("Warp engines damage: %f\n", devices.getDamage("WARP ENGINES"));
+        System.out.printf("Warp engines damage status: %b\n", devices.isDamaged("WARP ENGINES"));
+        System.out.println(devices.getStatus("WARP ENGINES"));
         
         System.out.println(devices.damageReport());
 
@@ -60,6 +61,7 @@ public class Main {
  * Getters test
  * Warp engines damage: 0.000000
  * Warp engines damage status: false
+ * WARP ENGINES: 0.0
  * Devices Status Report
  * WARP ENGINES: 0.0
  * SHORT RANGE SENSORS: 0.0
@@ -92,14 +94,13 @@ public class Main {
  * 
  * ...
  * 
- * Devices Status Report
  * WARP ENGINES: 0.0
  * SHORT RANGE SENSORS: 0.0
  * LONG RANGE SENSORS: 0.0
- * PHASER CONTROL: -1.429211657491689
+ * PHASER CONTROL: 0.0
  * TORPEDO CONTROL: 0.0
  * SHIELD CONTROL: 0.0
- * DAMAGE CONTROL: -0.5620815408040213
+ * DAMAGE CONTROL: 0.0
  * COMPUTER SYSTEMS: 0.0
  * 
  * Simulation test success
