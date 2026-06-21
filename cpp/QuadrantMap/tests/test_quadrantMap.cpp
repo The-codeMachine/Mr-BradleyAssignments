@@ -21,7 +21,7 @@ int main()
    int x;
    int y;
 
-   std::cout << "Enter (x, y) for a klingon: ";
+   std::cout << "Enter (x, y) to remove a klingon: ";
    std::cin >> x >> y;
 
    m.removeKlingon(x, y);

@@ -5,7 +5,7 @@
 #include <cassert>
 
 QuadrantMap::QuadrantMap(Quadrant& q) : quadrant(q) {
-    quadrantString.resize(192, ' ');
+    quadrantString.resize(ROWS * COLS * SYMBOL_SIZE, ' ');
     
     insertValues(q.klingons(), "+K+");
     insertValues(q.bases(), ">!<");
