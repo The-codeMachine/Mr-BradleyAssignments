@@ -32,16 +32,6 @@ import java.util.TreeMap;
 public class Devices {
     Devices() {
         this.devices = new double[8];
-        this.map = new TreeMap<>();
-
-        map.put("WARP ENGINES", 0);
-        map.put("SHORT RANGE SENSORS", 1);
-        map.put("LONG RANGE SENSORS", 2);
-        map.put("PHASER CONTROL", 3);
-        map.put("TORPEDO CONTROL", 4);
-        map.put("SHIELD CONTROL", 5);
-        map.put("DAMAGE CONTROL", 6);
-        map.put("COMPUTER SYSTEMS", 7);
     }
 
     /**
@@ -348,8 +338,17 @@ public class Devices {
     }
 
     private double[] devices;
-    private Map<String, Integer> map;
-
+    
+    private static final Map<String, Integer> map = Map.of(
+        "WARP ENGINES", 0,
+        "SHORT RANGE SENSORS", 1,
+        "LONG RANGE SENSORS", 2,
+        "PHASER CONTROL", 3,
+        "TORPEDO CONTROL", 4,  
+        "SHIELD CONTROL", 5,
+        "DAMAGE CONTROL", 6,
+        "COMPUTER SYSTEMS", 7
+    );
     private static final double UNDAMAGED = 0.0;
 }
 

@@ -8,17 +8,7 @@
 #include <iterator>
 #include <cctype>
 
-Devices::Devices() : devices{}
-{
-    map["WARP ENGINES"] = 0;
-    map["SHORT RANGE SENSORS"] = 1;
-    map["LONG RANGE SENSORS"] = 2;
-    map["PHASER CONTROL"] = 3;
-    map["TORPEDO CONTROL"] = 4;
-    map["SHIELD CONTROL"] = 5;
-    map["DAMAGE CONTROL"] = 6;
-    map["COMPUTER SYSTEMS"] = 7;
-}
+Devices::Devices() : devices{} {}
 
 // Checks if there are any devices damaged.
 bool Devices::anyDamaged() const
