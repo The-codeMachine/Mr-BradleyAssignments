@@ -11,9 +11,9 @@ int main()
     
     Devices devices;
 
-    std::cout << "Warp engines damage: " << devices.getDamage("WARP ENGINES") << "\n";
-    std::cout << "Warp engines damage status: " << devices.isDamaged("WARP ENGINES") << "\n";
-    std::cout << devices.getStatus("WARP ENGINES") << "\n";
+    std::cout << "Warp engines damage: " << devices.getDamage(Devices::WARP_ENGINES) << "\n";
+    std::cout << "Warp engines damage status: " << devices.isDamaged(Devices::WARP_ENGINES) << "\n";
+    std::cout << devices.getStatus(Devices::WARP_ENGINES) << "\n";
 
     std::cout << devices.damageReport() << "\n";
 

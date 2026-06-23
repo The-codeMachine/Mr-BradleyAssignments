@@ -43,27 +43,36 @@ class Devices
 public:
     Devices();
 
-    void takeDamage(const std::string &deviceName, double amount);
+    void takeDamage(const std::string_view &deviceName, double amount);
     void damageOverTime(double time);
     void hitDamage(double phaserEnergy, double shields);
     void damageEvent();
 
-    void makeRepair(const std::string &deviceName, double amount);
+    void makeRepair(const std::string_view &deviceName, double amount);
     void repairAll(double amount);
     void repairOverTime(double time);
     void repairEvent();
 
     void randomEvent();
 
-    bool isDamaged(const std::string &deviceName) const;
-    double getDamage(const std::string &deviceName) const;
-    std::string getStatus(const std::string &deviceName) const;
+    bool isDamaged(const std::string_view &deviceName) const;
+    double getDamage(const std::string_view &deviceName) const;
+    std::string getStatus(const std::string_view &deviceName) const;
 
     std::string damageReport() const;
 
     std::string toString() const;
 
     friend std::ostream &operator<<(std::ostream &os, const Devices &d);
+
+    static inline constexpr std::string_view WARP_ENGINES = "WARP ENGINES";
+    static inline constexpr std::string_view SHORT_RANGE_SENSORS = "SHORT RANGE SENSORS";
+    static inline constexpr std::string_view LONG_RANGE_SENSORS = "LONG RANGE SENSORS";
+    static inline constexpr std::string_view PHASER_CONTROL = "PHASER CONTROL";
+    static inline constexpr std::string_view TORPEDO_CONTROL = "TORPEDO CONTROL";
+    static inline constexpr std::string_view SHIELD_CONTROL = "SHIELD CONTROL";
+    static inline constexpr std::string_view DAMAGE_CONTROL = "DAMAGE CONTROL";
+    static inline constexpr std::string_view COMPUTER_SYSTEMS = "COMPUTER SYSTEMS";
 
 private:
     void damage(int index, double amount);
@@ -75,25 +84,23 @@ private:
     bool isValidIndex(int index) const;
     bool isValidAmount(double amount) const;
 
-    static std::string convertToValidDeviceName(const std::string &org);
-    int convertToIndex(const std::string &deviceName) const;
+    int convertToIndex(const std::string_view &deviceName) const;
 
 private:
     double devices[8];
 
-    const std::map<std::string, int> map = {
-        {"WARP ENGINES", 0},
-        {"SHORT RANGE SENSORS", 1},
-        {"LONG RANGE SENSORS", 2},
-        {"PHASER CONTROL", 3},
-        {"TORPEDO CONTROL", 4},
-        {"SHIELD CONTROL", 5},
-        {"DAMAGE CONTROL", 6},
-        {"COMPUTER SYSTEMS", 7}
-
+    const std::map<std::string_view, int> map = {
+        {WARP_ENGINES, 0},
+        {SHORT_RANGE_SENSORS, 1},
+        {LONG_RANGE_SENSORS, 2},
+        {PHASER_CONTROL, 3},
+        {TORPEDO_CONTROL, 4},
+        {SHIELD_CONTROL, 5},
+        {DAMAGE_CONTROL, 6},
+        {COMPUTER_SYSTEMS, 7}
     };
 
-    static constexpr double UNDAMAGED = 0.0;
+    static inline constexpr double UNDAMAGED = 0.0;
 };
 
 /*

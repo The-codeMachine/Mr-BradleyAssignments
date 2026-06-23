@@ -8,9 +8,9 @@ public class Main {
 
         Devices devices = new Devices();
 
-        System.out.printf("Warp engines damage: %f\n", devices.getDamage("WARP ENGINES"));
-        System.out.printf("Warp engines damage status: %b\n", devices.isDamaged("WARP ENGINES"));
-        System.out.println(devices.getStatus("WARP ENGINES"));
+        System.out.printf("Warp engines damage: %f\n", devices.getDamage(Devices.WARP_ENGINES));
+        System.out.printf("Warp engines damage status: %b\n", devices.isDamaged(Devices.WARP_ENGINES));
+        System.out.println(devices.getStatus(Devices.WARP_ENGINES));
         
         System.out.println(devices.damageReport());
 

@@ -301,53 +301,51 @@ public class Devices {
 
     /**
      * 
-     * Converts a string to a valid device name.
-     * 
-     * @param org
-     * @return the original string in all Uppercase
-     */
-    private static String convertToValidDeviceName(String org) {
-        return org.toUpperCase();
-    } 
-
-    /**
-     * 
      * Returns an index based off the device's name
      * 
      * @param deviceName
      * @return the device's index based off the name
      */
     private int convertToIndex(String deviceName) {
-        return map.get(convertToValidDeviceName(deviceName));
+        return map.get(deviceName);
     }
 
     @Override
     public String toString() {
         String out = "";
 
-        out += getStatus("WARP ENGINES") + "\n";
-        out += getStatus("SHORT RANGE SENSORS") + "\n";
-        out += getStatus("LONG RANGE SENSORS") + "\n";
-        out += getStatus("PHASER CONTROL") + "\n";
-        out += getStatus("TORPEDO CONTROL") + "\n";
-        out += getStatus("SHIELD CONTROL") + "\n";
-        out += getStatus("DAMAGE CONTROL") + "\n";
-        out += getStatus("COMPUTER SYSTEMS") + "\n";
+        out += getStatus(WARP_ENGINES) + "\n";
+        out += getStatus(SHORT_RANGE_SENSORS) + "\n";
+        out += getStatus(LONG_RANGE_SENSORS) + "\n";
+        out += getStatus(PHASER_CONTROL) + "\n";
+        out += getStatus(TORPEDO_CONTROL) + "\n";
+        out += getStatus(SHIELD_CONTROL) + "\n";
+        out += getStatus(DAMAGE_CONTROL) + "\n";
+        out += getStatus(COMPUTER_SYSTEMS) + "\n";
 
         return out;
     }
 
+    public static final String WARP_ENGINES = "WARP ENGINES";
+    public static final String SHORT_RANGE_SENSORS = "SHORT RANGE SENSORS";
+    public static final String LONG_RANGE_SENSORS = "LONG RANGE SENSORS";
+    public static final String PHASER_CONTROL = "PHASER CONTROL";
+    public static final String TORPEDO_CONTROL = "TORPEDO CONTROL";
+    public static final String SHIELD_CONTROL = "SHIELD CONTROL";
+    public static final String DAMAGE_CONTROL = "DAMAGE CONTROL";
+    public static final String COMPUTER_SYSTEMS = "COMPUTER SYSTEMS";
+
     private double[] devices;
     
     private static final Map<String, Integer> map = Map.of(
-        "WARP ENGINES", 0,
-        "SHORT RANGE SENSORS", 1,
-        "LONG RANGE SENSORS", 2,
-        "PHASER CONTROL", 3,
-        "TORPEDO CONTROL", 4,  
-        "SHIELD CONTROL", 5,
-        "DAMAGE CONTROL", 6,
-        "COMPUTER SYSTEMS", 7
+        WARP_ENGINES, 0,
+        SHORT_RANGE_SENSORS, 1,
+        LONG_RANGE_SENSORS, 2,
+        PHASER_CONTROL, 3,
+        TORPEDO_CONTROL, 4,  
+        SHIELD_CONTROL, 5,
+        DAMAGE_CONTROL, 6,
+        COMPUTER_SYSTEMS, 7
     );
     private static final double UNDAMAGED = 0.0;
 }

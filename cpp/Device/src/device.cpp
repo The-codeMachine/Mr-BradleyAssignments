@@ -72,25 +72,14 @@ void Devices::repair()
     repair(index, common::randomInRange(1, 4));
 }
 
-// Converts a string to all capital characters
-std::string Devices::convertToValidDeviceName(const std::string& org) {
-    std::string out = org;
-    
-    for (char& c : out) {
-        c = std::toupper(static_cast<unsigned char>(c));
-    }
-    
-    return out;
-}
-
 // Converts a device name to an index
-int Devices::convertToIndex(const std::string& deviceName) const {
-    return map.at(convertToValidDeviceName(deviceName));
+int Devices::convertToIndex(const std::string_view& deviceName) const {
+    return map.at(deviceName);
 }
 
 // Makes a random device take damage. 60% chance that it will
 // actually occur. [1, 6) damage may occur.
-void Devices::takeDamage(const std::string &deviceName, double amount)
+void Devices::takeDamage(const std::string_view &deviceName, double amount)
 {
     if (common::chanceOf(60))
         damage(convertToIndex(deviceName), amount);
@@ -130,7 +119,7 @@ void Devices::damageEvent()
 }
 
 // Repairs a device by an amount
-void Devices::makeRepair(const std::string &deviceName, double amount)
+void Devices::makeRepair(const std::string_view &deviceName, double amount)
 {
     repair(convertToIndex(deviceName), amount);
 }
@@ -178,7 +167,7 @@ void Devices::randomEvent()
 }
 
 // Checks if a device is damaged
-bool Devices::isDamaged(const std::string &deviceName) const
+bool Devices::isDamaged(const std::string_view &deviceName) const
 {
     assert(isValidIndex(convertToIndex(deviceName)));
 
@@ -186,7 +175,7 @@ bool Devices::isDamaged(const std::string &deviceName) const
 }
 
 // Returns the device's damage level
-double Devices::getDamage(const std::string &deviceName) const
+double Devices::getDamage(const std::string_view &deviceName) const
 {
     assert(isValidIndex(convertToIndex(deviceName)));
 
@@ -194,11 +183,11 @@ double Devices::getDamage(const std::string &deviceName) const
 }
 
 // Returns a device's status as a string
-std::string Devices::getStatus(const std::string &deviceName) const
+std::string Devices::getStatus(const std::string_view &deviceName) const
 {
     assert(isValidIndex(convertToIndex(deviceName)));
 
-    return deviceName + ": " + std::to_string(devices[convertToIndex(deviceName)]);
+    return std::string(deviceName) + ": " + std::to_string(devices[convertToIndex(deviceName)]);
 }
 
 // Makes a damager report of all the devices
@@ -211,14 +200,14 @@ std::string Devices::toString() const
 {
     std::string out;
 
-    out += getStatus("WARP ENGINES") + "\n";
-    out += getStatus("SHORT RANGE SENSORS") + "\n";
-    out += getStatus("LONG RANGE SENSORS") + "\n";
-    out += getStatus("PHASER CONTROL") + "\n";
-    out += getStatus("TORPEDO CONTROL") + "\n";
-    out += getStatus("SHIELD CONTROL") + "\n";
-    out += getStatus("DAMAGE CONTROL") + "\n";
-    out += getStatus("COMPUTER SYSTEMS") + "\n";
+    out += getStatus(WARP_ENGINES) + "\n";
+    out += getStatus(SHORT_RANGE_SENSORS) + "\n";
+    out += getStatus(LONG_RANGE_SENSORS) + "\n";
+    out += getStatus(PHASER_CONTROL) + "\n";
+    out += getStatus(TORPEDO_CONTROL) + "\n";
+    out += getStatus(SHIELD_CONTROL) + "\n";
+    out += getStatus(DAMAGE_CONTROL) + "\n";
+    out += getStatus(COMPUTER_SYSTEMS) + "\n";
 
     return out;
 }
