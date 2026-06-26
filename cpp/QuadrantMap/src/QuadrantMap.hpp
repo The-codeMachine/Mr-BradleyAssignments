@@ -43,12 +43,13 @@ public:
    friend std::ostream &operator<<(std::ostream &os, const QuadrantMap &m);
 
 private:
+   static int getIndexFrom(int x, int y);
+   static void generateRandomPosition(int &x, int &y);
+   static bool validPos(int x, int y);
+
    void clear(int x, int y);
    void insert(int x, int y, std::string value);
    void insertValues(int amount, const std::string &value);
-
-   static void generateRandomPosition(int &x, int &y);
-   static bool validPos(int x, int y);
 
 private:
    std::string quadrantString;
@@ -57,6 +58,11 @@ private:
    static inline constexpr size_t ROWS = 8;
    static inline constexpr size_t COLS = 8;
    static inline constexpr size_t SYMBOL_SIZE = 3;
+
+   static inline constexpr const char* KLINGON = "+K+";
+   static inline constexpr const char* BASE = ">!<";
+   static inline constexpr const char* STAR = " * ";
+   static inline constexpr const char* ENTERPRISE = "<*>";
 };
 
 /*
@@ -64,46 +70,45 @@ Sample Output
 
 QuadrantMap test
 --------------------------------
-   |   |   |   |+K+|   |   |   |
+   |   |   |   |   | * |   |   |
+--------------------------------
+   |   |+K+|   |   |   |   |   |
+--------------------------------
+   |   |   |   | * |   |   |   |
+--------------------------------
+   | * |   |   |   | * |   |   |
 --------------------------------
    |   |   |   |   |   |   |   |
 --------------------------------
-   |   |   |   |   |   | * |   |
---------------------------------
    |   |   |   |   |   |   |   |
 --------------------------------
-   |   |   |   |   |   |   |   |
+   |   |   |   | * |   |   |   |
 --------------------------------
-   |   |   |   |   |   |   |   |
---------------------------------
-   |   |<*>|   | * |   |   |   |
---------------------------------
-   |   |   |   |   |   |   |   |
-Klingons: 1, Bases: 0, Stars: 2
-(4, 2): <     >
-Is (4, 2) empty: 1
+<*>|   |+K+| * |   |   |   |   |
+Klingons: 2, Bases: 0, Stars: 6
+(5, 3): <  *  >
+Is (5, 3) empty: 0
 
-Klingons: 1
+Klingons: 2
 Bases: 0
-Stars: 2
-Enter (x, y) for a klingon: 4 0
+Stars: 6
+Enter (x, y) to remove a klingon: 3 2
 --------------------------------
-   |   |   |   |+K+|   |   |   |
---------------------------------
-   |   |   |   |   |   |   |   |
---------------------------------
-   |   |   |   |   |   | * |   |
+   |   |   |   |   | * |   |   |
 --------------------------------
    |   |   |   |   |   |   |   |
 --------------------------------
-   |   |   |   |   |   |   |   |
+   |   |   |   | * |   |   |   |
+--------------------------------
+   | * |   |   |   | * |   |   |
 --------------------------------
    |   |   |   |   |   |   |   |
 --------------------------------
-   |   |<*>|   | * |   |   |   |
---------------------------------
    |   |   |   |   |   |   |   |
-Klingons: 0, Bases: 0, Stars: 2
+--------------------------------
+   |   |   |   | * |   |   |   |
+--------------------------------
+<*>|   |+K+| * |   |   |   |   |
+Klingons: 1, Bases: 0, Stars: 6
 QuadrantMap test success
-
 */

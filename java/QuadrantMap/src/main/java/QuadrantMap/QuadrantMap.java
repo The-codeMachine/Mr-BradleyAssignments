@@ -21,10 +21,20 @@ import quadrant.*;
  *
  */
 public class QuadrantMap {
-    public QuadrantMap(Quadrant q) {
+    /**
+     * 
+     * Constructs a QuadrantMap from quadrant Q,
+     * setting Enterprise's coordinates to (x, y).
+     * 
+     * @param q
+     * @param x
+     * @param y
+     */
+    public QuadrantMap(Quadrant q, int x, int y) {
         quadrantString = " ".repeat(ROWS * COLS * SYMBOL_SIZE);
         quadrant = q;
 
+        insert(x, y, ENTERPRISE);
         insertValues(quadrant.klingons(), KLINGON);
         insertValues(quadrant.bases(), BASE);
         insertValues(quadrant.stars(), STAR);
@@ -62,7 +72,7 @@ public class QuadrantMap {
             return;
 
         if (at(x, y).equals("+K+")) {
-            clear(x, y);
+            clear(x - 1, y - 1);
             quadrant.reduceKlingons();
         }
     }
@@ -76,9 +86,9 @@ public class QuadrantMap {
      * @return the symbol as a string from (x, y)
      */
     public String at(int x, int y) {
-        assert validPos(x, y) : "(x, y) must be a valid sector";
+        assert validPos(x - 1, y - 1) : "(x, y) must be a valid sector";
 
-        int index = getIndexFrom(x, y);
+        int index = getIndexFrom(x - 1, y - 1);
         return quadrantString.substring(index, index + SYMBOL_SIZE);
     }
 
@@ -91,8 +101,6 @@ public class QuadrantMap {
      * @return true if the sector is empty
      */
     public boolean empty(int x, int y) {
-        assert validPos(x, y) : "(x, y) must be a valid sector";
-
         return at(x, y).equals("   ");
     }
 
@@ -137,7 +145,7 @@ public class QuadrantMap {
             out.append("\n");
 
             for (int j = 0; j < COLS; ++j) {
-                out.append(at(j, i) + "|");
+                out.append(at(j + 1, i + 1) + "|");
             }
 
             out.append("\n");
@@ -197,7 +205,7 @@ public class QuadrantMap {
         for (int i = 0; i < amount; ++i) {
             int[] pos = generateRandomPosition();
 
-            while (!empty(pos[0], pos[1])) {
+            while (!empty(pos[0] + 1, pos[1] + 1)) {
                 pos = generateRandomPosition();
             }
 
@@ -217,20 +225,20 @@ public class QuadrantMap {
     private static int getIndexFrom(int x, int y) {
         assert validPos(x, y) : "(x, y) must be a valid sector";
 
-        return x * COLS * SYMBOL_SIZE + y * SYMBOL_SIZE;
+        return y * COLS * SYMBOL_SIZE + x * SYMBOL_SIZE;
     }
 
     /**
      * 
      * Generates two random ints, one the x (0), and the other
-     * the y value (1). Returns an array. 
+     * the y value (1). Returns an array.
      * 
      * @return an array of random ints
      */
     private static int[] generateRandomPosition() {
         int[] out = new int[2];
-        out[0] = GameLib.randomInt(0, ROWS - 1);
-        out[1] = GameLib.randomInt(0, COLS - 1);
+        out[0] = GameLib.randomInt(0, COLS - 1);
+        out[1] = GameLib.randomInt(0, ROWS - 1);
 
         return out;
     }
@@ -266,27 +274,27 @@ public class QuadrantMap {
  * 
  * QuadrantMap test
  * --------------------------------
- * | | | | | | | |
+ *    |   |   |   |   |   |   |   |
  * --------------------------------
- * | | | | | | | |
+ *    |   |   |   |   |   |   |   |
  * --------------------------------
- * | | | | * | | | |
+ *    |   |   |   | * |   |   |   |
  * --------------------------------
- * | | | | | | | |
+ *    |   |   |   |<*>|   |   | * |
  * --------------------------------
- * | | | | | | | |
+ *    |   |   |   |   |   |   |   |
  * --------------------------------
- * | | | | | | | |
+ *    |   |   |   |   |   |   | * |
  * --------------------------------
- * | | | | | | | |
+ *    |   |   |   |   |   |   | * |
  * --------------------------------
- * | | | | | | | |
- * Klingons: 0, Bases: 0, Stars: 1
- * (4, 2): < * >
- * Is (4, 2) empty: false
+ *  * |   |   |   |   |   |   |   |
+ * Klingons: 0, Bases: 0, Stars: 5
+ * (5, 3): <  *  >
+ * Is (5, 3) empty: false
  * Klingons: 0
  * Bases: 0
- * Stars: 1
+ * Stars: 5
  * QuadrantMap test success
  * 
  */

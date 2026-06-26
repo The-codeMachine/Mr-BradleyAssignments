@@ -9,7 +9,7 @@ public class Main {
         System.out.println("QuadrantMap test");
 
         Quadrant q = new Quadrant();
-        QuadrantMap m = new QuadrantMap(q);
+        QuadrantMap m = new QuadrantMap(q, 4, 3);
 
         Scanner s = new Scanner(System.in);
         
@@ -25,8 +25,8 @@ public class Main {
         // Did not add the test code for removeKlingon.
         // I did verify it works, but it requires input
         // from the user, which gradle does not allow provided,
-        // and as such I used raw JDK. Gradle would not compile
-        // else so I removed it. 
+        // and as such I used raw JDK. Gradle would not compile,
+        // so I removed it. 
 
         System.out.println("QuadrantMap test success");
 
@@ -45,21 +45,21 @@ public class Main {
  * --------------------------------
  *    |   |   |   | * |   |   |   |
  * --------------------------------
- *    |   |   |   |   |   |   |   |
+ *    |   |   |   |<*>|   |   | * |
  * --------------------------------
  *    |   |   |   |   |   |   |   |
  * --------------------------------
- *    |   |   |   |   |   |   |   |
+ *    |   |   |   |   |   |   | * |
  * --------------------------------
- *    |   |   |   |   |   |   |   |
+ *    |   |   |   |   |   |   | * |
  * --------------------------------
- *    |   |   |   |   |   |   |   |
- * Klingons: 0, Bases: 0, Stars: 1
- * (4, 2): <  *  >
- * Is (4, 2) empty: false
+ *  * |   |   |   |   |   |   |   |
+ * Klingons: 0, Bases: 0, Stars: 5
+ * (5, 3): <  *  >
+ * Is (5, 3) empty: false
  * Klingons: 0
  * Bases: 0
- * Stars: 1
+ * Stars: 5
  * QuadrantMap test success
  * 
  */
