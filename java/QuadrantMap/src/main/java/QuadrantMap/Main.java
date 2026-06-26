@@ -15,8 +15,8 @@ public class Main {
         
         System.out.println(m);
         
-        System.out.printf("(4, 2): < %s >\n", m.at(4, 2));
-        System.out.printf("Is (4, 2) empty: %b\n", m.empty(4, 2));
+        System.out.printf("(5, 3): < %s >\n", m.at(5, 3));
+        System.out.printf("Is (5, 3) empty: %b\n", m.empty(5, 3));
         
         System.out.printf("Klingons: %d\n", m.klingons());
         System.out.printf("Bases: %d\n", m.bases());
