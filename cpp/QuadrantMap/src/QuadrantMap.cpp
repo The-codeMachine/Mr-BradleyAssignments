@@ -84,8 +84,8 @@ void QuadrantMap::moveEnterprise(int x, int y, int newX, int newY)
 
     if (empty(newX, newY))
     {
-        insert(newX, newY, ENTERPRISE);
-        clear(x, y);
+        insert(newX - 1, newY - 1, ENTERPRISE);
+        clear(x - 1, y - 1);
     }
 }
 

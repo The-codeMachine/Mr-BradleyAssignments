@@ -55,8 +55,8 @@ public class QuadrantMap {
         assert at(x, y).equals("<*>");
 
         if (empty(newX, newY)) {
-            insert(newX, newY, ENTERPRISE);
-            clear(x, y);
+            insert(newX - 1, newY - 1, ENTERPRISE);
+            clear(x - 1, y - 1);
         }
     }
 
@@ -167,7 +167,7 @@ public class QuadrantMap {
      * 
      */
     private void clear(int x, int y) {
-        if (empty(x, y))
+        if (empty(x + 1, y + 1))
             return;
 
         insert(x, y, "   ");
