@@ -4,17 +4,17 @@
 
 #include <cassert>
 
-QuadrantMap::QuadrantMap(Quadrant &q) : quadrant(q)
+QuadrantMap::QuadrantMap(Quadrant &q, int x, int y) : quadrant(q)
 {
     quadrantString.resize(ROWS * COLS * SYMBOL_SIZE, ' ');
 
+    insert(x - 1, y - 1, ENTERPRISE); 
     insertValues(q.klingons(), KLINGON);
     insertValues(q.bases(), BASE);
     insertValues(q.stars(), STAR);
-    insertValues(1, ENTERPRISE); // enterprise
 }
 
-// Gets the flat index from the 2D index (x, y)
+// Gets the flat index from the 2D index (x, y). Uses base-0. 
 int QuadrantMap::getIndexFrom(int x, int y)
 {
     assert(validPos(x, y));
@@ -22,20 +22,21 @@ int QuadrantMap::getIndexFrom(int x, int y)
     return x * SYMBOL_SIZE + y * COLS * SYMBOL_SIZE;
 }
 
-// Generates a random x, and y position based off the quadrant map's size
+// Generates a random x, and y position based off the quadrant map's size.
+// Uses base-0. 
 void QuadrantMap::generateRandomPosition(int &x, int &y)
 {
     x = common::randomInt(0, COLS - 1);
     y = common::randomInt(0, ROWS - 1);
 }
 
-// Checks if the x, and y values are valid
+// Checks if the x, and y values are valid. Uses base-0. 
 bool QuadrantMap::validPos(int x, int y)
 {
     return x >= 0 && x < COLS && y >= 0 && y < ROWS;
 }
 
-// Clears (x, y)
+// Clears (x, y). Uses base-0. 
 void QuadrantMap::clear(int x, int y)
 {
     if (empty(x + 1, y + 1))
@@ -44,7 +45,7 @@ void QuadrantMap::clear(int x, int y)
     insert(x, y, "   ");
 }
 
-// Inserts value at (x, y) as long as nothing is there right now
+// Inserts value at (x, y) as long as nothing is there right now. Uses base-0. 
 void QuadrantMap::insert(int x, int y, std::string value)
 {
     assert(validPos(x, y));
@@ -59,7 +60,7 @@ void QuadrantMap::insert(int x, int y, std::string value)
     }
 }
 
-// Inserts a value into a random location
+// Inserts a value into a random location. Uses base-0. 
 void QuadrantMap::insertValues(int amount, const std::string &value)
 {
     while (amount--)
@@ -77,7 +78,7 @@ void QuadrantMap::insertValues(int amount, const std::string &value)
     }
 }
 
-// Moves the enterprise from one square to another
+// Moves the enterprise from one square to another. Uses base-1. 
 void QuadrantMap::moveEnterprise(int x, int y, int newX, int newY)
 {
     assert(at(x, y) == ENTERPRISE);
@@ -89,7 +90,7 @@ void QuadrantMap::moveEnterprise(int x, int y, int newX, int newY)
     }
 }
 
-// Removes the klingon from the quadrant
+// Removes the klingon from the quadrant. Uses base-1. 
 void QuadrantMap::removeKlingon(int x, int y)
 {
     if (klingons() <= 0)
@@ -102,7 +103,7 @@ void QuadrantMap::removeKlingon(int x, int y)
     }
 }
 
-// Gets the value at (x, y)
+// Gets the value at (x, y). Uses base-1. 
 std::string QuadrantMap::at(int x, int y) const
 {
     assert(validPos(x - 1, y - 1));
@@ -135,7 +136,7 @@ int QuadrantMap::stars() const
     return quadrant.stars();
 }
 
-// Checks if (x, y) is empty ("   ")
+// Checks if (x, y) is empty ("   "). Uses base-1. 
 bool QuadrantMap::empty(int x, int y) const
 {
     return at(x, y) == "   ";

@@ -8,16 +8,19 @@ import quadrant.*;
  * status for Klingons, bases, stars, and the Enterprise
  * within a Quadrant. It allows you to remove a klingon,
  * and move the Enterprise. Operations include:
- * - Construction (raw kbs, klingons bases stars, or a Quadrant)
- * - Move the Enterprise
- * - Remove a klingon
- * - Check what the value of a sector is
- * - Check if a sector is empty
- * - Get the number of klingons/bases/stars in the Quadrant
- * - Convert the map to a string
+ *  - Construction (raw kbs, klingons bases stars, or a Quadrant)
+ *  - Move the Enterprise
+ *  - Remove a klingon
+ *  - Check what the value of a sector is
+ *  - Check if a sector is empty
+ *  - Get the number of klingons/bases/stars in the Quadrant
+ *  - Convert the map to a string
  *
  * Currently, there are 8 rows and 8 columns, with each
  * symbol being 3 big.
+ * 
+ * All public functions use base-1 positions. Valid
+ * positions for public functions are 1 to 8. 
  *
  */
 public class QuadrantMap {
@@ -34,7 +37,7 @@ public class QuadrantMap {
         quadrantString = " ".repeat(ROWS * COLS * SYMBOL_SIZE);
         quadrant = q;
 
-        insert(x, y, ENTERPRISE);
+        insert(x - 1, y - 1, ENTERPRISE);
         insertValues(quadrant.klingons(), KLINGON);
         insertValues(quadrant.bases(), BASE);
         insertValues(quadrant.stars(), STAR);
@@ -43,6 +46,7 @@ public class QuadrantMap {
     /**
      * 
      * Moves the enterprise from (x, y) to (newX, newY).
+     * X, y, newX, and newY all use base-1 position. 
      * 
      * @param x
      * @param y
@@ -62,7 +66,8 @@ public class QuadrantMap {
 
     /**
      * 
-     * Removes a klingon from (x, y) and from the Quadrant
+     * Removes a klingon from (x, y) and from the Quadrant.
+     * X, and y both use base-1 positions. 
      * 
      * @param x
      * @param y
@@ -79,7 +84,8 @@ public class QuadrantMap {
 
     /**
      * 
-     * Gets the symbol at (x, y).
+     * Gets the symbol at (x, y). X, and y both
+     * use base-1 positions. 
      * 
      * @param x
      * @param y
@@ -94,7 +100,8 @@ public class QuadrantMap {
 
     /**
      * 
-     * Checks if sector (x, y) is empty
+     * Checks if sector (x, y) is empty. 
+     * X, and y both use base-1 positions. 
      * 
      * @param x
      * @param y
@@ -106,7 +113,7 @@ public class QuadrantMap {
 
     /**
      * 
-     * Gets the number of klingons in the quadrant
+     * Gets the number of klingons in the quadrant. 
      * 
      * @return the number of klingons in the quadrant
      */
@@ -116,7 +123,7 @@ public class QuadrantMap {
 
     /**
      * 
-     * Gets the number of bases in the quadrant
+     * Gets the number of bases in the quadrant. 
      * 
      * @return the number of bases in the quadrant
      */
@@ -126,7 +133,7 @@ public class QuadrantMap {
 
     /**
      * 
-     * Gets the number of stars in the quadrant
+     * Gets the number of stars in the quadrant. 
      * 
      * @return the number of stars in the quadrant
      */
@@ -160,7 +167,8 @@ public class QuadrantMap {
 
     /**
      * 
-     * Clears (x, y) from the Quadrant string
+     * Clears (x, y) from the Quadrant string. X, 
+     * and y both use base-0 positions. 
      * 
      * @param x
      * @param y
@@ -175,7 +183,8 @@ public class QuadrantMap {
 
     /**
      * 
-     * Inserts a value at (x, y).
+     * Inserts a value at (x, y). X, and y both
+     * use base-0 positions. 
      * 
      * @param x
      * @param y
@@ -216,7 +225,8 @@ public class QuadrantMap {
     /**
      * 
      * Converts the 2D index (x, y) into a 1D index
-     * for the quadrantString.
+     * for the quadrantString. X, and y use base-0
+     * positions
      * 
      * @param x
      * @param y
@@ -231,7 +241,8 @@ public class QuadrantMap {
     /**
      * 
      * Generates two random ints, one the x (0), and the other
-     * the y value (1). Returns an array.
+     * the y value (1). Returns an array. X, and y are returned
+     * as base-0 positions. 
      * 
      * @return an array of random ints
      */
@@ -245,7 +256,8 @@ public class QuadrantMap {
 
     /**
      * 
-     * Checks if (x, y) is a valid sector in QuadrantMap.
+     * Checks if (x, y) is a valid sector in QuadrantMap. X,
+     * and y are both base-0 positions. 
      * 
      * @param x
      * @param y

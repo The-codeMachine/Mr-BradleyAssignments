@@ -7,7 +7,7 @@ int main()
    std::cout << "QuadrantMap test\n";
 
    Quadrant q;
-   QuadrantMap m(q);
+   QuadrantMap m(q, 4, 3);
 
    std::cout << m << "\n";
 

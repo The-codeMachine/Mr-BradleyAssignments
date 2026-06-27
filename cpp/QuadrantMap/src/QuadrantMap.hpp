@@ -21,12 +21,15 @@
  *
  * Currently, there are 8 rows and 8 columns, with each
  * symbol being 3 big.
+ * 
+ * All public functions use base-1 positions. Valid
+ * positions for public functions are 1 to 8. 
  *
  */
 class QuadrantMap
 {
 public:
-   QuadrantMap(Quadrant &q);
+   QuadrantMap(Quadrant &q, int x, int y);
 
    void moveEnterprise(int x, int y, int newX, int newY);
    void removeKlingon(int x, int y);
