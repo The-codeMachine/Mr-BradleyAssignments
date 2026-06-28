@@ -301,14 +301,15 @@ public class QuadrantMap {
     private String quadrantString;
     private Quadrant quadrant;
 
-    private static final int ROWS = 8;
-    private static final int COLS = 8;
-    private static final int SYMBOL_SIZE = 3;
+    private static final int ROWS         = 8;
+    private static final int COLS         = 8;
+    private static final int SYMBOL_SIZE  = 3;
 
-    private static final String KLINGON = "+K+";
-    private static final String BASE = ">!<";
-    private static final String STAR = " * ";
-    private static final String ENTERPRISE = "<*>";
+    private static final String KLINGON     = "+K+";
+    private static final String BASE        = ">!<";
+    private static final String STAR        = " * ";
+    private static final String ENTERPRISE  = "<*>";
+    private static final String EMPTY       = "   ";
 
 }
 
