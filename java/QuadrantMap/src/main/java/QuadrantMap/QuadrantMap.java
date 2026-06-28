@@ -126,7 +126,7 @@ public class QuadrantMap {
      * @return true if the sector is empty
      */
     public boolean empty(int x, int y) {
-        return at(x, y).equals("   ");
+        return at(x, y).equals(EMPTY);
     }
 
     /**
@@ -197,7 +197,7 @@ public class QuadrantMap {
         if (empty(x + 1, y + 1))
             return;
 
-        insert(x, y, "   ");
+        insert(x, y, EMPTY);
     }
 
     /**
