@@ -19,8 +19,18 @@ import quadrant.*;
  * Currently, there are 8 rows and 8 columns, with each
  * symbol being 3 big.
  * 
- * All public functions use base-1 positions. Valid
- * positions for public functions are 1 to 8. 
+ * All public methods use 1-based coordinates because they represent
+ * the quadrant from the player's perspective. Players naturally
+ * think of the first sector as (1,1), rather than (0,0).
+ *
+ * Private helper methods use 0-based coordinates because the internal
+ * String representation uses Java's natural 0-based indexing. This
+ * simplifies conversion between 2D sector coordinates and the 1D
+ * String representation.
+ *
+ * Conversion between the two coordinate systems occurs only at the
+ * public API boundary. Public methods convert to 0-based coordinates
+ * before calling private helper methods.
  *
  */
 public class QuadrantMap {
@@ -45,8 +55,12 @@ public class QuadrantMap {
 
     /**
      * 
-     * Moves the enterprise from (x, y) to (newX, newY).
-     * X, y, newX, and newY all use base-1 position. 
+     * Moves the Enterprise to a new sector.
+     *
+     * The move succeeds only if the destination sector is empty.
+     * Internally, the destination is updated before the previous
+     * sector is cleared so that the map always contains exactly
+     * one Enterprise. 
      * 
      * @param x
      * @param y
@@ -67,7 +81,8 @@ public class QuadrantMap {
     /**
      * 
      * Removes a klingon from (x, y) and from the Quadrant.
-     * X, and y both use base-1 positions. 
+     * X, and y both use base-1 positions. Removes a klingon
+     * by checking if a klingon is there, and then clears it. 
      * 
      * @param x
      * @param y
@@ -84,8 +99,10 @@ public class QuadrantMap {
 
     /**
      * 
-     * Gets the symbol at (x, y). X, and y both
-     * use base-1 positions. 
+     * Returns the symbol stored at the specified sector.
+     * The 2D coordinates are converted into a 1D index into
+     * the backing String, and the fixed-width symbol stored
+     * at that location is returned.
      * 
      * @param x
      * @param y
@@ -102,6 +119,7 @@ public class QuadrantMap {
      * 
      * Checks if sector (x, y) is empty. 
      * X, and y both use base-1 positions. 
+     * Checks if at(x, y) == "   ".
      * 
      * @param x
      * @param y
@@ -167,8 +185,9 @@ public class QuadrantMap {
 
     /**
      * 
-     * Clears (x, y) from the Quadrant string. X, 
-     * and y both use base-0 positions. 
+     * Removes whatever occupies the specified sector.
+     * Clearing is implemented by replacing the sector with
+     * the empty-space symbol.
      * 
      * @param x
      * @param y
@@ -183,8 +202,10 @@ public class QuadrantMap {
 
     /**
      * 
-     * Inserts a value at (x, y). X, and y both
-     * use base-0 positions. 
+     * Writes a fixed-width symbol into the specified sector.
+     * The backing String is copied into a StringBuilder so the
+     * three characters representing the sector can be replaced.
+     * The updated String then becomes the new map.
      * 
      * @param x
      * @param y
@@ -226,7 +247,17 @@ public class QuadrantMap {
      * 
      * Converts the 2D index (x, y) into a 1D index
      * for the quadrantString. X, and y use base-0
-     * positions
+     * positions. This uses the formula:
+     * 
+     * y * AMOUNT_OF_COLUMNS (COLS) * SYMBOL_SIZE +
+     * x * SYMBOL_SIZE = the start index of the column
+     * 
+     * Where y = amount of rows, and x = amount of columns. 
+     * The calculation works because each row occupies
+     * COLS * SYMBOL_SIZE characters in the backing String. 
+     * Multiplying y by this value skips entire rows, 
+     * while x * SYMBOL_SIZE moves to the correct sector 
+     * within that row.
      * 
      * @param x
      * @param y
@@ -242,7 +273,7 @@ public class QuadrantMap {
      * 
      * Generates two random ints, one the x (0), and the other
      * the y value (1). Returns an array. X, and y are returned
-     * as base-0 positions. 
+     * as base-0 positions. Based off the COLS and ROWS. 
      * 
      * @return an array of random ints
      */
@@ -256,8 +287,8 @@ public class QuadrantMap {
 
     /**
      * 
-     * Checks if (x, y) is a valid sector in QuadrantMap. X,
-     * and y are both base-0 positions. 
+     * Checks whether the supplied 0-based coordinates lie within
+     * the bounds of the quadrant. 
      * 
      * @param x
      * @param y
