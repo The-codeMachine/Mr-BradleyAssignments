@@ -22,8 +22,18 @@
  * Currently, there are 8 rows and 8 columns, with each
  * symbol being 3 big.
  * 
- * All public functions use base-1 positions. Valid
- * positions for public functions are 1 to 8. 
+ * All public methods use 1-based coordinates because they represent
+ * the quadrant from the player's perspective. Players naturally
+ * think of the first sector as (1,1), rather than (0,0).
+ *
+ * Private helper methods use 0-based coordinates because the internal
+ * String representation uses Java's natural 0-based indexing. This
+ * simplifies conversion between 2D sector coordinates and the 1D
+ * String representation.
+ *
+ * Conversion between the two coordinate systems occurs only at the
+ * public API boundary. Public methods convert to 0-based coordinates
+ * before calling private helper methods.
  *
  */
 class QuadrantMap
@@ -66,6 +76,7 @@ private:
    static inline constexpr const char* BASE = ">!<";
    static inline constexpr const char* STAR = " * ";
    static inline constexpr const char* ENTERPRISE = "<*>";
+   static inline constexpr const char* EMPTY = "   ";
 };
 
 /*

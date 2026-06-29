@@ -14,7 +14,19 @@ QuadrantMap::QuadrantMap(Quadrant &q, int x, int y) : quadrant(q)
     insertValues(q.stars(), STAR);
 }
 
-// Gets the flat index from the 2D index (x, y). Uses base-0. 
+// Converts the 2D index (x, y) into a 1D index
+// for the quadrantString. X, and y use base-0
+// positions. This uses the formula:
+// 
+// y * AMOUNT_OF_COLUMNS (COLS) * SYMBOL_SIZE +
+// x * SYMBOL_SIZE = the start index of the column
+// 
+// Where y = amount of rows, and x = amount of columns. 
+// The calculation works because each row occupies
+// COLS * SYMBOL_SIZE characters in the backing String. 
+// Multiplying y by this value skips entire rows, 
+// while x * SYMBOL_SIZE moves to the correct sector 
+// within that row.
 int QuadrantMap::getIndexFrom(int x, int y)
 {
     assert(validPos(x, y));
@@ -22,30 +34,37 @@ int QuadrantMap::getIndexFrom(int x, int y)
     return x * SYMBOL_SIZE + y * COLS * SYMBOL_SIZE;
 }
 
-// Generates a random x, and y position based off the quadrant map's size.
-// Uses base-0. 
+// Generates two random ints, one the x (0), and the other
+// the y value (1). Returns an array. X, and y are returned
+// as base-0 positions. Based off the COLS and ROWS. 
 void QuadrantMap::generateRandomPosition(int &x, int &y)
 {
     x = common::randomInt(0, COLS - 1);
     y = common::randomInt(0, ROWS - 1);
 }
 
-// Checks if the x, and y values are valid. Uses base-0. 
+// Checks whether the supplied 0-based coordinates lie within
+// the bounds of the quadrant. 
 bool QuadrantMap::validPos(int x, int y)
 {
     return x >= 0 && x < COLS && y >= 0 && y < ROWS;
 }
 
-// Clears (x, y). Uses base-0. 
+// Removes whatever occupies the specified sector.
+// Clearing is implemented by replacing the sector with
+// the empty-space symbol.
 void QuadrantMap::clear(int x, int y)
 {
     if (empty(x + 1, y + 1))
         return;
 
-    insert(x, y, "   ");
+    insert(x, y, EMPTY);
 }
 
-// Inserts value at (x, y) as long as nothing is there right now. Uses base-0. 
+// Writes a fixed-width symbol into the specified sector.
+// The backing String is copied into a StringBuilder so the
+// three characters representing the sector can be replaced.
+// The updated String then becomes the new map.
 void QuadrantMap::insert(int x, int y, std::string value)
 {
     assert(validPos(x, y));
@@ -78,7 +97,11 @@ void QuadrantMap::insertValues(int amount, const std::string &value)
     }
 }
 
-// Moves the enterprise from one square to another. Uses base-1. 
+// Moves the Enterprise to a new sector. 
+// The move succeeds only if the destination sector is empty.
+// Internally, the destination is updated before the previous
+// sector is cleared so that the map always contains exactly
+// one Enterprise. 
 void QuadrantMap::moveEnterprise(int x, int y, int newX, int newY)
 {
     assert(at(x, y) == ENTERPRISE);
@@ -90,7 +113,9 @@ void QuadrantMap::moveEnterprise(int x, int y, int newX, int newY)
     }
 }
 
-// Removes the klingon from the quadrant. Uses base-1. 
+// Removes a klingon from (x, y) and from the Quadrant.
+// X, and y both use base-1 positions. Removes a klingon
+// by checking if a klingon is there, and then clears it.
 void QuadrantMap::removeKlingon(int x, int y)
 {
     if (klingons() <= 0)
@@ -103,7 +128,10 @@ void QuadrantMap::removeKlingon(int x, int y)
     }
 }
 
-// Gets the value at (x, y). Uses base-1. 
+// Returns the symbol stored at the specified sector.
+// The 2D coordinates are converted into a 1D index into
+// the backing String, and the fixed-width symbol stored
+// at that location is returned.
 std::string QuadrantMap::at(int x, int y) const
 {
     assert(validPos(x - 1, y - 1));
@@ -136,10 +164,12 @@ int QuadrantMap::stars() const
     return quadrant.stars();
 }
 
-// Checks if (x, y) is empty ("   "). Uses base-1. 
+// Checks if sector (x, y) is empty. 
+// X, and y both use base-1 positions. 
+// Checks if at(x, y) == "   ".
 bool QuadrantMap::empty(int x, int y) const
 {
-    return at(x, y) == "   ";
+    return at(x, y) == EMPTY;
 }
 
 // Converts the QuadrantMap into a string
