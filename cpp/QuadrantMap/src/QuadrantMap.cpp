@@ -65,7 +65,7 @@ void QuadrantMap::clear(int x, int y)
 // The backing String is copied into a StringBuilder so the
 // three characters representing the sector can be replaced.
 // The updated String then becomes the new map.
-void QuadrantMap::insert(int x, int y, std::string value)
+void QuadrantMap::insert(int x, int y, const std::string& value)
 {
     assert(validPos(x, y));
 
@@ -97,6 +97,18 @@ void QuadrantMap::insertValues(int amount, const std::string &value)
     }
 }
 
+void QuadrantMap::move(int x, int y, int newX, int newY, const std::string& value) {
+    assert(validPos(x, y));
+    assert(validPos(newX, newY));
+
+    assert(at(x + 1, y + 1) == value);
+    
+    if (empty(newX + 1, newY + 1)) {
+        insert(newX, newY, value);
+        clear(x, y);
+    }
+}
+
 // Moves the Enterprise to a new sector. 
 // The move succeeds only if the destination sector is empty.
 // Internally, the destination is updated before the previous
@@ -104,13 +116,7 @@ void QuadrantMap::insertValues(int amount, const std::string &value)
 // one Enterprise. 
 void QuadrantMap::moveEnterprise(int x, int y, int newX, int newY)
 {
-    assert(at(x, y) == ENTERPRISE);
-
-    if (empty(newX, newY))
-    {
-        insert(newX - 1, newY - 1, ENTERPRISE);
-        clear(x - 1, y - 1);
-    }
+    move(x - 1, y - 1, newX - 1, newY - 1, ENTERPRISE);
 }
 
 // Removes a klingon from (x, y) and from the Quadrant.

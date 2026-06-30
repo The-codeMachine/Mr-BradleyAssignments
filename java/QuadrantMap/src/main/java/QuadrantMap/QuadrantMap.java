@@ -68,14 +68,7 @@ public class QuadrantMap {
      * @param newY
      */
     public void moveEnterprise(int x, int y, int newX, int newY) {
-        assert validPos(x, y) : "(x, y) must be a valid sector";
-        assert validPos(newX, newY) : "(newX, newY) must be a valid sector";
-        assert at(x, y).equals("<*>");
-
-        if (empty(newX, newY)) {
-            insert(newX - 1, newY - 1, ENTERPRISE);
-            clear(x - 1, y - 1);
-        }
+        move(x - 1, y - 1, newX - 1, newY - 1, ENTERPRISE);
     }
 
     /**
@@ -161,26 +154,24 @@ public class QuadrantMap {
 
     @Override
     public String toString() {
-        StringBuilder out = new StringBuilder();
+        String out = "";
+        String dashRow = "-".repeat(COLS * (SYMBOL_SIZE + 1)) + "\n";
 
         for (int i = 0; i < ROWS; ++i) {
-            for (int j = 0; j < COLS * (SYMBOL_SIZE + 1); ++j) {
-                out.append('-');
-            }
-            out.append("\n");
+            out += dashRow;
 
             for (int j = 0; j < COLS; ++j) {
-                out.append(at(j + 1, i + 1) + "|");
+                out += at(j + 1, i + 1) + "|";
             }
 
-            out.append("\n");
+            out += "\n";
         }
 
-        out.append("Klingons: " + Integer.toString(klingons()) +
+        out += "Klingons: " + Integer.toString(klingons()) +
                 ", Bases: " + Integer.toString(bases()) +
-                ", Stars: " + Integer.toString(stars()));
+                ", Stars: " + Integer.toString(stars());
 
-        return out.toString();
+        return out;
     }
 
     /**
@@ -203,9 +194,9 @@ public class QuadrantMap {
     /**
      * 
      * Writes a fixed-width symbol into the specified sector.
-     * The backing String is copied into a StringBuilder so the
-     * three characters representing the sector can be replaced.
-     * The updated String then becomes the new map.
+     * Uses substring methods to change the characters within 
+     * the quadrantString by getting all previous characters, 
+     * and all characters after, and inserting the new characters. 
      * 
      * @param x
      * @param y
@@ -216,12 +207,9 @@ public class QuadrantMap {
         assert value.length() == SYMBOL_SIZE : "Value must be exactly the same as SYMBOL_SIZE";
 
         int index = getIndexFrom(x, y);
-        StringBuilder sb = new StringBuilder(quadrantString);
-        for (int i = 0; i < SYMBOL_SIZE; ++i) {
-            sb.setCharAt(index + i, value.charAt(i));
-        }
-
-        quadrantString = sb.toString();
+        quadrantString = quadrantString.substring(0, index)
+        + value.substring(0, SYMBOL_SIZE)
+        + quadrantString.substring(index + SYMBOL_SIZE);
     }
 
     /**
@@ -240,6 +228,32 @@ public class QuadrantMap {
             }
 
             insert(pos[0], pos[1], value);
+        }
+    }
+
+    /**
+     * 
+     * Moves a value from (x, y) to (newX, newY). It does
+     * this by checking it (x, y) is actually the value, and
+     * then clearing it, and inserting it in (newX, newY) after 
+     * verifying that (newX, newY) is empty. Can be used to move
+     * Enterprise or Klingons. 
+     * 
+     * @param x
+     * @param y
+     * @param newX
+     * @param newY
+     * @param value
+     */
+    private void move(int x, int y, int newX, int newY, String value) {
+        assert validPos(x, y) : "(x, y) must be a valid sector";
+        assert validPos(newX, newY) : "(newX, newY) must be a valid sector";
+
+        assert at(x + 1, y + 1).equals(value);
+
+        if (empty(newX + 1, newY + 1)) {
+            clear(x, y);
+            insert(newX, newY, value);
         }
     }
 

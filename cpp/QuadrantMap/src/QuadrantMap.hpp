@@ -61,8 +61,9 @@ private:
    static bool validPos(int x, int y);
 
    void clear(int x, int y);
-   void insert(int x, int y, std::string value);
+   void insert(int x, int y, const std::string& value);
    void insertValues(int amount, const std::string &value);
+   void move(int x, int y, int newX, int newY, const std::string& value);
 
 private:
    std::string quadrantString;
