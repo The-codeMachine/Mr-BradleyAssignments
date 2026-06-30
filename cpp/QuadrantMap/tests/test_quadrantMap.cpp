@@ -14,17 +14,23 @@ int main()
    std::cout << "(5, 3): < " << m.at(5, 3) << " >\n";
    std::cout << "Is (5, 3) empty: " << m.empty(5, 3) << "\n\n";
 
-   std::cout << "Klingons: " << m.klingons() << "\n";
-   std::cout << "Bases: " << m.bases() << "\n";
-   std::cout << "Stars: " << m.stars() << "\n";
+   m.insert(7, 8, QuadrantMap::STAR);
+
+   std::cout << "(7, 8): < " << m.at(7, 8) << " >\n";
+   std::cout << "Is (7, 8) empty: " << m.empty(7, 8) << "\n\n";
+
+   m.clearSector(7, 8);
+
+   std::cout << "(7, 8): < " << m.at(7, 8) << " >\n";
+   std::cout << "Is (7, 8) empty: " << m.empty(7, 8) << "\n\n";
 
    int x;
    int y;
 
-   std::cout << "Enter (x, y) to remove a klingon: ";
+   std::cout << "Enter (x, y) to remove an object: ";
    std::cin >> x >> y;
 
-   m.removeKlingon(x, y);
+   m.clearSector(x, y);
 
    std::cout << m << "\n";
 

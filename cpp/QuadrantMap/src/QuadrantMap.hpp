@@ -11,13 +11,14 @@
  * status for Klingons, bases, stars, and the Enterprise
  * within a Quadrant. It allows you to remove a klingon,
  * and move the Enterprise. Operations include:
- *  - Construction (raw kbs, klingons bases stars, or a Quadrant)
- *  - Move the Enterprise
- *  - Remove a klingon
- *  - Check what the value of a sector is
+ *  - Construction (through Quadrant)
+ *  - Insert an object
+ *  - Clear a sector
+ *  - Move an object
+ *  - Remove an object
+ *  - Check what object is at a certain sector
  *  - Check if a sector is empty
- *  - Get the number of klingons/bases/stars in the Quadrant
- *  - Convert the map to a string
+ *  - Convert map to string
  *
  * Currently, there are 8 rows and 8 columns, with each
  * symbol being 3 big.
@@ -39,45 +40,41 @@
 class QuadrantMap
 {
 public:
-   QuadrantMap(Quadrant &q, int x, int y);
+   QuadrantMap(Quadrant q, int x, int y);
 
-   void moveEnterprise(int x, int y, int newX, int newY);
-   void removeKlingon(int x, int y);
+   void insert(int x, int y, const std::string& value);
+   void clearSector(int x, int y);
+
+   void move(int x, int y, int newX, int newY, const std::string& value);
+   void removeObject(int x, int y, const std::string& object);
 
    std::string at(int x, int y) const;
    bool empty(int x, int y) const;
 
-   int klingons() const;
-   int bases() const;
-   int stars() const;
-
    std::string toString() const;
 
    friend std::ostream &operator<<(std::ostream &os, const QuadrantMap &m);
+
+public:
+   static inline constexpr const char* KLINGON = "+K+";
+   static inline constexpr const char* BASE = ">!<";
+   static inline constexpr const char* STAR = " * ";
+   static inline constexpr const char* ENTERPRISE = "<*>";
+   static inline constexpr const char* EMPTY = "   ";
 
 private:
    static int getIndexFrom(int x, int y);
    static void generateRandomPosition(int &x, int &y);
    static bool validPos(int x, int y);
 
-   void clear(int x, int y);
-   void insert(int x, int y, const std::string& value);
    void insertValues(int amount, const std::string &value);
-   void move(int x, int y, int newX, int newY, const std::string& value);
 
 private:
    std::string quadrantString;
-   Quadrant &quadrant;
 
    static inline constexpr size_t ROWS = 8;
    static inline constexpr size_t COLS = 8;
    static inline constexpr size_t SYMBOL_SIZE = 3;
-
-   static inline constexpr const char* KLINGON = "+K+";
-   static inline constexpr const char* BASE = ">!<";
-   static inline constexpr const char* STAR = " * ";
-   static inline constexpr const char* ENTERPRISE = "<*>";
-   static inline constexpr const char* EMPTY = "   ";
 };
 
 /*

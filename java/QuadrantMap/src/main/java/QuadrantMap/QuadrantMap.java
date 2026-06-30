@@ -8,13 +8,14 @@ import quadrant.*;
  * status for Klingons, bases, stars, and the Enterprise
  * within a Quadrant. It allows you to remove a klingon,
  * and move the Enterprise. Operations include:
- *  - Construction (raw kbs, klingons bases stars, or a Quadrant)
- *  - Move the Enterprise
- *  - Remove a klingon
- *  - Check what the value of a sector is
+ *  - Construction (through Quadrant)
+ *  - Insert an object
+ *  - Clear a sector
+ *  - Move an object
+ *  - Remove an object
+ *  - Check what object is at a certain sector
  *  - Check if a sector is empty
- *  - Get the number of klingons/bases/stars in the Quadrant
- *  - Convert the map to a string
+ *  - Convert map to string
  *
  * Currently, there are 8 rows and 8 columns, with each
  * symbol being 3 big.
@@ -45,12 +46,11 @@ public class QuadrantMap {
      */
     public QuadrantMap(Quadrant q, int x, int y) {
         quadrantString = " ".repeat(ROWS * COLS * SYMBOL_SIZE);
-        quadrant = q;
 
         insert(x, y, ENTERPRISE);
-        insertValues(quadrant.klingons(), KLINGON);
-        insertValues(quadrant.bases(), BASE);
-        insertValues(quadrant.stars(), STAR);
+        insertValues(q.klingons(), KLINGON);
+        insertValues(q.bases(), BASE);
+        insertValues(q.stars(), STAR);
     }
 
     /**
@@ -76,24 +76,6 @@ public class QuadrantMap {
         + value.substring(0, SYMBOL_SIZE)
         + quadrantString.substring(index + SYMBOL_SIZE);
     }
-
-    /**
-     * 
-     * Returns the symbol stored at the specified sector.
-     * The 2D coordinates are converted into a 1D index into
-     * the backing String, and the fixed-width symbol stored
-     * at that location is returned.
-     * 
-     * @param x
-     * @param y
-     * @return the symbol as a string from (x, y)
-     */
-    public String at(int x, int y) {
-        assert validPos(x - 1, y - 1) : "(x, y) must be a valid sector";
-
-        int index = getIndexFrom(x - 1, y - 1);
-        return quadrantString.substring(index, index + SYMBOL_SIZE);
-    }
     
     /**
      * 
@@ -115,8 +97,8 @@ public class QuadrantMap {
     /**
      * 
      * Moves a value from (x, y) to (newX, newY). It does
-     * this by checking it (x, y) is actually the value, and
-     * then clearing it, and inserting it in (newX, newY) after 
+     * this by checking if (x, y) is actually the value, and
+     * then clearing it, and inserting it into (newX, newY) after 
      * verifying that (newX, newY) is empty. Can be used to move
      * Enterprise or Klingons. 
      * 
@@ -136,6 +118,41 @@ public class QuadrantMap {
             clearSector(x, y);
             insert(newX, newY, value);
         }
+    }
+
+    /**
+     * 
+     * Clears a sector only if it has value as 
+     * its object. If it does then it is cleared. 
+     * 
+     * @param x
+     * @param y
+     * @param object
+     */
+    public void removeObject(int x, int y, String object) {
+        assert validPos(x - 1, y - 1) : "Sector (x, y) must be valid";
+        
+        if (at(x, y).equals(object)) {
+            clearSector(x, y);
+        }
+    }
+
+    /**
+     * 
+     * Returns the symbol stored at the specified sector.
+     * The 2D coordinates are converted into a 1D index into
+     * the backing String, and the fixed-width symbol stored
+     * at that location is returned.
+     * 
+     * @param x
+     * @param y
+     * @return the symbol as a string from (x, y)
+     */
+    public String at(int x, int y) {
+        assert validPos(x - 1, y - 1) : "(x, y) must be a valid sector";
+
+        int index = getIndexFrom(x - 1, y - 1);
+        return quadrantString.substring(index, index + SYMBOL_SIZE);
     }
 
     /**
@@ -245,7 +262,6 @@ public class QuadrantMap {
     }
 
     private String quadrantString;
-    private Quadrant quadrant;
 
     private static final int ROWS         = 8;
     private static final int COLS         = 8;

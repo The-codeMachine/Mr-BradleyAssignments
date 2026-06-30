@@ -4,11 +4,11 @@
 
 #include <cassert>
 
-QuadrantMap::QuadrantMap(Quadrant &q, int x, int y) : quadrant(q)
+QuadrantMap::QuadrantMap(Quadrant q, int x, int y)
 {
     quadrantString.resize(ROWS * COLS * SYMBOL_SIZE, ' ');
 
-    insert(x - 1, y - 1, ENTERPRISE); 
+    insert(x, y, ENTERPRISE); 
     insertValues(q.klingons(), KLINGON);
     insertValues(q.bases(), BASE);
     insertValues(q.stars(), STAR);
@@ -50,35 +50,6 @@ bool QuadrantMap::validPos(int x, int y)
     return x >= 0 && x < COLS && y >= 0 && y < ROWS;
 }
 
-// Removes whatever occupies the specified sector.
-// Clearing is implemented by replacing the sector with
-// the empty-space symbol.
-void QuadrantMap::clear(int x, int y)
-{
-    if (empty(x + 1, y + 1))
-        return;
-
-    insert(x, y, EMPTY);
-}
-
-// Writes a fixed-width symbol into the specified sector.
-// The backing String is copied into a StringBuilder so the
-// three characters representing the sector can be replaced.
-// The updated String then becomes the new map.
-void QuadrantMap::insert(int x, int y, const std::string& value)
-{
-    assert(validPos(x, y));
-
-    if (value.size() != SYMBOL_SIZE)
-        return;
-
-    int index = getIndexFrom(x, y);
-    for (size_t i = 0; i < SYMBOL_SIZE; ++i)
-    {
-        quadrantString[index + i] = value[i];
-    }
-}
-
 // Inserts a value into a random location. Uses base-0. 
 void QuadrantMap::insertValues(int amount, const std::string &value)
 {
@@ -93,46 +64,70 @@ void QuadrantMap::insertValues(int amount, const std::string &value)
             generateRandomPosition(x, y);
         }
 
-        insert(x, y, value);
+        insert(x + 1, y + 1, value);
     }
 }
 
-void QuadrantMap::move(int x, int y, int newX, int newY, const std::string& value) {
+// Writes a fixed-width symbol into the specified sector.
+// The backing String is copied into a StringBuilder so the
+// three characters representing the sector can be replaced.
+// The updated String then becomes the new map.
+void QuadrantMap::insert(int x, int y, const std::string& value)
+{
+    x--;
+    y--;
+
     assert(validPos(x, y));
-    assert(validPos(newX, newY));
 
-    assert(at(x + 1, y + 1) == value);
-    
-    if (empty(newX + 1, newY + 1)) {
-        insert(newX, newY, value);
-        clear(x, y);
-    }
-}
-
-// Moves the Enterprise to a new sector. 
-// The move succeeds only if the destination sector is empty.
-// Internally, the destination is updated before the previous
-// sector is cleared so that the map always contains exactly
-// one Enterprise. 
-void QuadrantMap::moveEnterprise(int x, int y, int newX, int newY)
-{
-    move(x - 1, y - 1, newX - 1, newY - 1, ENTERPRISE);
-}
-
-// Removes a klingon from (x, y) and from the Quadrant.
-// X, and y both use base-1 positions. Removes a klingon
-// by checking if a klingon is there, and then clears it.
-void QuadrantMap::removeKlingon(int x, int y)
-{
-    if (klingons() <= 0)
+    if (value.size() != SYMBOL_SIZE)
         return;
 
-    if (at(x, y) == KLINGON)
+    int index = getIndexFrom(x, y);
+    for (size_t i = 0; i < SYMBOL_SIZE; ++i)
     {
-        clear(x - 1, y - 1);
-        quadrant.reduceKlingons();
+        quadrantString[index + i] = value[i];
     }
 }
+
+
+// Removes whatever occupies the specified sector.
+// Clearing is implemented by replacing the sector with
+// the empty-space symbol.
+void QuadrantMap::clearSector(int x, int y)
+{
+    if (empty(x, y))
+        return;
+
+    insert(x, y, EMPTY);
+}
+
+// Moves a value from (x, y) to (newX, newY). It does
+// this by checking if (x, y) is actually the value, and
+// then clearing it, and inserting it into (newX, newY) after 
+// verifying that (newX, newY) is empty. Can be used to move
+// Enterprise or Klingons.
+void QuadrantMap::move(int x, int y, int newX, int newY, const std::string& value) {
+    assert(validPos(x - 1, y - 1));
+    assert(validPos(newX - 1, newY - 1));
+
+    assert(at(x, y) == value);
+    
+    if (empty(newX, newY)) {
+        insert(newX, newY, value);
+        clearSector(x, y);
+    }
+}
+
+// Clears a sector only if it has value as its object. If it does then
+// it is cleared. 
+void QuadrantMap::removeObject(int x, int y, const std::string& object) {
+    assert(validPos(x - 1, y - 1));
+
+    if (at(x, y) == object) {
+        clearSector(x, y);
+    }
+}
+
 
 // Returns the symbol stored at the specified sector.
 // The 2D coordinates are converted into a 1D index into
@@ -150,24 +145,6 @@ std::string QuadrantMap::at(int x, int y) const
     }
 
     return out;
-}
-
-// Gets the number of klingons in the quadrant
-int QuadrantMap::klingons() const
-{
-    return quadrant.klingons();
-}
-
-// Gets the number of bases in the quadrant
-int QuadrantMap::bases() const
-{
-    return quadrant.bases();
-}
-
-// Gets the number of stars in the quadrant
-int QuadrantMap::stars() const
-{
-    return quadrant.stars();
 }
 
 // Checks if sector (x, y) is empty. 
@@ -198,10 +175,6 @@ std::string QuadrantMap::toString() const
 
         out += "\n";
     }
-
-    out += "Klingons: " + std::to_string(klingons()) +
-           ", Bases: " + std::to_string(bases()) +
-           ", Stars: " + std::to_string(stars());
 
     return out;
 }
