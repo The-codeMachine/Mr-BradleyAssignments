@@ -17,10 +17,16 @@ public class Main {
         
         System.out.printf("(5, 3): < %s >\n", m.at(5, 3));
         System.out.printf("Is (5, 3) empty: %b\n", m.empty(5, 3));
-        
-        System.out.printf("Klingons: %d\n", m.klingons());
-        System.out.printf("Bases: %d\n", m.bases());
-        System.out.printf("Stars: %d\n", m.stars());
+
+        m.insert(7, 8, QuadrantMap.STAR);
+
+        System.out.printf("(7, 8): < %s >\n", m.at(7, 8));
+        System.out.printf("Is (7, 8) empty: %b\n", m.empty(7, 8));
+
+        m.clearSector(7, 8);
+
+        System.out.printf("(7, 8): < %s >\n", m.at(7, 8));
+        System.out.printf("Is (7, 8) empty: %b\n", m.empty(7, 8));
 
         // Did not add the test code for removeKlingon.
         // I did verify it works, but it requires input
@@ -41,25 +47,26 @@ public class Main {
  * --------------------------------
  *    |   |   |   |   |   |   |   |
  * --------------------------------
- *    |   |   |   |   |   |   |   |
+ *    |   |   |   |   |   |   |>!<|
  * --------------------------------
- *    |   |   |   | * |   |   |   |
- * --------------------------------
- *    |   |   |   |<*>|   |   | * |
+ *    |   |   |<*>|   |   |   |   |
  * --------------------------------
  *    |   |   |   |   |   |   |   |
  * --------------------------------
- *    |   |   |   |   |   |   | * |
+ *    |   |   |   |   |   |   |   |
  * --------------------------------
- *    |   |   |   |   |   |   | * |
+ *    |   |   |   |   |   |   |   |
  * --------------------------------
- *  * |   |   |   |   |   |   |   |
- * Klingons: 0, Bases: 0, Stars: 5
- * (5, 3): <  *  >
- * Is (5, 3) empty: false
- * Klingons: 0
- * Bases: 0
- * Stars: 5
+ *    |   |   |   |   | * |   |   |
+ * --------------------------------
+ *    |   |   |   |   |   |   |   |
+ * 
+ * (5, 3): <     >
+ * Is (5, 3) empty: true
+ * (7, 8): <  *  >
+ * Is (7, 8) empty: false
+ * (7, 8): <     >
+ * Is (7, 8) empty: true
  * QuadrantMap test success
  * 
  */

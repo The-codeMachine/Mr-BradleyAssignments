@@ -47,7 +47,7 @@ public class QuadrantMap {
         quadrantString = " ".repeat(ROWS * COLS * SYMBOL_SIZE);
         quadrant = q;
 
-        insert(x - 1, y - 1, ENTERPRISE);
+        insert(x, y, ENTERPRISE);
         insertValues(quadrant.klingons(), KLINGON);
         insertValues(quadrant.bases(), BASE);
         insertValues(quadrant.stars(), STAR);
@@ -55,39 +55,26 @@ public class QuadrantMap {
 
     /**
      * 
-     * Moves the Enterprise to a new sector.
-     *
-     * The move succeeds only if the destination sector is empty.
-     * Internally, the destination is updated before the previous
-     * sector is cleared so that the map always contains exactly
-     * one Enterprise. 
+     * Writes a fixed-width symbol into the specified sector.
+     * Uses substring methods to change the characters within 
+     * the quadrantString by getting all previous characters, 
+     * and all characters after, and inserting the new characters. 
      * 
      * @param x
      * @param y
-     * @param newX
-     * @param newY
+     * @param value
      */
-    public void moveEnterprise(int x, int y, int newX, int newY) {
-        move(x - 1, y - 1, newX - 1, newY - 1, ENTERPRISE);
-    }
+    public void insert(int x, int y, String value) {
+        x--;
+        y--;
 
-    /**
-     * 
-     * Removes a klingon from (x, y) and from the Quadrant.
-     * X, and y both use base-1 positions. Removes a klingon
-     * by checking if a klingon is there, and then clears it. 
-     * 
-     * @param x
-     * @param y
-     */
-    public void removeKlingon(int x, int y) {
-        if (klingons() <= 0)
-            return;
+        assert validPos(x, y) : "X and Y must be valid positions";
+        assert value.length() == SYMBOL_SIZE : "Value must be exactly the same as SYMBOL_SIZE";
 
-        if (at(x, y).equals("+K+")) {
-            clear(x - 1, y - 1);
-            quadrant.reduceKlingons();
-        }
+        int index = getIndexFrom(x, y);
+        quadrantString = quadrantString.substring(0, index)
+        + value.substring(0, SYMBOL_SIZE)
+        + quadrantString.substring(index + SYMBOL_SIZE);
     }
 
     /**
@@ -107,6 +94,49 @@ public class QuadrantMap {
         int index = getIndexFrom(x - 1, y - 1);
         return quadrantString.substring(index, index + SYMBOL_SIZE);
     }
+    
+    /**
+     * 
+     * Removes whatever occupies the specified sector.
+     * Clearing is implemented by replacing the sector with
+     * the empty-space symbol.
+     * 
+     * @param x
+     * @param y
+     * 
+     */
+    public void clearSector(int x, int y) {
+        if (empty(x, y))
+            return;
+
+        insert(x, y, EMPTY);
+    }
+        
+    /**
+     * 
+     * Moves a value from (x, y) to (newX, newY). It does
+     * this by checking it (x, y) is actually the value, and
+     * then clearing it, and inserting it in (newX, newY) after 
+     * verifying that (newX, newY) is empty. Can be used to move
+     * Enterprise or Klingons. 
+     * 
+     * @param x
+     * @param y
+     * @param newX
+     * @param newY
+     * @param value
+     */
+    public void move(int x, int y, int newX, int newY, String value) {
+        assert validPos(x, y) : "(x, y) must be a valid sector";
+        assert validPos(newX, newY) : "(newX, newY) must be a valid sector";
+
+        assert at(x, y).equals(value);
+
+        if (empty(newX, newY)) {
+            clearSector(x, y);
+            insert(newX, newY, value);
+        }
+    }
 
     /**
      * 
@@ -120,36 +150,6 @@ public class QuadrantMap {
      */
     public boolean empty(int x, int y) {
         return at(x, y).equals(EMPTY);
-    }
-
-    /**
-     * 
-     * Gets the number of klingons in the quadrant. 
-     * 
-     * @return the number of klingons in the quadrant
-     */
-    public int klingons() {
-        return quadrant.klingons();
-    }
-
-    /**
-     * 
-     * Gets the number of bases in the quadrant. 
-     * 
-     * @return the number of bases in the quadrant
-     */
-    public int bases() {
-        return quadrant.bases();
-    }
-
-    /**
-     * 
-     * Gets the number of stars in the quadrant. 
-     * 
-     * @return the number of stars in the quadrant
-     */
-    public int stars() {
-        return quadrant.stars();
     }
 
     @Override
@@ -167,49 +167,7 @@ public class QuadrantMap {
             out += "\n";
         }
 
-        out += "Klingons: " + Integer.toString(klingons()) +
-                ", Bases: " + Integer.toString(bases()) +
-                ", Stars: " + Integer.toString(stars());
-
         return out;
-    }
-
-    /**
-     * 
-     * Removes whatever occupies the specified sector.
-     * Clearing is implemented by replacing the sector with
-     * the empty-space symbol.
-     * 
-     * @param x
-     * @param y
-     * 
-     */
-    private void clear(int x, int y) {
-        if (empty(x + 1, y + 1))
-            return;
-
-        insert(x, y, EMPTY);
-    }
-
-    /**
-     * 
-     * Writes a fixed-width symbol into the specified sector.
-     * Uses substring methods to change the characters within 
-     * the quadrantString by getting all previous characters, 
-     * and all characters after, and inserting the new characters. 
-     * 
-     * @param x
-     * @param y
-     * @param value
-     */
-    private void insert(int x, int y, String value) {
-        assert validPos(x, y) : "X and Y must be valid positions";
-        assert value.length() == SYMBOL_SIZE : "Value must be exactly the same as SYMBOL_SIZE";
-
-        int index = getIndexFrom(x, y);
-        quadrantString = quadrantString.substring(0, index)
-        + value.substring(0, SYMBOL_SIZE)
-        + quadrantString.substring(index + SYMBOL_SIZE);
     }
 
     /**
@@ -227,33 +185,7 @@ public class QuadrantMap {
                 pos = generateRandomPosition();
             }
 
-            insert(pos[0], pos[1], value);
-        }
-    }
-
-    /**
-     * 
-     * Moves a value from (x, y) to (newX, newY). It does
-     * this by checking it (x, y) is actually the value, and
-     * then clearing it, and inserting it in (newX, newY) after 
-     * verifying that (newX, newY) is empty. Can be used to move
-     * Enterprise or Klingons. 
-     * 
-     * @param x
-     * @param y
-     * @param newX
-     * @param newY
-     * @param value
-     */
-    private void move(int x, int y, int newX, int newY, String value) {
-        assert validPos(x, y) : "(x, y) must be a valid sector";
-        assert validPos(newX, newY) : "(newX, newY) must be a valid sector";
-
-        assert at(x + 1, y + 1).equals(value);
-
-        if (empty(newX + 1, newY + 1)) {
-            clear(x, y);
-            insert(newX, newY, value);
+            insert(pos[0] + 1, pos[1] + 1, value);
         }
     }
 
@@ -319,11 +251,11 @@ public class QuadrantMap {
     private static final int COLS         = 8;
     private static final int SYMBOL_SIZE  = 3;
 
-    private static final String KLINGON     = "+K+";
-    private static final String BASE        = ">!<";
-    private static final String STAR        = " * ";
-    private static final String ENTERPRISE  = "<*>";
-    private static final String EMPTY       = "   ";
+    public static final String KLINGON     = "+K+";
+    public static final String BASE        = ">!<";
+    public static final String STAR        = " * ";
+    public static final String ENTERPRISE  = "<*>";
+    public static final String EMPTY       = "   ";
 
 }
 
@@ -334,25 +266,26 @@ public class QuadrantMap {
  * --------------------------------
  *    |   |   |   |   |   |   |   |
  * --------------------------------
- *    |   |   |   |   |   |   |   |
+ *    |   |   |   |   |   |   |>!<|
  * --------------------------------
- *    |   |   |   | * |   |   |   |
- * --------------------------------
- *    |   |   |   |<*>|   |   | * |
+ *    |   |   |<*>|   |   |   |   |
  * --------------------------------
  *    |   |   |   |   |   |   |   |
  * --------------------------------
- *    |   |   |   |   |   |   | * |
+ *    |   |   |   |   |   |   |   |
  * --------------------------------
- *    |   |   |   |   |   |   | * |
+ *    |   |   |   |   |   |   |   |
  * --------------------------------
- *  * |   |   |   |   |   |   |   |
- * Klingons: 0, Bases: 0, Stars: 5
- * (5, 3): <  *  >
- * Is (5, 3) empty: false
- * Klingons: 0
- * Bases: 0
- * Stars: 5
+ *    |   |   |   |   | * |   |   |
+ * --------------------------------
+ *    |   |   |   |   |   |   |   |
+ * 
+ * (5, 3): <     >
+ * Is (5, 3) empty: true
+ * (7, 8): <  *  >
+ * Is (7, 8) empty: false
+ * (7, 8): <     >
+ * Is (7, 8) empty: true
  * QuadrantMap test success
  * 
  */
