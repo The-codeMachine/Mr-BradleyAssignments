@@ -5,9 +5,9 @@ import quadrant.*;
 
 /**
  * QuadrantMap handles all of the movement and positional
- * status for Klingons, bases, stars, and the Enterprise
- * within a Quadrant. It allows you to remove a klingon,
- * and move the Enterprise. Operations include:
+ * status for all objects within a Quadrant. Currently this
+ * includes: klingons, stars, bases, and the Enterprise. 
+ * Operations include:
  *  - Construction (through Quadrant)
  *  - Insert an object
  *  - Clear a sector
@@ -73,7 +73,7 @@ public class QuadrantMap {
 
         int index = getIndexFrom(x, y);
         quadrantString = quadrantString.substring(0, index)
-        + value.substring(0, SYMBOL_SIZE)
+        + value
         + quadrantString.substring(index + SYMBOL_SIZE);
     }
     
@@ -88,9 +88,6 @@ public class QuadrantMap {
      * 
      */
     public void clearSector(int x, int y) {
-        if (empty(x, y))
-            return;
-
         insert(x, y, EMPTY);
     }
         
@@ -101,7 +98,7 @@ public class QuadrantMap {
      * then clearing it, and inserting it into (newX, newY) after 
      * verifying that (newX, newY) is empty. Can be used to move
      * Enterprise or Klingons. 
-     * 
+     *
      * @param x
      * @param y
      * @param newX
@@ -109,10 +106,10 @@ public class QuadrantMap {
      * @param value
      */
     public void move(int x, int y, int newX, int newY, String value) {
-        assert validPos(x, y) : "(x, y) must be a valid sector";
-        assert validPos(newX, newY) : "(newX, newY) must be a valid sector";
+        assert validPos(x - 1, y - 1) : "(x, y) sector must be valid";
+        assert validPos(newX - 1, newY - 1) : "(newX, newY) sector must be valid";
 
-        assert at(x, y).equals(value);
+        assert at(x, y).equals(value) : "Original sector (x, y) must be == value";
 
         if (empty(newX, newY)) {
             clearSector(x, y);
@@ -131,10 +128,9 @@ public class QuadrantMap {
      */
     public void removeObject(int x, int y, String object) {
         assert validPos(x - 1, y - 1) : "Sector (x, y) must be valid";
+        assert at(x, y).equals(object) : "Sector (x, y) must be the object";
         
-        if (at(x, y).equals(object)) {
-            clearSector(x, y);
-        }
+        clearSector(x, y);
     }
 
     /**
@@ -195,6 +191,8 @@ public class QuadrantMap {
      * @param value
      */
     private void insertValues(int amount, String value) {
+        assert amount <= ROWS * COLS;
+
         for (int i = 0; i < amount; ++i) {
             int[] pos = generateRandomPosition();
 

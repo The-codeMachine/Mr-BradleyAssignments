@@ -8,9 +8,9 @@
 
 /**
  * QuadrantMap handles all of the movement and positional
- * status for Klingons, bases, stars, and the Enterprise
- * within a Quadrant. It allows you to remove a klingon,
- * and move the Enterprise. Operations include:
+ * status for all objects within a Quadrant. Currently this
+ * includes: klingons, stars, bases, and the Enterprise. 
+ * Operations include:
  *  - Construction (through Quadrant)
  *  - Insert an object
  *  - Clear a sector

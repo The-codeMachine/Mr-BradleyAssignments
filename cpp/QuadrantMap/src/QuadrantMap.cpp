@@ -53,6 +53,8 @@ bool QuadrantMap::validPos(int x, int y)
 // Inserts a value into a random location. Uses base-0. 
 void QuadrantMap::insertValues(int amount, const std::string &value)
 {
+    assert(amount <= ROWS * COLS);
+
     while (amount--)
     {
         int x;
@@ -95,9 +97,6 @@ void QuadrantMap::insert(int x, int y, const std::string& value)
 // the empty-space symbol.
 void QuadrantMap::clearSector(int x, int y)
 {
-    if (empty(x, y))
-        return;
-
     insert(x, y, EMPTY);
 }
 
