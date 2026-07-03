@@ -80,16 +80,15 @@ public class QuadrantMap {
      * @param value
      */
     public void insert(int x, int y, String value) {
-        x--;
-        y--;
+        x--; y--;
 
         assert validPos(x, y) : "X and Y must be valid positions";
         assert value.length() == SYMBOL_SIZE : "Value must be exactly the same as SYMBOL_SIZE";
 
         int index = getIndexFrom(x, y);
-        quadrantString = quadrantString.substring(0, index)
-        + value
-        + quadrantString.substring(index + SYMBOL_SIZE);
+        quadrantString = quadrantString.substring(0, index)  // prefix
+        + value                                              // infix
+        + quadrantString.substring(index + SYMBOL_SIZE);     // postfix
     }
     
     /**
@@ -103,6 +102,7 @@ public class QuadrantMap {
      * 
      */
     public void clearSector(int x, int y) {
+        // wpuld be great to know where an assert fails in insert when called by another method -- we will come back to this
         insert(x, y, EMPTY);
     }
         
@@ -121,11 +121,14 @@ public class QuadrantMap {
      * @param value
      */
     public void move(int x, int y, int newX, int newY, String value) {
+        // you assert with expressions
         assert validPos(x - 1, y - 1) : "(x, y) sector must be valid";
         assert validPos(newX - 1, newY - 1) : "(newX, newY) sector must be valid";
 
+        // then without wrong unadjusted x, y values
         assert at(x, y).equals(value) : "Original sector (x, y) must be == value";
 
+        // then do the asserts again - in these calls ( just pointing it out - its something we will address later )
         if (empty(newX, newY)) {
             clearSector(x, y);
             insert(newX, newY, value);
@@ -143,7 +146,7 @@ public class QuadrantMap {
      */
     public void removeObject(int x, int y, String object) {
         assert validPos(x - 1, y - 1) : "Sector (x, y) must be valid";
-        assert at(x, y).equals(object) : "Sector (x, y) must be the object";
+        assert at(x, y).equals(object) : "Sector (x, y) must be the object";  // unadjusted x, y ? just needs to be commented
         
         clearSector(x, y);
     }
@@ -160,6 +163,7 @@ public class QuadrantMap {
      * @return the symbol as a string from (x, y)
      */
     public String at(int x, int y) {
+        // you calculate the adjusted values twice why not just x--; y--; @ the start?
         assert validPos(x - 1, y - 1) : "(x, y) must be a valid sector";
 
         int index = getIndexFrom(x - 1, y - 1);
@@ -183,7 +187,7 @@ public class QuadrantMap {
     @Override
     public String toString() {
         String out = "";
-        String dashRow = "-".repeat(COLS * (SYMBOL_SIZE + 1)) + "\n";
+        final String dashRow = "-".repeat(COLS * (SYMBOL_SIZE + 1)) + "\n";
 
         for (int i = 0; i < ROWS; ++i) {
             out += dashRow;
@@ -208,8 +212,12 @@ public class QuadrantMap {
     private void insertValues(int amount, String value) {
         assert amount <= ROWS * COLS;
 
+        final int X = 0, Y = 1;
+
         for (int i = 0; i < amount; ++i) {
             int[] pos = generateRandomPosition();
+
+            // x++; y++;
 
             while (!empty(pos[0] + 1, pos[1] + 1)) {
                 pos = generateRandomPosition();
