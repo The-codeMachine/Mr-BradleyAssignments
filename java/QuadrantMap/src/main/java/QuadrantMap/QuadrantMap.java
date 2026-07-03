@@ -146,7 +146,8 @@ public class QuadrantMap {
      */
     public void removeObject(int x, int y, String object) {
         assert validPos(x - 1, y - 1) : "Sector (x, y) must be valid";
-        assert at(x, y).equals(object) : "Sector (x, y) must be the object";  // unadjusted x, y ? just needs to be commented
+        assert at(x, y).equals(object) : "Sector (x, y) must be the object"; 
+        // at is a public method so we keep the coordinates 1-based 
         
         clearSector(x, y);
     }
@@ -163,10 +164,10 @@ public class QuadrantMap {
      * @return the symbol as a string from (x, y)
      */
     public String at(int x, int y) {
-        // you calculate the adjusted values twice why not just x--; y--; @ the start?
-        assert validPos(x - 1, y - 1) : "(x, y) must be a valid sector";
+        x--; y--;
+        assert validPos(x, y) : "(x, y) must be a valid sector";
 
-        int index = getIndexFrom(x - 1, y - 1);
+        int index = getIndexFrom(x, y);
         return quadrantString.substring(index, index + SYMBOL_SIZE);
     }
 
@@ -217,13 +218,17 @@ public class QuadrantMap {
         for (int i = 0; i < amount; ++i) {
             int[] pos = generateRandomPosition();
 
-            // x++; y++;
+            // x       y
+            pos[0]++; pos[1]++;
 
-            while (!empty(pos[0] + 1, pos[1] + 1)) {
+            while (!empty(pos[0], pos[1])) {
                 pos = generateRandomPosition();
+
+                // converts to base-1
+                pos[0]++; pos[1]++;
             }
 
-            insert(pos[0] + 1, pos[1] + 1, value);
+            insert(pos[0], pos[1], value);
         }
     }
 
