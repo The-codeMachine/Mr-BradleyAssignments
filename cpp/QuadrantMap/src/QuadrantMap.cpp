@@ -4,6 +4,15 @@
 
 #include <cassert>
 
+// Constructs a QuadrantMap from quadrant Q,
+// setting Enterprise's coordinates to (x, y).
+// 
+// Design Note: 
+// The Enterprise position is supplied separately because 
+// a QuadrantMap is intended to represent the visible state
+// of a quadrant after the Enterprise has entered it. The
+// Quadrant stores the klingons, bases, and stars, while the
+// Enterprise is considered part of the game state. 
 QuadrantMap::QuadrantMap(Quadrant q, int x, int y)
 {
     quadrantString.resize(ROWS * COLS * SYMBOL_SIZE, ' ');

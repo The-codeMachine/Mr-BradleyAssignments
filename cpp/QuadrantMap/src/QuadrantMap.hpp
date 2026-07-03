@@ -6,6 +6,13 @@
 #include <ostream>
 #include <cstdint>
 
+/*
+   TODO:
+   Assertions are currently used to document preconditions during
+   development, and handle exceptions. Error handling with exceptions
+   return values, etc. will be visited later as the design evolves.  
+*/
+
 /**
  * QuadrantMap handles all of the movement and positional
  * status for all objects within a Quadrant. Currently this
@@ -56,6 +63,12 @@ public:
    friend std::ostream &operator<<(std::ostream &os, const QuadrantMap &m);
 
 public:
+   /*
+      Design Note:
+      The object symbols are currently represented as String constants.
+      An enum may provide better type safety and group the symbols
+      into a single abstraction.  
+   */
    static inline constexpr const char* KLINGON = "+K+";
    static inline constexpr const char* BASE = ">!<";
    static inline constexpr const char* STAR = " * ";

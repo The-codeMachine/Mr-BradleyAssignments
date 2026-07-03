@@ -4,6 +4,13 @@ import common.GameLib;
 import quadrant.*;
 
 /**
+ * TODO:
+ * Assertions are currently used to document preconditions during
+ * development, and handle exceptions. Error handling with exceptions
+ * return values, etc. will be visited later as the design evolves.  
+ */
+
+/**
  * QuadrantMap handles all of the movement and positional
  * status for all objects within a Quadrant. Currently this
  * includes: klingons, stars, bases, and the Enterprise. 
@@ -32,6 +39,7 @@ import quadrant.*;
  * Conversion between the two coordinate systems occurs only at the
  * public API boundary. Public methods convert to 0-based coordinates
  * before calling private helper methods.
+ * 
  *
  */
 public class QuadrantMap {
@@ -39,6 +47,13 @@ public class QuadrantMap {
      * 
      * Constructs a QuadrantMap from quadrant Q,
      * setting Enterprise's coordinates to (x, y).
+     * 
+     * Design Note: 
+     * The Enterprise position is supplied separately because 
+     * a QuadrantMap is intended to represent the visible state
+     * of a quadrant after the Enterprise has entered it. The
+     * Quadrant stores the klingons, bases, and stars, while the
+     * Enterprise is considered part of the game state. 
      * 
      * @param q
      * @param x
@@ -265,6 +280,12 @@ public class QuadrantMap {
     private static final int COLS         = 8;
     private static final int SYMBOL_SIZE  = 3;
 
+    /**
+     * Design Note:
+     * The object symbols are currently represented as String constants.
+     * An enum may provide better type safety and group the symbols
+     * into a single abstraction.  
+     */
     public static final String KLINGON     = "+K+";
     public static final String BASE        = ">!<";
     public static final String STAR        = " * ";
