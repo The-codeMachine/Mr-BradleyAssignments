@@ -60,12 +60,7 @@ public class QuadrantMap {
      * @param y
      */
     public QuadrantMap(Quadrant q, int x, int y) {
-        quadrantString = " ".repeat(ROWS * COLS * SYMBOL_SIZE);
-
-        insert(x, y, ENTERPRISE);
-        insertValues(q.klingons(), KLINGON);
-        insertValues(q.bases(), BASE);
-        insertValues(q.stars(), STAR);
+        initializeQuadrant(q, x, y);
     }
 
     /**
@@ -230,6 +225,25 @@ public class QuadrantMap {
 
             insert(pos[0], pos[1], value);
         }
+    }
+
+    /**
+     * 
+     * Initializes the Quadrant by placing the Enterprise at (x, y), 
+     * and uses the Quadrant information to place the rest of the
+     * objects. 
+     * 
+     * @param q
+     * @param x
+     * @param y
+     */
+    private void initializeQuadrant(Quadrant q, int x, int y) {
+        quadrantString = " ".repeat(ROWS * COLS * SYMBOL_SIZE);
+
+        insert(x, y, ENTERPRISE);
+        insertValues(q.klingons(), KLINGON);
+        insertValues(q.bases(), BASE);
+        insertValues(q.stars(), STAR);
     }
 
     /**

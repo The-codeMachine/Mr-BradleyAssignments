@@ -81,6 +81,7 @@ private:
    static bool validPos(int x, int y);
 
    void insertValues(int amount, const std::string &value);
+   void initializeQuadrant(Quadrant q, int x, int y);
 
 private:
    std::string quadrantString;
