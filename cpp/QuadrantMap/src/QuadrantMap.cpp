@@ -62,16 +62,19 @@ void QuadrantMap::insertValues(int amount, const std::string &value)
 
     while (amount--)
     {
-        int x;
-        int y;
+        int x, y;
 
         generateRandomPosition(x, y);
-        while (!empty(x + 1, y + 1))
+        x++; y++;
+
+        while (!empty(x, y))
         {
             generateRandomPosition(x, y);
+
+            x++; y++;
         }
 
-        insert(x + 1, y + 1, value);
+        insert(x, y, value);
     }
 }
 
