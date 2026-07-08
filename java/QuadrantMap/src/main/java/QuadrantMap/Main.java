@@ -2,19 +2,61 @@ package QuadrantMap;
 
 import java.util.Scanner;
 
+import common.GameLib;
 import quadrant.*;
 
 public class Main {
+    /**
+     * 
+     * Small helper function for a random location for
+     * the Enterprise. 
+     * 
+     * @return a random valid location
+     */
+    private static int[] generateRandomPosition() {
+        int[] out = new int[2];
+        out[0] = GameLib.randomInt(1, 8);
+        out[1] = GameLib.randomInt(1, 8);
+
+        return out;
+    }
+
     public static void main(String args[]) {
         System.out.println("QuadrantMap test");
 
         Quadrant q = new Quadrant();
-        QuadrantMap m = new QuadrantMap(q, 4, 3);
+        System.out.printf("Klingons: %d, Bases: %d, Stars: %d\n", q.klingons(), q.bases(), q.stars());
+        
+        int enterprisePosition[] = generateRandomPosition();
+        System.out.printf("Enterprise location: (%d, %d)\n", enterprisePosition[0], enterprisePosition[1]);
+        
+        QuadrantMap m = new QuadrantMap(q, enterprisePosition[0], enterprisePosition[1]);
 
-        Scanner s = new Scanner(System.in);
-        
+        assert m.at(enterprisePosition[0], enterprisePosition[1]).equals(QuadrantMap.ENTERPRISE) 
+            : "Enterprise is not at the correct location";
+
         System.out.println(m);
-        
+
+        int klingons = 0;
+        int bases = 0;
+        int stars = 0;
+        for (int i = 1; i <= 8; ++i) {
+            for (int j = 1; j <= 8; ++j) {
+                String sector = m.at(i, j);
+
+                if (sector.equals(QuadrantMap.KLINGON))
+                    klingons++;
+                else if (sector.equals(QuadrantMap.BASE))
+                    bases++;
+                else if (sector.equals(QuadrantMap.STAR))
+                    stars++;
+            }
+        }
+
+        assert klingons == q.klingons() : "There is not the correct amount of klingons";
+        assert bases == q.bases() : "There is not the correct amount of bases";
+        assert stars == q.stars() : "There is not the correct amount of stars";
+
         System.out.printf("(5, 3): < %s >\n", m.at(5, 3));
         System.out.printf("Is (5, 3) empty: %b\n", m.empty(5, 3));
 
@@ -35,8 +77,6 @@ public class Main {
         // so I removed it. 
 
         System.out.println("QuadrantMap test success");
-
-        s.close();
     }
 }
 

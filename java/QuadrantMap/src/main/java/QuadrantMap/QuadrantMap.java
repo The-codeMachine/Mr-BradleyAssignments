@@ -305,7 +305,7 @@ public class QuadrantMap {
     private static final int COLS         = 8;
     private static final int SYMBOL_SIZE  = 3;
 
-    private static fnal int X = 0, Y = 1;        // array point index names
+    private static final int X = 0, Y = 1;        // array point index names
 
     /**
      * Design Note:
