@@ -208,22 +208,20 @@ public class QuadrantMap {
     private void insertValues(int amount, String value) {
         assert amount <= ROWS * COLS;
 
-        final int X = 0, Y = 1;
-
         for (int i = 0; i < amount; ++i) {
             int[] pos = generateRandomPosition();
 
-            // x       y
-            pos[0]++; pos[1]++;
+            // x       y  NB: The use the named constans for array indexes
+            pos[X]++; pos[Y]++;
 
-            while (!empty(pos[0], pos[1])) {
+            while (!empty(pos[X], pos[Y])) {
                 pos = generateRandomPosition();
 
                 // converts to base-1
-                pos[0]++; pos[1]++;
+                pos[X]++; pos[Y]++;
             }
 
-            insert(pos[0], pos[1], value);
+            insert(pos[X], pos[Y], value);
         }
     }
 
@@ -282,8 +280,8 @@ public class QuadrantMap {
      */
     private static int[] generateRandomPosition() {
         int[] out = new int[2];
-        out[0] = GameLib.randomInt(0, COLS - 1);
-        out[1] = GameLib.randomInt(0, ROWS - 1);
+        out[X] = GameLib.randomInt(0, COLS - 1);
+        out[Y] = GameLib.randomInt(0, ROWS - 1);
 
         return out;
     }
@@ -306,6 +304,8 @@ public class QuadrantMap {
     private static final int ROWS         = 8;
     private static final int COLS         = 8;
     private static final int SYMBOL_SIZE  = 3;
+
+    private static fnal int X = 0, Y = 1;        // array point index names
 
     /**
      * Design Note:
