@@ -51,7 +51,7 @@ public:
 
    void insert(int x, int y, const std::string& value);
    void clearSector(int x, int y);
-
+   
    void move(int x, int y, int newX, int newY, const std::string& value);
    void removeObject(int x, int y, const std::string& object);
 
@@ -81,6 +81,15 @@ private:
    static bool validPos(int x, int y);
    static int toBase0(int c);
    static int toBase1(int c);
+
+   void insertP(int x, int y, const std::string& value);
+   void clearSectorP(int x, int y);
+
+   void moveP(int x, int y, int newX, int newY, const std::string& value);
+   void removeObjectP(int x, int y, const std::string& object);
+
+   std::string atP(int x, int y) const;
+   bool emptyP(int x, int y) const;
 
    void insertValues(int amount, const std::string &value);
    void initializeQuadrant(Quadrant q, int x, int y);
