@@ -75,7 +75,8 @@ public class QuadrantMap {
      * @param value
      */
     public void insert(int x, int y, String value) {
-        x--; y--;
+        x = toBase0(x);
+        y = toBase0(y);
 
         assert validPos(x, y) : "X and Y must be valid positions";
         assert value.length() == SYMBOL_SIZE : "Value must be exactly the same as SYMBOL_SIZE";
@@ -117,8 +118,8 @@ public class QuadrantMap {
      */
     public void move(int x, int y, int newX, int newY, String value) {
         // you assert with expressions
-        assert validPos(x - 1, y - 1) : "(x, y) sector must be valid";
-        assert validPos(newX - 1, newY - 1) : "(newX, newY) sector must be valid";
+        assert validPos(toBase0(x), toBase0(y)) : "(x, y) sector must be valid";
+        assert validPos(toBase0(newX), toBase0(newY)) : "(newX, newY) sector must be valid";
 
         // then without wrong unadjusted x, y values
         assert at(x, y).equals(value) : "Original sector (x, y) must be == value";
@@ -140,7 +141,7 @@ public class QuadrantMap {
      * @param object
      */
     public void removeObject(int x, int y, String object) {
-        assert validPos(x - 1, y - 1) : "Sector (x, y) must be valid";
+        assert validPos(toBase0(x), toBase0(y)) : "Sector (x, y) must be valid";
         assert at(x, y).equals(object) : "Sector (x, y) must be the object"; 
         // at is a public method so we keep the coordinates 1-based 
         
@@ -159,7 +160,8 @@ public class QuadrantMap {
      * @return the symbol as a string from (x, y)
      */
     public String at(int x, int y) {
-        x--; y--;
+        x = toBase0(x); 
+        y = toBase0(y);
         assert validPos(x, y) : "(x, y) must be a valid sector";
 
         int index = getIndexFrom(x, y);
@@ -189,7 +191,7 @@ public class QuadrantMap {
             out += dashRow;
 
             for (int j = 0; j < COLS; ++j) {
-                out += at(j + 1, i + 1) + "|";
+                out += at(toBase1(j), toBase1(i)) + "|";
             }
 
             out += "\n";
@@ -210,13 +212,14 @@ public class QuadrantMap {
 
         for (int i = 0; i < amount; ++i) {
             int[] pos = generateRandomPosition();
-            pos[X]++; pos[Y]++;
+            pos[X] = toBase1(pos[X]); 
+            pos[Y] = toBase1(pos[Y]);
 
             while (!empty(pos[X], pos[Y])) {
                 pos = generateRandomPosition();
 
-                // converts to base-1
-                pos[X]++; pos[Y]++;
+                pos[X] = toBase1(pos[X]); 
+                pos[Y] = toBase1(pos[Y]);
             }
 
             insert(pos[X], pos[Y], value);
@@ -278,8 +281,8 @@ public class QuadrantMap {
      */
     private static int[] generateRandomPosition() {
         int[] out = new int[2];
-        out[X] = GameLib.randomInt(0, COLS - 1);
-        out[Y] = GameLib.randomInt(0, ROWS - 1);
+        out[X] = GameLib.randomInt(0, toBase0(COLS));
+        out[Y] = GameLib.randomInt(0, toBase0(ROWS));
 
         return out;
     }
@@ -295,6 +298,28 @@ public class QuadrantMap {
      */
     private static boolean validPos(int x, int y) {
         return x >= 0 && x < COLS && y >= 0 && y < ROWS;
+    }
+
+    /**
+     * 
+     * Converts c to base-0, expects a base-1 input. 
+     * 
+     * @param c
+     * @return c as base-0
+     */
+    private static int toBase0(int c) {
+        return c - 1;
+    }
+
+    /**
+     * 
+     * Converts c to base-1, expects a base-0 input. 
+     * 
+     * @param c
+     * @return c as base-1
+     */
+    private static int toBase1(int c) {
+        return c + 1;
     }
 
     private String quadrantString;

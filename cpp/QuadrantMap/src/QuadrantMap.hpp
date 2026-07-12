@@ -79,6 +79,8 @@ private:
    static int getIndexFrom(int x, int y);
    static void generateRandomPosition(int &x, int &y);
    static bool validPos(int x, int y);
+   static int toBase0(int c);
+   static int toBase1(int c);
 
    void insertValues(int amount, const std::string &value);
    void initializeQuadrant(Quadrant q, int x, int y);

@@ -55,6 +55,18 @@ bool QuadrantMap::validPos(int x, int y)
     return x >= 0 && x < COLS && y >= 0 && y < ROWS;
 }
 
+// Converts c to base-0, expects a base-1 input.
+int QuadrantMap::toBase0(int c)
+{
+    return c - 1;
+}
+
+// Converts c to base-1, expects a base-0 input.
+int QuadrantMap::toBase1(int c)
+{
+    return c + 1;
+}
+
 // Inserts a value into a random location. Uses base-0.
 void QuadrantMap::insertValues(int amount, const std::string &value)
 {
@@ -65,22 +77,24 @@ void QuadrantMap::insertValues(int amount, const std::string &value)
         int x, y;
 
         generateRandomPosition(x, y);
-        x++; y++;
+        x = toBase1(x);
+        y = toBase1(y);
 
         while (!empty(x, y))
         {
             generateRandomPosition(x, y);
 
-            x++; y++;
+            x = toBase1(x);
+            y = toBase1(y);
         }
 
         insert(x, y, value);
     }
 }
 
-// Initializes the Quadrant by placing the Enterprise at (x, y), 
+// Initializes the Quadrant by placing the Enterprise at (x, y),
 // and uses the Quadrant information to place the rest of the
-// objects. 
+// objects.
 void QuadrantMap::initializeQuadrant(Quadrant q, int x, int y)
 {
     quadrantString.resize(ROWS * COLS * SYMBOL_SIZE, ' ');
@@ -127,8 +141,8 @@ void QuadrantMap::clearSector(int x, int y)
 // Enterprise or Klingons.
 void QuadrantMap::move(int x, int y, int newX, int newY, const std::string &value)
 {
-    assert(validPos(x - 1, y - 1));
-    assert(validPos(newX - 1, newY - 1));
+    assert(validPos(toBase0(x), toBase0(y)));
+    assert(validPos(toBase0(newX), toBase0(newY)));
 
     assert(at(x, y) == value);
 
@@ -143,7 +157,7 @@ void QuadrantMap::move(int x, int y, int newX, int newY, const std::string &valu
 // it is cleared.
 void QuadrantMap::removeObject(int x, int y, const std::string &object)
 {
-    assert(validPos(x - 1, y - 1));
+    assert(validPos(toBase0(x), toBase0(y)));
 
     if (at(x, y) == object)
     {
@@ -157,8 +171,8 @@ void QuadrantMap::removeObject(int x, int y, const std::string &object)
 // at that location is returned.
 std::string QuadrantMap::at(int x, int y) const
 {
-    x--;
-    y--;
+    x = toBase0(x);
+    y = toBase0(y);
     assert(validPos(x, y));
 
     int index = getIndexFrom(x, y);
@@ -188,7 +202,7 @@ std::string QuadrantMap::toString() const
 
         for (size_t j = 0; j < COLS; ++j)
         {
-            out += at(j + 1, i + 1) + "|";
+            out += at(toBase1(j), toBase1(i)) + "|";
         }
 
         out += "\n";
