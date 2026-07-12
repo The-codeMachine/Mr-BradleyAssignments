@@ -13,16 +13,16 @@ import quadrant.*;
 /**
  * QuadrantMap handles all of the movement and positional
  * status for all objects within a Quadrant. Currently this
- * includes: klingons, stars, bases, and the Enterprise. 
+ * includes: klingons, stars, bases, and the Enterprise.
  * Operations include:
- *  - Construction (through Quadrant)
- *  - Insert an object
- *  - Clear a sector
- *  - Move an object
- *  - Remove an object
- *  - Check what object is at a certain sector
- *  - Check if a sector is empty
- *  - Convert map to string
+ * - Construction (through Quadrant)
+ * - Insert an object
+ * - Clear a sector
+ * - Move an object
+ * - Remove an object
+ * - Check what object is at a certain sector
+ * - Check if a sector is empty
+ * - Convert map to string
  *
  * Currently, there are 8 rows and 8 columns, with each
  * symbol being 3 big.
@@ -48,67 +48,61 @@ public class QuadrantMap {
      * Constructs a QuadrantMap from quadrant Q,
      * setting Enterprise's coordinates to (x, y).
      * 
-     * Design Note: 
-     * The Enterprise position is supplied separately because 
+     * Design Note:
+     * The Enterprise position is supplied separately because
      * a QuadrantMap is intended to represent the visible state
      * of a quadrant after the Enterprise has entered it. The
      * Quadrant stores the klingons, bases, and stars, while the
-     * Enterprise is considered part of the game state. 
+     * Enterprise is considered part of the game state.
      * 
      * @param q
      * @param x
      * @param y
      */
     public QuadrantMap(Quadrant q, int x, int y) {
-        initializeQuadrant(q, x, y);
+        initializeQuadrant(q, toBase0(x), toBase0(y));
     }
 
     /**
      * 
      * Writes a fixed-width symbol into the specified sector.
-     * Uses substring methods to change the characters within 
-     * the quadrantString by getting all previous characters, 
-     * and all characters after, and inserting the new characters. 
+     * Uses 1-Based coordinates
      * 
      * @param x
      * @param y
      * @param value
      */
     public void insert(int x, int y, String value) {
-        x = toBase0(x);
-        y = toBase0(y);
-
-        assert validPos(x, y) : "X and Y must be valid positions";
-        assert value.length() == SYMBOL_SIZE : "Value must be exactly the same as SYMBOL_SIZE";
-
-        int index = getIndexFrom(x, y);
-        quadrantString = quadrantString.substring(0, index)  // prefix
-        + value                                              // infix
-        + quadrantString.substring(index + SYMBOL_SIZE);     // postfix
+        insertP(toBase0(x), toBase0(y), value);
     }
-    
+
     /**
      * 
      * Removes whatever occupies the specified sector.
      * Clearing is implemented by replacing the sector with
      * the empty-space symbol.
      * 
+     * Uses base-1 coordinates. 
+     * 
      * @param x
      * @param y
      * 
      */
     public void clearSector(int x, int y) {
-        // wpuld be great to know where an assert fails in insert when called by another method -- we will come back to this
-        insert(x, y, EMPTY);
+        // wpuld be great to know where an assert fails in insert when called by another
+        // method -- we will come back to this
+        insert(toBase0(x), toBase0(y), EMPTY);
     }
-        
+
     /**
      * 
      * Moves a value from (x, y) to (newX, newY). It does
      * this by checking if (x, y) is actually the value, and
-     * then clearing it, and inserting it into (newX, newY) after 
+     * then clearing it, and inserting it into (newX, newY) after
      * verifying that (newX, newY) is empty. Can be used to move
-     * Enterprise or Klingons. 
+     * Enterprise or Klingons.
+     * 
+     * Uses base-1 coordinates. 
      *
      * @param x
      * @param y
@@ -117,35 +111,22 @@ public class QuadrantMap {
      * @param value
      */
     public void move(int x, int y, int newX, int newY, String value) {
-        // you assert with expressions
-        assert validPos(toBase0(x), toBase0(y)) : "(x, y) sector must be valid";
-        assert validPos(toBase0(newX), toBase0(newY)) : "(newX, newY) sector must be valid";
-
-        // then without wrong unadjusted x, y values
-        assert at(x, y).equals(value) : "Original sector (x, y) must be == value";
-
-        // then do the asserts again - in these calls ( just pointing it out - its something we will address later )
-        if (empty(newX, newY)) {
-            clearSector(x, y);
-            insert(newX, newY, value);
-        }
+        moveP(toBase0(x), toBase0(y), toBase0(newX), toBase0(newY), value);
     }
 
     /**
      * 
-     * Clears a sector only if it has value as 
-     * its object. If it does then it is cleared. 
+     * Clears a sector only if it has value as
+     * its object. If it does then it is cleared.
+     * 
+     * Uses base-1 coordinates.
      * 
      * @param x
      * @param y
      * @param object
      */
     public void removeObject(int x, int y, String object) {
-        assert validPos(toBase0(x), toBase0(y)) : "Sector (x, y) must be valid";
-        assert at(x, y).equals(object) : "Sector (x, y) must be the object"; 
-        // at is a public method so we keep the coordinates 1-based 
-        
-        clearSector(x, y);
+        removeObjectP(toBase0(x), toBase0(y), object);
     }
 
     /**
@@ -155,31 +136,30 @@ public class QuadrantMap {
      * the backing String, and the fixed-width symbol stored
      * at that location is returned.
      * 
+     * Uses base-1 coordinates. 
+     * 
      * @param x
      * @param y
      * @return the symbol as a string from (x, y)
      */
     public String at(int x, int y) {
-        x = toBase0(x); 
-        y = toBase0(y);
-        assert validPos(x, y) : "(x, y) must be a valid sector";
-
-        int index = getIndexFrom(x, y);
-        return quadrantString.substring(index, index + SYMBOL_SIZE);
+        return atP(toBase0(x), toBase0(y));
     }
 
     /**
      * 
-     * Checks if sector (x, y) is empty. 
-     * X, and y both use base-1 positions. 
-     * Checks if at(x, y) == "   ".
+     * Checks if sector (x, y) is empty.
+     * X, and y both use base-1 positions.
+     * Checks if at(x, y) == " ".
+     * 
+     * Uses base-1 coordinates
      * 
      * @param x
      * @param y
      * @return true if the sector is empty
      */
     public boolean empty(int x, int y) {
-        return at(x, y).equals(EMPTY);
+        return emptyP(toBase0(x), toBase0(y));
     }
 
     @Override
@@ -191,13 +171,139 @@ public class QuadrantMap {
             out += dashRow;
 
             for (int j = 0; j < COLS; ++j) {
-                out += at(toBase1(j), toBase1(i)) + "|";
+                out += atP(j, i) + "|";
             }
 
             out += "\n";
         }
 
         return out;
+    }
+
+    /**
+     * 
+     * Writes a fixed-width symbol into the specified sector.
+     * Uses substring methods to change the characters within
+     * the quadrantString by getting all previous characters,
+     * and all characters after, and inserting the new characters.
+     * 
+     * Uses base-0 coordinates.
+     * 
+     * @param x
+     * @param y
+     * @param value
+     */
+    private void insertP(int x, int y, String value) {
+        assert validPos(x, y) : "X and Y must be valid positions";
+        assert value.length() == SYMBOL_SIZE : "Value must be exactly the same as SYMBOL_SIZE";
+
+        int index = getIndexFrom(x, y);
+        quadrantString = quadrantString.substring(0, index) // prefix
+                + value // infix
+                + quadrantString.substring(index + SYMBOL_SIZE); // postfix
+    }
+
+    /**
+     * 
+     * Removes whatever occupies the specified sector.
+     * Clearing is implemented by replacing the sector with
+     * the empty-space symbol.
+     * 
+     * Uses base-0 coordinates. 
+     * 
+     * @param x
+     * @param y
+     * 
+     */
+    private void clearSectorP(int x, int y) {
+        insertP(x, y, EMPTY);
+    }
+
+    /**
+     * 
+     * Moves a value from (x, y) to (newX, newY). It does
+     * this by checking if (x, y) is actually the value, and
+     * then clearing it, and inserting it into (newX, newY) after
+     * verifying that (newX, newY) is empty. Can be used to move
+     * Enterprise or Klingons.
+     * 
+     * Uses base-0 coordinate.
+     *
+     * @param x
+     * @param y
+     * @param newX
+     * @param newY
+     * @param value
+     */
+    private void moveP(int x, int y, int newX, int newY, String value) {
+        // you assert with expressions
+        assert validPos(x, y) : "(x, y) sector must be valid";
+        assert validPos(newX, newY) : "(newX, newY) sector must be valid";
+
+        // then without wrong unadjusted x, y values
+        assert atP(x, y).equals(value) : "Original sector (x, y) must be == value";
+
+        // then do the asserts again - in these calls ( just pointing it out - its
+        // something we will address later )
+        if (emptyP(newX, newY)) {
+            clearSectorP(newX, newY);
+            insertP(newX, newY, value);
+        }
+    }
+
+    /**
+     * 
+     * Clears a sector only if it has value as
+     * its object. If it does then it is cleared.
+     * 
+     * Uses base-0 coordinates.
+     * 
+     * @param x
+     * @param y
+     * @param object
+     */
+    private void removeObjectP(int x, int y, String object) {
+        assert validPos(x, y) : "Sector (x, y) must be valid";
+        assert atP(x, y).equals(object) : "Sector (x, y) must be the object";
+        // at is a public method so we keep the coordinates 1-based
+
+        clearSectorP(x, y);
+    }
+
+    /**
+     * 
+     * Returns the symbol stored at the specified sector.
+     * The 2D coordinates are converted into a 1D index into
+     * the backing String, and the fixed-width symbol stored
+     * at that location is returned.
+     * 
+     * Uses base-0 coordinates. 
+     * 
+     * @param x
+     * @param y
+     * @return the symbol as a string from (x, y)
+     */
+    private String atP(int x, int y) {
+        assert validPos(x, y) : "(x, y) must be a valid sector";
+
+        int index = getIndexFrom(x, y);
+        return quadrantString.substring(index, index + SYMBOL_SIZE);
+    }
+
+    /**
+     * 
+     * Checks if sector (x, y) is empty.
+     * X, and y both use base-1 positions.
+     * Checks if at(x, y) == " ".
+     * 
+     * Uses base-0 coordinates
+     * 
+     * @param x
+     * @param y
+     * @return true if the sector is empty
+     */
+    private boolean emptyP(int x, int y) {
+        return atP(x, y).equals(EMPTY);
     }
 
     /**
@@ -212,25 +318,20 @@ public class QuadrantMap {
 
         for (int i = 0; i < amount; ++i) {
             int[] pos = generateRandomPosition();
-            pos[X] = toBase1(pos[X]); 
-            pos[Y] = toBase1(pos[Y]);
 
-            while (!empty(pos[X], pos[Y])) {
+            while (!emptyP(pos[X], pos[Y])) {
                 pos = generateRandomPosition();
-
-                pos[X] = toBase1(pos[X]); 
-                pos[Y] = toBase1(pos[Y]);
             }
 
-            insert(pos[X], pos[Y], value);
+            insertP(pos[X], pos[Y], value);
         }
     }
 
     /**
      * 
-     * Initializes the Quadrant by placing the Enterprise at (x, y), 
+     * Initializes the Quadrant by placing the Enterprise at (x, y),
      * and uses the Quadrant information to place the rest of the
-     * objects. 
+     * objects.
      * 
      * @param q
      * @param x
@@ -239,7 +340,7 @@ public class QuadrantMap {
     private void initializeQuadrant(Quadrant q, int x, int y) {
         quadrantString = " ".repeat(ROWS * COLS * SYMBOL_SIZE);
 
-        insert(x, y, ENTERPRISE);
+        insertP(x, y, ENTERPRISE);
         insertValues(q.klingons(), KLINGON);
         insertValues(q.bases(), BASE);
         insertValues(q.stars(), STAR);
@@ -254,11 +355,11 @@ public class QuadrantMap {
      * y * AMOUNT_OF_COLUMNS (COLS) * SYMBOL_SIZE +
      * x * SYMBOL_SIZE = the start index of the column
      * 
-     * Where y = amount of rows, and x = amount of columns. 
+     * Where y = amount of rows, and x = amount of columns.
      * The calculation works because each row occupies
-     * COLS * SYMBOL_SIZE characters in the backing String. 
-     * Multiplying y by this value skips entire rows, 
-     * while x * SYMBOL_SIZE moves to the correct sector 
+     * COLS * SYMBOL_SIZE characters in the backing String.
+     * Multiplying y by this value skips entire rows,
+     * while x * SYMBOL_SIZE moves to the correct sector
      * within that row.
      * 
      * @param x
@@ -275,7 +376,7 @@ public class QuadrantMap {
      * 
      * Generates two random ints, one the x (0), and the other
      * the y value (1). Returns an array. X, and y are returned
-     * as base-0 positions. Based off the COLS and ROWS. 
+     * as base-0 positions. Based off the COLS and ROWS.
      * 
      * @return an array of random ints
      */
@@ -290,7 +391,7 @@ public class QuadrantMap {
     /**
      * 
      * Checks whether the supplied 0-based coordinates lie within
-     * the bounds of the quadrant. 
+     * the bounds of the quadrant.
      * 
      * @param x
      * @param y
@@ -302,7 +403,7 @@ public class QuadrantMap {
 
     /**
      * 
-     * Converts c to base-0, expects a base-1 input. 
+     * Converts c to base-0, expects a base-1 input.
      * 
      * @param c
      * @return c as base-0
@@ -313,7 +414,8 @@ public class QuadrantMap {
 
     /**
      * 
-     * Converts c to base-1, expects a base-0 input. 
+     * Converts c to base-1, expects a base-0 input.
+     * Might remove toBase1 since it isn't used anymore. 
      * 
      * @param c
      * @return c as base-1
@@ -324,23 +426,23 @@ public class QuadrantMap {
 
     private String quadrantString;
 
-    private static final int ROWS         = 8;
-    private static final int COLS         = 8;
-    private static final int SYMBOL_SIZE  = 3;
+    private static final int ROWS = 8;
+    private static final int COLS = 8;
+    private static final int SYMBOL_SIZE = 3;
 
-    private static final int X = 0, Y = 1;        // array point index names
+    private static final int X = 0, Y = 1; // array point index names
 
     /**
      * Design Note:
      * The object symbols are currently represented as String constants.
      * An enum may provide better type safety and group the symbols
-     * into a single abstraction.  
+     * into a single abstraction.
      */
-    public static final String KLINGON     = "+K+";
-    public static final String BASE        = ">!<";
-    public static final String STAR        = " * ";
-    public static final String ENTERPRISE  = "<*>";
-    public static final String EMPTY       = "   ";
+    public static final String KLINGON = "+K+";
+    public static final String BASE = ">!<";
+    public static final String STAR = " * ";
+    public static final String ENTERPRISE = "<*>";
+    public static final String EMPTY = "   ";
 
 }
 
@@ -351,27 +453,27 @@ public class QuadrantMap {
  * Klingons: 0, Bases: 0, Stars: 8
  * Enterprise location: (7, 1)
  * --------------------------------
- *  * |   |   |   |   | * |<*>| * |
+ * * | | | | | * |<*>| * |
  * --------------------------------
- *    |   |   |   |   |   |   |   |
+ * | | | | | | | |
  * --------------------------------
- *    |   |   |   | * |   |   |   |
+ * | | | | * | | | |
  * --------------------------------
- *    | * |   |   |   |   | * |   |
+ * | * | | | | | * | |
  * --------------------------------
- *    |   |   |   |   |   |   |   |
+ * | | | | | | | |
  * --------------------------------
- *  * |   | * |   |   |   |   |   |
+ * * | | * | | | | | |
  * --------------------------------
- *    |   |   |   |   |   |   |   |
+ * | | | | | | | |
  * --------------------------------
- *    |   |   |   |   |   |   |   |
+ * | | | | | | | |
  * 
- * (5, 3): <  *  >
+ * (5, 3): < * >
  * Is (5, 3) empty: false
- * (7, 8): <  *  >
+ * (7, 8): < * >
  * Is (7, 8) empty: false
- * (7, 8): <     >
+ * (7, 8): < >
  * Is (7, 8) empty: true
  * QuadrantMap test success
  * 
