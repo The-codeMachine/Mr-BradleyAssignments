@@ -153,3 +153,21 @@ public class QuadrantString {
     private static final int ARRAY_SIZE = 64;
     private static final int CELL_SIZE = 3;
 }
+
+/**
+ * Sample Output
+ * 
+ * QuadrantString test
+ * Checking initial state
+ * Testing place()
+ * Testing isEmpty()
+ * Testing overwrite
+ * Testing clear()
+ * Testing edge positions
+ * 
+ * Raw Quadrant String:
+ * >!<                                                         >!<                                                                                                                              +K+
+ * 
+ * QuadrantString test success
+ * 
+ */

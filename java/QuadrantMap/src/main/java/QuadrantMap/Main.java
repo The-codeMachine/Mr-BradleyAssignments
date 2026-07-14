@@ -20,6 +20,68 @@ public class Main {
     }
 
     public static void main(String args[]) {
+        System.out.println("QuadrantString test");
+
+        QuadrantString qs = new QuadrantString();
+
+        System.out.println("Checking initial state");
+
+        for (int i = 0; i < 64; i++) {
+            assert qs.isEmpty(i) : "Location " + i + " should initially be empty";
+            assert qs.at(i).equals(QuadrantMap.EMPTY)
+                : "Location " + i + " should contain EMPTY";
+        }
+
+        System.out.println("Testing place()");
+
+        qs.place(0, QuadrantMap.ENTERPRISE);
+        qs.place(10, QuadrantMap.KLINGON);
+        qs.place(20, QuadrantMap.BASE);
+        qs.place(63, QuadrantMap.STAR);
+
+        assert qs.at(0).equals(QuadrantMap.ENTERPRISE);
+        assert qs.at(10).equals(QuadrantMap.KLINGON);
+        assert qs.at(20).equals(QuadrantMap.BASE);
+        assert qs.at(63).equals(QuadrantMap.STAR);
+
+        System.out.println("Testing isEmpty()");
+
+        assert !qs.isEmpty(0);
+        assert !qs.isEmpty(10);
+        assert !qs.isEmpty(20);
+        assert !qs.isEmpty(63);
+
+        assert qs.isEmpty(1);
+        assert qs.isEmpty(15);
+        assert qs.isEmpty(40);
+
+        System.out.println("Testing overwrite");
+
+        qs.place(10, QuadrantMap.STAR);
+
+        assert qs.at(10).equals(QuadrantMap.STAR)
+            : "place() should overwrite an existing symbol";
+
+        System.out.println("Testing clear()");
+
+        qs.clear(10);
+
+        assert qs.isEmpty(10);
+        assert qs.at(10).equals(QuadrantMap.EMPTY);
+
+        System.out.println("Testing edge positions");
+
+        qs.place(0, QuadrantMap.BASE);
+        qs.place(63, QuadrantMap.KLINGON);
+
+        assert qs.at(0).equals(QuadrantMap.BASE);
+        assert qs.at(63).equals(QuadrantMap.KLINGON);
+
+        System.out.println("\nRaw Quadrant String:");
+        System.out.println(qs);
+
+        System.out.println("\nQuadrantString test success");
+
         System.out.println("QuadrantMap test");
 
         Quadrant q = new Quadrant();
@@ -81,32 +143,44 @@ public class Main {
 /**
  * Sample Output
  * 
+ * QuadrantString test
+ * Checking initial state
+ * Testing place()
+ * Testing isEmpty()
+ * Testing overwrite
+ * Testing clear()
+ * Testing edge positions
+ * 
+ * Raw Quadrant String:
+ * >!<                                                         >!<                                                                                                                              +K+
+ * 
+ * QuadrantString test success
  * QuadrantMap test
- * Klingons: 0, Bases: 0, Stars: 8
- * Enterprise location: (7, 1)
- * --------------------------------
- *  * |   |   |   |   | * |<*>| * |
+ * Klingons: 0, Bases: 0, Stars: 5
+ * Enterprise location: (5, 6)
  * --------------------------------
  *    |   |   |   |   |   |   |   |
  * --------------------------------
- *    |   |   |   | * |   |   |   |
+ *    |   |   | * |   |   |   |   |
  * --------------------------------
- *    | * |   |   |   |   | * |   |
+ *  * |   |   |   |   |   |   |   |
  * --------------------------------
- *    |   |   |   |   |   |   |   |
+ *  * |   |   |   | * |   |   |   |
  * --------------------------------
- *  * |   | * |   |   |   |   |   |
+ *    |   | * |   |   |   |   |   |
+ * --------------------------------
+ *    |   |   |   |<*>|   |   |   |
  * --------------------------------
  *    |   |   |   |   |   |   |   |
  * --------------------------------
  *    |   |   |   |   |   |   |   |
  * 
- * (5, 3): <  *  >
- * Is (5, 3) empty: false
+ * (5, 3): <     >
+ * Is (5, 3) empty: true
  * (7, 8): <  *  >
  * Is (7, 8) empty: false
- * (7, 8): <     >
- * Is (7, 8) empty: true
+ * (7, 8): <  *  >
+ * Is (7, 8) empty: false
  * QuadrantMap test success
  * 
  */
