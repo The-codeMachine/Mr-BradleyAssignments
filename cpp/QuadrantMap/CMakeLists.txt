@@ -1,4 +1,4 @@
-add_executable(quadrantMap tests/test_quadrantMap.cpp src/QuadrantMap.cpp ../quadrant/src/quadrant.cpp)
+add_executable(quadrantMap tests/test_quadrantMap.cpp src/QuadrantMap.cpp src/QuadrantString.cpp ../quadrant/src/quadrant.cpp)
 
 target_link_libraries(quadrantMap PRIVATE common)
 

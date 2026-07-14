@@ -23,9 +23,9 @@ int main()
    std::cout << "Enterprise location: (" << x << ", " << y << ")\n";
 
    QuadrantMap m(q, x, y);
-
+   
    assert(m.at(x, y) == QuadrantMap::ENTERPRISE);
-
+   
    std::cout << m << "\n";
 
    int klingons = 0;
@@ -51,7 +51,7 @@ int main()
    std::cout << "(5, 3): < " << m.at(5, 3) << " >\n";
    std::cout << "Is (5, 3) empty: " << m.empty(5, 3) << "\n\n";
 
-   m.insert(7, 8, QuadrantMap::STAR);
+   m.place(7, 8, QuadrantMap::STAR);
 
    std::cout << "(7, 8): < " << m.at(7, 8) << " >\n";
    std::cout << "Is (7, 8) empty: " << m.empty(7, 8) << "\n\n";

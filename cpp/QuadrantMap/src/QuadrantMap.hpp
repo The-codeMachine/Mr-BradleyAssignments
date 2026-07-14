@@ -1,5 +1,6 @@
 #pragma once
 
+#include <QuadrantString.hpp>
 #include <quadrant.hpp>
 
 #include <string>
@@ -49,7 +50,7 @@ class QuadrantMap
 public:
    QuadrantMap(Quadrant q, int x, int y);
 
-   void insert(int x, int y, const std::string& value);
+   void place(int x, int y, const std::string& value);
    void clearSector(int x, int y);
    
    void move(int x, int y, int newX, int newY, const std::string& value);
@@ -82,7 +83,7 @@ private:
    static int toBase0(int c);
    static int toBase1(int c);
 
-   void insertP(int x, int y, const std::string& value);
+   void placeP(int x, int y, const std::string& value);
    void clearSectorP(int x, int y);
 
    void moveP(int x, int y, int newX, int newY, const std::string& value);
@@ -91,11 +92,11 @@ private:
    std::string atP(int x, int y) const;
    bool emptyP(int x, int y) const;
 
-   void insertValues(int amount, const std::string &value);
+   void placeValues(int amount, const std::string &value);
    void initializeQuadrant(Quadrant q, int x, int y);
 
 private:
-   std::string quadrantString;
+   QuadrantString quadrantString;
 
    static inline constexpr size_t ROWS = 8;
    static inline constexpr size_t COLS = 8;

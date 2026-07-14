@@ -43,6 +43,32 @@ public class QuadrantString {
 
     /**
      * 
+     * Checks whether the cell contains value. 
+     * 
+     * @param index
+     * @param value
+     * @return true if the cell contains value
+     */
+    public boolean contains(int index, String value) {
+        // checks are done within other functions
+        return at(index).equals(value);
+    }
+
+    /**
+     * 
+     * Checks whether the cell at index is empty
+     * or not. 
+     * 
+     * @param index
+     * @return True if the cell at index is empty
+     */
+    public boolean isEmpty(int index) {
+        // checks are done within other functions
+        return contains(index, EMPTY);
+    }
+
+    /**
+     * 
      * Places the value at index, overrides
      * whatever was there already.
      * 
@@ -69,32 +95,6 @@ public class QuadrantString {
     public void clear(int index) {
         // checks are done within place
         place(index, EMPTY);
-    }
-
-    /**
-     * 
-     * Checks whether the the cell contains value. 
-     * 
-     * @param index
-     * @param value
-     * @return true if the cell contains value
-     */
-    public boolean contains(int index, String value) {
-        // checks are done within other functions
-        return at(index).equals(value);
-    }
-
-    /**
-     * 
-     * Checks whether the cell at index is empty
-     * or not. 
-     * 
-     * @param index
-     * @return True if the cell at index is empty
-     */
-    public boolean isEmpty(int index) {
-        // checks are done within other functions
-        return contains(index, EMPTY);
     }
 
     /**

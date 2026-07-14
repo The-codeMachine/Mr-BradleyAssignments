@@ -36,7 +36,7 @@ int QuadrantMap::getIndexFrom(int x, int y)
 {
     assert(validPos(x, y));
 
-    return x * SYMBOL_SIZE + y * COLS * SYMBOL_SIZE;
+    return x + y * COLS;
 }
 
 // Generates two random ints, one the x (0), and the other
@@ -68,22 +68,18 @@ int QuadrantMap::toBase1(int c)
 }
 
 // Writes a fixed-width symbol into the specified sector.
-// The backing String is copied into a StringBuilder so the
-// three characters representing the sector can be replaced.
-// The updated String then becomes the new map.
-// Uses base-0 coordinates
-void QuadrantMap::insertP(int x, int y, const std::string &value)
+// Uses substring methods to change the characters within
+// the quadrantString by getting all previous characters,
+// and all characters after, and inserting the new characters.
+// 
+// Uses base-0 coordinates.
+void QuadrantMap::placeP(int x, int y, const std::string &value)
 {
     assert(validPos(x, y));
 
-    if (value.size() != SYMBOL_SIZE)
-        return;
-
+    // checks are done within place
     int index = getIndexFrom(x, y);
-    for (size_t i = 0; i < SYMBOL_SIZE; ++i)
-    {
-        quadrantString[index + i] = value[i];
-    }
+    quadrantString.place(index, value);
 }
 
 // Removes whatever occupies the specified sector.
@@ -92,7 +88,7 @@ void QuadrantMap::insertP(int x, int y, const std::string &value)
 // Uses base-0 coordinates.
 void QuadrantMap::clearSectorP(int x, int y)
 {
-    insertP(x, y, EMPTY);
+    placeP(x, y, EMPTY);
 }
 
 // Moves a value from (x, y) to (newX, newY). It does
@@ -110,7 +106,7 @@ void QuadrantMap::moveP(int x, int y, int newX, int newY, const std::string &val
 
     if (emptyP(newX, newY))
     {
-        insertP(newX, newY, value);
+        placeP(newX, newY, value);
         clearSectorP(x, y);
     }
 }
@@ -138,7 +134,7 @@ std::string QuadrantMap::atP(int x, int y) const
     assert(validPos(x, y));
 
     int index = getIndexFrom(x, y);
-    return quadrantString.substr(index, SYMBOL_SIZE);
+    return quadrantString.at(index);
 }
 
 // Checks if sector (x, y) is empty.
@@ -147,11 +143,12 @@ std::string QuadrantMap::atP(int x, int y) const
 // Uses base-1 coordinates
 bool QuadrantMap::emptyP(int x, int y) const
 {
-    return atP(x, y) == EMPTY;
+    int index = getIndexFrom(x, y);
+    return quadrantString.isEmpty(index);
 }
 
 // Inserts a value into a random location. Uses base-0.
-void QuadrantMap::insertValues(int amount, const std::string &value)
+void QuadrantMap::placeValues(int amount, const std::string &value)
 {
     assert(amount <= ROWS * COLS);
 
@@ -171,7 +168,7 @@ void QuadrantMap::insertValues(int amount, const std::string &value)
             y = toBase1(y);
         }
 
-        insert(x, y, value);
+        place(x, y, value);
     }
 }
 
@@ -180,12 +177,10 @@ void QuadrantMap::insertValues(int amount, const std::string &value)
 // objects.
 void QuadrantMap::initializeQuadrant(Quadrant q, int x, int y)
 {
-    quadrantString.resize(ROWS * COLS * SYMBOL_SIZE, ' ');
-
-    insertP(x, y, ENTERPRISE);
-    insertValues(q.klingons(), KLINGON);
-    insertValues(q.bases(), BASE);
-    insertValues(q.stars(), STAR);
+    placeP(x, y, ENTERPRISE);
+    placeValues(q.klingons(), KLINGON);
+    placeValues(q.bases(), BASE);
+    placeValues(q.stars(), STAR);
 }
 
 // Writes a fixed-width symbol into the specified sector.
@@ -193,9 +188,9 @@ void QuadrantMap::initializeQuadrant(Quadrant q, int x, int y)
 // three characters representing the sector can be replaced.
 // The updated String then becomes the new map.
 // Uses base-1 coordinates
-void QuadrantMap::insert(int x, int y, const std::string &value)
+void QuadrantMap::place(int x, int y, const std::string &value)
 {
-    insertP(toBase0(x), toBase0(y), value);
+    placeP(toBase0(x), toBase0(y), value);
 }
 
 // Removes whatever occupies the specified sector.
