@@ -40,7 +40,6 @@ import quadrant.*;
  * public API boundary. Public methods convert to 0-based coordinates
  * before calling private helper methods.
  * 
- *
  */
 public class QuadrantMap {
     /**
@@ -72,8 +71,8 @@ public class QuadrantMap {
      * @param y
      * @param value
      */
-    public void insert(int x, int y, String value) {
-        insertP(toBase0(x), toBase0(y), value);
+    public void place(int x, int y, String value) {
+        placeP(toBase0(x), toBase0(y), value);
     }
 
     /**
@@ -91,7 +90,7 @@ public class QuadrantMap {
     public void clearSector(int x, int y) {
         // wpuld be great to know where an assert fails in insert when called by another
         // method -- we will come back to this
-        insert(toBase0(x), toBase0(y), EMPTY);
+        place(toBase0(x), toBase0(y), EMPTY);
     }
 
     /**
@@ -193,14 +192,12 @@ public class QuadrantMap {
      * @param y
      * @param value
      */
-    private void insertP(int x, int y, String value) {
+    private void placeP(int x, int y, String value) {
         assert validPos(x, y) : "X and Y must be valid positions";
-        assert value.length() == SYMBOL_SIZE : "Value must be exactly the same as SYMBOL_SIZE";
 
+        // Checks are done in the .place function
         int index = getIndexFrom(x, y);
-        quadrantString = quadrantString.substring(0, index) // prefix
-                + value // infix
-                + quadrantString.substring(index + SYMBOL_SIZE); // postfix
+        quadrantString.place(index, value);
     }
 
     /**
@@ -216,7 +213,7 @@ public class QuadrantMap {
      * 
      */
     private void clearSectorP(int x, int y) {
-        insertP(x, y, EMPTY);
+        placeP(x, y, EMPTY);
     }
 
     /**
@@ -247,7 +244,7 @@ public class QuadrantMap {
         // something we will address later )
         if (emptyP(newX, newY)) {
             clearSectorP(newX, newY);
-            insertP(newX, newY, value);
+            placeP(newX, newY, value);
         }
     }
 
@@ -265,7 +262,6 @@ public class QuadrantMap {
     private void removeObjectP(int x, int y, String object) {
         assert validPos(x, y) : "Sector (x, y) must be valid";
         assert atP(x, y).equals(object) : "Sector (x, y) must be the object";
-        // at is a public method so we keep the coordinates 1-based
 
         clearSectorP(x, y);
     }
@@ -287,7 +283,7 @@ public class QuadrantMap {
         assert validPos(x, y) : "(x, y) must be a valid sector";
 
         int index = getIndexFrom(x, y);
-        return quadrantString.substring(index, index + SYMBOL_SIZE);
+        return quadrantString.at(index);
     }
 
     /**
@@ -303,7 +299,8 @@ public class QuadrantMap {
      * @return true if the sector is empty
      */
     private boolean emptyP(int x, int y) {
-        return atP(x, y).equals(EMPTY);
+        int index = getIndexFrom(x, y);
+        return quadrantString.isEmpty(index);
     }
 
     /**
@@ -313,7 +310,7 @@ public class QuadrantMap {
      * @param amount
      * @param value
      */
-    private void insertValues(int amount, String value) {
+    private void placeValues(int amount, String value) {
         assert amount <= ROWS * COLS;
 
         for (int i = 0; i < amount; ++i) {
@@ -323,7 +320,7 @@ public class QuadrantMap {
                 pos = generateRandomPosition();
             }
 
-            insertP(pos[X], pos[Y], value);
+            placeP(pos[X], pos[Y], value);
         }
     }
 
@@ -338,12 +335,12 @@ public class QuadrantMap {
      * @param y
      */
     private void initializeQuadrant(Quadrant q, int x, int y) {
-        quadrantString = " ".repeat(ROWS * COLS * SYMBOL_SIZE);
+        quadrantString = new QuadrantString();
 
-        insertP(x, y, ENTERPRISE);
-        insertValues(q.klingons(), KLINGON);
-        insertValues(q.bases(), BASE);
-        insertValues(q.stars(), STAR);
+        placeP(x, y, ENTERPRISE);
+        placeValues(q.klingons(), KLINGON);
+        placeValues(q.bases(), BASE);
+        placeValues(q.stars(), STAR);
     }
 
     /**
@@ -369,7 +366,7 @@ public class QuadrantMap {
     private static int getIndexFrom(int x, int y) {
         assert validPos(x, y) : "(x, y) must be a valid sector";
 
-        return y * COLS * SYMBOL_SIZE + x * SYMBOL_SIZE;
+        return y * COLS + x;
     }
 
     /**
@@ -424,7 +421,7 @@ public class QuadrantMap {
         return c + 1;
     }
 
-    private String quadrantString;
+    private QuadrantString quadrantString;
 
     private static final int ROWS = 8;
     private static final int COLS = 8;

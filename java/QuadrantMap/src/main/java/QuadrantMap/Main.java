@@ -58,7 +58,7 @@ public class Main {
         System.out.printf("(5, 3): < %s >\n", m.at(5, 3));
         System.out.printf("Is (5, 3) empty: %b\n", m.empty(5, 3));
 
-        m.insert(7, 8, QuadrantMap.STAR);
+        m.place(7, 8, QuadrantMap.STAR);
 
         System.out.printf("(7, 8): < %s >\n", m.at(7, 8));
         System.out.printf("Is (7, 8) empty: %b\n", m.empty(7, 8));
