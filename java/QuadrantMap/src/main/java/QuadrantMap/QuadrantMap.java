@@ -59,7 +59,7 @@ public class QuadrantMap {
      * @param y
      */
     public QuadrantMap(Quadrant q, int x, int y) {
-        initializeQuadrant(q, toBase0(x), toBase0(y));
+        initializeQuadrant(q, x, y);
     }
 
     /**
@@ -72,7 +72,11 @@ public class QuadrantMap {
      * @param value
      */
     public void place(int x, int y, String value) {
-        placeP(toBase0(x), toBase0(y), value);
+        assert validPos(x, y) : "X and Y must be valid positions";
+
+        // Checks are done in the .place function
+        int index = getIndexFrom(x, y);
+        quadrantString.place(index, value);
     }
 
     /**
@@ -110,7 +114,19 @@ public class QuadrantMap {
      * @param value
      */
     public void move(int x, int y, int newX, int newY, String value) {
-        moveP(toBase0(x), toBase0(y), toBase0(newX), toBase0(newY), value);
+        // you assert with expressions
+        assert validPos(x, y) : "(x, y) sector must be valid";
+        assert validPos(newX, newY) : "(newX, newY) sector must be valid";
+
+        // then without wrong unadjusted x, y values
+        assert at(x, y).equals(value) : "Original sector (x, y) must be == value";
+
+        // then do the asserts again - in these calls ( just pointing it out - its
+        // something we will address later )
+        if (empty(newX, newY)) {
+            clearSector(newX, newY);
+            place(newX, newY, value);
+        }
     }
 
     /**
@@ -125,7 +141,10 @@ public class QuadrantMap {
      * @param object
      */
     public void removeObject(int x, int y, String object) {
-        removeObjectP(toBase0(x), toBase0(y), object);
+        assert validPos(x, y) : "Sector (x, y) must be valid";
+        assert at(x, y).equals(object) : "Sector (x, y) must be the object";
+
+        clearSector(x, y);
     }
 
     /**
@@ -142,7 +161,11 @@ public class QuadrantMap {
      * @return the symbol as a string from (x, y)
      */
     public String at(int x, int y) {
-        return atP(toBase0(x), toBase0(y));
+        assert validPos(x, y) : "(x, y) must be a valid sector";
+
+        // getIndexFrom converts to base-1
+        int index = getIndexFrom(x, y);
+        return quadrantString.at(index);
     }
 
     /**
@@ -158,7 +181,9 @@ public class QuadrantMap {
      * @return true if the sector is empty
      */
     public boolean empty(int x, int y) {
-        return emptyP(toBase0(x), toBase0(y));
+        // getIndexFrom converts (x, y) to a 0-based index for quadrantString
+        int index = getIndexFrom(x, y);
+        return quadrantString.isEmpty(index);
     }
 
     @Override
@@ -166,141 +191,17 @@ public class QuadrantMap {
         String out = "";
         final String dashRow = "-".repeat(COLS * (SYMBOL_SIZE + 1)) + "\n";
 
-        for (int i = 0; i < ROWS; ++i) {
+        for (int i = 1; i <= ROWS; ++i) {
             out += dashRow;
 
-            for (int j = 0; j < COLS; ++j) {
-                out += atP(j, i) + "|";
+            for (int j = 1; j <= COLS; ++j) {
+                out += at(j, i) + "|";
             }
 
             out += "\n";
         }
 
         return out;
-    }
-
-    /**
-     * 
-     * Writes a fixed-width symbol into the specified sector.
-     * Uses substring methods to change the characters within
-     * the quadrantString by getting all previous characters,
-     * and all characters after, and inserting the new characters.
-     * 
-     * Uses base-0 coordinates.
-     * 
-     * @param x
-     * @param y
-     * @param value
-     */
-    private void placeP(int x, int y, String value) {
-        assert validPos(x, y) : "X and Y must be valid positions";
-
-        // Checks are done in the .place function
-        int index = getIndexFrom(x, y);
-        quadrantString.place(index, value);
-    }
-
-    /**
-     * 
-     * Removes whatever occupies the specified sector.
-     * Clearing is implemented by replacing the sector with
-     * the empty-space symbol.
-     * 
-     * Uses base-0 coordinates. 
-     * 
-     * @param x
-     * @param y
-     * 
-     */
-    private void clearSectorP(int x, int y) {
-        placeP(x, y, EMPTY);
-    }
-
-    /**
-     * 
-     * Moves a value from (x, y) to (newX, newY). It does
-     * this by checking if (x, y) is actually the value, and
-     * then clearing it, and inserting it into (newX, newY) after
-     * verifying that (newX, newY) is empty. Can be used to move
-     * Enterprise or Klingons.
-     * 
-     * Uses base-0 coordinate.
-     *
-     * @param x
-     * @param y
-     * @param newX
-     * @param newY
-     * @param value
-     */
-    private void moveP(int x, int y, int newX, int newY, String value) {
-        // you assert with expressions
-        assert validPos(x, y) : "(x, y) sector must be valid";
-        assert validPos(newX, newY) : "(newX, newY) sector must be valid";
-
-        // then without wrong unadjusted x, y values
-        assert atP(x, y).equals(value) : "Original sector (x, y) must be == value";
-
-        // then do the asserts again - in these calls ( just pointing it out - its
-        // something we will address later )
-        if (emptyP(newX, newY)) {
-            clearSectorP(newX, newY);
-            placeP(newX, newY, value);
-        }
-    }
-
-    /**
-     * 
-     * Clears a sector only if it has value as
-     * its object. If it does then it is cleared.
-     * 
-     * Uses base-0 coordinates.
-     * 
-     * @param x
-     * @param y
-     * @param object
-     */
-    private void removeObjectP(int x, int y, String object) {
-        assert validPos(x, y) : "Sector (x, y) must be valid";
-        assert atP(x, y).equals(object) : "Sector (x, y) must be the object";
-
-        clearSectorP(x, y);
-    }
-
-    /**
-     * 
-     * Returns the symbol stored at the specified sector.
-     * The 2D coordinates are converted into a 1D index into
-     * the backing String, and the fixed-width symbol stored
-     * at that location is returned.
-     * 
-     * Uses base-0 coordinates. 
-     * 
-     * @param x
-     * @param y
-     * @return the symbol as a string from (x, y)
-     */
-    private String atP(int x, int y) {
-        assert validPos(x, y) : "(x, y) must be a valid sector";
-
-        int index = getIndexFrom(x, y);
-        return quadrantString.at(index);
-    }
-
-    /**
-     * 
-     * Checks if sector (x, y) is empty.
-     * X, and y both use base-1 positions.
-     * Checks if at(x, y) == " ".
-     * 
-     * Uses base-0 coordinates
-     * 
-     * @param x
-     * @param y
-     * @return true if the sector is empty
-     */
-    private boolean emptyP(int x, int y) {
-        int index = getIndexFrom(x, y);
-        return quadrantString.isEmpty(index);
     }
 
     /**
@@ -316,11 +217,11 @@ public class QuadrantMap {
         for (int i = 0; i < amount; ++i) {
             int[] pos = generateRandomPosition();
 
-            while (!emptyP(pos[X], pos[Y])) {
+            while (!empty(pos[X], pos[Y])) {
                 pos = generateRandomPosition();
             }
 
-            placeP(pos[X], pos[Y], value);
+            place(pos[X], pos[Y], value);
         }
     }
 
@@ -337,7 +238,7 @@ public class QuadrantMap {
     private void initializeQuadrant(Quadrant q, int x, int y) {
         quadrantString = new QuadrantString();
 
-        placeP(x, y, ENTERPRISE);
+        place(x, y, ENTERPRISE);
         placeValues(q.klingons(), KLINGON);
         placeValues(q.bases(), BASE);
         placeValues(q.stars(), STAR);
@@ -346,7 +247,7 @@ public class QuadrantMap {
     /**
      * 
      * Converts the 2D index (x, y) into a 1D index
-     * for the quadrantString. X, and y use base-0
+     * for the quadrantString. X, and y use base-1
      * positions. This uses the formula:
      * 
      * y * AMOUNT_OF_COLUMNS (COLS) * SYMBOL_SIZE +
@@ -366,28 +267,29 @@ public class QuadrantMap {
     private static int getIndexFrom(int x, int y) {
         assert validPos(x, y) : "(x, y) must be a valid sector";
 
-        return y * COLS + x;
+        // converts to base-0 because QuadrantString uses base-0
+        return toBase0(y) * COLS + toBase0(x);
     }
 
     /**
      * 
      * Generates two random ints, one the x (0), and the other
      * the y value (1). Returns an array. X, and y are returned
-     * as base-0 positions. Based off the COLS and ROWS.
+     * as base-1 positions. Based off the COLS and ROWS.
      * 
      * @return an array of random ints
      */
     private static int[] generateRandomPosition() {
         int[] out = new int[2];
-        out[X] = GameLib.randomInt(0, toBase0(COLS));
-        out[Y] = GameLib.randomInt(0, toBase0(ROWS));
+        out[X] = GameLib.randomInt(1, COLS);
+        out[Y] = GameLib.randomInt(1, ROWS);
 
         return out;
     }
 
     /**
      * 
-     * Checks whether the supplied 0-based coordinates lie within
+     * Checks whether the supplied 1-based coordinates lie within
      * the bounds of the quadrant.
      * 
      * @param x
@@ -395,7 +297,7 @@ public class QuadrantMap {
      * @return true if (x, y) is a valid sector
      */
     private static boolean validPos(int x, int y) {
-        return x >= 0 && x < COLS && y >= 0 && y < ROWS;
+        return x > 0 && x <= COLS && y > 0 && y <= ROWS;
     }
 
     /**
@@ -450,21 +352,21 @@ public class QuadrantMap {
  * Klingons: 0, Bases: 0, Stars: 8
  * Enterprise location: (7, 1)
  * --------------------------------
- * * | | | | | * |<*>| * |
+ *    |   |   |   |   |   |   |   |
  * --------------------------------
- * | | | | | | | |
+ *    |   |   | * |   |   |   |   |
  * --------------------------------
- * | | | | * | | | |
+ *  * |   |   |   |   |   |   |   |
  * --------------------------------
- * | * | | | | | * | |
+ *  * |   |   |   | * |   |   |   |
  * --------------------------------
- * | | | | | | | |
+ *    |   | * |   |   |   |   |   |
  * --------------------------------
- * * | | * | | | | | |
+ *    |   |   |   |<*>|   |   |   |
  * --------------------------------
- * | | | | | | | |
+ *    |   |   |   |   |   |   |   |
  * --------------------------------
- * | | | | | | | |
+ *    |   |   |   |   |   |   |   |
  * 
  * (5, 3): < * >
  * Is (5, 3) empty: false
