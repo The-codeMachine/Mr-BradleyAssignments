@@ -118,6 +118,7 @@ void QuadrantMap::place(int x, int y, const std::string &value)
 // Uses base-1 coordinates.
 void QuadrantMap::clearSector(int x, int y)
 {
+    // checks like validPos are done within place
     place(x, y, EMPTY);
 }
 
@@ -136,8 +137,8 @@ void QuadrantMap::move(int x, int y, int newX, int newY, const std::string &valu
 
     if (empty(newX, newY))
     {
-        place(newX, newY, value);
         clearSector(x, y);
+        place(newX, newY, value);
     }
 }
 
@@ -163,7 +164,7 @@ std::string QuadrantMap::at(int x, int y) const
 {
     assert(validPos(x, y));
 
-    // getIndexFrom converts (x, y) to a valid 0-based index for QuadratString
+    // getIndexFrom converts (x, y) to a valid 0-based index for QuadrantString
     int index = getIndexFrom(x, y);
     return quadrantString.at(index);
 }

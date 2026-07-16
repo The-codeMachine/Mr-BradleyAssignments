@@ -25,9 +25,9 @@ import quadrant.*;
  *  - Convert map to string
  *
  * Currently, there are 8 rows and 8 columns, with each
- * symbol being 3 big.
+ * symbol being 3 characters long.
  * 
- * All public methods use 1-based coordinates because they represent
+ * All methods use 1-based coordinates because they represent
  * the quadrant from the player's perspective. Players naturally
  * think of the first sector as (1,1), rather than (0,0).
  *
@@ -86,9 +86,8 @@ public class QuadrantMap {
      * 
      */
     public void clearSector(int x, int y) {
-        // wpuld be great to know where an assert fails in insert when called by another
-        // method -- we will come back to this
-        place(toBase0(x), toBase0(y), EMPTY);
+        // Checks like validPos are done within place
+        place(x, y, EMPTY);
     }
 
     /**
@@ -118,7 +117,7 @@ public class QuadrantMap {
         // then do the asserts again - in these calls ( just pointing it out - its
         // something we will address later )
         if (empty(newX, newY)) {
-            clearSector(newX, newY);
+            clearSector(x, y);
             place(newX, newY, value);
         }
     }
@@ -157,7 +156,7 @@ public class QuadrantMap {
     public String at(int x, int y) {
         assert validPos(x, y) : "(x, y) must be a valid sector";
 
-        // getIndexFrom converts to base-1
+        // getIndexFrom converts from base-1
         int index = getIndexFrom(x, y);
         return quadrantString.at(index);
     }
@@ -366,7 +365,7 @@ public class QuadrantMap {
  * Is (5, 3) empty: false
  * (7, 8): < * >
  * Is (7, 8) empty: false
- * (7, 8): < >
+ * (7, 8): <   >
  * Is (7, 8) empty: true
  * QuadrantMap test success
  * 

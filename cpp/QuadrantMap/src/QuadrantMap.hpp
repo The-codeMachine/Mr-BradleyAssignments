@@ -29,9 +29,9 @@
  *  - Convert map to string
  *
  * Currently, there are 8 rows and 8 columns, with each
- * symbol being 3 big.
+ * symbol being 3 characters long.
  * 
- * All public methods use 1-based coordinates because they represent
+ * All methods use 1-based coordinates because they represent
  * the quadrant from the player's perspective. Players naturally
  * think of the first sector as (1,1), rather than (0,0).
  *
