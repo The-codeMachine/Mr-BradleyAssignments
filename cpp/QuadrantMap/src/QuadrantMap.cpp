@@ -16,11 +16,11 @@
 // Enterprise is considered part of the game state.
 QuadrantMap::QuadrantMap(Quadrant q, int x, int y)
 {
-    initializeQuadrant(q, toBase0(x), toBase0(y));
+    initializeQuadrant(q, x, y);
 }
 
 // Converts the 2D index (x, y) into a 1D index
-// for the quadrantString. X, and y use base-0
+// for the quadrantString. X, and y use base-1
 // positions. This uses the formula:
 //
 // y * AMOUNT_OF_COLUMNS (COLS) * SYMBOL_SIZE +
@@ -36,23 +36,23 @@ int QuadrantMap::getIndexFrom(int x, int y)
 {
     assert(validPos(x, y));
 
-    return x + y * COLS;
+    return toBase0(x) + toBase0(y) * COLS;
 }
 
 // Generates two random ints, one the x (0), and the other
 // the y value (1). Returns an array. X, and y are returned
-// as base-0 positions. Based off the COLS and ROWS.
+// as base-1 positions. Based off the COLS and ROWS.
 void QuadrantMap::generateRandomPosition(int &x, int &y)
 {
-    x = common::randomInt(0, COLS - 1);
-    y = common::randomInt(0, ROWS - 1);
+    x = common::randomInt(1, COLS);
+    y = common::randomInt(1, ROWS);
 }
 
-// Checks whether the supplied 0-based coordinates lie within
+// Checks whether the supplied 1-based coordinates lie within
 // the bounds of the quadrant.
 bool QuadrantMap::validPos(int x, int y)
 {
-    return x >= 0 && x < COLS && y >= 0 && y < ROWS;
+    return x > 0 && x <= COLS && y > 0 && y <= ROWS;
 }
 
 // Converts c to base-0, expects a base-1 input.
@@ -67,87 +67,7 @@ int QuadrantMap::toBase1(int c)
     return c + 1;
 }
 
-// Writes a fixed-width symbol into the specified sector.
-// Uses substring methods to change the characters within
-// the quadrantString by getting all previous characters,
-// and all characters after, and inserting the new characters.
-// 
-// Uses base-0 coordinates.
-void QuadrantMap::placeP(int x, int y, const std::string &value)
-{
-    assert(validPos(x, y));
-
-    // checks are done within place
-    int index = getIndexFrom(x, y);
-    quadrantString.place(index, value);
-}
-
-// Removes whatever occupies the specified sector.
-// Clearing is implemented by replacing the sector with
-// the empty-space symbol.
-// Uses base-0 coordinates.
-void QuadrantMap::clearSectorP(int x, int y)
-{
-    placeP(x, y, EMPTY);
-}
-
-// Moves a value from (x, y) to (newX, newY). It does
-// this by checking if (x, y) is actually the value, and
-// then clearing it, and inserting it into (newX, newY) after
-// verifying that (newX, newY) is empty. Can be used to move
-// Enterprise or Klingons.
-// Uses base-0 coordinates
-void QuadrantMap::moveP(int x, int y, int newX, int newY, const std::string &value)
-{
-    assert(validPos(x, y));
-    assert(validPos(newX, newY));
-
-    assert(atP(x, y) == value);
-
-    if (emptyP(newX, newY))
-    {
-        placeP(newX, newY, value);
-        clearSectorP(x, y);
-    }
-}
-
-// Clears a sector only if it has value as its object. If it does then
-// it is cleared.
-// Uses base-0 coordinates. 
-void QuadrantMap::removeObjectP(int x, int y, const std::string &object)
-{
-    assert(validPos(x, y));
-
-    if (atP(x, y) == object)
-    {
-        clearSectorP(x, y);
-    }
-}
-
-// Returns the symbol stored at the specified sector.
-// The 2D coordinates are converted into a 1D index into
-// the backing String, and the fixed-width symbol stored
-// at that location is returned.
-// Uses base-0 coordinates.
-std::string QuadrantMap::atP(int x, int y) const
-{
-    assert(validPos(x, y));
-
-    int index = getIndexFrom(x, y);
-    return quadrantString.at(index);
-}
-
-// Checks if sector (x, y) is empty.
-// X, and y both use base-1 positions.
-// Checks if at(x, y) == "   ".
-// Uses base-1 coordinates
-bool QuadrantMap::emptyP(int x, int y) const
-{
-    int index = getIndexFrom(x, y);
-    return quadrantString.isEmpty(index);
-}
-
-// Inserts a value into a random location. Uses base-0.
+// Inserts a value into a random location. Uses base-1.
 void QuadrantMap::placeValues(int amount, const std::string &value)
 {
     assert(amount <= ROWS * COLS);
@@ -157,15 +77,10 @@ void QuadrantMap::placeValues(int amount, const std::string &value)
         int x, y;
 
         generateRandomPosition(x, y);
-        x = toBase1(x);
-        y = toBase1(y);
 
         while (!empty(x, y))
         {
             generateRandomPosition(x, y);
-
-            x = toBase1(x);
-            y = toBase1(y);
         }
 
         place(x, y, value);
@@ -177,7 +92,7 @@ void QuadrantMap::placeValues(int amount, const std::string &value)
 // objects.
 void QuadrantMap::initializeQuadrant(Quadrant q, int x, int y)
 {
-    placeP(x, y, ENTERPRISE);
+    place(x, y, ENTERPRISE);
     placeValues(q.klingons(), KLINGON);
     placeValues(q.bases(), BASE);
     placeValues(q.stars(), STAR);
@@ -190,7 +105,11 @@ void QuadrantMap::initializeQuadrant(Quadrant q, int x, int y)
 // Uses base-1 coordinates
 void QuadrantMap::place(int x, int y, const std::string &value)
 {
-    placeP(toBase0(x), toBase0(y), value);
+    assert(validPos(x, y));
+
+    // checks are done within place
+    int index = getIndexFrom(x, y);
+    quadrantString.place(index, value);
 }
 
 // Removes whatever occupies the specified sector.
@@ -199,7 +118,7 @@ void QuadrantMap::place(int x, int y, const std::string &value)
 // Uses base-1 coordinates.
 void QuadrantMap::clearSector(int x, int y)
 {
-    clearSectorP(toBase0(x), toBase0(y));
+    place(x, y, EMPTY);
 }
 
 // Moves a value from (x, y) to (newX, newY). It does
@@ -210,7 +129,16 @@ void QuadrantMap::clearSector(int x, int y)
 // Uses base-1 coordinates
 void QuadrantMap::move(int x, int y, int newX, int newY, const std::string &value)
 {  
-    moveP(toBase0(x), toBase0(y), toBase0(newX), toBase0(newY), value);
+    assert(validPos(x, y));
+    assert(validPos(newX, newY));
+
+    assert(at(x, y) == value);
+
+    if (empty(newX, newY))
+    {
+        place(newX, newY, value);
+        clearSector(x, y);
+    }
 }
 
 // Clears a sector only if it has value as its object. If it does then
@@ -218,7 +146,12 @@ void QuadrantMap::move(int x, int y, int newX, int newY, const std::string &valu
 // Uses base-1 coordinates. 
 void QuadrantMap::removeObject(int x, int y, const std::string &object)
 {
-    removeObjectP(toBase0(x), toBase0(y), object);
+    assert(validPos(x, y));
+
+    if (at(x, y) == object)
+    {
+        clearSector(x, y);
+    }
 }
 
 // Returns the symbol stored at the specified sector.
@@ -228,7 +161,11 @@ void QuadrantMap::removeObject(int x, int y, const std::string &object)
 // Uses base-1 coordinates.
 std::string QuadrantMap::at(int x, int y) const
 {
-    return atP(toBase0(x), toBase0(y));
+    assert(validPos(x, y));
+
+    // getIndexFrom converts (x, y) to a valid 0-based index for QuadratString
+    int index = getIndexFrom(x, y);
+    return quadrantString.at(index);
 }
 
 // Checks if sector (x, y) is empty.
@@ -237,7 +174,9 @@ std::string QuadrantMap::at(int x, int y) const
 // Uses base-1 coordinates
 bool QuadrantMap::empty(int x, int y) const
 {
-    return emptyP(toBase0(x), toBase0(y));
+    // getIndexFrom converts it to a base-0 1D index for quadrantString
+    int index = getIndexFrom(x, y);
+    return quadrantString.isEmpty(index);
 }
 
 // Converts the QuadrantMap into a string
@@ -245,7 +184,7 @@ std::string QuadrantMap::toString() const
 {
     std::string out;
 
-    for (size_t i = 0; i < ROWS; ++i)
+    for (size_t i = 1; i <= ROWS; ++i)
     {
         for (size_t j = 0; j < COLS * (SYMBOL_SIZE + 1); ++j)
         {
@@ -253,9 +192,9 @@ std::string QuadrantMap::toString() const
         }
         out += "\n";
 
-        for (size_t j = 0; j < COLS; ++j)
+        for (size_t j = 1; j <= COLS; ++j)
         {
-            out += at(toBase1(j), toBase1(i)) + "|";
+            out += at(j, i) + "|";
         }
 
         out += "\n";

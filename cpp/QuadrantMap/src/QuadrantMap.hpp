@@ -35,14 +35,8 @@
  * the quadrant from the player's perspective. Players naturally
  * think of the first sector as (1,1), rather than (0,0).
  *
- * Private helper methods use 0-based coordinates because the internal
- * String representation uses Java's natural 0-based indexing. This
- * simplifies conversion between 2D sector coordinates and the 1D
- * String representation.
- *
  * Conversion between the two coordinate systems occurs only at the
- * public API boundary. Public methods convert to 0-based coordinates
- * before calling private helper methods.
+ * getIndexFrom. 
  *
  */
 class QuadrantMap
@@ -82,15 +76,6 @@ private:
    static bool validPos(int x, int y);
    static int toBase0(int c);
    static int toBase1(int c);
-
-   void placeP(int x, int y, const std::string& value);
-   void clearSectorP(int x, int y);
-
-   void moveP(int x, int y, int newX, int newY, const std::string& value);
-   void removeObjectP(int x, int y, const std::string& object);
-
-   std::string atP(int x, int y) const;
-   bool emptyP(int x, int y) const;
 
    void placeValues(int amount, const std::string &value);
    void initializeQuadrant(Quadrant q, int x, int y);

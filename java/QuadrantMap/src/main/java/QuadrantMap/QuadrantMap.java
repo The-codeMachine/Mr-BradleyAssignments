@@ -13,16 +13,16 @@ import quadrant.*;
 /**
  * QuadrantMap handles all of the movement and positional
  * status for all objects within a Quadrant. Currently this
- * includes: klingons, stars, bases, and the Enterprise.
+ * includes: klingons, stars, bases, and the Enterprise. 
  * Operations include:
- * - Construction (through Quadrant)
- * - Insert an object
- * - Clear a sector
- * - Move an object
- * - Remove an object
- * - Check what object is at a certain sector
- * - Check if a sector is empty
- * - Convert map to string
+ *  - Construction (through Quadrant)
+ *  - Insert an object
+ *  - Clear a sector
+ *  - Move an object
+ *  - Remove an object
+ *  - Check what object is at a certain sector
+ *  - Check if a sector is empty
+ *  - Convert map to string
  *
  * Currently, there are 8 rows and 8 columns, with each
  * symbol being 3 big.
@@ -31,15 +31,9 @@ import quadrant.*;
  * the quadrant from the player's perspective. Players naturally
  * think of the first sector as (1,1), rather than (0,0).
  *
- * Private helper methods use 0-based coordinates because the internal
- * String representation uses Java's natural 0-based indexing. This
- * simplifies conversion between 2D sector coordinates and the 1D
- * String representation.
- *
  * Conversion between the two coordinate systems occurs only at the
- * public API boundary. Public methods convert to 0-based coordinates
- * before calling private helper methods.
- * 
+ * getIndexFrom. 
+ *
  */
 public class QuadrantMap {
     /**
