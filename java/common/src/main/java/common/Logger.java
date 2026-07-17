@@ -10,6 +10,11 @@ enum LogLevel {
     Error
 }
 
+/*
+ * TODO:
+ * Add file logging to the logger class.
+ */
+
 /**
  * 
  * The logger class logs messages to the console
@@ -17,17 +22,17 @@ enum LogLevel {
  * its log level, and log to certain levels. It
  * uses an enum to represent its levels, this
  * consists of:
- *  - Trace
- *  - Warning
- *  - Error
+ * - Trace
+ * - Warning
+ * - Error
  * 
  * The logger also has to ability to print stack
  * traces. It is used within the IO library, and
- * should only really be access through the IO 
- * library. 
+ * should only really be access through the IO
+ * library.
  * 
- * Currently, the logger only logs to the console. 
- * There is no file logging yet. 
+ * Currently, the logger only logs to the console.
+ * There is no file logging yet.
  * 
  */
 public class Logger {
@@ -35,20 +40,20 @@ public class Logger {
     Logger(LogLevel level) {
         this.level = level;
     }
-    
+
     /**
      * 
-     * Gets the log level for this logger. 
+     * Gets the log level for this logger.
      * 
      * @return this logger's log level.
      */
     public LogLevel getLogLevel() {
-        return level;        
-    } 
+        return level;
+    }
 
     /**
      * 
-     * Sets the log level of this logger. 
+     * Sets the log level of this logger.
      * 
      * @param level
      */
@@ -58,8 +63,8 @@ public class Logger {
 
     /**
      * 
-     * Logs a message to the console (no file logging yet). 
-     * Checks that the log level supports logging that type. 
+     * Logs a message to the console (no file logging yet).
+     * Checks that the log level supports logging that type.
      * 
      * @param level
      * @param msg
@@ -67,7 +72,7 @@ public class Logger {
     public void log(LogLevel level, String msg) {
         if (this.level.ordinal() < level.ordinal()) {
             // (e.g. warning logs does not log trace logs)
-            return; 
+            return;
         }
 
         logMessage(msg);
@@ -77,7 +82,7 @@ public class Logger {
      * 
      * Prints the log message to the console. This
      * log message is based off an exception stack
-     * trace. 
+     * trace.
      * 
      * @param e
      */
@@ -101,17 +106,17 @@ public class Logger {
     /**
      * 
      * Constructs a list of strings representing
-     * the stack trace. 
+     * the stack trace.
      * 
-     * @return a list of strings representing the stack trace. 
+     * @return a list of strings representing the stack trace.
      */
     private static List<String> traceStack(Exception e) {
         List<String> stackTraceList = Arrays.stream(e.getStackTrace())
-                    .map(StackTraceElement::toString)
-                    .collect(Collectors.toList());
+                .map(StackTraceElement::toString)
+                .collect(Collectors.toList());
 
         return stackTraceList;
     }
 
-    private LogLevel level; 
+    private LogLevel level;
 }
