@@ -43,6 +43,17 @@ public class IO {
 
     /**
      * 
+     * Formats, and prints a message to the console. 
+     * 
+     * @param msg
+     * @param args
+     */
+    public static void printf(String msg, Object... args) {
+        System.out.printf(msg, args);
+    }
+
+    /**
+     * 
      * Prompts the user with a message. The scanner will
      * then read the user's response to the message as a String. 
      * 
@@ -60,7 +71,7 @@ public class IO {
      * 
      * @return the next line from the user.
      */
-    public static String readString() {
+    public static String readLine() {
         return SCANNER.nextLine();
     }
 
@@ -84,5 +95,49 @@ public class IO {
         return SCANNER.nextDouble();
     }
 
+    /**
+     * 
+     * Logs a trace message.
+     * 
+     * @param msg
+     */
+    public static void trace(String msg) {
+        TRACE_LOGGER.log(LogLevel.Trace, msg);
+    }
+
+    /**
+     * 
+     * Logs a warning message.
+     * 
+     * @param msg
+     */
+    public static void warning(String msg) {
+        WARNING_LOGGER.log(LogLevel.Warning, msg);
+    }
+    
+    /**
+     * 
+     * Logs an error message.
+     * 
+     * @param msg
+     */
+    public static void error(String msg) {
+        ERROR_LOGGER.log(LogLevel.Error, msg);
+    }
+    
+    /**
+     * 
+     * Logs an exception.
+     * 
+     * @param e
+     */
+    public static void exception(Exception e) {
+        ERROR_LOGGER.exception(e);
+    }
+
     private static final Scanner SCANNER = new Scanner(System.in);
+
+    private static Logger TRACE_LOGGER = new Logger(LogLevel.Trace, "logs/trace.log");
+    private static Logger WARNING_LOGGER = new Logger(LogLevel.Warning, "logs/warning.log");
+    private static Logger ERROR_LOGGER = new Logger(LogLevel.Error, "logs/error.log");
 }

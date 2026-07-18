@@ -1,6 +1,7 @@
 #include "Logger.hpp"
 
 #include <string>
+#include <cstdio>
 
 /**
  *
@@ -25,12 +26,24 @@ namespace common
 
         void print(const std::string &message);
         void println(const std::string &message);
+        template <typename T, typename... Args>
+        void printf(const std::string& message, Args... args) {
+            ::printf(message, args);
+        }
 
         std::string prompt(const std::string &message);
 
         std::string readString();
         int readInt();
         double readDouble();
+
+        void trace(const std::string& message);
+        void warning(const std::string& message);
+        void error(const std::string& message);
+
+        static common::Logger TRACE_LOGGER(LogLevel::Trace, "logs/trace.log");
+        static common::Logger WARNING_LOGGER(LogLevel::Warning, "logs/warning.log");
+        static common::Logger ERROR_LOGGER(LogLevel::Error, "logs/error.log");
 
     } // namespace IO
 

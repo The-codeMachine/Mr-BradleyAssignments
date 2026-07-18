@@ -42,8 +42,6 @@ package quadrant;
 
 import common.*;
 
-import java.util.Random;
-
 public class Quadrant {
     /**
      * Generates a quadrant using a RNG

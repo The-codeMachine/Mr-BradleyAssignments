@@ -54,6 +54,21 @@ namespace common {
             return r;
         }
 
+        // Logs a trace message. 
+        void trace(const std::string& message) {
+            TRACE_LOGGER.log(LogLevel::Trace, message);
+        }
+
+        // Logs a warning message. 
+        void warning(const std::string& message) {
+            WARNING_LOGGER.log(LogLevel::Warning, message);
+        }
+
+        // Logs an error message. 
+        void error(const std::string& message) {
+            ERROR_LOGGER.log(LogLevel::Error, message);
+        }
+
     } // namespace IO
 
 } // namepsace common
