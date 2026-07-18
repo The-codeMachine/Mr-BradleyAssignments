@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include <stdexcept>
+#include <filesystem>
 #include <fstream>
 
 namespace common
@@ -31,31 +32,40 @@ namespace common
      * should only really be access through the IO
      * library.
      *
-     * Currently, the logger only logs to the console.
-     * There is no file logging yet.
+     * Logger flushes every 20 writes, and when the
+     * file is closed, or this object is destroyed. 
      *
      */
     class Logger
     {
     public:
-        Logger(LogLevel level, const std::string& path);
+        Logger(LogLevel level, const std::filesystem::path& path);
+        ~Logger();
 
         LogLevel getLogLevel() const;
         void setLogLevel(LogLevel level);
+        
+        void open();
+        void close();
+        void flush();
 
+        bool isOpen() const;
+        
         void log(LogLevel level, const std::string &message);
-
         void exception(const std::exception &e);
 
         static void testLogger();
 
     private:
         void logMessage(const std::string &message);
-        static std::vector<std::string> traceStack(const std::exception &e);
 
     private:
         LogLevel level;
+
+        std::filesystem::path path;
         std::ofstream logFile;
+
+        size_t pendingWrites = 0;
 
     };
 

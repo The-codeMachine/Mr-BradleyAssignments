@@ -1,27 +1,33 @@
 #include "../include/common/Logger.hpp"
 
-#include <filesystem>
 #include <sstream>
 #include <cassert>
 #include <iostream>
 
 namespace common
 {
-    Logger::Logger(LogLevel level, const std::string &path) : level(level), logFile(path, std::ios::app)
-    {
-        if (!logFile.is_open())
-        {
-            throw std::runtime_error("Failed to open logFile: " + path);
+    Logger::Logger(LogLevel level, const std::filesystem::path& path) :
+        level(level), path(path) {
+            open();
         }
+
+    Logger::~Logger() {
+        close();
     }
 
     // Logs the message to the console (will add file logging later).
     void Logger::logMessage(const std::string &message)
     {
-        std::cout << message << "\n";
+        if (!isOpen())
+            open();
 
+        std::cout << message << "\n";
         logFile << message << "\n";
-        logFile.flush();
+        
+        pendingWrites++;
+        if (pendingWrites >= 20) {
+            flush();
+        }
     }
 
     // Gets the log level for this logger
@@ -34,6 +40,40 @@ namespace common
     void Logger::setLogLevel(LogLevel level)
     {
         this->level = level;
+    }
+
+    // Opens the log file. 
+    void Logger::open() {
+        if (isOpen())
+            return;
+
+        logFile.open(path, std::ios::app);
+
+        if (!logFile) {
+            throw std::runtime_error("Failed to open log file: " + path.string());
+        }
+    }
+
+    // Closes the log file and does all writes. 
+    void Logger::close() {
+        if (!isOpen())
+            return;
+
+        flush();
+        logFile.close();
+    }
+
+    // Flushes all writes to the log file. 
+    void Logger::flush() {
+        if (isOpen())
+            logFile.flush();
+
+        pendingWrites = 0;
+    }
+
+    // Checks if the log file is open. 
+    bool Logger::isOpen() const {
+        return logFile.is_open();
     }
 
     // Logs a message to the console (no file logging yet).
