@@ -138,8 +138,6 @@ public class Main {
         // so I removed it. 
 
         System.out.println("QuadrantMap test success");
-
-        Logger.testLogger();
     }
 }
 

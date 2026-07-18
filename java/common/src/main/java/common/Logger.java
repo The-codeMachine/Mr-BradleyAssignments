@@ -3,6 +3,7 @@ package common;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -84,7 +85,7 @@ public class Logger {
      * @param msg
      */
     public void log(LogLevel level, String msg) {
-        if (this.level.ordinal() < level.ordinal()) {
+        if (level.ordinal() < this.level.ordinal()) {
             // (e.g. warning logs does not log trace logs)
             return;
         }
@@ -115,8 +116,16 @@ public class Logger {
     public static void testLogger() {
         System.out.println("Logger test");
 
-        Logger logger = new Logger(LogLevel.Trace, 
-            "D:/Developer/Mr-BradleyAssignments/java/test_logs/logger_test.log");
+        Path path = Path.of(
+        "D:/Developer/Mr-BradleyAssignments/java/test_logs/logger_test.log");
+
+        try {
+            Files.deleteIfExists(path);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        Logger logger = new Logger(LogLevel.Trace, path);
 
         logger.log(LogLevel.Trace, "This is a test message from the logger");
         logger.log(LogLevel.Error, "This is an error coded log test message");
@@ -134,23 +143,24 @@ public class Logger {
         logger.log(LogLevel.Error, "This message should appear within both the log file and console");
 
         try {
-            String content = Files.readString(
-                Path.of("D:/Developer/Mr-BradleyAssignments/java/test_logs/logger_test.log"));
+            String content = Files.readString(path);
 
-            assert content.equals("""
-            This is a test message from the logger\n
-            This is an error coded log test message\n
-            This message should appear\n
-            This message should also appear\n
-            This message should appear within both the log file and console\n
-            """) : "Log file is not equal to the expected output";
+            String expected = String.join(System.lineSeparator(),
+                "This is a test message from the logger",
+                "This is an error coded log test message",
+                "This message should appear",
+                "This message should also appear",
+                "This message should appear within both the log file and console"
+            ) + System.lineSeparator();
 
-            Files.deleteIfExists(Path.of("D:/Developer/Mr-BradleyAssignments/java/test_logs/logger_test.log"));
+
+            assert content.equals(expected) : "Log file is not equal to the expected output";
+
+            Files.deleteIfExists(path);
 
         } catch (IOException e) {
             System.out.println("Exception occurred: " + e);
         }
-        
 
         System.out.println("Logger test success");
     }
@@ -166,7 +176,7 @@ public class Logger {
         System.out.println(msg);
 
         try {
-            Files.write(logFilePath, msg.getBytes());
+            Files.writeString(logFilePath, msg + System.lineSeparator(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -190,3 +200,17 @@ public class Logger {
     private LogLevel level;
     private Path logFilePath;
 }
+
+/**
+ * 
+ * Sample Output
+ * 
+ * Logger test
+ * This is a test message from the logger
+ * This is an error coded log test message
+ * This message should appear
+ * This message should also appear
+ * This message should appear within both the log file and console
+ * Logger test success
+ * 
+ */
