@@ -2,6 +2,7 @@
 #include <QuadrantString.hpp>
 
 #include <common/random.hpp>
+#include <common/Logger.hpp>
 
 #include <iostream>
 #include <cassert>
@@ -116,6 +117,8 @@ int main()
    std::cout << "Is (7, 8) empty: " << m.empty(7, 8) << "\n\n";
 
    std::cout << "QuadrantMap test success\n";
+
+   common::Logger::testLogger();
 
    return 0;
 }

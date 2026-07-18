@@ -122,7 +122,7 @@ public class Logger {
         try {
             Files.deleteIfExists(path);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            System.out.println("An error occurred: " + e);
         }
 
         Logger logger = new Logger(LogLevel.Trace, path);

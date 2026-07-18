@@ -1,7 +1,6 @@
 package QuadrantMap;
 
 import common.GameLib;
-import common.Logger;
 import quadrant.*;
 
 public class Main {

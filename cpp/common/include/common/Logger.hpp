@@ -1,6 +1,9 @@
+#pragma once
+
 #include <string>
 #include <vector>
 #include <stdexcept>
+#include <fstream>
 
 namespace common
 {
@@ -11,11 +14,6 @@ namespace common
         Warning,
         Error
     };
-
-    /*
-    TODO:
-    Add file logging to the logger class.
-    */
 
     /**
      *
@@ -40,21 +38,38 @@ namespace common
     class Logger
     {
     public:
-        Logger(LogLevel level);
+        Logger(LogLevel level, const std::string& path);
 
         LogLevel getLogLevel() const;
         void setLogLevel(LogLevel level);
 
-        void log(LogLevel level, const std::string &message) const;
+        void log(LogLevel level, const std::string &message);
 
-        void exception(const std::exception &e) const;
+        void exception(const std::exception &e);
+
+        static void testLogger();
 
     private:
-        void logMessage(const std::string &message) const;
+        void logMessage(const std::string &message);
         static std::vector<std::string> traceStack(const std::exception &e);
 
     private:
         LogLevel level;
+        std::ofstream logFile;
+
     };
 
 } // namepsace common
+
+/*
+Sample Output
+
+Logger test
+This is a test message from the logger
+This is an error coded log test message
+This message should appear
+This message should also appear
+This message should appear within both the log file and console
+Logger test success
+
+*/
