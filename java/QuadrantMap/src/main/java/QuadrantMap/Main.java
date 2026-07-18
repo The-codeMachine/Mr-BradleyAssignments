@@ -1,6 +1,7 @@
 package QuadrantMap;
 
 import common.GameLib;
+import common.Logger;
 import quadrant.*;
 
 public class Main {
@@ -137,6 +138,8 @@ public class Main {
         // so I removed it. 
 
         System.out.println("QuadrantMap test success");
+
+        Logger.testLogger();
     }
 }
 

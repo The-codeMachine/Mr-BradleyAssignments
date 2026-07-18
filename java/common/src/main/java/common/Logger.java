@@ -1,5 +1,8 @@
 package common;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -10,9 +13,18 @@ enum LogLevel {
     Error
 }
 
-/*
+/**
+ * 
  * TODO:
- * Add file logging to the logger class.
+ * Do I need to add timestamps, and the log level
+ * to each log. This would be part of the message;
+ * looking something like this: 
+ * [2026-07-17 21:20:34] Trace Enterprise moved to Quadrant 31
+ * 
+ * I'm not sure if I would print that, but I might
+ * add that to the logs. I will consult Mr. Bradley
+ * on this. 
+ * 
  */
 
 /**
@@ -31,14 +43,16 @@ enum LogLevel {
  * should only really be access through the IO
  * library.
  * 
- * Currently, the logger only logs to the console.
- * There is no file logging yet.
- * 
  */
 public class Logger {
 
-    Logger(LogLevel level) {
+    Logger(LogLevel level, Path path) {
         this.level = level;
+        logFilePath = path;
+    }
+
+    Logger(LogLevel level, String path) {
+        this(level, Path.of(path));
     }
 
     /**
@@ -63,7 +77,7 @@ public class Logger {
 
     /**
      * 
-     * Logs a message to the console (no file logging yet).
+     * Logs a message to the console and to a log file.
      * Checks that the log level supports logging that type.
      * 
      * @param level
@@ -89,18 +103,73 @@ public class Logger {
     public void exception(Exception e) {
         List<String> stackTrace = traceStack(e);
 
-        stackTrace.forEach(System.out::println);
+        stackTrace.forEach(this::logMessage);
     }
 
     /**
      * 
-     * Logs the message to the console (will add
-     * file logging, but later).
+     * Tests the logger ensuring that it works as
+     * expected. 
+     * 
+     */
+    public static void testLogger() {
+        System.out.println("Logger test");
+
+        Logger logger = new Logger(LogLevel.Trace, 
+            "D:/Developer/Mr-BradleyAssignments/java/test_logs/logger_test.log");
+
+        logger.log(LogLevel.Trace, "This is a test message from the logger");
+        logger.log(LogLevel.Error, "This is an error coded log test message");
+
+        logger.setLogLevel(LogLevel.Warning);
+
+        logger.log(LogLevel.Trace, "This message should not appear");
+        logger.log(LogLevel.Warning, "This message should appear");
+        logger.log(LogLevel.Error, "This message should also appear");
+
+        logger.setLogLevel(LogLevel.Error);
+
+        logger.log(LogLevel.Trace, "This message should not appear");
+        logger.log(LogLevel.Warning, "This message should not appear either");
+        logger.log(LogLevel.Error, "This message should appear within both the log file and console");
+
+        try {
+            String content = Files.readString(
+                Path.of("D:/Developer/Mr-BradleyAssignments/java/test_logs/logger_test.log"));
+
+            assert content.equals("""
+            This is a test message from the logger\n
+            This is an error coded log test message\n
+            This message should appear\n
+            This message should also appear\n
+            This message should appear within both the log file and console\n
+            """) : "Log file is not equal to the expected output";
+
+            Files.deleteIfExists(Path.of("D:/Developer/Mr-BradleyAssignments/java/test_logs/logger_test.log"));
+
+        } catch (IOException e) {
+            System.out.println("Exception occurred: " + e);
+        }
+        
+
+        System.out.println("Logger test success");
+    }
+
+    /**
+     * 
+     * Logs the message to the console and to a log
+     * file specified in the constructor. 
      * 
      * @param msg
      */
     private void logMessage(String msg) {
         System.out.println(msg);
+
+        try {
+            Files.write(logFilePath, msg.getBytes());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -119,4 +188,5 @@ public class Logger {
     }
 
     private LogLevel level;
+    private Path logFilePath;
 }
