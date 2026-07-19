@@ -31,19 +31,23 @@ namespace common
             ::printf(message, args);
         }
 
-        std::string prompt(const std::string &message);
-
         std::string readString();
         int readInt();
         double readDouble();
+
+        std::string prompt(const std::string &message);
+        int promptInt(const std::string &message);
+        double promptDouble(const std::string &message);
+        std::string readCommand();
 
         void trace(const std::string& message);
         void warning(const std::string& message);
         void error(const std::string& message);
 
-        static common::Logger TRACE_LOGGER(LogLevel::Trace, "logs/trace.log");
-        static common::Logger WARNING_LOGGER(LogLevel::Warning, "logs/warning.log");
-        static common::Logger ERROR_LOGGER(LogLevel::Error, "logs/error.log");
+        static common::Logger LOGGER(LogLevel::Trace, "logs/game.log");
+
+        static const std::string COMMANDS = "NAVSRSLRSPHATORSHEDAMCOMXXX";
+        static constexpr int COMMAND_SIZE = 3;
 
     } // namespace IO
 
