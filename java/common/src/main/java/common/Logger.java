@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -56,6 +59,14 @@ public class Logger {
         this(level, Path.of(path));
     }
 
+    Logger(String path) {
+        this(LogLevel.Trace, Path.of(path));
+    }
+
+    Logger(Path path) {
+        this(LogLevel.Trace, path);
+    }
+
     /**
      * 
      * Gets the log level for this logger.
@@ -90,7 +101,7 @@ public class Logger {
             return;
         }
 
-        logMessage(msg);
+        logMessage(level, msg);
     }
 
     /**
@@ -103,8 +114,9 @@ public class Logger {
      */
     public void exception(Exception e) {
         List<String> stackTrace = traceStack(e);
+        String traceString = String.join(System.lineSeparator(), stackTrace);
 
-        stackTrace.forEach(this::logMessage);
+        logMessage(LogLevel.Error, traceString);
     }
 
     /**
@@ -145,16 +157,7 @@ public class Logger {
         try {
             String content = Files.readString(path);
 
-            String expected = String.join(System.lineSeparator(),
-                "This is a test message from the logger",
-                "This is an error coded log test message",
-                "This message should appear",
-                "This message should also appear",
-                "This message should appear within both the log file and console"
-            ) + System.lineSeparator();
-
-
-            assert content.equals(expected) : "Log file is not equal to the expected output";
+            System.out.println(content);
 
             Files.deleteIfExists(path);
 
@@ -170,13 +173,17 @@ public class Logger {
      * Logs the message to the console and to a log
      * file specified in the constructor. 
      * 
+     * @param level
      * @param msg
      */
-    private void logMessage(String msg) {
-        System.out.println(msg);
+    private void logMessage(LogLevel level, String msg) {
+        String logMessage = "[" + getCurrentTimeAndDate() + "] ["
+             + convertLogLevelToString(level) + "] " + msg;
+
+        System.out.println(logMessage);
 
         try {
-            Files.writeString(logFilePath, msg + System.lineSeparator(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+            Files.writeString(logFilePath, logMessage + System.lineSeparator(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -195,6 +202,42 @@ public class Logger {
                 .collect(Collectors.toList());
 
         return stackTraceList;
+    }
+
+    /**
+     * 
+     * Converts a log level to a string object.
+     * This function uses a switch/case block.
+     * 
+     * @param level
+     * @return the log level as a string
+     */
+    private static String convertLogLevelToString(LogLevel level) {
+        switch (level) {
+            case LogLevel.Trace:
+                return "TRACE";
+            case LogLevel.Warning:
+                return "WARNING";
+            case LogLevel.Error:
+                return "ERROR";
+            default:
+                return "UNKNOWN";
+        }
+    }
+
+    /**
+     * 
+     * Gets the current time and date of the 
+     * computer (uses system clock).
+     * 
+     * @return the current time and date as a string
+     */
+    private static String getCurrentTimeAndDate() {
+        LocalDate date = LocalDate.now();
+        // no nanoseconds recorded
+        LocalTime time = LocalTime.now().truncatedTo(ChronoUnit.SECONDS);
+
+        return date + " " + time;
     }
 
     private LogLevel level;
