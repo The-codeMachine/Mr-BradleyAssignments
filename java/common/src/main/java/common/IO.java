@@ -97,7 +97,7 @@ public class IO {
 
     /**
      * 
-     * Requests a int from the user. Prints a message and
+     * Requests an int from the user. Prints a message and
      * then reads the next int. 
      * 
      * @param msg
@@ -132,13 +132,12 @@ public class IO {
      */
     public static String readCommand() {
         String cmd = prompt("Enter your next command: ");
-
+        cmd = cmd.trim().toUpperCase();
+        
         if (cmd.length() != COMMAND_SIZE) {
             warning("Invalid command length");
             return "";
         }
-        
-        cmd = cmd.trim().toUpperCase();
 
         for (int i = 0; i < COMMANDS.length(); i += 3) {
             if (COMMANDS.substring(i, i + 2).equals(cmd))

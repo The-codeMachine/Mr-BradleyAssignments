@@ -47,6 +47,9 @@ enum LogLevel {
  * should only really be access through the IO
  * library.
  * 
+ * Logger flushes every 20 writes, and when the
+ * file is closed, or this object is destroyed. 
+ * 
  */
 public class Logger {
 
