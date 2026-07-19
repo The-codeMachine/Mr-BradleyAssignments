@@ -54,19 +54,6 @@ public class IO {
 
     /**
      * 
-     * Prompts the user with a message. The scanner will
-     * then read the user's response to the message as a String. 
-     * 
-     * @param msg
-     * @return the user's response to the message as a String.
-     */
-    public static String prompt(String msg) {
-        print(msg);
-        return SCANNER.nextLine();
-    }
-
-    /**
-     * 
      * Reads the next line from the user.
      * 
      * @return the next line from the user.
@@ -97,12 +84,79 @@ public class IO {
 
     /**
      * 
+     * Prompts the user with a message. The scanner will
+     * then read the user's response to the message as a String. 
+     * 
+     * @param msg
+     * @return the user's response to the message as a String.
+     */
+    public static String prompt(String msg) {
+        print(msg);
+        return readLine();
+    }
+
+    /**
+     * 
+     * Requests a int from the user. Prints a message and
+     * then reads the next int. 
+     * 
+     * @param msg
+     * @return the user provided int
+     */
+    public static int promptInt(String msg) {
+        print(msg);
+        return readInt();
+    }
+
+    /**
+     * 
+     * Requests a double from the user. Prints a message and
+     * then reads the next double. 
+     * 
+     * @param msg
+     * @return the user provided double
+     */
+    public static double promptDouble(String msg) {
+        print(msg);
+        return readDouble();
+    }
+
+    /**
+     * 
+     * Reads a command from the user. This method
+     * verifies it is of the correct length, and 
+     * is an actual valid command based off the
+     * COMMANDS string. 
+     * 
+     * @return the command represented as a string. 
+     */
+    public static String readCommand() {
+        String cmd = prompt("Enter your next command: ");
+
+        if (cmd.length() != COMMAND_SIZE) {
+            warning("Invalid command length");
+            return "";
+        }
+        
+        cmd = cmd.trim().toUpperCase();
+
+        for (int i = 0; i < COMMANDS.length(); i += 3) {
+            if (COMMANDS.substring(i, i + 2).equals(cmd))
+                return cmd;
+        }
+
+        warning("Invalid command was entered: " + cmd);
+        return "";
+    }
+
+    /**
+     * 
      * Logs a trace message.
      * 
      * @param msg
      */
     public static void trace(String msg) {
-        TRACE_LOGGER.log(LogLevel.Trace, msg);
+        LOGGER.log(LogLevel.Trace, msg);
     }
 
     /**
@@ -112,7 +166,7 @@ public class IO {
      * @param msg
      */
     public static void warning(String msg) {
-        WARNING_LOGGER.log(LogLevel.Warning, msg);
+        LOGGER.log(LogLevel.Warning, msg);
     }
     
     /**
@@ -122,7 +176,7 @@ public class IO {
      * @param msg
      */
     public static void error(String msg) {
-        ERROR_LOGGER.log(LogLevel.Error, msg);
+        LOGGER.log(LogLevel.Error, msg);
     }
     
     /**
@@ -132,12 +186,12 @@ public class IO {
      * @param e
      */
     public static void exception(Exception e) {
-        ERROR_LOGGER.exception(e);
+        LOGGER.exception(e);
     }
 
     private static final Scanner SCANNER = new Scanner(System.in);
-
-    private static Logger TRACE_LOGGER = new Logger(LogLevel.Trace, "logs/trace.log");
-    private static Logger WARNING_LOGGER = new Logger(LogLevel.Warning, "logs/warning.log");
-    private static Logger ERROR_LOGGER = new Logger(LogLevel.Error, "logs/error.log");
+    private static final Logger LOGGER = new Logger(LogLevel.Trace, "logs/game.log");
+    
+    private static final String COMMANDS = "NAVSRSLRSPHATORSHEDAMCOMXXX";
+    private static final int COMMAND_SIZE = 3;
 }
