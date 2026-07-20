@@ -36,6 +36,9 @@
  *  - Make the ship take damage
  *  - Fire the ship's phasers
  * 
+ * Ship's get location, construction, and fire phasers all
+ * take base-1 as input. 
+ * 
  */
 class Ship {
 public:

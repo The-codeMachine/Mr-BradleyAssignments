@@ -1,9 +1,10 @@
 #include "Enterprise.hpp"
 
 Enterprise::Enterprise(double shields, int sectorX, int sectorY,
-                int quadrantX, int quadrantY, int torpedoes, bool docked) :
+                int quadrantX, int quadrantY, int energy, 
+                int torpedoes, bool docked) :
                 Ship(shields, sectorX, sectorY, quadrantX, quadrantX),
-                torpedoes(torpedoes), docked(docked) {}
+                energy(energy), torpedoes(torpedoes), docked(docked) {}
 
 // Makes the Enterprise move based off warpFactor
 // and warpDirection, but double checks that the

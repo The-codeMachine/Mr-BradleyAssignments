@@ -38,6 +38,9 @@ import static common.MathUtils.clamp;
  *  - Make the ship take damage
  *  - Fire the ship's phasers
  * 
+ * Ship's get location, construction, and fire phasers all
+ * take base-1 as input. 
+ * 
  */
 public class Ship {
     public Ship(double shields, int sectorX, int sectorY, int quadrantX, int quadrantY) {
@@ -105,8 +108,10 @@ public class Ship {
         // warp speed == total sector distance
         double distanceInSectors = warpFactor * GRID_SIZE;
         
+        // converts to correct orientation, and warpDirection is correct (from base-1 to base-0)
+        double angleDegrees = 90.0 - (warpDirection - 1.0) * 45.0;
         // convert dirrection to standard radians
-        double radians = Math.toRadians(warpDirection);
+        double radians = Math.toRadians(angleDegrees);
 
         // calculate displacement vectors using trignonmetry
         double deltaX = distanceInSectors * Math.cos(radians);

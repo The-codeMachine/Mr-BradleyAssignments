@@ -23,7 +23,8 @@
 class Enterprise : Ship {
 public:
     Enterprise(double shields, int sectorX, int sectorY,
-                int quadrantX, int quadrantY, int torpedoes, bool docked);
+                int quadrantX, int quadrantY, int energy,
+                int torpedoes, bool docked);
 
     void move(double warpFactor, double warpDirection) override;
     void takeDamage(double phaserEnergy) override;
@@ -31,6 +32,7 @@ public:
 private:
     Devices devices;
 
+    int energy;
     int torpedoes;
     bool docked;
 };

@@ -1,6 +1,7 @@
 #include "Logger.hpp"
 
 #include <string>
+#include <cstdarg>
 #include <cstdio>
 
 /**
@@ -26,9 +27,10 @@ namespace common
 
         void print(const std::string &message);
         void println(const std::string &message);
-        template <typename T, typename... Args>
+
+        template <typename... Args>
         void printf(const std::string& message, Args... args) {
-            ::printf(message, args);
+            ::printf(message.c_str(), std::forward<Args>(args)...);
         }
 
         std::string readString();
@@ -44,10 +46,10 @@ namespace common
         void warning(const std::string& message);
         void error(const std::string& message);
 
-        static common::Logger LOGGER(LogLevel::Trace, "logs/game.log");
+        inline common::Logger LOGGER(LogLevel::Trace, "logs/game.log");
 
-        static const std::string COMMANDS = "NAVSRSLRSPHATORSHEDAMCOMXXX";
-        static constexpr int COMMAND_SIZE = 3;
+        const std::string COMMANDS = "NAVSRSLRSPHATORSHEDAMCOMXXX";
+        constexpr int COMMAND_SIZE = 3;
 
     } // namespace IO
 

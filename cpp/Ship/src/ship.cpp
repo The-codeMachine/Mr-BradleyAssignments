@@ -37,9 +37,11 @@ void Ship::move(double warpFactor, double warpDirection) {
 
     // warp speed == total sector distance
     double distanceInSectors = warpFactor * GRID_SIZE;
-    
-    // convert dirrection to standard radians
-    double radians = warpDirection * (std::numbers::pi / 180.0);
+
+    // makes it base-0 from a base-1 input
+    double angleDegrees = 90.0 - (warpDirection - 1.0) * 45.0;
+    // convert direction to standard radians
+    double radians = angleDegrees * (std::numbers::pi / 180.0);
 
     // calculate displacement vectors using trignonmetry
     double deltaX = distanceInSectors * std::cos(radians);

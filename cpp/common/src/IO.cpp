@@ -12,7 +12,6 @@ namespace common {
             std::cout << message;
         }
 
-
         // Prints a message as a line to the console. This will
         // produce the message and a new line. 
         void println(const std::string &message) {

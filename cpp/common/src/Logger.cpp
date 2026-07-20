@@ -47,6 +47,7 @@ namespace common
         if (isOpen())
             return;
 
+        std::filesystem::create_directories(path.parent_path());
         logFile.open(path, std::ios::app);
 
         if (!logFile) {
