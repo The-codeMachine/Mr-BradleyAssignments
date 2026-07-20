@@ -21,8 +21,8 @@ import ship.*;
  * 
  */
 public class Enterprise extends Ship {
-    public Enterprise(double shields, int quadrantX, int quadrantY, 
-        int sectorX, int sectorY, int torpedoes, boolean docked) {
+    public Enterprise(double shields, int sectorX, int sectorY, 
+        int quadrantX, int quadrantY, int torpedoes, boolean docked) {
         super(shields, sectorX, sectorY, quadrantX, quadrantY);
 
         devices = new Devices();
@@ -61,8 +61,8 @@ public class Enterprise extends Ship {
         super.takeDamage(phaserEnergy);
     }
 
-    Devices devices;
+    private Devices devices;
 
-    int torpedoes;
-    boolean docked;
+    private int torpedoes;
+    private boolean docked;
 }

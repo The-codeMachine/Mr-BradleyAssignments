@@ -1,0 +1,36 @@
+#pragma once
+
+#include <Ship.hpp>
+#include <Device.hpp>
+
+/**
+ * The Enterprise represents the player's
+ * ship. It can do everything other ships
+ * can, and more. This includes:
+ * - Moving
+ * - Firing phasers
+ * - Firing torpedoes
+ * - Docking
+ * 
+ * If the Enterprise is destroyed, the game
+ * ends for the player.
+ * 
+ * If a certain device is destroyed, then that
+ * specific game mechanic is unavailable for the
+ * player.
+ * 
+ */
+class Enterprise : Ship {
+public:
+    Enterprise(double shields, int sectorX, int sectorY,
+                int quadrantX, int quadrantY, int torpedoes, bool docked);
+
+    void move(double warpFactor, double warpDirection) override;
+    void takeDamage(double phaserEnergy) override;
+
+private:
+    Devices devices;
+
+    int torpedoes;
+    bool docked;
+};

@@ -80,6 +80,16 @@ public class Ship {
 
     /**
      * 
+     * Gets the shields of the ship and returns it.
+     * 
+     * @return the shields of the ship
+     */
+    public double shields() {
+        return shields;
+    }
+
+    /**
+     * 
      * Makes the ship move based off a warp
      * factor and direction. This uses exact
      * trignonmetry to calculate the precise place
@@ -107,8 +117,8 @@ public class Ship {
         double newGlobalY = currentGlobalY + deltaY;
 
         // edge cases for galaxy boundaries
-        newGlobalX = common.MathUtils.clamp(newGlobalX, 0, 63.99);
-        newGlobalY = common.MathUtils.clamp(newGlobalY, 0, 63.99);
+        newGlobalX = common.MathUtils.clamp(newGlobalX, 0.0, 63.99);
+        newGlobalY = common.MathUtils.clamp(newGlobalY, 0.0, 63.99);
 
         // convert to ints
         int newQuadX = (int) (newGlobalX / GRID_SIZE);
@@ -153,17 +163,6 @@ public class Ship {
      */
     public void firePhasers(double phaserEnergy, int x, int y) {
 
-    }
-
-    /**
-     * 
-     * Gets the shields of the ship and returns it.
-     * Only subclasses can access this. 
-     * 
-     * @return the shields of the ship
-     */
-    protected double shields() {
-        return shields;
     }
 
     private double shields;

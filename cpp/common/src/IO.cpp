@@ -43,8 +43,8 @@ namespace common {
             return r;
         }
 
-        // Prompts the user with a message. The scanner will
-        // then read the user's response to the message as a String. 
+        // Prompts the user with a message. We will then read
+        // the user's response to the message as a string.
         std::string prompt(const std::string &message) {
             std::cout << message;
             
