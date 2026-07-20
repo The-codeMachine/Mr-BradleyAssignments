@@ -2,7 +2,6 @@ package device;
 
 import common.*;
 import java.util.Map;
-import java.util.TreeMap;
 
 /**
  * 
@@ -30,7 +29,7 @@ import java.util.TreeMap;
  * 
  */
 public class Devices {
-    Devices() {
+    public Devices() {
         this.devices = new double[8];
     }
 

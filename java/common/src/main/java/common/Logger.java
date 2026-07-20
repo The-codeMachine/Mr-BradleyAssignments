@@ -53,20 +53,20 @@ enum LogLevel {
  */
 public class Logger {
 
-    Logger(LogLevel level, Path path) {
+    public Logger(LogLevel level, Path path) {
         this.level = level;
         logFilePath = path;
     }
 
-    Logger(LogLevel level, String path) {
+    public Logger(LogLevel level, String path) {
         this(level, Path.of(path));
     }
 
-    Logger(String path) {
+    public Logger(String path) {
         this(LogLevel.Trace, Path.of(path));
     }
 
-    Logger(Path path) {
+    public Logger(Path path) {
         this(LogLevel.Trace, path);
     }
 

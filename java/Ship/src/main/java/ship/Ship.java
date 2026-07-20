@@ -1,7 +1,6 @@
 package ship;
 
-import common.*;
-import device.*;
+import static common.MathUtils.clamp;
 
 /**
  * TODO:
@@ -26,23 +25,22 @@ import device.*;
  */
 
 /**
- * Base class for all ships.
- *
- * A ship contains:
- *  - shields
- *  - hull health
- *  - location
- *  - devices
- *
- * Supports:
- *  - taking damage
- *  - repairing devices
- *  - docking
- *  - random device events
- *
+ * 
+ * This is the base Ship class. The ship class
+ * consists of shield, and position information.
+ * It handles movement calculation, damage reduction,
+ * and phaser firing for all base ships. Other ships
+ * like the Enterprise might use this as a super 
+ * class and work upon the current functions 
+ * (e.g. adding checks for devices).
+ * Current list of operations consist of:
+ *  - Move (move the ship based off warp factor, and direction)
+ *  - Make the ship take damage
+ *  - Fire the ship's phasers
+ * 
  */
 public class Ship {
-    Ship(int shields, int sectorX, int sectorY, int quadrantX, int quadrantY) {
+    public Ship(double shields, int sectorX, int sectorY, int quadrantX, int quadrantY) {
         this.shields = shields;
         
         this.sectorX = sectorX;
@@ -50,6 +48,34 @@ public class Ship {
 
         this.quadrantX = quadrantX;
         this.quadrantY = quadrantY;
+    }
+
+    /**
+     * 
+     * Gets the ship's local position (which 
+     * sector it is currently in).
+     * 
+     * @return the ship's sector position
+     */
+    public int[] getLocalLocation() {
+        int[] out = new int[2];
+        out[X] = sectorX;
+        out[Y] = sectorY;
+        return out;
+    }
+
+    /**
+     * 
+     * Gets which quadrant this ship is 
+     * located in currently.
+     * 
+     * @return the ship's quadrant position
+     */
+    public int[] getGlobalLocation() {
+        int[] out = new int[2];
+        out[X] = quadrantX;
+        out[Y] = quadrantY;
+        return out;
     }
 
     /**
@@ -129,7 +155,18 @@ public class Ship {
 
     }
 
-    private int shields;
+    /**
+     * 
+     * Gets the shields of the ship and returns it.
+     * Only subclasses can access this. 
+     * 
+     * @return the shields of the ship
+     */
+    protected double shields() {
+        return shields;
+    }
+
+    private double shields;
     
     private int sectorX;
     private int sectorY;
@@ -138,4 +175,7 @@ public class Ship {
     private int quadrantY;
 
     private static final int GRID_SIZE = 8;
+
+    public static final int X = 0;
+    public static final int Y = 1;
 }
