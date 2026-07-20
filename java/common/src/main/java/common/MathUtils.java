@@ -14,7 +14,7 @@ public class MathUtils {
      * @param high
      * @return a value low <= v <= high
      */
-    public static int clamp(int value, int low, int high) {
+    public static double clamp(double value, double low, double high) {
         return min(max(value, low), high);
     }
 }

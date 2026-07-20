@@ -1,9 +1,29 @@
 package ship;
 
-import java.util.ArrayList;
-
 import common.*;
 import device.*;
+
+/**
+ * TODO:
+ * Find a way to handle ship destruction 
+ * within the shipl Maybe return a boolean
+ * returning whether or not it was destroyed, 
+ * and then the QuadrantMap will remove it
+ * if it was destroyed. Or if the Enterprise
+ * gets destroyed end the game. But we will
+ * simply override that. 
+ * 
+ */
+
+/**
+ * TODO:
+ * Add a phaser firing functionality. Make
+ * sure the phaser calculation works. Currently,
+ * though we don't do this until Mr. Bradley 
+ * tells us to. We currently only need the 
+ * movement functionality. 
+ * 
+ */
 
 /**
  * Base class for all ships.
@@ -22,280 +42,100 @@ import device.*;
  *
  */
 public class Ship {
-    public Ship(double shields, double health, int x, int y) {
+    Ship(int shields, int sectorX, int sectorY, int quadrantX, int quadrantY) {
         this.shields = shields;
-        this.health = health;
-        this.x = x;
-        this.y = y;
-
-        this.devices = new ArrayList<>();
-    }
-
-    /**
-     * 
-     * Gets the ship's shields
-     * 
-     */
-    public double getShields() {
-        return shields;
-    }
-
-    /**
-     * 
-     * Gets the ship's health
-     * 
-     */
-    public double getHealth() {
-        return health;
-    }
-
-    /**
-     * 
-     * Gets the ship's x position
-     * 
-     */
-    public int getX() {
-        return x;
-    }
-
-    /**
-     * 
-     * Gets the ship's y position
-     * 
-     */
-    public int getY() {
-        return y;
-    }
-
-    /**
-     * 
-     * Sets a new position for the ship
-     * 
-     * @param newX
-     * @param newY
-     * 
-     */
-    public void setPosition(int newX, int newY) {
-        x = newX;
-        y = newY;
-    }
-
-    /**
-     * 
-     * Checks if the ship is destroyed
-     * 
-     */
-    public boolean isDestroyed() {
-        return health <= 0.0;
-    }
-
-    /**
-     * 
-     * Makes the ship take damage 
-     * 
-     * @param amount
-     * 
-     */
-    public void takeDamage(double phaserEnergy, double distance) {
-        assert phaserEnergy >= 0.0 && distance >= 0.0;
-
-        double amount = phaserEnergy / distance;
-
-        if (shields > 0.0) {
-            shields -= amount;
-
-            if (shields < 0.0) {
-                health += shields;
-                shields = 0.0;
-            }
-        } else {
-            health -= amount;
-        }
-
-        if (amount / shields >= 0.02 && devices.size() > 0) {
-            int index = GameLib.randomInt(0, devices.size() - 1);
-            double damageAmount = GameLib.randomInRange(1.0, 5.0);
-
-            devices.get(index).damage(damageAmount);
-
-            return;
-        }
-
-        // possible device damage
-        if (GameLib.chanceOf(0.6) && devices.size() > 0) {
-            int index = GameLib.randomInt(0, devices.size() - 1);
-            double damageAmount = GameLib.randomInRange(1.0, 5.0);
-
-            devices.get(index).damage(damageAmount);
-        }
-    }
-
-    /**
-     * 
-     * Repairs all the devices in the ship
-     * 
-     * @param amount
-     * 
-     */
-    public void repairAllDevices(double amount) {
-        for (Device d : devices) {
-            d.repair(amount);
-        }
-    }
-
-    /**
-     * 
-     * Resets all of the devices on the ship
-     * 
-     */
-    public void resetDevices() {
-        for (Device d : devices) {
-            d.reset();
-        }
-    }
-
-    /**
-     * 
-     * Random event that occurs on the ship
-     * 
-     */
-    public void randomDeviceEvent() {
-        if (devices.size() < 1)
-            return;
-
-        // 20% chance
-        if (GameLib.chanceOf(0.8))
-            return;
-
-        int index = GameLib.randomInt(0, devices.size() - 1);
-        devices.get(index).event();
-    }
-
-    /**
-     * 
-     * Gets a device from devices by the index
-     * 
-     * @param index
-     * 
-     */
-    public Device getDevice(int index) {
-        assert index >= 0 && index < devices.size();
-
-        return devices.get(index);
-    }
-
-    /**
-     * 
-     * Returns the total number of devices on the ship
-     * 
-     */
-    public int totalDevices() {
-        return devices.size();
-    }   
-
-    /**
-     * 
-     * Adds a device to devices (for testing purposes)
-     * 
-     */
-    public void addDevice(Device d) {
-        devices.add(d);
-    }
-
-    /**
-     * 
-     * Tests the ship's private functions
-     * 
-     */
-    public static void whiteBoxTest() {
-        System.out.println("Ship white box test");
-
-        Ship s = new Ship(100.0, 100.0, 0, 0);
-
-        s.devices.add(new Device(1, "Warp Engines"));
-        s.devices.add(new Device(2, "Sensors"));
-
-        s.takeDamage(20.0, 1.0);
-
-        assert s.getShields() == 80.0 : "Shield is not 80 like it is suppose to be";
-
-        s.randomDeviceEvent();
         
-        System.out.println(s);
+        this.sectorX = sectorX;
+        this.sectorY = sectorY;
 
-        System.out.println("Ship white box test success");
+        this.quadrantX = quadrantX;
+        this.quadrantY = quadrantY;
     }
 
-    @Override
-    public String toString() {
-        String out = "";
+    /**
+     * 
+     * Makes the ship move based off a warp
+     * factor and direction. This uses exact
+     * trignonmetry to calculate the precise place
+     * the ship will end up. 
+     * 
+     * @param warpFactor
+     * @param warpDirection
+     */
+    public void move(double warpFactor, double warpDirection) {
+        double currentGlobalX = quadrantX * GRID_SIZE + sectorX;
+        double currentGlobalY = quadrantY * GRID_SIZE + sectorY;
 
-        out += "Health: " + Double.toString(health) + "\n";
-        out += "Shields: " + Double.toString(shields) + "\n";
-        out += "Position: (" + Integer.toString(x) + ", " + Integer.toString(y) + ") \n";
+        // warp speed == total sector distance
+        double distanceInSectors = warpFactor * GRID_SIZE;
+        
+        // convert dirrection to standard radians
+        double radians = Math.toRadians(warpDirection);
 
-        out += "Devices\n";
+        // calculate displacement vectors using trignonmetry
+        double deltaX = distanceInSectors * Math.cos(radians);
+        double deltaY = distanceInSectors * Math.sin(radians);
 
-        for (Device d : devices)
-        {
-            out += "  " + d.toString() + "\n";
+        // new global positions
+        double newGlobalX = currentGlobalX + deltaX;
+        double newGlobalY = currentGlobalY + deltaY;
+
+        // edge cases for galaxy boundaries
+        newGlobalX = common.MathUtils.clamp(newGlobalX, 0, 63.99);
+        newGlobalY = common.MathUtils.clamp(newGlobalY, 0, 63.99);
+
+        // convert to ints
+        int newQuadX = (int) (newGlobalX / GRID_SIZE);
+        int newQuadY = (int) (newGlobalY / GRID_SIZE);
+
+        int newSectX = (int) (newGlobalX % GRID_SIZE);
+        int newSectY = (int) (newGlobalY % GRID_SIZE);
+
+        // assign new values
+        quadrantX = newQuadX;
+        quadrantY = newQuadY;
+
+        sectorX = newSectX;
+        sectorY = newSectY;
+    }
+
+    /**
+     * 
+     * Makes the ship take damage based off 
+     * effective phaser energy. 
+     * 
+     * @param phaserEnergy
+     */
+    public void takeDamage(double phaserEnergy) {
+        shields -= phaserEnergy;
+        if (shields <= 0) {
+            // destory ship IDK how to handle rn
         }
-
-        return out;
     }
 
-    private double shields;
-    private double health;
+    /**
+     * 
+     * Makes the ship fire phasers. This is
+     * based off the (x, y) value which is
+     * its destination. (Within one quadrant)
+     * 
+     * Not implemented yet. 
+     * 
+     * @param phaserEnergy
+     * @param x
+     * @param y
+     */
+    public void firePhasers(double phaserEnergy, int x, int y) {
 
-    private int x;
-    private int y;
+    }
 
-    private ArrayList<Device> devices;
+    private int shields;
+    
+    private int sectorX;
+    private int sectorY;
+
+    private int quadrantX;
+    private int quadrantY;
+
+    private static final int GRID_SIZE = 8;
 }
-
-/**
- * Sample Output
- * 
- * Ship test
- * Getters test
- * Ship constructed with specs
- * Health: 200.0
- * Shields: 100.0
- * Position: (3, 5) 
- * Devices
- *   [1], Warp Engines, Damage: 0.0
- *   [2], Shield Control, Damage: 0.0
- * 
- * Ship shields: 100.000000
- * Ship health: 200.000000
- * Ship position: (3, 5)
- * Ship total devices: 2
- * Getters test success
- * 
- * Damage test
- * Ship after taking 25 damage
- * Health: 200.0
- * Shields: 75.0
- * Position: (0, 0) 
- * Devices
- * 
- * Ship after taking 100 damage
- * Health: 175.0
- * Shields: 0.0
- * Position: (0, 0) 
- * Devices
- * 
- * Damage test success
- * 
- * Ship white box test
- * Health: 100.0
- * Shields: 80.0
- * Position: (0, 0) 
- * Devices
- *   [1], Warp Engines, Damage: -2.149951265549807
- *   [2], Sensors, Damage: 0.0
- * 
- * Ship white box test success
- * Ship test success
- * 
- */
