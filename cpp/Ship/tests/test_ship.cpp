@@ -27,5 +27,15 @@ int main() {
     assert(sectX == 4 && sectY == 4 && quadX == 4 && quadY == 6);
     common::IO::printf("The ship's new position is: (%d, %d) in (%d, %d)\n", sectX, sectY, quadX, quadY);
 
+    s = Ship(200, 7, 7, 8, 8);
+
+    // NE                
+    s.move(8, 2);
+    s.getLocalLocation(sectX, sectY);
+    s.getGlobalLocation(quadX, quadY);
+
+    assert(sectX == 8 && sectY == 8 && quadX == 8 && quadY == 8);
+    common::IO::printf("The ship's new position is: (%d, %d) in (%d, %d)\n", sectX, sectY, quadX, quadY);
+
     common::IO::println("Ship test success");
 }

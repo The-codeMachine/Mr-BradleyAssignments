@@ -21,6 +21,9 @@ namespace common {
 
     bool isBetween();
 
+    int toBase0(int c);
+    int toBase1(int c);
+
     void isBetweenTest();
     void testDriver();
     

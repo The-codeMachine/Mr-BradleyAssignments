@@ -1,6 +1,7 @@
 #include <QuadrantMap.hpp>
 
 #include <common/random.hpp>
+#include <common/GameLib.hpp>
 
 #include <cassert>
 #include <iostream>
@@ -36,7 +37,7 @@ int QuadrantMap::getIndexFrom(int x, int y)
 {
     assert(validPos(x, y));
 
-    return toBase0(x) + toBase0(y) * COLS;
+    return common::toBase0(x) + common::toBase0(y) * COLS;
 }
 
 // Generates two random ints, one the x (0), and the other
@@ -53,18 +54,6 @@ void QuadrantMap::generateRandomPosition(int &x, int &y)
 bool QuadrantMap::validPos(int x, int y)
 {
     return x > 0 && x <= COLS && y > 0 && y <= ROWS;
-}
-
-// Converts c to base-0, expects a base-1 input.
-int QuadrantMap::toBase0(int c)
-{
-    return c - 1;
-}
-
-// Converts c to base-1, expects a base-0 input.
-int QuadrantMap::toBase1(int c)
-{
-    return c + 1;
 }
 
 // Inserts a value into a random location. Uses base-1.

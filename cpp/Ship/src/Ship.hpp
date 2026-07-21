@@ -50,8 +50,8 @@ public:
 
     virtual void move(double warpFactor, double warpDirection);
 
-    virtual void takeDamage(double phaserEnergy);
-    virtual void firePhasers(double phaserEnergy, int x, int y);
+    virtual bool takeDamage(double phaserEnergy);
+    virtual int firePhasers(double phaserEnergy, int x, int y, int numKlingons);
 
 private:
     double shields;

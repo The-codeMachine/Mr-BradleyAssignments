@@ -20,7 +20,7 @@ void Enterprise::move(double warpFactor, double warpDirection) {
 
 // Makes the Enterprise take damage based off
 // the effective phaser energy.
-void Enterprise::takeDamage(double phaserEnergy) {
+bool Enterprise::takeDamage(double phaserEnergy) {
     devices.hitDamage(phaserEnergy, this->getShields());
-    Ship::takeDamage(phaserEnergy);
+    return Ship::takeDamage(phaserEnergy);
 }

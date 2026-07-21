@@ -1,25 +1,27 @@
 #include "Ship.hpp"
 
+#include <common/GameLib.hpp>
+
 #include <cmath>
 #include <numbers>
 #include <algorithm>
 
 Ship::Ship(double shields, int sectorX, int sectorY, int quadrantX, int quadrantY) :
-    shields(shields), sectorX(sectorX), sectorY(sectorY), 
-    quadrantX(quadrantX), quadrantY(quadrantY) {}
+    shields(shields), sectorX(common::toBase0(sectorX)), sectorY(common::toBase0(sectorY)), 
+    quadrantX(common::toBase0(quadrantX)), quadrantY(common::toBase0(quadrantY)) {}
 
 // Gets the ship's local position (which 
 // sector it is currently in).
 void Ship::getLocalLocation(int& x, int& y) const noexcept {
-    x = sectorX;
-    y = sectorY;
+    x = common::toBase1(sectorX);
+    y = common::toBase1(sectorY);
 }
 
 // Gets which quadrant this ship is 
 // located in currently.
 void Ship::getGlobalLocation(int& x, int& y) const noexcept {
-    x = quadrantX;
-    y = quadrantY;
+    x = common::toBase1(quadrantX);
+    y = common::toBase1(quadrantY);
 }
 
 // Gets the shields of the ship and returns it.
@@ -32,6 +34,9 @@ double Ship::getShields() const noexcept {
 // trignonmetry to calculate the precise place
 // the ship will end up. 
 void Ship::move(double warpFactor, double warpDirection) {
+    if (warpFactor > 10.0)
+        warpFactor = 10.0;
+
     double currentGlobalX = quadrantX * GRID_SIZE + sectorX;
     double currentGlobalY = quadrantY * GRID_SIZE + sectorY;
 
@@ -70,18 +75,25 @@ void Ship::move(double warpFactor, double warpDirection) {
     sectorY = newSectY;
 }
 
-// Makes the ship take damage based off 
-// effective phaser energy. 
-void Ship::takeDamage(double phaserEnergy) {
+// Makes the ship take damage. Returns whether
+// the damage destroys the ship or not. 
+bool Ship::takeDamage(double phaserEnergy) {
     shields -= phaserEnergy;
     if (shields <= 0) {
-        // destory ship IDK how to handle rn
+        shields = 0;
+        return true;
     }
+
+    return false;
 }
 
-// Makes the ship fire phasers. This is
-// based off the (x, y) value which is
-// its destination. (Within one quadrant)
-void Ship::firePhasers(double phaserEnergy, int x, int y) {
-    
+// Calculates the effective phaser energy
+// based off how much is fired, how 
+// far the ship is, and how many klingons
+// are in the quadant currently.
+int Ship::firePhasers(double phaserEnergy, int x, int y, int numKlingons) {
+    double distance = std::sqrt((sectorX - x) * (sectorX - x) + (sectorY - y) * (sectorY - y));
+    double h = phaserEnergy / numKlingons;
+
+    return (h / distance) * (common::random() + 2);
 }

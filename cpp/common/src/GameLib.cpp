@@ -10,6 +10,18 @@ namespace common
         return low <= value && value <= high;
     }
 
+    // Converts c to base-0. Exepcts a 
+    // base-1 argument. 
+    int toBase0(int c) {
+        return c - 1;
+    }
+
+    // Converts c to base-1. Exepcts a 
+    // base-0 argument. 
+    int toBase1(int c) {
+        return c + 1;
+    }
+
     void isBetweenTest()
     {
         std::cout << "Is between test\n";

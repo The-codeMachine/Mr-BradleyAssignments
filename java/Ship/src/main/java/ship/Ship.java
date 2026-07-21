@@ -82,6 +82,9 @@ public class Ship {
      * @param warpDirection
      */
     public void move(double warpFactor, double warpDirection) {
+        if (warpFactor > 10.0)
+            warpFactor = 10.0;
+
         double currentGlobalX = quadrantX * GRID_SIZE + sectorX;
         double currentGlobalY = quadrantY * GRID_SIZE + sectorY;
 
@@ -152,9 +155,9 @@ public class Ship {
      * 
      * @return the effective phaserEnergy based off calculations
      */
-    public int firePhasers(double phaserEnergy, int x, int y, int numKligons) {
+    public int firePhasers(double phaserEnergy, int x, int y, int numKlingons) {
         double distance = Math.sqrt(Math.pow(sectorX - x, 2) + Math.pow(sectorY - y, 2));
-        double h = phaserEnergy / numKligons;
+        double h = phaserEnergy / numKlingons;
 
         return (int)((h / distance) * (common.GameLib.random() + 2));
     }

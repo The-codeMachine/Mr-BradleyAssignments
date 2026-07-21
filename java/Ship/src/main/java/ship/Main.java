@@ -32,6 +32,7 @@ public class Main {
                 globalLocation[0], globalLocation[1]);
 
         s = new Ship(200, 7, 7, 8, 8);
+        
         // NE                
         s.move(8, 2);
         localLocation = s.getLocalLocation();

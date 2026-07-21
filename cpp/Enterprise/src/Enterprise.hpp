@@ -27,7 +27,7 @@ public:
                 int torpedoes, bool docked);
 
     void move(double warpFactor, double warpDirection) override;
-    void takeDamage(double phaserEnergy) override;
+    bool takeDamage(double phaserEnergy) override;
 
 private:
     Devices devices;
