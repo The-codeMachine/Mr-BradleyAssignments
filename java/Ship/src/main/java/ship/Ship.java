@@ -1,5 +1,9 @@
 package ship;
 
+import java.util.ArrayList;
+
+import common.GameLib.Location;
+
 /**
  * 
  * This is the base Ship class. The ship class
@@ -24,11 +28,8 @@ public class Ship {
     public Ship(double shields, int sectorX, int sectorY, int quadrantX, int quadrantY) {
         this.shields = shields;
         
-        this.sectorX = common.GameLib.toBase0(sectorX);
-        this.sectorY = common.GameLib.toBase0(sectorY);
-
-        this.quadrantX = common.GameLib.toBase0(quadrantX);
-        this.quadrantY = common.GameLib.toBase0(quadrantY);
+        location = new Location(common.GameLib.toBase0(sectorX), common.GameLib.toBase0(sectorY),
+            common.GameLib.toBase0(quadrantX), common.GameLib.toBase0(quadrantY)); 
     }
 
     /**
@@ -38,27 +39,8 @@ public class Ship {
      * 
      * @return the ship's sector position
      */
-    public int[] getLocalLocation() {
-        int[] out = new int[2];
-        out[X] = common.GameLib.toBase1(sectorX);
-        out[Y] = common.GameLib.toBase1(sectorY);
-
-        return out;
-    }
-
-    /**
-     * 
-     * Gets which quadrant this ship is 
-     * located in currently.
-     * 
-     * @return the ship's quadrant position
-     */
-    public int[] getGlobalLocation() {
-        int[] out = new int[2];
-        out[X] = common.GameLib.toBase1(quadrantX);
-        out[Y] = common.GameLib.toBase1(quadrantY);
-
-        return out;
+    public Location getLocation() {
+        return location;
     }
 
     /**
@@ -78,49 +60,74 @@ public class Ship {
      * trignonmetry to calculate the precise place
      * the ship will end up. 
      * 
+     * The path will be returned as base-0. 
+     * 
      * @param warpFactor
      * @param warpDirection
+     * @return the path the ship will take to their destination 
      */
-    public void move(double warpFactor, double warpDirection) {
+    public ArrayList<Location> calculatePath(double warpFactor, double warpDirection) {
         if (warpFactor > 10.0)
             warpFactor = 10.0;
 
-        double currentGlobalX = quadrantX * GRID_SIZE + sectorX;
-        double currentGlobalY = quadrantY * GRID_SIZE + sectorY;
+        ArrayList<Location> path = new ArrayList<>();
 
-        // warp speed == total sector distance
+        double currentGlobalX = location.quadrantX * GRID_SIZE + location.sectorX;
+        double currentGlobalY = location.quadrantY * GRID_SIZE + location.sectorY;
+
         double distanceInSectors = warpFactor * GRID_SIZE;
-        
-        // converts to correct orientation, and warpDirection is correct (from base-1 to base-0)
+
         double angleDegrees = 90.0 - (warpDirection - 1.0) * 45.0;
-        // convert dirrection to standard radians
         double radians = Math.toRadians(angleDegrees);
 
-        // calculate displacement vectors using trignonmetry
         double deltaX = distanceInSectors * Math.cos(radians);
         double deltaY = distanceInSectors * Math.sin(radians);
 
-        // new global positions
-        double newGlobalX = currentGlobalX + deltaX;
-        double newGlobalY = currentGlobalY + deltaY;
+        double newGlobalX = common.MathUtils.clamp(currentGlobalX + deltaX, 0.0, 63.99);
+        double newGlobalY = common.MathUtils.clamp(currentGlobalY + deltaY, 0.0, 63.99);
 
-        // edge cases for galaxy boundaries
-        newGlobalX = common.MathUtils.clamp(newGlobalX, 0.0, 63.99);
-        newGlobalY = common.MathUtils.clamp(newGlobalY, 0.0, 63.99);
+        double dx = newGlobalX - currentGlobalX;
+        double dy = newGlobalY - currentGlobalY;
 
-        // convert to ints
-        int newQuadX = (int) (newGlobalX / GRID_SIZE);
-        int newQuadY = (int) (newGlobalY / GRID_SIZE);
+        int steps = (int)Math.ceil(Math.max(Math.abs(dx), Math.abs(dy)));
 
-        int newSectX = (int) (newGlobalX % GRID_SIZE);
-        int newSectY = (int) (newGlobalY % GRID_SIZE);
+        int lastGlobalX = -1;
+        int lastGlobalY = -1;
 
-        // assign new values
-        quadrantX = newQuadX;
-        quadrantY = newQuadY;
+        for (int i = 1; i <= steps; i++) {
+            double t = (double)i / steps;
 
-        sectorX = newSectX;
-        sectorY = newSectY;
+            int globalX = (int)(currentGlobalX + dx * t);
+            int globalY = (int)(currentGlobalY + dy * t);
+
+            if (globalX == lastGlobalX && globalY == lastGlobalY)
+                continue;
+
+            lastGlobalX = globalX;
+            lastGlobalY = globalY;
+
+            int quadrantX = globalX / GRID_SIZE;
+            int quadrantY = globalY / GRID_SIZE;
+
+            int sectorX = globalX % GRID_SIZE;
+            int sectorY = globalY % GRID_SIZE;
+
+            path.add(new Location(sectorX, sectorY, quadrantX, quadrantY));
+        }
+
+        return path;
+    }
+
+    /**
+     * 
+     * Moves the ship to the new location.
+     * Does not do any checks to validate
+     * that the location is a valid position. 
+     * 
+     * @param location
+     */
+    public void move(Location location) {
+        this.location = location;
     }
 
     /**
@@ -156,7 +163,7 @@ public class Ship {
      * @return the effective phaserEnergy based off calculations
      */
     public int firePhasers(double phaserEnergy, int x, int y, int numKlingons) {
-        double distance = Math.sqrt(Math.pow(sectorX - x, 2) + Math.pow(sectorY - y, 2));
+        double distance = Math.sqrt(Math.pow(location.sectorX - x, 2) + Math.pow(location.sectorY - y, 2));
         double h = phaserEnergy / numKlingons;
 
         return (int)((h / distance) * (common.GameLib.random() + 2));
@@ -164,14 +171,7 @@ public class Ship {
 
     private double shields;
     
-    private int sectorX;
-    private int sectorY;
-
-    private int quadrantX;
-    private int quadrantY;
+    private Location location;
 
     private static final int GRID_SIZE = 8;
-
-    public static final int X = 0;
-    public static final int Y = 1;
 }

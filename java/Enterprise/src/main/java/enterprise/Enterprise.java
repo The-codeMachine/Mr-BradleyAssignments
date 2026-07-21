@@ -1,5 +1,8 @@
 package enterprise;
 
+import common.GameLib.Location;
+import java.util.ArrayList;
+
 import device.*;
 import ship.*;
 
@@ -39,20 +42,14 @@ public class Enterprise extends Ship {
      * the user to use impulse engines if the warp
      * engines are offline. 
      * 
-     * TODO:
-     * Not sure if we should do it here, but we 
-     * need to check whether there is already an
-     * object there. If there is cancel the move,
-     * move the Enterprise, or damage the Enterprise.
-     * 
      * @param warpFactor
      * @param warpDirection
      */
-    public void move(double warpFactor, double warpDirection) {
+    public ArrayList<Location> calculatePath(double warpFactor, double warpDirection) {
         if (devices.isDamaged(Devices.WARP_ENGINES) && warpFactor >= 1.0)
-            return;
+            return new ArrayList<>();
 
-        super.move(warpFactor, warpDirection);
+        return super.calculatePath(warpFactor, warpDirection);
     }
 
     /**

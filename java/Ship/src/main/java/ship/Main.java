@@ -1,5 +1,7 @@
 package ship;
 
+import common.GameLib.Location;
+
 import common.IO;
 
 public class Main {
@@ -9,40 +11,37 @@ public class Main {
         Ship s = new Ship(200, 4, 4, 2, 2);
 
         // N
-        s.move(2, 1);
+        s.calculatePath(2, 1);
 
-        int[] localLocation = s.getLocalLocation();
-        int[] globalLocation = s.getGlobalLocation();
+        Location location = s.getLocation();
 
-        assert localLocation[0] == 4 && localLocation[1] == 4 &&
-                globalLocation[0] == 2 && globalLocation[1] == 4
+        assert location.sectorX == 4 && location.sectorY == 4 &&
+                location.quadrantX == 2 && location.quadrantY == 4
                 : "Ship did not move to correct location";
-        IO.printf("The ship's new position is: (%d, %d) in (%d, %d)\n", localLocation[0], localLocation[1],
-                globalLocation[0], globalLocation[1]);
+        IO.printf("The ship's new position is: (%d, %d) in (%d, %d)\n", location.sectorX, location.sectorY,
+                location.quadrantX, location.quadrantY);
 
         // NE
-        s.move(3, 2);
-        localLocation = s.getLocalLocation();
-        globalLocation = s.getGlobalLocation();
+        s.calculatePath(3, 2);
+        location = s.getLocation();
 
-        assert localLocation[0] == 4 && localLocation[1] == 4 &&
-                globalLocation[0] == 4 && globalLocation[1] == 6
+        assert location.sectorX == 4 && location.sectorY == 4 &&
+                location.quadrantX == 4 && location.quadrantY == 6
                 : "Ship did not move to correct location";
-        IO.printf("The ship's new position is: (%d, %d) in (%d, %d)\n", localLocation[0], localLocation[1],
-                globalLocation[0], globalLocation[1]);
+        IO.printf("The ship's new position is: (%d, %d) in (%d, %d)\n", location.sectorX, location.sectorY,
+                location.quadrantX, location.quadrantY);
 
         s = new Ship(200, 7, 7, 8, 8);
         
         // NE                
-        s.move(8, 2);
-        localLocation = s.getLocalLocation();
-        globalLocation = s.getGlobalLocation();
+        s.calculatePath(8, 2);
+        location = s.getLocation();
 
-        assert localLocation[0] == 8 && localLocation[1] == 8 &&
-                globalLocation[0] == 8 && globalLocation[1] == 8
+        assert location.sectorX == 8 && location.sectorY == 8 &&
+                location.quadrantX == 8 && location.quadrantY == 8
                 : "Ship did not move to correct location";
-        IO.printf("The ship's new position is: (%d, %d) in (%d, %d)\n", localLocation[0], localLocation[1],
-                globalLocation[0], globalLocation[1]);
+        IO.printf("The ship's new position is: (%d, %d) in (%d, %d)\n", location.sectorX, location.sectorY,
+                location.quadrantX, location.quadrantY);
 
         IO.println("Ship test success");
     }

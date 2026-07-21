@@ -1,5 +1,9 @@
 package Game;
 
+import common.GameLib.Location;
+
+import java.util.ArrayList;
+
 import QuadrantMap.QuadrantMap;
 import enterprise.Enterprise;
 import galaxy.Galaxy;
@@ -33,34 +37,33 @@ public class Game {
      * there more gracefully. Currently it will just
      * not complete the move. Maybe make .move function
      * inside the Enterprise a boolean returning whether
-     * it was a success or not. 
+     * it was a success or not.
      * 
      * @param warpFactor
      * @param warpDirection
+     * @return true if the move was successful 
      */
-    public void move(double warpFactor, double warpDirection) {
-        int[] oldGlobalLocation = enterprise.getGlobalLocation();
-        int[] oldLocalLocation = enterprise.getLocalLocation();
+    public boolean move(double warpFactor, double warpDirection) {
+        ArrayList<Location> path = enterprise.calculatePath(warpFactor, warpDirection);
 
-        enterprise.move(warpFactor, warpDirection);
+        Location last = path.getLast();
 
-        int[] newGlobalLocation = enterprise.getGlobalLocation();
-        int[] newLocalLocation = enterprise.getLocalLocation();
+        for (Location location : path) {
+            if (!map[location.quadrantX][location.quadrantY]
+                    .empty(location.sectorX, location.sectorY)) {
 
-        // clears old location
-        map[oldGlobalLocation[X]][oldGlobalLocation[Y]]
-                .clearSector(oldLocalLocation[X], oldLocalLocation[Y]);
+                last = location;
+                break;
+            }
+        }
 
-        // puts new location
-        map[newGlobalLocation[X]][newGlobalLocation[Y]]
-                .place(newLocalLocation[X], newLocalLocation[Y], QuadrantMap.ENTERPRISE);
+        enterprise.move(last);
+
+        return last == path.getLast();
     }
-    
+
     private Enterprise enterprise;
     private Galaxy galaxy;
 
     private QuadrantMap[][] map;
-
-    private static final int X = 0;
-    private static final int Y = 1;
 }

@@ -16,6 +16,48 @@ package common;
 
 public class GameLib {
 
+    // Location helper class (represents a paired (x, y) coordinates)
+
+    /**
+     * 
+     * This is a helper class which represents a 
+     * paired (x, y) coordinate. This allows public
+     * access to its x, and y value. You can 
+     * construct it with an inital x, and y value, or
+     * none. If the location is unassigned it is = -1.
+     * 
+     * Both coordinates are stored as base-0. 
+     * 
+     */
+    public static class Location {
+        public Location(int sectorX, int sectorY, int quadrantX, int quadrantY) {
+            sectorX = (int)MathUtils.clamp(sectorX, MIN, MAX);
+            sectorY = (int)MathUtils.clamp(sectorY, MIN, MAX);
+            quadrantX = (int)MathUtils.clamp(quadrantX, MIN, MAX);
+            quadrantY = (int)MathUtils.clamp(quadrantY, MIN, MAX);
+
+            this.sectorX = sectorX;
+            this.sectorY = sectorY;
+
+            this.quadrantX = quadrantX;
+            this.quadrantY = quadrantY;
+        }
+
+        public Location() {
+            sectorX = -1;
+            sectorY = -1;
+        }
+
+        public int sectorX;
+        public int sectorY;
+
+        public int quadrantX;
+        public int quadrantY;
+
+        private static final int MIN = 0;
+        private static final int MAX = 7;
+    }
+
     // Random helper functions
 
     /**

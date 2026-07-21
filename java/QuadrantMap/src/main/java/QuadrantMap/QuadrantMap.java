@@ -97,7 +97,8 @@ public class QuadrantMap {
      * this by checking if (x, y) is actually the value, and
      * then clearing it, and inserting it into (newX, newY) after
      * verifying that (newX, newY) is empty. Can be used to move
-     * Enterprise or Klingons.
+     * Enterprise or Klingons. Checks that the path between
+     * the two coordinates is clear. 
      * 
      * Uses base-1 coordinates. 
      *
@@ -107,7 +108,7 @@ public class QuadrantMap {
      * @param newY
      * @param value
      */
-    public void move(int x, int y, int newX, int newY, String value) {
+    public boolean move(int x, int y, int newX, int newY, String value) {
         // you assert with expressions
         assert validPos(x, y) : "(x, y) sector must be valid";
         assert validPos(newX, newY) : "(newX, newY) sector must be valid";
@@ -120,7 +121,11 @@ public class QuadrantMap {
         if (empty(newX, newY)) {
             clearSector(x, y);
             place(newX, newY, value);
+            
+            return true;
         }
+
+        return false;
     }
 
     /**
