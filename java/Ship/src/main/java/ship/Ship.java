@@ -17,16 +17,18 @@ package ship;
  * Ship's get location, construction, and fire phasers all
  * take base-1 as input. 
  * 
+ * Internally, all the variables are base-0. 
+ * 
  */
 public class Ship {
     public Ship(double shields, int sectorX, int sectorY, int quadrantX, int quadrantY) {
         this.shields = shields;
         
-        this.sectorX = sectorX;
-        this.sectorY = sectorY;
+        this.sectorX = common.GameLib.toBase0(sectorX);
+        this.sectorY = common.GameLib.toBase0(sectorY);
 
-        this.quadrantX = quadrantX;
-        this.quadrantY = quadrantY;
+        this.quadrantX = common.GameLib.toBase0(quadrantX);
+        this.quadrantY = common.GameLib.toBase0(quadrantY);
     }
 
     /**
@@ -38,8 +40,9 @@ public class Ship {
      */
     public int[] getLocalLocation() {
         int[] out = new int[2];
-        out[X] = sectorX;
-        out[Y] = sectorY;
+        out[X] = common.GameLib.toBase1(sectorX);
+        out[Y] = common.GameLib.toBase1(sectorY);
+
         return out;
     }
 
@@ -52,8 +55,9 @@ public class Ship {
      */
     public int[] getGlobalLocation() {
         int[] out = new int[2];
-        out[X] = quadrantX;
-        out[Y] = quadrantY;
+        out[X] = common.GameLib.toBase1(quadrantX);
+        out[Y] = common.GameLib.toBase1(quadrantY);
+
         return out;
     }
 

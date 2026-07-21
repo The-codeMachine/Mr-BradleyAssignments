@@ -1,6 +1,7 @@
 package QuadrantMap;
 
 import common.GameLib;
+import common.GameLib.*;
 import quadrant.*;
 
 /**
@@ -261,7 +262,7 @@ public class QuadrantMap {
         assert validPos(x, y) : "(x, y) must be a valid sector";
 
         // converts to base-0 because QuadrantString uses base-0
-        return toBase0(y) * COLS + toBase0(x);
+        return GameLib.toBase0(y) * COLS + GameLib.toBase0(x);
     }
 
     /**
@@ -291,29 +292,6 @@ public class QuadrantMap {
      */
     private static boolean validPos(int x, int y) {
         return x > 0 && x <= COLS && y > 0 && y <= ROWS;
-    }
-
-    /**
-     * 
-     * Converts c to base-0, expects a base-1 input.
-     * 
-     * @param c
-     * @return c as base-0
-     */
-    private static int toBase0(int c) {
-        return c - 1;
-    }
-
-    /**
-     * 
-     * Converts c to base-1, expects a base-0 input.
-     * Might remove toBase1 since it isn't used anymore. 
-     * 
-     * @param c
-     * @return c as base-1
-     */
-    private static int toBase1(int c) {
-        return c + 1;
     }
 
     private QuadrantString quadrantString;

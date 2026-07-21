@@ -63,9 +63,9 @@ public class Enterprise extends Ship {
      * @param phaserEnergy
      * 
      */
-    public void takeDamage(double phaserEnergy) {
+    public boolean takeDamage(double phaserEnergy) {
         devices.hitDamage(phaserEnergy, super.shields());
-        super.takeDamage(phaserEnergy);
+        return super.takeDamage(phaserEnergy);
     }
 
     private Devices devices;

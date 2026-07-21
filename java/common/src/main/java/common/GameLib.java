@@ -108,6 +108,30 @@ public class GameLib {
         return weights.length - 1;
     }
 
+    /**
+     * 
+     * Converts c to base-0. Exepcts a 
+     * base-1 argument. 
+     * 
+     * @param c
+     * @return c as base-0 from base-1
+     */
+    public static int toBase0(int c) {
+        return c - 1;
+    }
+
+    /**
+     * 
+     * Converts c to base-1. Exepcts a 
+     * base-0 argument. 
+     * 
+     * @param c
+     * @return c as base-1 from base-0
+     */
+    public static int toBase1(int c) {
+        return c + 1;
+    }
+
     private static double _rnd;
     /**
      * This function is the MS BASIC function of the same name

@@ -55,29 +55,7 @@ public class Game {
         map[newGlobalLocation[X]][newGlobalLocation[Y]]
                 .place(newLocalLocation[X], newLocalLocation[Y], QuadrantMap.ENTERPRISE);
     }
-
-    /**
-     * 
-     * Converts the value from base-1 to base-0.
-     * 
-     * @param c
-     * @return the value as base-0 from base-1
-     */
-    private static int toBase0(int c) {
-        return c - 1;
-    }
-
-    /**
-     * 
-     * Converts a value from base-0 to base-1.
-     * 
-     * @param c
-     * @return the value as base-1 from base-0
-     */
-    private static int toBase1(int c) {
-        return c + 1;
-    }
-
+    
     private Enterprise enterprise;
     private Galaxy galaxy;
 
