@@ -22,10 +22,11 @@ import ship.*;
  */
 public class Enterprise extends Ship {
     public Enterprise(double shields, int sectorX, int sectorY, 
-        int quadrantX, int quadrantY, int torpedoes, boolean docked) {
+        int quadrantX, int quadrantY, int energy, int torpedoes, boolean docked) {
         super(shields, sectorX, sectorY, quadrantX, quadrantY);
 
         devices = new Devices();
+        this.energy = energy;
         this.torpedoes = torpedoes;
         this.docked = docked;
     }
@@ -63,6 +64,7 @@ public class Enterprise extends Ship {
 
     private Devices devices;
 
+    private int energy;
     private int torpedoes;
     private boolean docked;
 }
