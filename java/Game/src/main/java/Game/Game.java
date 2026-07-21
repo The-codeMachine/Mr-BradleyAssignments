@@ -24,15 +24,16 @@ public class Game {
      * within a quadrant).
      * 
      * It does this by comparing the new and old
-     * coordinates. Based off this it retrieves 
+     * coordinates. Based off this it retrieves
      * the old and new QuadrantMap, adjusting values
-     * within there. 
+     * within there.
      * 
-     * TODO: 
-     * Make it handle if there is already an object 
+     * TODO:
+     * Make it handle if there is already an object
      * there more gracefully. Currently it will just
-     * not complete the move. Might even kill the 
-     * program. But I am not sure how to handle it yet. 
+     * not complete the move. Maybe make .move function
+     * inside the Enterprise a boolean returning whether
+     * it was a success or not. 
      * 
      * @param warpFactor
      * @param warpDirection
@@ -46,23 +47,13 @@ public class Game {
         int[] newGlobalLocation = enterprise.getGlobalLocation();
         int[] newLocalLocation = enterprise.getLocalLocation();
 
-        QuadrantMap currQ = map[toBase0(oldGlobalLocation[X])][toBase0(oldGlobalLocation[Y])];
+        // clears old location
+        map[oldGlobalLocation[X]][oldGlobalLocation[Y]]
+                .clearSector(oldLocalLocation[X], oldLocalLocation[Y]);
 
-        // moves the Enterprise within a quadrant
-        if (oldGlobalLocation == newGlobalLocation) {
-            currQ.move(oldLocalLocation[X], oldLocalLocation[Y],
-                    newLocalLocation[X], newLocalLocation[Y],
-                    QuadrantMap.ENTERPRISE);
-
-            // exit function, no more functionality is necessary
-            return;
-        }
-
-        // moves the Enterprise through different quadrants
-        QuadrantMap newQ = map[toBase0(newGlobalLocation[X])][toBase0(newGlobalLocation[Y])];
-
-        currQ.clearSector(oldLocalLocation[X], oldLocalLocation[Y]);
-        newQ.place(newLocalLocation[X], newLocalLocation[Y], QuadrantMap.ENTERPRISE);
+        // puts new location
+        map[newGlobalLocation[X]][newGlobalLocation[Y]]
+                .place(newLocalLocation[X], newLocalLocation[Y], QuadrantMap.ENTERPRISE);
     }
 
     /**

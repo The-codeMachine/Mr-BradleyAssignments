@@ -1,29 +1,5 @@
 package ship;
 
-import static common.MathUtils.clamp;
-
-/**
- * TODO:
- * Find a way to handle ship destruction 
- * within the shipl Maybe return a boolean
- * returning whether or not it was destroyed, 
- * and then the QuadrantMap will remove it
- * if it was destroyed. Or if the Enterprise
- * gets destroyed end the game. But we will
- * simply override that. 
- * 
- */
-
-/**
- * TODO:
- * Add a phaser firing functionality. Make
- * sure the phaser calculation works. Currently,
- * though we don't do this until Mr. Bradley 
- * tells us to. We currently only need the 
- * movement functionality. 
- * 
- */
-
 /**
  * 
  * This is the base Ship class. The ship class
@@ -142,32 +118,41 @@ public class Ship {
 
     /**
      * 
-     * Makes the ship take damage based off 
-     * effective phaser energy. 
+     * Makes the ship take damage. Returns whether
+     * the damage destroys the ship or not. 
      * 
      * @param phaserEnergy
+     * @return true if the ship is destoryed 
      */
-    public void takeDamage(double phaserEnergy) {
+    public boolean takeDamage(double phaserEnergy) {
         shields -= phaserEnergy;
         if (shields <= 0) {
-            // destory ship IDK how to handle rn
+            shields = 0;
+            return true;
         }
+
+        return false;
     }
 
     /**
      * 
-     * Makes the ship fire phasers. This is
-     * based off the (x, y) value which is
-     * its destination. (Within one quadrant)
-     * 
-     * Not implemented yet. 
+     * Calculates the effective phaser energy
+     * based off how much is fired, how 
+     * far the ship is, and how many klingons
+     * are in the quadant currently. 
      * 
      * @param phaserEnergy
      * @param x
      * @param y
+     * @param numKlingons
+     * 
+     * @return the effective phaserEnergy based off calculations
      */
-    public void firePhasers(double phaserEnergy, int x, int y) {
+    public int firePhasers(double phaserEnergy, int x, int y, int numKligons) {
+        double distance = Math.sqrt(Math.pow(sectorX - x, 2) + Math.pow(sectorY - y, 2));
+        double h = phaserEnergy / numKligons;
 
+        return (int)((h / distance) * (common.GameLib.random() + 2));
     }
 
     private double shields;

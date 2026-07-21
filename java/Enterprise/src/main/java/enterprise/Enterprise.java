@@ -39,6 +39,12 @@ public class Enterprise extends Ship {
      * the user to use impulse engines if the warp
      * engines are offline. 
      * 
+     * TODO:
+     * Not sure if we should do it here, but we 
+     * need to check whether there is already an
+     * object there. If there is cancel the move,
+     * move the Enterprise, or damage the Enterprise.
+     * 
      * @param warpFactor
      * @param warpDirection
      */
