@@ -267,7 +267,7 @@ public class QuadrantMap {
 
     /**
      * 
-     * Initializes the Quadrant by placing the Enterprise at (x, y),
+     * Initializes the Quadrant without placing the Enterprise at (x, y),
      * and uses the Quadrant information to place the rest of the
      * objects.
      * 

@@ -25,7 +25,6 @@ import galaxy.Galaxy;
  *  - Running the game loop
  *  - Moving the Enterprise (and later other ships)
  * 
- * 
  */
 public class Game {
 
@@ -69,7 +68,7 @@ public class Game {
 
     /**
      * 
-     * Gets the curernt Enterprise. 
+     * Gets the current Enterprise. 
      * 
      * @return the enterprise of the game
      */

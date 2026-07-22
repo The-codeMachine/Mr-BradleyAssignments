@@ -7,19 +7,33 @@
 #include <ostream>
 #include <cstdint>
 
-/*
-   TODO:
-   Assertions are currently used to document preconditions during
-   development, and handle exceptions. Error handling with exceptions
-   return values, etc. will be visited later as the design evolves.  
-*/
+/**
+ * 
+ * TODO:
+ * Resonably large issue. Not sure how to handle it currently,
+ * but essentially, the QuadrantMap is upside-down. As y goes
+ * up it goes down. This is backwards to what is normal. This
+ * issue is currently fixed by adjusting the delta-y to be 
+ * negative, this makes North = up, but we might want to flip
+ * the QuadrantMap, maybe just in the printing section. Any 
+ * ideas? 
+ * 
+ */
+
+
+/**
+ * TODO:
+ * Assertions are currently used to document preconditions during
+ * development, and handle exceptions. Error handling with exceptions
+ * return values, etc. will be visited later as the design evolves.  
+ */
 
 /**
  * QuadrantMap handles all of the movement and positional
  * status for all objects within a Quadrant. Currently this
  * includes: klingons, stars, bases, and the Enterprise. 
  * Operations include:
- *  - Construction (through Quadrant)
+ *  - Construction (through Quadrant, with or without an Enterprise)
  *  - Insert an object
  *  - Clear a sector
  *  - Move an object
@@ -43,6 +57,8 @@ class QuadrantMap
 {
 public:
    QuadrantMap(Quadrant q, int x, int y);
+   QuadrantMap(Quadrant q);
+   QuadrantMap();
 
    void place(int x, int y, const std::string& value);
    void clearSector(int x, int y);
@@ -77,6 +93,7 @@ private:
 
    void placeValues(int amount, const std::string &value);
    void initializeQuadrant(Quadrant q, int x, int y);
+   void initializeQuadrant(Quadrant q);
 
 private:
    QuadrantString quadrantString;

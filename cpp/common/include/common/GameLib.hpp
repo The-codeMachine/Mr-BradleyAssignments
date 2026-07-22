@@ -19,6 +19,37 @@
 
 namespace common {
 
+    /**
+     * 
+     * This is a helper class which represents a 
+     * paired (x, y) coordinate. This allows public
+     * access to its x, and y value. You can 
+     * construct it with an inital x, and y value, or
+     * none. If the location is unassigned it is = -1.
+     * 
+     * Both coordinates are stored as base-0. 
+     * 
+     */
+    class Location {
+    public:
+        Location();
+        Location(int sectorX, int sectorY, int quadrantX, int quadrantY);
+
+        bool operator==(const Location& other) const;
+
+        std::string toString() const;
+
+        int quadrantX;
+        int quadrantY;
+
+        int sectorX;
+        int sectorY;
+        
+    private:
+        static constexpr int MIN = 0;
+        static constexpr int MAX = 7;
+    };
+
     bool isBetween();
 
     int toBase0(int c);

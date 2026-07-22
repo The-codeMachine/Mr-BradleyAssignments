@@ -39,8 +39,7 @@ public class GameLib {
         }
 
         public Location() {
-            sectorX = -1;
-            sectorY = -1;
+            this(-1, -1, -1, -1);
         }
 
         @Override

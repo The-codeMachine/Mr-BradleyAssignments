@@ -20,6 +20,13 @@ QuadrantMap::QuadrantMap(Quadrant q, int x, int y)
     initializeQuadrant(q, x, y);
 }
 
+// Constructs a QuadrantMap from quadrant Q.
+QuadrantMap::QuadrantMap(Quadrant q) {
+    initializeQuadrant(q);
+}
+
+QuadrantMap::QuadrantMap() : quadrantString() {}
+
 // Converts the 2D index (x, y) into a 1D index
 // for the quadrantString. X, and y use base-1
 // positions. This uses the formula:
@@ -82,6 +89,16 @@ void QuadrantMap::placeValues(int amount, const std::string &value)
 void QuadrantMap::initializeQuadrant(Quadrant q, int x, int y)
 {
     place(x, y, ENTERPRISE);
+    placeValues(q.klingons(), KLINGON);
+    placeValues(q.bases(), BASE);
+    placeValues(q.stars(), STAR);
+}
+
+// Initializes the Quadrant without placing the Enterprise at (x, y),
+// and uses the Quadrant information to place the rest of the
+// objects.
+void QuadrantMap::initializeQuadrant(Quadrant q)
+{
     placeValues(q.klingons(), KLINGON);
     placeValues(q.bases(), BASE);
     placeValues(q.stars(), STAR);

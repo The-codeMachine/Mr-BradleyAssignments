@@ -1,10 +1,28 @@
 #include "../include/common/GameLib.hpp"
+
 #include <iostream>
 #include <chrono>
+#include <algorithm>
 #include <cassert>
 
 namespace common
 {
+
+    Location::Location(int sectorX, int sectorY, int quadrantX, int quadrantY) :
+        sectorX(std::clamp(sectorX, MIN, MAX)), sectorY(std::clamp(sectorY, MIN, MAX)),
+        quadrantX(std::clamp(quadrantX, MIN, MAX)), quadrantY(std::clamp(quadrantY, MIN, MAX)) {}
+
+    Location::Location() : Location(-1, -1, -1, -1) {}
+
+    bool Location::operator==(const Location& other) const {
+        return (other.sectorX == sectorX && other.sectorY == sectorY 
+            && quadrantX == other.quadrantX && quadrantY == other.quadrantY);
+    }
+
+    std::string Location::toString() const {
+        return "(" + std::to_string(sectorX) + ", " + std::to_string(sectorY) + ") in ("
+         + std::to_string(quadrantX) + ", " + std::to_string(quadrantY) + ")";
+    }
 
     bool isBetween(double value, double low, double high) {
         return low <= value && value <= high;

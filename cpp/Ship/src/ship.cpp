@@ -7,21 +7,13 @@
 #include <algorithm>
 
 Ship::Ship(double shields, int sectorX, int sectorY, int quadrantX, int quadrantY) :
-    shields(shields), sectorX(common::toBase0(sectorX)), sectorY(common::toBase0(sectorY)), 
-    quadrantX(common::toBase0(quadrantX)), quadrantY(common::toBase0(quadrantY)) {}
+    shields(shields), location(common::toBase0(sectorX), common::toBase0(sectorY), 
+    common::toBase0(quadrantX), common::toBase0(quadrantY)) {}
 
-// Gets the ship's local position (which 
+// Gets the ship's local position (which
 // sector it is currently in).
-void Ship::getLocalLocation(int& x, int& y) const noexcept {
-    x = common::toBase1(sectorX);
-    y = common::toBase1(sectorY);
-}
-
-// Gets which quadrant this ship is 
-// located in currently.
-void Ship::getGlobalLocation(int& x, int& y) const noexcept {
-    x = common::toBase1(quadrantX);
-    y = common::toBase1(quadrantY);
+common::Location Ship::getLocation() const noexcept {
+    return location;
 }
 
 // Gets the shields of the ship and returns it.
@@ -32,47 +24,83 @@ double Ship::getShields() const noexcept {
 // Makes the ship move based off a warp
 // factor and direction. This uses exact
 // trignonmetry to calculate the precise place
-// the ship will end up. 
-void Ship::move(double warpFactor, double warpDirection) {
-    if (warpFactor > 10.0)
-        warpFactor = 10.0;
+// the ship will end up.
+// 
+// The path will be returned as base-0.
+// 
+// This converts the warp direction into radians
+// (degrees). Based off these degrees, it constructs
+// a ratio of x sectors to y sectors travelled. It
+// then simulates travelling through all these sectors
+// and adds it to the path which it returns. 
+std::vector<common::Location> Ship::calculatePath(double warpFactor, double warpDirection) {
+    std::vector<common::Location> path;
 
-    double currentGlobalX = quadrantX * GRID_SIZE + sectorX;
-    double currentGlobalY = quadrantY * GRID_SIZE + sectorY;
+    warpFactor = std::min(warpFactor, 10.0);
 
-    // warp speed == total sector distance
-    double distanceInSectors = warpFactor * GRID_SIZE;
+    // Warp 1 = 8 sectors
+    int distance = (int) std::round(warpFactor * GRID_SIZE);
 
-    // makes it base-0 from a base-1 input
+    // Convert direction into angle
     double angleDegrees = 90.0 - (warpDirection - 1.0) * 45.0;
-    // convert direction to standard radians
-    double radians = angleDegrees * (std::numbers::pi / 180.0);
+    double radians = angleDegrees * (std::numbers::pi / 180);
 
-    // calculate displacement vectors using trignonmetry
-    double deltaX = distanceInSectors * std::cos(radians);
-    double deltaY = distanceInSectors * std::sin(radians);
+    // Direction ratio
+    double dx = std::cos(radians);
+    double dy = -std::sin(radians);
 
-    // new global positions
-    double newGlobalX = currentGlobalX + deltaX;
-    double newGlobalY = currentGlobalY + deltaY;
+    // Normalize
+    double length = std::sqrt(dx * dx + dy * dy);
 
-    // edge cases for galaxy boundaries
-    newGlobalX = std::clamp(newGlobalX, 0.0, 63.99);
-    newGlobalY = std::clamp(newGlobalY, 0.0, 63.99);
+    dx /= length;
+    dy /= length;
 
-    // convert to ints
-    int newQuadX = (int) (newGlobalX / GRID_SIZE);
-    int newQuadY = (int) (newGlobalY / GRID_SIZE);
+    // Current galaxy position
+    double x = location.quadrantX * GRID_SIZE + location.sectorX;
+    double y = location.quadrantY * GRID_SIZE + location.sectorY;
 
-    int newSectX = (int)newGlobalX % GRID_SIZE;
-    int newSectY = (int)newGlobalY % GRID_SIZE;
+    int lastX = (int) x;
+    int lastY = (int) y;
 
-    // assign new values
-    quadrantX = newQuadX;
-    quadrantY = newQuadY;
+    double travelled = 0;
 
-    sectorX = newSectX;
-    sectorY = newSectY;
+    while (travelled < distance) {
+
+        x += dx;
+        y += dy;
+
+        travelled++;
+
+        // Outside galaxy
+        if (x < 0 || x >= 64 ||
+                y < 0 || y >= 64) {
+            break;
+        }
+
+        int globalX = (int) std::floor(x);
+        int globalY = (int) std::floor(y);
+
+        if (globalX != lastX || globalY != lastY) {
+
+            path.push_back({
+                    globalX % GRID_SIZE,
+                    globalY % GRID_SIZE,
+                    globalX / GRID_SIZE,
+                    globalY / GRID_SIZE});
+
+            lastX = globalX;
+            lastY = globalY;
+        }
+    }
+
+    return path;
+}
+
+// Moves the ship to the new location.
+// Does not do any checks to validate
+// that the location is a valid position.
+void Ship::move(common::Location location) {
+    this->location = location;
 }
 
 // Makes the ship take damage. Returns whether
@@ -92,7 +120,8 @@ bool Ship::takeDamage(double phaserEnergy) {
 // far the ship is, and how many klingons
 // are in the quadant currently.
 int Ship::firePhasers(double phaserEnergy, int x, int y, int numKlingons) {
-    double distance = std::sqrt((sectorX - x) * (sectorX - x) + (sectorY - y) * (sectorY - y));
+    double distance = std::sqrt((location.sectorX - x) * (location.sectorX - x) + 
+        (location.sectorY - y) * (location.sectorY - y));
     double h = phaserEnergy / numKlingons;
 
     return (h / distance) * (common::random() + 2);

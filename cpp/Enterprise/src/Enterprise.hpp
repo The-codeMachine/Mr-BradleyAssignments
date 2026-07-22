@@ -20,13 +20,13 @@
  * player.
  * 
  */
-class Enterprise : Ship {
+class Enterprise : public Ship {
 public:
     Enterprise(double shields, int sectorX, int sectorY,
                 int quadrantX, int quadrantY, int energy,
                 int torpedoes, bool docked);
 
-    void move(double warpFactor, double warpDirection) override;
+    std::vector<common::Location> calculatePath(double warpFactor, double warpDirection) override;
     bool takeDamage(double phaserEnergy) override;
 
 private:
