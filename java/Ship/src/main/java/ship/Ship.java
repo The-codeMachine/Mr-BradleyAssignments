@@ -2,7 +2,6 @@ package ship;
 
 import java.util.ArrayList;
 
-import common.IO;
 import common.GameLib.Location;
 
 /**
@@ -76,11 +75,11 @@ public class Ship {
      * 
      * The path will be returned as base-0.
      * 
-     * The calculatePath method uses Bresenham's line
-     * algorithm. It is integer only (better than floats).
-     * Essentially, this is a raycast to a location,
-     * and it calculates the squares the ship will travel
-     * through.
+     * This converts the warp direction into radians
+     * (degrees). Based off these degrees, it constructs
+     * a ratio of x sectors to y sectors travelled. It
+     * then simulates travelling through all these sectors
+     * and adds it to the path which it returns. 
      * 
      * @param warpFactor
      * @param warpDirection

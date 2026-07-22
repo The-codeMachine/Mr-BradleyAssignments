@@ -10,6 +10,23 @@ import QuadrantMap.QuadrantMap;
 import enterprise.Enterprise;
 import galaxy.Galaxy;
 
+/**
+ * 
+ * The Game class is the main class of the
+ * entire Super Star Trek recreation. It 
+ * owns everything. It is responsible for 
+ * the game loop, forwarding commands to the
+ * Enterprise, handling game quiting, lost
+ * and winning. A full list of its operations
+ * include:
+ *  - Construction (initializes everything)
+ *  - Getting a QuadrantMap at a certain coordinate 
+ *      (either by location, or global quadrant coordinates)
+ *  - Running the game loop
+ *  - Moving the Enterprise (and later other ships)
+ * 
+ * 
+ */
 public class Game {
 
     public Game() {
@@ -119,3 +136,56 @@ public class Game {
 
     private QuadrantMap[][] map;
 }
+
+/**
+ * Sample Output 
+ * 
+ * Game test
+ * Initial Quadrant
+ * --------------------------------
+ * <*>|   |   |   |   |   |   |   |
+ * --------------------------------
+ *    |   |   |   |   |   | * |   |
+ * --------------------------------
+ *    |   |   |   |   |   |   | * |
+ * --------------------------------
+ *  * |   |   |   |   |   | * |   |
+ * --------------------------------
+ *    |   |   |   |   |   |   |   |
+ * --------------------------------
+ *    |   |   |   |   |   |   |   |
+ * --------------------------------
+ *    |   |   |   |   |   |   |   |
+ * --------------------------------
+ *    |   |   |   |   |   |   |   |
+ * 
+ * ...
+ * 
+ * Warp Clamp
+ * Warp 15.00  Direction 2.0
+ * (5, 2) in (3, 0)
+ * (6, 1) in (3, 0)
+ * (7, 0) in (3, 0)
+ * Move Successful: true
+ * Current Quadrant:
+ * --------------------------------
+ *    |   |   |   |   |   |   |<*>|
+ * --------------------------------
+ *    |   |   |   |   |   |   |   |
+ * --------------------------------
+ *    |   |   |   |   |   | * |   |
+ * --------------------------------
+ *    |   |   |   |   |   |   |   |
+ * --------------------------------
+ *    |   |   |   |   |   |   |   |
+ * --------------------------------
+ *    |   |   |   |   |   |   |   |
+ * --------------------------------
+ *    |   |   |   |   |   |   |   |
+ * --------------------------------
+ *    |   |   |   |   |   |   |   |
+ * 
+ * 
+ * Game test success
+ * 
+ */

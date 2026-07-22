@@ -1,7 +1,6 @@
 package QuadrantMap;
 
 import common.GameLib;
-import common.GameLib.*;
 import quadrant.*;
 
 /**
@@ -29,7 +28,7 @@ import quadrant.*;
  * status for all objects within a Quadrant. Currently this
  * includes: klingons, stars, bases, and the Enterprise. 
  * Operations include:
- *  - Construction (through Quadrant)
+ *  - Construction (through Quadrant, with or without an Enterprise)
  *  - Insert an object
  *  - Clear a sector
  *  - Move an object
