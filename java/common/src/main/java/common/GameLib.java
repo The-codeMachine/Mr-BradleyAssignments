@@ -31,21 +31,21 @@ public class GameLib {
      */
     public static class Location {
         public Location(int sectorX, int sectorY, int quadrantX, int quadrantY) {
-            sectorX = (int)MathUtils.clamp(sectorX, MIN, MAX);
-            sectorY = (int)MathUtils.clamp(sectorY, MIN, MAX);
-            quadrantX = (int)MathUtils.clamp(quadrantX, MIN, MAX);
-            quadrantY = (int)MathUtils.clamp(quadrantY, MIN, MAX);
+            this.sectorX = (int)MathUtils.clamp(sectorX, MIN, MAX);
+            this.sectorY = (int)MathUtils.clamp(sectorY, MIN, MAX);
 
-            this.sectorX = sectorX;
-            this.sectorY = sectorY;
-
-            this.quadrantX = quadrantX;
-            this.quadrantY = quadrantY;
+            this.quadrantX = (int)MathUtils.clamp(quadrantX, MIN, MAX);
+            this.quadrantY = (int)MathUtils.clamp(quadrantY, MIN, MAX);
         }
 
         public Location() {
             sectorX = -1;
             sectorY = -1;
+        }
+
+        @Override
+        public String toString() {
+            return "(" + sectorX + ", " + sectorY + ") in (" + quadrantX + ", " + quadrantY + ")";
         }
 
         public int sectorX;

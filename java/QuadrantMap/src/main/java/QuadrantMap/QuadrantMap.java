@@ -5,6 +5,19 @@ import common.GameLib.*;
 import quadrant.*;
 
 /**
+ * 
+ * TODO:
+ * Resonably large issue. Not sure how to handle it currently,
+ * but essentially, the QuadrantMap is upside-down. As y goes
+ * up it goes down. This is backwards to what is normal. This
+ * issue is currently fixed by adjusting the delta-y to be 
+ * negative, this makes North = up, but we might want to flip
+ * the QuadrantMap, maybe just in the printing section. Any 
+ * ideas? 
+ * 
+ */
+
+/**
  * TODO:
  * Assertions are currently used to document preconditions during
  * development, and handle exceptions. Error handling with exceptions
@@ -55,6 +68,16 @@ public class QuadrantMap {
      */
     public QuadrantMap(Quadrant q, int x, int y) {
         initializeQuadrant(q, x, y);
+    }
+
+    /**
+     * 
+     * Constructs a QuadrantMap from quadrant Q.
+     * 
+     * @param q
+     */
+    public QuadrantMap(Quadrant q) {
+        initializeQuadrant(q);
     }
 
     /**
@@ -238,6 +261,22 @@ public class QuadrantMap {
         quadrantString = new QuadrantString();
 
         place(x, y, ENTERPRISE);
+        placeValues(q.klingons(), KLINGON);
+        placeValues(q.bases(), BASE);
+        placeValues(q.stars(), STAR);
+    }
+
+    /**
+     * 
+     * Initializes the Quadrant by placing the Enterprise at (x, y),
+     * and uses the Quadrant information to place the rest of the
+     * objects.
+     * 
+     * @param q
+     */
+    private void initializeQuadrant(Quadrant q) {
+        quadrantString = new QuadrantString();
+
         placeValues(q.klingons(), KLINGON);
         placeValues(q.bases(), BASE);
         placeValues(q.stars(), STAR);
