@@ -77,7 +77,9 @@ public class Game {
     }
 
     public void run() {
+        while (handleCommand()) {
 
+        }
     }
 
     /**
@@ -128,6 +130,57 @@ public class Game {
         enterprise.move(last);
 
         return last == path.getLast();
+    }
+
+    /**
+     * 
+     * Handles a command from the user. Takes the input
+     * and handles the command (gets the correct data, 
+     * and calls the functions). Returns a boolean 
+     * representing whether the game should continue or
+     * not (true if the game should continue).
+     * 
+     * @param input
+     * @return whether the game should continue
+     */
+    private boolean handleCommand() {
+        String command = IO.readCommand();
+
+        switch (command) {
+            case "NAV":
+                moveCommand();
+                break;
+            case "SRS":
+                shortRangeCommand();
+                break;
+            case "XXX":
+                return false;
+        }
+
+        return !enterprise.isDestroyed();
+    }
+
+    /**
+     * 
+     * Handles the move command (gets the correct data,
+     * then calls the move function). 
+     * 
+     */
+    private void moveCommand() {
+        double warpDirection = IO.readDouble();
+        double warpFactor = IO.readDouble();
+
+        move(warpFactor, warpDirection);
+    }
+
+    /**
+     * 
+     * The Enterprise does a short range scan.
+     * 
+     */
+    private void shortRangeCommand() {
+        Location enterpriseLocation = enterprise.getLocation();
+        IO.println(map[enterpriseLocation.quadrantX][enterpriseLocation.quadrantY].toString());
     }
 
     private Enterprise enterprise;

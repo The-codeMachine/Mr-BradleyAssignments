@@ -140,7 +140,7 @@ public class IO {
         }
 
         for (int i = 0; i < COMMANDS.length(); i += 3) {
-            if (COMMANDS.substring(i, i + 2).equals(cmd))
+            if (COMMANDS.substring(i, i + 3).equals(cmd))
                 return cmd;
         }
 

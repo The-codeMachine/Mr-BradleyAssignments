@@ -2,6 +2,7 @@ package ship;
 
 import java.util.ArrayList;
 
+import common.IO;
 import common.GameLib.Location;
 
 /**
@@ -116,7 +117,13 @@ public class Ship {
 
         double travelled = 0;
 
+        IO.printf("angleDegrees: %.3f\n", angleDegrees);
+        IO.printf("radians: %.3f\n", radians);
+        IO.printf("dx, dy: %.3f, %.3f\n", dx, dy);
+
         while (travelled < distance) {
+
+            IO.printf("(x, y): %.3f, %.3f\n", x, y);
 
             x += dx;
             y += dy;

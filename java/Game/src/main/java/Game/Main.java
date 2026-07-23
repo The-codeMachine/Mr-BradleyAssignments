@@ -51,6 +51,10 @@ public class Main {
         testMove(game, 15.0, 2, "Warp Clamp");
 
         IO.println("Game test success");
+
+        game = new Game();
+
+        game.run();
     }
 }
 
