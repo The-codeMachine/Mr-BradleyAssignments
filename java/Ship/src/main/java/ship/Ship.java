@@ -3,6 +3,7 @@ package ship;
 import java.util.ArrayList;
 
 import common.IO;
+import common.GameLib;
 import common.GameLib.Location;
 
 /**
@@ -98,13 +99,12 @@ public class Ship {
         double angleDegrees = 90.0 - (warpDirection - 1.0) * 45.0;
         double radians = Math.toRadians(angleDegrees);
 
-        // Direction ratio
+        // Direction vector
         double dx = Math.cos(radians);
         double dy = -Math.sin(radians);
 
         // Normalize
-        double length = Math.sqrt(dx * dx + dy * dy);
-
+        double length = Math.hypot(dx, dy);
         dx /= length;
         dy /= length;
 
@@ -112,45 +112,170 @@ public class Ship {
         double x = location.quadrantX * GRID_SIZE + location.sectorX;
         double y = location.quadrantY * GRID_SIZE + location.sectorY;
 
-        int lastX = (int) x;
-        int lastY = (int) y;
+        int lastX = (int) Math.floor(x);
+        int lastY = (int) Math.floor(y);
 
+        IO.println("==================================================");
+        IO.println("Navigation Calculation");
+        IO.println("==================================================");
+
+        IO.printf("Start Quadrant : (%d, %d)\n",
+                GameLib.toBase1(location.quadrantX),
+                GameLib.toBase1(location.quadrantY));
+
+        IO.printf("Start Sector   : (%d, %d)\n",
+                GameLib.toBase1(location.sectorX),
+                GameLib.toBase1(location.sectorY));
+
+        IO.println("");
+
+        IO.printf("Global Position\n");
+        IO.printf("X = %d * %d + %d = %.3f\n",
+                location.quadrantX,
+                GRID_SIZE,
+                location.sectorX,
+                x);
+
+        IO.printf("Y = %d * %d + %d = %.3f\n",
+                location.quadrantY,
+                GRID_SIZE,
+                location.sectorY,
+                y);
+
+        IO.println("");
+
+        IO.printf("Warp Factor = %.2f\n", warpFactor);
+        IO.printf("Distance = round(%.2f * %d) = %d sectors\n",
+                warpFactor,
+                GRID_SIZE,
+                distance);
+
+        IO.println("");
+
+        IO.printf("Direction = %.3f\n", warpDirection);
+
+        IO.printf("Angle = 90 - ((%.3f - 1.0) * 45)\n", warpDirection);
+        IO.printf("      = %.6f degrees\n", angleDegrees);
+
+        IO.printf("Radians = %.6f\n", radians);
+
+        IO.println("");
+
+        IO.printf("Direction Vector\n");
+        IO.printf("dx = cos(%.6f) = %.6f\n", radians, dx);
+        IO.printf("dy = -sin(%.6f) = %.6f\n", radians, dy);
+
+        IO.printf("Vector Length = %.6f\n", length);
+
+        IO.println("");
+
+        int step = 1;
         double travelled = 0;
-
-        IO.printf("angleDegrees: %.3f\n", angleDegrees);
-        IO.printf("radians: %.3f\n", radians);
-        IO.printf("dx, dy: %.3f, %.3f\n", dx, dy);
 
         while (travelled < distance) {
 
-            IO.printf("(x, y): %.3f, %.3f\n", x, y);
+            IO.println("--------------------------------------------------");
+            IO.printf("Step %d\n", step++);
 
-            x += dx;
-            y += dy;
+            IO.println("");
+
+            IO.println("Current Position");
+            IO.printf("x = %.6f\n", x);
+            IO.printf("y = %.6f\n", y);
+
+            double nextX = x + dx;
+            double nextY = y + dy;
+
+            IO.println("");
+
+            IO.println("Movement");
+
+            IO.printf("x = %.6f + %.6f = %.6f\n",
+                    x, dx, nextX);
+
+            IO.printf("y = %.6f + %.6f = %.6f\n",
+                    y, dy, nextY);
+
+            x = nextX;
+            y = nextY;
 
             travelled++;
 
             // Outside galaxy
             if (x < 0 || x >= 64 ||
-                    y < 0 || y >= 64) {
+                y < 0 || y >= 64) {
+
+                IO.println("");
+                IO.println("Movement exits the galaxy.");
                 break;
             }
 
-            int globalX = (int) Math.floor(x);
-            int globalY = (int) Math.floor(y);
+            int globalX = (int)Math.floor(x);
+            int globalY = (int)Math.floor(y);
+
+            IO.println("");
+            IO.println("Sector Calculation");
+
+            IO.printf("floor(%.6f) = %d\n", x, globalX);
+            IO.printf("floor(%.6f) = %d\n", y, globalY);
 
             if (globalX != lastX || globalY != lastY) {
 
+                int quadrantX = globalX / GRID_SIZE;
+                int quadrantY = globalY / GRID_SIZE;
+
+                int sectorX = globalX % GRID_SIZE;
+                int sectorY = globalY % GRID_SIZE;
+
+                IO.println("");
+                IO.println("Sector boundary crossed.");
+
+                if (globalX != lastX)
+                    IO.printf("X changed: %d -> %d\n", lastX, globalX);
+
+                if (globalY != lastY)
+                    IO.printf("Y changed: %d -> %d\n", lastY, globalY);
+
+                IO.printf("Global Sector : (%d, %d)\n",
+                        globalX,
+                        globalY);
+
+                IO.printf("Quadrant      : (%d, %d)\n",
+                        GameLib.toBase1(quadrantX),
+                        GameLib.toBase1(quadrantY));
+
+                IO.printf("Local Sector  : (%d, %d)\n",
+                        GameLib.toBase1(sectorX),
+                        GameLib.toBase1(sectorY));
+
                 path.add(new Location(
-                        globalX % GRID_SIZE,
-                        globalY % GRID_SIZE,
-                        globalX / GRID_SIZE,
-                        globalY / GRID_SIZE));
+                        sectorX,
+                        sectorY,
+                        quadrantX,
+                        quadrantY));
 
                 lastX = globalX;
                 lastY = globalY;
+            } else {
+                IO.println("");
+                IO.println("Still inside the current sector.");
             }
         }
+
+        IO.println("");
+        IO.println("==================================================");
+        IO.println("Visited Sectors");
+        IO.println("==================================================");
+
+        for (Location l : path) {
+            IO.printf("Quadrant (%d,%d) Sector (%d,%d)\n",
+                    GameLib.toBase1(l.quadrantX),
+                    GameLib.toBase1(l.quadrantY),
+                    GameLib.toBase1(l.sectorX),
+                    GameLib.toBase1(l.sectorY));
+        }
+
+        IO.println("==================================================");
 
         return path;
     }

@@ -37,6 +37,7 @@ public class Main {
         testMove(game, 0.75, 6, "South-West");
         testMove(game, 0.75, 7, "West");
         testMove(game, 0.75, 8, "North-West");
+        testMove(game, 0.75, 4.25, "Mid-warp");
 
         // Longer movement
         testMove(game, 2.5, 3, "Long East");
@@ -53,8 +54,10 @@ public class Main {
         IO.println("Game test success");
 
         game = new Game();
+        //IO.println("Initial Quadrant");
+        //IO.println(game.at(1, 1).toString());
 
-        game.run();
+        //game.run();
     }
 }
 

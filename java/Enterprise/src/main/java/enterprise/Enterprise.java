@@ -3,8 +3,6 @@ package enterprise;
 import common.GameLib.Location;
 import java.util.ArrayList;
 
-import javax.print.DocFlavor.STRING;
-
 import device.*;
 import ship.*;
 
@@ -76,8 +74,4 @@ public class Enterprise extends Ship {
     private int energy;
     private int torpedoes;
     private boolean docked;
-
-    private static final String KLINGON = "+K+";
-    private static final String BASE = ">!<";
-    private static final String STAR = " * ";
 }
