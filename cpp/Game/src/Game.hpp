@@ -34,6 +34,11 @@ public:
 
     bool move(double warpFactor, double warpDirection);
 
+private:
+    bool handleCommand();
+    
+    void moveCommand(const std::vector<std::string>& command);
+    void shortRangeCommand();
 
 private:
     Enterprise enterprise;

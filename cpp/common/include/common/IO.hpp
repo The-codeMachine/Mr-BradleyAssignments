@@ -2,6 +2,7 @@
 
 #include <string>
 #include <cstdarg>
+#include <vector>
 #include <cstdio>
 
 /**
@@ -40,7 +41,7 @@ namespace common
         std::string prompt(const std::string &message);
         int promptInt(const std::string &message);
         double promptDouble(const std::string &message);
-        std::string readCommand();
+        std::vector<std::string> readCommand();
 
         void trace(const std::string& message);
         void warning(const std::string& message);

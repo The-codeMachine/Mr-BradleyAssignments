@@ -6,6 +6,12 @@ Enterprise::Enterprise(double shields, int sectorX, int sectorY,
                 Ship(shields, sectorX, sectorY, quadrantX, quadrantY),
                 energy(energy), torpedoes(torpedoes), docked(docked) {}
 
+// Returns if the Enterprise is destroyed.
+// Will return true if the Enterprise is destoryed.
+bool Enterprise::isDestroyed() const noexcept {
+    return getShields() <= 0;
+}
+
 // Makes the Enterprise move based off warpFactor
 // and warpDirection, but double checks that the
 // warp engines are still capable. This still allows

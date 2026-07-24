@@ -1,5 +1,7 @@
 package common;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Scanner;
 
 /**
@@ -69,7 +71,7 @@ public class IO {
      * @return the next integer from the user.
      */
     public static int readInt() {
-        return SCANNER.nextInt();
+        return Integer.parseInt(readLine().trim());
     }
     
     /**
@@ -79,7 +81,7 @@ public class IO {
      * @return the next double from the user. 
      */
     public static double readDouble() {
-        return SCANNER.nextDouble();
+        return Double.parseDouble(readLine().trim());
     }
 
     /**
@@ -130,22 +132,24 @@ public class IO {
      * 
      * @return the command represented as a string. 
      */
-    public static String readCommand() {
-        String cmd = prompt("Enter your next command: ");
-        cmd = cmd.trim().toUpperCase();
-        
-        if (cmd.length() != COMMAND_SIZE) {
-            warning("Invalid command length");
-            return "";
+    public static ArrayList<String> readCommand() {
+        String line = prompt("Enter your next command: ");
+
+        if (line.isEmpty()) {
+            IO.warning("No command entered");
+            return new ArrayList<>();
         }
 
-        for (int i = 0; i < COMMANDS.length(); i += 3) {
-            if (COMMANDS.substring(i, i + 3).equals(cmd))
-                return cmd;
+        String[] parts = line.split("\\s+");
+        String cmd = parts[0].toUpperCase();
+
+        for (int i = 0; i < COMMANDS.length(); i += COMMAND_SIZE) {
+            if (COMMANDS.substring(i, i + COMMAND_SIZE).equals(cmd))
+                return new ArrayList<>(Arrays.asList(parts));
         }
 
         warning("Invalid command was entered: " + cmd);
-        return "";
+        return new ArrayList<>();
     }
 
     /**

@@ -29,7 +29,7 @@ import galaxy.Galaxy;
 public class Game {
 
     public Game() {
-        enterprise = new Enterprise(300.0, 1, 1, 1, 1, 3000, 10, false);
+        enterprise = new Enterprise(300.0, 7, 3, 1, 1, 3000, 10, false);
         galaxy = new Galaxy();
         map = new QuadrantMap[8][8];
         for (int i = 0; i < 8; ++i) {
@@ -38,7 +38,7 @@ public class Game {
             }
         }
 
-        map[0][0].place(1, 1, QuadrantMap.ENTERPRISE);
+        map[0][0].place(7, 3, QuadrantMap.ENTERPRISE);
     }
 
     /**
@@ -76,6 +76,12 @@ public class Game {
         return enterprise;
     }
 
+    /**
+     * 
+     * Runs the game (takes input from the user,
+     * and runs those commands in game).
+     * 
+     */
     public void run() {
         while (handleCommand()) {
 
@@ -144,11 +150,12 @@ public class Game {
      * @return whether the game should continue
      */
     private boolean handleCommand() {
-        String command = IO.readCommand();
+        ArrayList<String> command = IO.readCommand();
+        String cmd = command.get(0);
 
-        switch (command) {
+        switch (cmd) {
             case "NAV":
-                moveCommand();
+                moveCommand(command);
                 break;
             case "SRS":
                 shortRangeCommand();
@@ -166,9 +173,9 @@ public class Game {
      * then calls the move function). 
      * 
      */
-    private void moveCommand() {
-        double warpDirection = IO.readDouble();
-        double warpFactor = IO.readDouble();
+    private void moveCommand(ArrayList<String> command) {
+        double warpDirection = Double.parseDouble(command.get(1));
+        double warpFactor = Double.parseDouble(command.get(2));
 
         move(warpFactor, warpDirection);
     }

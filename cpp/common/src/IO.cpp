@@ -48,7 +48,7 @@ namespace common {
             std::cout << message;
             
             std::string response;
-            std::cin >> response;
+            std::getline(std::cin, response);
 
             return response;
         }
@@ -93,26 +93,45 @@ namespace common {
             return out;
         }
 
+        // Splits a string based off a delimiter
+        static std::vector<std::string> stringSplit(const std::string& input, const std::string& delimiter) {
+            std::vector<std::string> tokens;
+            size_t start = 0;
+            size_t end = input.find(delimiter);
+
+            while (end != std::string::npos) {
+                tokens.push_back(input.substr(start, end - start));
+                start = end + delimiter.length();
+                end = input.find(delimiter, start);
+            }
+
+            tokens.push_back(input.substr(start));
+            return tokens;
+        }
+
         // Reads a command from the user. This method
         // verifies it is of the correct length, and 
         // is an actual valid command based off the
         // COMMANDS string.
-        std::string readCommand() {
-            std::string cmd = prompt("Enter your next command: ");
-            cmd = toUpper(trimCommand(cmd));
+        std::vector<std::string> readCommand() {
+            std::string line = prompt("Enter your next command: ");
+            line = trimCommand(line);
 
-            if (cmd.length() != COMMAND_SIZE) {
-                warning("Invalid command length");
-                return "";
+            if (line.empty()) {
+                warning("No command entered");
+                return {};
             }
+
+            std::vector<std::string> parts = stringSplit(line, " ");
+            std::string command = toUpper(parts[0]);
 
             for (int i = 0; i < COMMANDS.size(); i += 3) {
-                if (COMMANDS.substr(i, 3) == cmd)
-                    return cmd;
+                if (COMMANDS.substr(i, 3) == command)
+                    return parts;
             }
 
-            warning("Invalid command was entered: " + cmd);
-            return "";
+            warning("Invalid command was entered: " + line);
+            return {};
         }
 
         // Logs a trace message. 

@@ -65,6 +65,13 @@ public class Enterprise extends Ship {
         return super.takeDamage(phaserEnergy);
     }
 
+    /**
+     * 
+     * Returns if the Enterprise is destroyed.
+     * Will return true if the Enterprise is destoryed.
+     * 
+     * @return whether the Enterprise is destroyed or not
+     */
     public boolean isDestroyed() {
         return shields() <= 0;
     }

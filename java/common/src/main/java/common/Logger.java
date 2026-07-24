@@ -56,6 +56,12 @@ public class Logger {
     public Logger(LogLevel level, Path path) {
         this.level = level;
         logFilePath = path;
+
+        try {
+            Files.createDirectories(path.getParent());
+        } catch (IOException e) {
+            // IDK what to do if it fails 
+        }
     }
 
     public Logger(LogLevel level, String path) {

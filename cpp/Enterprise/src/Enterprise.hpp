@@ -26,6 +26,8 @@ public:
                 int quadrantX, int quadrantY, int energy,
                 int torpedoes, bool docked);
 
+    bool isDestroyed() const noexcept;
+
     std::vector<common::Location> calculatePath(double warpFactor, double warpDirection) override;
     bool takeDamage(double phaserEnergy) override;
 
