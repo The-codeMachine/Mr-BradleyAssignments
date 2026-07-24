@@ -150,7 +150,11 @@ public class Game {
      * @return whether the game should continue
      */
     private boolean handleCommand() {
+        // continue since readCommand reports an error    
         ArrayList<String> command = IO.readCommand();
+        if (command.isEmpty())
+            return true;
+
         String cmd = command.get(0);
 
         switch (cmd) {
