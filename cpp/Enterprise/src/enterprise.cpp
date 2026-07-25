@@ -1,5 +1,7 @@
 #include "Enterprise.hpp"
 
+#include <common/IO.hpp>
+
 Enterprise::Enterprise(double shields, int sectorX, int sectorY,
                 int quadrantX, int quadrantY, int energy, 
                 int torpedoes, bool docked) :
@@ -18,9 +20,18 @@ bool Enterprise::isDestroyed() const noexcept {
 // the user to use impulse engines if the warp
 // engines are offline. 
 std::vector<common::Location> Enterprise::calculatePath(double warpFactor, double warpDirection) {
-    if (devices.isDamaged(Devices::WARP_ENGINES) && warpFactor >= 1.0)
+    if (devices.isDamaged(Devices::WARP_ENGINES) && warpFactor >= 0.2) {
+        common::IO::println("Warp engines are damaged, maximum warp is 0.2");
         return {};
+    }
+    
+    int energyUsed = (int)(warpFactor * 8 + 0.5);
+    if (energy < energyUsed) {
+        common::IO::println("Insufficient energy for warp");
+        return {};
+    }
 
+    energy -= energyUsed;
     return Ship::calculatePath(warpFactor, warpDirection);
 }
 
@@ -30,4 +41,12 @@ std::vector<common::Location> Enterprise::calculatePath(double warpFactor, doubl
 bool Enterprise::takeDamage(double phaserEnergy) {
     devices.hitDamage(phaserEnergy, this->getShields());
     return Ship::takeDamage(phaserEnergy);
+}
+
+std::string Enterprise::toString() const {
+    return "Energy: " + std::to_string(energy) +
+                "\nLocation: " + getLocation().toString() +
+                "\nTorpedoes: " + std::to_string(torpedoes) +
+                "\nShields: " + std::to_string(getShields()) +
+                "\nDocked: " + std::to_string(docked); 
 }

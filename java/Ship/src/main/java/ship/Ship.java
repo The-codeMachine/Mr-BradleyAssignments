@@ -90,7 +90,7 @@ public class Ship {
     public ArrayList<Location> calculatePath(double warpFactor, double warpDirection) {
         ArrayList<Location> path = new ArrayList<>();
 
-        warpFactor = Math.min(warpFactor, 10.0);
+        warpFactor = Math.min(warpFactor, 8.0);
 
         // Warp 1 = 8 sectors
         int distance = (int) Math.round(warpFactor * GRID_SIZE);

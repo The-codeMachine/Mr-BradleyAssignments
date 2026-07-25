@@ -1,6 +1,7 @@
 package enterprise;
 
 import common.GameLib.Location;
+import common.IO;
 import java.util.ArrayList;
 
 import device.*;
@@ -24,8 +25,8 @@ import ship.*;
  * 
  */
 public class Enterprise extends Ship {
-    public Enterprise(double shields, int sectorX, int sectorY, 
-        int quadrantX, int quadrantY, int energy, int torpedoes, boolean docked) {
+    public Enterprise(double shields, int sectorX, int sectorY,
+            int quadrantX, int quadrantY, int energy, int torpedoes, boolean docked) {
         super(shields, sectorX, sectorY, quadrantX, quadrantY);
 
         devices = new Devices();
@@ -40,15 +41,24 @@ public class Enterprise extends Ship {
      * and warpDirection, but double checks that the
      * warp engines are still capable. This still allows
      * the user to use impulse engines if the warp
-     * engines are offline. 
+     * engines are offline.
      * 
      * @param warpFactor
      * @param warpDirection
      */
     public ArrayList<Location> calculatePath(double warpFactor, double warpDirection) {
-        if (devices.isDamaged(Devices.WARP_ENGINES) && warpFactor >= 1.0)
+        if (devices.isDamaged(Devices.WARP_ENGINES) && warpFactor > 0.2) {
+            IO.println("Warp Engines are damaged, maximum warp is 0.2");
             return new ArrayList<>();
+        }
 
+        int energyUsed = (int) (warpFactor * 8 + 0.5);
+        if (energy < energyUsed) {
+            IO.println("Insufficient energy for warp");
+            return new ArrayList<>();
+        }
+
+        energy -= energyUsed;
         return super.calculatePath(warpFactor, warpDirection);
     }
 
@@ -74,6 +84,14 @@ public class Enterprise extends Ship {
      */
     public boolean isDestroyed() {
         return shields() <= 0;
+    }
+
+    public String toString() {
+        return "Energy: " + energy +
+                "\nLocation: " + getLocation() +
+                "\nTorpedoes: " + torpedoes +
+                "\nShields: " + shields() +
+                "\nDocked: " + docked;
     }
 
     private Devices devices;

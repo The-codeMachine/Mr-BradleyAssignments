@@ -141,7 +141,8 @@ public class IO {
         }
 
         String[] parts = line.split("\\s+");
-        String cmd = parts[0].toUpperCase();
+        parts[0] = parts[0].toUpperCase();
+        String cmd = parts[0];
 
         for (int i = 0; i < COMMANDS.length(); i += COMMAND_SIZE) {
             if (COMMANDS.substring(i, i + COMMAND_SIZE).equals(cmd))

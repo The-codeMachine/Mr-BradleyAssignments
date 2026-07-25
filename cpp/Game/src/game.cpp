@@ -116,6 +116,7 @@ void Game::moveCommand(const std::vector<std::string>& command) {
         double warpFactor = std::stod(command[2]);
 
         move(warpFactor, warpDirection);
+        shortRangeCommand();
     } catch (const std::exception& e) {
         common::IO::warning("Please enter valid doubles");
         return;
@@ -126,4 +127,6 @@ void Game::moveCommand(const std::vector<std::string>& command) {
 void Game::shortRangeCommand() {
     common::Location enterpriseLocation = enterprise.getLocation();
     common::IO::println(map[enterpriseLocation.quadrantX][enterpriseLocation.quadrantY].toString());
+
+    common::IO::println(enterprise.toString());
 }

@@ -178,10 +178,16 @@ public class Game {
      * 
      */
     private void moveCommand(ArrayList<String> command) {
-        double warpDirection = Double.parseDouble(command.get(1));
-        double warpFactor = Double.parseDouble(command.get(2));
+        try {
+            double warpDirection = Double.parseDouble(command.get(1));
+            double warpFactor = Double.parseDouble(command.get(2));
 
-        move(warpFactor, warpDirection);
+            move(warpFactor, warpDirection);
+            shortRangeCommand();
+        } catch (Exception e) {
+            IO.warning("Invalid usage of NAV");
+            IO.println("NAV Usage: NAV <warp factor> <warp direction>");
+        }
     }
 
     /**
@@ -192,6 +198,8 @@ public class Game {
     private void shortRangeCommand() {
         Location enterpriseLocation = enterprise.getLocation();
         IO.println(map[enterpriseLocation.quadrantX][enterpriseLocation.quadrantY].toString());
+        
+        IO.println(enterprise.toString());
     }
 
     private Enterprise enterprise;
