@@ -96,7 +96,7 @@ public class Ship {
         int distance = (int) Math.round(warpFactor * GRID_SIZE);
 
         // Convert direction into angle
-        double angleDegrees = 90.0 - (warpDirection - 1.0) * 45.0;
+        double angleDegrees = 90.0 + (warpDirection - 3.0) * 45.0;
         double radians = Math.toRadians(angleDegrees);
 
         // Direction vector
