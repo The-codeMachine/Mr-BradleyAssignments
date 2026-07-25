@@ -42,7 +42,7 @@ std::vector<common::Location> Ship::calculatePath(double warpFactor, double warp
     int distance = (int) std::round(warpFactor * GRID_SIZE);
 
     // Convert direction into angle
-    double angleDegrees = 90.0 + (warpDirection - 3.0) * 45.0;
+    double angleDegrees = (warpDirection - 1.0) * 45.0;
     double radians = angleDegrees * (std::numbers::pi / 180);
 
     // Direction ratio
