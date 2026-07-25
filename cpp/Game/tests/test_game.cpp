@@ -55,7 +55,8 @@ int main() {
 
     Game game;
     common::IO::println("Initial Quadrant");
-    common::IO::println(game.at(1, 1).toString());
+    common::Location loc = game.getEnterprise().getLocation();
+    common::IO::println(game.at(common::toBase1(loc.quadrantX), common::toBase1(loc.quadrantY)).toString());
 
     game.run();
 

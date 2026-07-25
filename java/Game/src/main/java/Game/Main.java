@@ -2,6 +2,7 @@ package Game;
 
 import common.GameLib;
 import common.IO;
+import common.GameLib.Location;
 
 public class Main {
     private static void testMove(Game game, double warp, double direction, String name) {
@@ -57,7 +58,8 @@ public class Main {
 
         Game game = new Game();
         IO.println("Initial Quadrant");
-        IO.println(game.at(1, 1).toString());
+        Location loc = game.getEnterprise().getLocation();
+        IO.println(game.at(GameLib.toBase1(loc.quadrantX), GameLib.toBase1(loc.quadrantY)).toString());
 
         game.run();
     }
