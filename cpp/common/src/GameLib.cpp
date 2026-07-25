@@ -12,7 +12,8 @@ namespace common
         sectorX(std::clamp(sectorX, MIN, MAX)), sectorY(std::clamp(sectorY, MIN, MAX)),
         quadrantX(std::clamp(quadrantX, MIN, MAX)), quadrantY(std::clamp(quadrantY, MIN, MAX)) {}
 
-    Location::Location() : Location(-1, -1, -1, -1) {}
+    Location::Location() : sectorX(common::randomInt(MIN, MAX)), sectorY(common::randomInt(MIN, MAX)),
+        quadrantX(common::randomInt(MIN, MAX)), quadrantY(common::randomInt(MIN, MAX)) {}
 
     bool Location::operator==(const Location& other) const {
         return (other.sectorX == sectorX && other.sectorY == sectorY 

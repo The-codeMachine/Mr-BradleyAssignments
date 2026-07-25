@@ -24,7 +24,8 @@ public class GameLib {
      * paired (x, y) coordinate. This allows public
      * access to its x, and y value. You can 
      * construct it with an inital x, and y value, or
-     * none. If the location is unassigned it is = -1.
+     * none. If the location is unassigned a random number
+     * between 0-7 will be generated.
      * 
      * Both coordinates are stored as base-0. 
      * 
@@ -39,7 +40,11 @@ public class GameLib {
         }
 
         public Location() {
-            this(-1, -1, -1, -1);
+            sectorX = GameLib.randomInt(MIN, MAX);
+            sectorY = GameLib.randomInt(MIN, MAX);
+            
+            quadrantX = GameLib.randomInt(MIN, MAX);
+            quadrantY = GameLib.randomInt(MIN, MAX);
         }
 
         @Override

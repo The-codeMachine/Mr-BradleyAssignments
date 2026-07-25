@@ -193,11 +193,7 @@ std::string QuadrantMap::toString() const
 
     for (size_t i = 1; i <= ROWS; ++i)
     {
-        for (size_t j = 0; j < COLS * (SYMBOL_SIZE + 1); ++j)
-        {
-            out += '-';
-        }
-        out += "\n";
+        out += "---+---+---+---+---+---+---+---+\n";
 
         for (size_t j = 1; j <= COLS; ++j)
         {

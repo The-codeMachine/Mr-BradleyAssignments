@@ -210,7 +210,7 @@ public class QuadrantMap {
     @Override
     public String toString() {
         String out = "";
-        final String dashRow = "-".repeat(COLS * (SYMBOL_SIZE + 1)) + "\n";
+        final String dashRow = "---+".repeat(COLS) + "\n";
 
         for (int i = 1; i <= ROWS; ++i) {
             out += dashRow;

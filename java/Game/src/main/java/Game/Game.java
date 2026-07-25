@@ -30,6 +30,9 @@ public class Game {
 
     public Game() {
         enterprise = new Enterprise(300.0, 7, 3, 1, 1, 3000, 10, false);
+        Location enterpriseLocation = new Location();
+        enterprise.move(enterpriseLocation);
+
         galaxy = new Galaxy();
         map = new QuadrantMap[8][8];
         for (int i = 0; i < 8; ++i) {
@@ -38,7 +41,8 @@ public class Game {
             }
         }
 
-        map[0][0].place(7, 3, QuadrantMap.ENTERPRISE);
+        map[enterpriseLocation.quadrantX][enterpriseLocation.quadrantY]
+            .place(GameLib.toBase1(enterpriseLocation.sectorX), GameLib.toBase1(enterpriseLocation.sectorY), QuadrantMap.ENTERPRISE);
     }
 
     /**
