@@ -130,7 +130,19 @@ namespace common {
                     return parts;
             }
 
-            warning("Invalid command was entered: " + line);
+            warning("Invalid command was entered: " + command);
+
+            println("Valid commands: ");
+            println(" - NAV (Sets a course)");
+            println(" - SRS (Scans the current quadrant)");
+            println(" - LRS (Scans all quadrants around you)");
+            println(" - PHA (Fires your phasers");
+            println(" - TOR (Fires a torpedoe)");
+            println(" - SHE (Raises/lowers the shields)");
+            println(" - DAM (Gets the damage report)");
+            println(" - COM (Access the library's computer)");
+            println(" - XXX (Quits the game)");   
+
             return {};
         }
 

@@ -6,9 +6,12 @@
 #include <numbers>
 #include <algorithm>
 
-Ship::Ship(double shields, int sectorX, int sectorY, int quadrantX, int quadrantY) :
-    shields(shields), location(common::toBase0(sectorX), common::toBase0(sectorY), 
-    common::toBase0(quadrantX), common::toBase0(quadrantY)) {}
+Ship::Ship() : shields(0) {}
+
+Ship::Ship(double shields) : shields(shields) {}
+
+Ship::Ship(double shields, common::Location location) : shields(shields), 
+    location(location) {}
 
 // Gets the ship's local position (which
 // sector it is currently in).

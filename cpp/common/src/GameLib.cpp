@@ -21,8 +21,8 @@ namespace common
     }
 
     std::string Location::toString() const {
-        return "(" + std::to_string(sectorY) + ", " + std::to_string(sectorX) + ") in ("
-         + std::to_string(quadrantY) + ", " + std::to_string(quadrantX) + ")";
+        return "(" + std::to_string(toBase1(sectorY)) + ", " + std::to_string(toBase1(sectorX)) + ") in ("
+         + std::to_string(toBase1(quadrantY)) + ", " + std::to_string(toBase1(quadrantX)) + ")";
     }
 
     bool isBetween(double value, double low, double high) {

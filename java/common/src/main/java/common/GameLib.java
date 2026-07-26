@@ -49,7 +49,7 @@ public class GameLib {
 
         @Override
         public String toString() {
-            return "(" + sectorY + ", " + sectorX + ") in (" + quadrantY + ", " + quadrantX + ")";
+            return "(" + toBase1(sectorY) + ", " + toBase1(sectorX) + ") in (" + toBase1(quadrantY) + ", " + toBase1(quadrantX) + ")";
         }
 
         public int sectorX;

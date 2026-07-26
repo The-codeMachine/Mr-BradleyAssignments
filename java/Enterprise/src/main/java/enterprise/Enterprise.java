@@ -23,17 +23,29 @@ import ship.*;
  * specific game mechanic is unavailable for the
  * player.
  * 
+ * The Enterprise is constructed using a random
+ * location, or a specified location. 
+ * 
  */
 public class Enterprise extends Ship {
-    public Enterprise(double shields, int sectorX, int sectorY,
-            int quadrantX, int quadrantY, int energy, int torpedoes, boolean docked) {
-        super(shields, sectorX, sectorY, quadrantX, quadrantY);
+    public Enterprise(double shields, Location location, int energy, int torpedoes, boolean docked) {
+        super(shields, location);
 
         devices = new Devices();
         this.energy = energy;
         this.torpedoes = torpedoes;
         this.docked = docked;
     }
+
+    public Enterprise(double shields, int energy, int torpedoes, boolean docked) {
+        super(shields);
+
+        devices = new Devices();
+        this.energy = energy;
+        this.torpedoes = torpedoes;
+        this.docked = docked;
+    }
+
 
     /**
      * 

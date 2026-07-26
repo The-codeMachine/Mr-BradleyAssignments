@@ -29,9 +29,7 @@ import galaxy.Galaxy;
 public class Game {
 
     public Game() {
-        enterprise = new Enterprise(300.0, 7, 3, 1, 1, 3000, 10, false);
-        Location enterpriseLocation = new Location();
-        enterprise.move(enterpriseLocation);
+        enterprise = new Enterprise(300.0, 3000, 10, false);
 
         galaxy = new Galaxy();
         map = new QuadrantMap[8][8];
@@ -41,6 +39,7 @@ public class Game {
             }
         }
 
+        Location enterpriseLocation = enterprise.getLocation();
         map[enterpriseLocation.quadrantX][enterpriseLocation.quadrantY]
             .place(GameLib.toBase1(enterpriseLocation.sectorX), GameLib.toBase1(enterpriseLocation.sectorY), QuadrantMap.ENTERPRISE);
     }

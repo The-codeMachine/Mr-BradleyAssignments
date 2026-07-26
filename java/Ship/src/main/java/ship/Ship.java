@@ -40,11 +40,20 @@ import common.GameLib.Location;
  * 
  */
 public class Ship {
-    public Ship(double shields, int sectorX, int sectorY, int quadrantX, int quadrantY) {
+    public Ship(double shields, Location location) {
+        this.shields = shields;
+        this.location = location;
+    }
+
+    public Ship(double shields) {
         this.shields = shields;
 
-        location = new Location(common.GameLib.toBase0(sectorX), common.GameLib.toBase0(sectorY),
-                common.GameLib.toBase0(quadrantX), common.GameLib.toBase0(quadrantY));
+        location = new Location();
+    }
+
+    public Ship() {
+        shields = 0;
+        location = new Location();
     }
 
     /**

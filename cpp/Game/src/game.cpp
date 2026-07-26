@@ -2,16 +2,14 @@
 
 #include <common/IO.hpp>
 
-Game::Game() : enterprise(300.0, 7, 3, 1, 1, 3000, 10, false) {
-    common::Location enterpriseLocation;
-    enterprise.move(enterpriseLocation);
-
+Game::Game() : enterprise(300.0, 3000, 10, false) {
     for (int i = 0; i < 8; ++i) {
         for (int j = 0; j < 8; ++j) {
             map[i][j] = QuadrantMap(galaxy.getQuadrant(i, j));
         }
     }
 
+    common::Location enterpriseLocation = enterprise.getLocation();
     map[enterpriseLocation.quadrantX][enterpriseLocation.quadrantY]
         .place(common::toBase1(enterpriseLocation.sectorX), common::toBase1(enterpriseLocation.sectorY), QuadrantMap::ENTERPRISE);
 }

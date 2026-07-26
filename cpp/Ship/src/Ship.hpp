@@ -39,7 +39,9 @@
  */
 class Ship {
 public:
-    Ship(double shields, int sectorX, int sectorY, int quadrantX, int quadrantY);
+    Ship();
+    Ship(double shields);
+    Ship(double shields, common::Location location);
     
     common::Location getLocation() const noexcept;
     double getShields() const noexcept;

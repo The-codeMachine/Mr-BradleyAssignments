@@ -2,10 +2,14 @@
 
 #include <common/IO.hpp>
 
-Enterprise::Enterprise(double shields, int sectorX, int sectorY,
-                int quadrantX, int quadrantY, int energy, 
+Enterprise::Enterprise(double shields, common::Location location, int energy, 
                 int torpedoes, bool docked) :
-                Ship(shields, sectorX, sectorY, quadrantX, quadrantY),
+                Ship(shields, location),
+                energy(energy), torpedoes(torpedoes), docked(docked) {}
+
+Enterprise::Enterprise(double shields, int energy, 
+                int torpedoes, bool docked) :
+                Ship(shields),
                 energy(energy), torpedoes(torpedoes), docked(docked) {}
 
 // Returns if the Enterprise is destroyed.

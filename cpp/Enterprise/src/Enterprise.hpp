@@ -22,9 +22,8 @@
  */
 class Enterprise : public Ship {
 public:
-    Enterprise(double shields, int sectorX, int sectorY,
-                int quadrantX, int quadrantY, int energy,
-                int torpedoes, bool docked);
+    Enterprise(double shields, common::Location location, int energy, int torpedoes, bool docked);
+    Enterprise(double shields, int energy, int torpedoes, bool docked);
 
     bool isDestroyed() const noexcept;
 
