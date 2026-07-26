@@ -39,6 +39,7 @@ private:
     
     void moveCommand(const std::vector<std::string>& command);
     void shortRangeCommand();
+    void longRangeCommand();
 
 private:
     Enterprise enterprise;

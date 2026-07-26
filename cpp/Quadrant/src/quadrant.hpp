@@ -58,7 +58,7 @@ public:
     bool hasBase() const;
     void removeBase();
 
-    std::string to_string() const;
+    std::string toString() const;
 
 #ifndef NDEBUG
 

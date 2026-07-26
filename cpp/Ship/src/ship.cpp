@@ -33,6 +33,22 @@ double Ship::getShields() const noexcept {
 // a ratio of x sectors to y sectors travelled. It
 // then simulates travelling through all these sectors
 // and adds it to the path which it returns. 
+// 
+// Cardinal Directions:
+// 
+//         3   
+//     4       2   
+// 5               1
+//     6       8
+//         7
+// 
+// These are calculated into angle degrees through:
+// (warpDirection - 1.0) * 45;
+// 
+// The 45 makes every warpDirection be a different 
+// cardinal direction (e.g. N = 3, SW = 6). The
+// subtraction from one converts warpDirection to
+// base-0 from base-1.
 std::vector<common::Location> Ship::calculatePath(double warpFactor, double warpDirection) {
     std::vector<common::Location> path;
 

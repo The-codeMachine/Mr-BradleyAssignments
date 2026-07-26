@@ -135,7 +135,7 @@ void Quadrant::whiteBoxTest()
 #endif
 
 // Turns the KBS value into a string (zero padded)
-std::string Quadrant::to_string() const {
+std::string Quadrant::toString() const {
     return common::zeroFill(kbs, 3);
 }
 
@@ -160,7 +160,7 @@ int Quadrant::setContent(int klingons, int bases, int stars)
 std::ostream &operator<<(std::ostream &os, const Quadrant &qu)
 {
     // could be changed to std::format("%03d", qu.kbs) but that requires C++20
-    os << qu.to_string();
+    os << qu.toString();
     return os;
 }
 

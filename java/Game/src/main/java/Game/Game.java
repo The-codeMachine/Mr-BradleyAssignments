@@ -168,6 +168,9 @@ public class Game {
             case "SRS":
                 shortRangeCommand();
                 break;
+            case "LRS":
+                longRangeCommand();
+                break;
             case "XXX":
                 return false;
         }
@@ -204,6 +207,30 @@ public class Game {
         IO.println(map[enterpriseLocation.quadrantX][enterpriseLocation.quadrantY].toString());
         
         IO.println(enterprise.toString());
+    }
+
+    /**
+     * 
+     * Does a long range scan around the Enterprise. Returns
+     * the quadrant's KBS value around the Enterprise. 
+     * 
+     */
+    private void longRangeCommand() {
+        Location loc = enterprise.getLocation();
+        
+        int startY = Math.max(0, loc.quadrantY - 1);
+        int endY = Math.min(7, loc.quadrantY + 1);
+
+        int startX = Math.max(0, loc.quadrantX - 1);
+        int endX = Math.min(7, loc.quadrantX + 1);
+
+        for (int y = startY; y <= endY; ++y) {
+            for (int x = startX; x <= endX; ++x) {
+                IO.print(galaxy.getQuadrant(x, y).toString() + " ");
+            }
+
+            IO.println("");
+        }
     }
 
     private Enterprise enterprise;

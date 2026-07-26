@@ -100,6 +100,8 @@ bool Game::handleCommand() {
         moveCommand(command);
     } else if (cmd == "SRS") {
         shortRangeCommand();
+    } else if (cmd == "LRS") {
+        longRangeCommand();
     } else if (cmd == "XXX") {
         return false;
     }
@@ -133,4 +135,25 @@ void Game::shortRangeCommand() {
     common::IO::println(map[enterpriseLocation.quadrantX][enterpriseLocation.quadrantY].toString());
 
     common::IO::println(enterprise.toString());
+}
+
+ 
+// Does a long range scan around the Enterprise. Returns
+// the quadrant's KBS value around the Enterprise. 
+void Game::longRangeCommand() {
+    common::Location loc = enterprise.getLocation();
+
+    int startY = std::max(0, loc.quadrantY - 1);
+    int endY = std::min(7, loc.quadrantY + 1);
+
+    int startX = std::max(0, loc.quadrantX - 1);
+    int endX = std::min(7, loc.quadrantX + 1);
+
+    for (int y = startY; y <= endY; ++y) {
+        for (int x = startX; x <= endX; ++x) {
+            common::IO::print(galaxy.getQuadrant(x, y).toString() + " ");
+        }
+
+        common::IO::println("");
+    }
 }
