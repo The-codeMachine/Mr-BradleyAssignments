@@ -82,15 +82,16 @@ public class Ship {
      * Makes the ship move based off a warp
      * factor and direction. This uses exact
      * trignonmetry to calculate the precise place
-     * the ship will end up.
+     * the ship will end up. This uses a ray. 
      * 
      * The path will be returned as base-0.
      * 
      * This converts the warp direction into radians
-     * (degrees). Based off these degrees, it constructs
-     * a ratio of x sectors to y sectors travelled. It
-     * then simulates travelling through all these sectors
-     * and adds it to the path which it returns. 
+     * (degrees). Based off these degrees it calculates
+     * two movement vectors (one for x, and another for y).
+     * Based off these vectors we calculate the next 
+     * horizontal and vertical boundary we move the ship
+     * and add it to the path. 
      * 
      * Cardinal Directions:
      * 
@@ -134,11 +135,11 @@ public class Ship {
         dy /= length;
 
         // Current galaxy position
-        double x = location.quadrantX * GRID_SIZE + location.sectorX;
-        double y = location.quadrantY * GRID_SIZE + location.sectorY;
+        double x = location.quadrantX * GRID_SIZE + location.sectorX + 0.5;
+        double y = location.quadrantY * GRID_SIZE + location.sectorY + 0.5;
 
-        int lastX = (int) Math.round(x);
-        int lastY = (int) Math.round(y);
+        int lastX = (int) Math.floor(x);
+        int lastY = (int) Math.floor(y);
 
         IO.println("==================================================");
         IO.println("Navigation Calculation");
@@ -155,13 +156,13 @@ public class Ship {
         IO.println("");
 
         IO.printf("Global Position (column, row)\n");
-        IO.printf("X = %d * %d + %d = %.3f\n",
+        IO.printf("X = %d * %d + %d + 0.5 = %.3f\n",
                 location.quadrantX,
                 GRID_SIZE,
                 location.sectorX,
                 x);
 
-        IO.printf("Y = %d * %d + %d = %.3f\n",
+        IO.printf("Y = %d * %d + %d + 0.5 = %.3f\n",
                 location.quadrantY,
                 GRID_SIZE,
                 location.sectorY,
@@ -194,13 +195,11 @@ public class Ship {
 
         IO.println("");
 
-        int step = 1;
         double travelled = 0;
 
         while (travelled < distance) {
 
             IO.println("--------------------------------------------------");
-            IO.printf("Step %d\n", step++);
 
             IO.println("");
 
@@ -208,23 +207,29 @@ public class Ship {
             IO.printf("x = %.6f\n", x);
             IO.printf("y = %.6f\n", y);
 
-            double nextX = x + dx * STEP_SIZE;
-            double nextY = y + dy * STEP_SIZE;
+            double distanceToXBoundary = calculateNextBoundaryX(x, dx);
+            double distanceToYBoundary = calculateNextBoundaryY(y, dy);
+
+            double movement = Math.min(distanceToXBoundary, distanceToYBoundary);
+
+            // Prevent overshooting warp distance
+            if (travelled + movement > distance)
+                movement = distance - travelled;
 
             IO.println("");
 
             IO.println("Movement (column, row)");
 
-            IO.printf("x = %.6f + %.6f = %.6f\n",
-                    x, dx, nextX);
+            IO.printf("x = %.6f + %.6f * %.6f = %.6f\n",
+                    x, dx, distanceToXBoundary, x + dx * movement);
 
-            IO.printf("y = %.6f + %.6f = %.6f\n",
-                    y, dy, nextY);
+            IO.printf("y = %.6f + %.6f * %.f6 = %.6f\n",
+                    y, dy, distanceToYBoundary, y + dy * movement);
 
-            x = nextX;
-            y = nextY;
+            x += dx * movement;
+            y += dy * movement;
 
-            travelled += STEP_SIZE;
+            travelled += movement;
 
             // Outside galaxy
             if (x < 0 || x >= 64 ||
@@ -235,8 +240,8 @@ public class Ship {
                 break;
             }
 
-            int globalX = (int)Math.round(x);
-            int globalY = (int)Math.round(y);
+            int globalX = (int)Math.floor(x);
+            int globalY = (int)Math.floor(y);
 
             IO.println("");
             IO.println("Sector Calculation (column, row)");
@@ -356,10 +361,57 @@ public class Ship {
         return (int) ((h / distance) * (common.GameLib.random() + 2));
     }
 
+    /**
+     * 
+     * Calculates the next boundary the ship will pass
+     * through on the x axis. This is based off the
+     * direction, and current x position.
+     *  
+     * Returns a infinity is there is none. This makes
+     * the ship overshoot the warp factor making it stop
+     * the calculation.
+     * 
+     * @param x
+     * @param dx
+     * @return the next x boundary the ship will pass
+     */
+    private static double calculateNextBoundaryX(double x, double dx) {
+        if (dx > 0)
+            return (Math.floor(x) + 1 - x) / dx;
+
+        if (dx < 0)
+            return (Math.ceil(x) - 1 - x) / dx;
+
+        return Double.POSITIVE_INFINITY;
+    }
+
+    /**
+     * 
+     * Calculates the next boundary the ship will pass
+     * through on the y axis. This is based off the
+     * direction, and current y position.
+     * 
+     * Returns a infinity is there is none. This makes
+     * the ship overshoot the warp factor making it stop
+     * the calculation.
+     * 
+     * @param y
+     * @param dy
+     * @return the next y boundary the ship will pass
+     */
+    private static double calculateNextBoundaryY(double y, double dy) {
+        if (dy > 0)
+            return (Math.floor(y) + 1 - y) / dy;
+
+        if (dy < 0)
+            return (Math.floor(y) - 1 - y) / dy;
+
+        return Double.POSITIVE_INFINITY;
+    }
+
     private double shields;
 
     private Location location;
 
     private static final int GRID_SIZE = 8;
-    private static final double STEP_SIZE = 0.5;
 }
