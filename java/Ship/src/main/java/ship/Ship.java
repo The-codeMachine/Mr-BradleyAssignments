@@ -137,24 +137,24 @@ public class Ship {
         double x = location.quadrantX * GRID_SIZE + location.sectorX;
         double y = location.quadrantY * GRID_SIZE + location.sectorY;
 
-        int lastX = (int) Math.floor(x);
-        int lastY = (int) Math.floor(y);
+        int lastX = (int) Math.round(x);
+        int lastY = (int) Math.round(y);
 
         IO.println("==================================================");
         IO.println("Navigation Calculation");
         IO.println("==================================================");
 
-        IO.printf("Start Quadrant : (%d, %d)\n",
+        IO.printf("Start Quadrant (column, row) : (%d, %d)\n",
                 GameLib.toBase1(location.quadrantX),
                 GameLib.toBase1(location.quadrantY));
 
-        IO.printf("Start Sector   : (%d, %d)\n",
+        IO.printf("Start Sector (column, row)   : (%d, %d)\n",
                 GameLib.toBase1(location.sectorX),
                 GameLib.toBase1(location.sectorY));
 
         IO.println("");
 
-        IO.printf("Global Position\n");
+        IO.printf("Global Position (column, row)\n");
         IO.printf("X = %d * %d + %d = %.3f\n",
                 location.quadrantX,
                 GRID_SIZE,
@@ -179,7 +179,7 @@ public class Ship {
 
         IO.printf("Direction = %.3f\n", warpDirection);
 
-        IO.printf("Angle = 90 - ((%.3f - 1.0) * 45)\n", warpDirection);
+        IO.printf("Angle = ((%.3f - 1.0) * 45)\n", warpDirection);
         IO.printf("      = %.6f degrees\n", angleDegrees);
 
         IO.printf("Radians = %.6f\n", radians);
@@ -187,8 +187,8 @@ public class Ship {
         IO.println("");
 
         IO.printf("Direction Vector\n");
-        IO.printf("dx = cos(%.6f) = %.6f\n", radians, dx);
-        IO.printf("dy = -sin(%.6f) = %.6f\n", radians, dy);
+        IO.printf("dx = cos(%.6f) = %.6f (takes radians)\n", radians, dx);
+        IO.printf("dy = -sin(%.6f) = %.6f (takes radians)\n", radians, dy);
 
         IO.printf("Vector Length = %.6f\n", length);
 
@@ -204,16 +204,16 @@ public class Ship {
 
             IO.println("");
 
-            IO.println("Current Position");
+            IO.println("Current Position (column, row)");
             IO.printf("x = %.6f\n", x);
             IO.printf("y = %.6f\n", y);
 
-            double nextX = x + dx;
-            double nextY = y + dy;
+            double nextX = x + dx * STEP_SIZE;
+            double nextY = y + dy * STEP_SIZE;
 
             IO.println("");
 
-            IO.println("Movement");
+            IO.println("Movement (column, row)");
 
             IO.printf("x = %.6f + %.6f = %.6f\n",
                     x, dx, nextX);
@@ -224,7 +224,7 @@ public class Ship {
             x = nextX;
             y = nextY;
 
-            travelled++;
+            travelled += STEP_SIZE;
 
             // Outside galaxy
             if (x < 0 || x >= 64 ||
@@ -235,11 +235,11 @@ public class Ship {
                 break;
             }
 
-            int globalX = (int)Math.floor(x);
-            int globalY = (int)Math.floor(y);
+            int globalX = (int)Math.round(x);
+            int globalY = (int)Math.round(y);
 
             IO.println("");
-            IO.println("Sector Calculation");
+            IO.println("Sector Calculation (column, row)");
 
             IO.printf("floor(%.6f) = %d\n", x, globalX);
             IO.printf("floor(%.6f) = %d\n", y, globalY);
@@ -265,11 +265,11 @@ public class Ship {
                         globalX,
                         globalY);
 
-                IO.printf("Quadrant      : (%d, %d)\n",
+                IO.printf("Quadrant (column, row)     : (%d, %d)\n",
                         GameLib.toBase1(quadrantX),
                         GameLib.toBase1(quadrantY));
 
-                IO.printf("Local Sector  : (%d, %d)\n",
+                IO.printf("Local Sector (column, row) : (%d, %d)\n",
                         GameLib.toBase1(sectorX),
                         GameLib.toBase1(sectorY));
 
@@ -293,7 +293,7 @@ public class Ship {
         IO.println("==================================================");
 
         for (Location l : path) {
-            IO.printf("Quadrant (%d,%d) Sector (%d,%d)\n",
+            IO.printf("Quadrant (column, row) (%d,%d) Sector (column, row) (%d,%d)\n",
                     GameLib.toBase1(l.quadrantX),
                     GameLib.toBase1(l.quadrantY),
                     GameLib.toBase1(l.sectorX),
@@ -361,4 +361,5 @@ public class Ship {
     private Location location;
 
     private static final int GRID_SIZE = 8;
+    private static final double STEP_SIZE = 0.5;
 }

@@ -116,7 +116,7 @@ public class Game {
         Location last = enterprise.getLocation();
 
         for (Location location : path) {
-            IO.println(location.toString());
+            IO.printf("Location (row, column): %s\n", location.toString());
 
             if (!map[location.quadrantX][location.quadrantY]
                     .empty(GameLib.toBase1(location.sectorX), GameLib.toBase1(location.sectorY))) {
