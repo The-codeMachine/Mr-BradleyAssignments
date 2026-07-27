@@ -96,8 +96,8 @@ std::vector<common::Location> Ship::calculatePath(double warpFactor, double warp
             break;
         }
 
-        int globalX = (int) std::floor(x);
-        int globalY = (int) std::floor(y);
+        int globalX = (int) std::round(x);
+        int globalY = (int) std::round(y);
 
         if (globalX != lastX || globalY != lastY) {
 
