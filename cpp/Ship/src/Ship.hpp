@@ -53,6 +53,10 @@ public:
     virtual int firePhasers(double phaserEnergy, int x, int y, int numKlingons);
 
 private:
+    static double calculateNextBoundaryX(double x, double dx);
+    static double calculateNextBoundaryY(double y, double dy);
+
+private:
     double shields;
 
     common::Location location;

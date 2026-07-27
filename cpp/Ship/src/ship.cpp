@@ -13,6 +13,41 @@ Ship::Ship(double shields) : shields(shields) {}
 Ship::Ship(double shields, common::Location location) : shields(shields), 
     location(location) {}
 
+
+// Calculates the next boundary the ship will pass
+// through on the x axis. This is based off the
+// direction, and current x position.
+//
+// Returns a infinity is there is none. This makes
+// the ship overshoot the warp factor making it stop
+// the calculation.
+double Ship::calculateNextBoundaryX(double x, double dx) {
+    if (dx > 0)
+        return (std::floor(x) + 1 - x) / dx;
+
+    if (dx < 0 ) 
+        return (std::ceil(x) - 1 - x) / dx;
+
+    return 1e199;
+}
+
+// Calculates the next boundary the ship will pass
+// through on the y axis. This is based off the
+// direction, and current y position.
+//
+// Returns a infinity is there is none. This makes
+// the ship overshoot the warp factor making it stop
+// the calculation.
+double Ship::calculateNextBoundaryY(double y, double dy) {
+    if (dy > 0)
+        return (std::floor(y) + 1 - y) / dy;
+
+    if (dy < 0 ) 
+        return (std::ceil(y) - 1 - y) / dy;
+
+    return 1e199;
+}
+
 // Gets the ship's local position (which
 // sector it is currently in).
 common::Location Ship::getLocation() const noexcept {
@@ -27,15 +62,16 @@ double Ship::getShields() const noexcept {
 // Makes the ship move based off a warp
 // factor and direction. This uses exact
 // trignonmetry to calculate the precise place
-// the ship will end up.
+// the ship will end up. This uses a ray. 
 // 
 // The path will be returned as base-0.
 // 
 // This converts the warp direction into radians
-// (degrees). Based off these degrees, it constructs
-// a ratio of x sectors to y sectors travelled. It
-// then simulates travelling through all these sectors
-// and adds it to the path which it returns. 
+// (degrees). Based off these degrees it calculates
+// two movement vectors (one for x, and another for y).
+// Based off these vectors we calculate the next 
+// horizontal and vertical boundary we move the ship
+// and add it to the path. 
 // 
 // Cardinal Directions:
 // 
@@ -55,7 +91,7 @@ double Ship::getShields() const noexcept {
 std::vector<common::Location> Ship::calculatePath(double warpFactor, double warpDirection) {
     std::vector<common::Location> path;
 
-    warpFactor = std::min(warpFactor, 10.0);
+    warpFactor = std::min(warpFactor, 8.0);
 
     // Warp 1 = 8 sectors
     int distance = (int) std::round(warpFactor * GRID_SIZE);
@@ -74,21 +110,30 @@ std::vector<common::Location> Ship::calculatePath(double warpFactor, double warp
     dx /= length;
     dy /= length;
 
-    // Current galaxy position
-    double x = location.quadrantX * GRID_SIZE + location.sectorX;
-    double y = location.quadrantY * GRID_SIZE + location.sectorY;
+    // Current galaxy position (makes it start in the middle of the sector)
+    double x = location.quadrantX * GRID_SIZE + location.sectorX + 0.5;
+    double y = location.quadrantY * GRID_SIZE + location.sectorY + 0.5;
 
-    int lastX = (int) x;
-    int lastY = (int) y;
+    int lastX = (int) std::floor(x);
+    int lastY = (int) std::floor(y);
 
     double travelled = 0;
 
     while (travelled < distance) {
 
-        x += dx;
-        y += dy;
+        double distanceToXBoundary = calculateNextBoundaryX(x, dx);
+        double distanceToYBoundary = calculateNextBoundaryY(y, dy);
 
-        travelled++;
+        double movement = std::min(distanceToXBoundary, distanceToYBoundary);
+
+        // Prevent overshooting warp distance
+        if (travelled + movement > distance)
+            movement = distance - travelled;
+
+        x += dx * movement;
+        y += dy * movement;
+
+        travelled += movement;
 
         // Outside galaxy
         if (x < 0 || x >= 64 ||
@@ -96,8 +141,8 @@ std::vector<common::Location> Ship::calculatePath(double warpFactor, double warp
             break;
         }
 
-        int globalX = (int) std::round(x);
-        int globalY = (int) std::round(y);
+        int globalX = (int) std::floor(x);
+        int globalY = (int) std::floor(y);
 
         if (globalX != lastX || globalY != lastY) {
 
