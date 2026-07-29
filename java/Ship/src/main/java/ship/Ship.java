@@ -223,7 +223,7 @@ public class Ship {
             IO.printf("x = %.6f + %.6f * %.6f = %.6f\n",
                     x, dx, distanceToXBoundary, x + dx * movement);
 
-            IO.printf("y = %.6f + %.6f * %.f6 = %.6f\n",
+            IO.printf("y = %.6f + %.6f * %.6f = %.6f\n",
                     y, dy, distanceToYBoundary, y + dy * movement);
 
             x += dx * movement;
