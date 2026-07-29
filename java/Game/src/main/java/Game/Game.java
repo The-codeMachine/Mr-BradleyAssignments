@@ -170,6 +170,9 @@ public class Game {
             case "LRS":
                 longRangeCommand();
                 break;
+            case "DAM":
+                damageReportCommand();
+                break;
             case "XXX":
                 return false;
         }
@@ -230,6 +233,10 @@ public class Game {
 
             IO.println("");
         }
+    }
+
+    private void damageReportCommand() {
+        enterprise.damageReport();
     }
 
     private Enterprise enterprise;

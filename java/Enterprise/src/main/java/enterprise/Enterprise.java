@@ -98,6 +98,16 @@ public class Enterprise extends Ship {
         return shields() <= 0;
     }
 
+    /**
+     * 
+     * Prints the damage report (which is the status of the
+     * devices of the Enterprise).
+     * 
+     */
+    public void damageReport() {
+        IO.println(devices.damageReport());
+    }
+
     public String toString() {
         return "Energy: " + energy +
                 "\nLocation: " + getLocation() +
