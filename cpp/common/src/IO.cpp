@@ -123,7 +123,8 @@ namespace common {
             }
 
             std::vector<std::string> parts = stringSplit(line, " ");
-            std::string command = toUpper(parts[0]);
+            parts[0] = toUpper(parts[0]);
+            std::string command = parts[0];
 
             for (int i = 0; i < COMMANDS.size(); i += 3) {
                 if (COMMANDS.substr(i, 3) == command)

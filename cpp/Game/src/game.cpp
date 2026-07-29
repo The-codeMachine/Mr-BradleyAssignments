@@ -100,6 +100,8 @@ bool Game::handleCommand() {
         shortRangeCommand();
     } else if (cmd == "LRS") {
         longRangeCommand();
+    } else if (cmd == "DAM") {
+        damageReportCommand();
     } else if (cmd == "XXX") {
         return false;
     }
@@ -154,4 +156,9 @@ void Game::longRangeCommand() {
 
         common::IO::println("");
     }
+}
+
+// Prints a damage report based off the Enterprise's devices
+void Game::damageReportCommand() {
+    enterprise.damageReport();
 }

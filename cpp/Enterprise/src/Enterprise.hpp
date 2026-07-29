@@ -30,6 +30,8 @@ public:
     std::vector<common::Location> calculatePath(double warpFactor, double warpDirection) override;
     bool takeDamage(double phaserEnergy) override;
 
+    void damageReport() const;
+
     std::string toString() const;
 
 private:

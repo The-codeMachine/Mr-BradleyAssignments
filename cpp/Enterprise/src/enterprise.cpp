@@ -47,6 +47,12 @@ bool Enterprise::takeDamage(double phaserEnergy) {
     return Ship::takeDamage(phaserEnergy);
 }
 
+// Prints a damage report for all the device's state of
+// repair. 
+void Enterprise::damageReport() const {
+    common::IO::println(devices.damageReport());
+}
+
 std::string Enterprise::toString() const {
     return "Energy: " + std::to_string(energy) +
                 "\nLocation: " + getLocation().toString() +
