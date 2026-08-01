@@ -2,20 +2,20 @@
 
 #include <common/IO.hpp>
 
-Enterprise::Enterprise(double shields, common::Location location, int energy, 
+Enterprise::Enterprise(int energy, common::Location location, double shields, 
                 int torpedoes, bool docked) :
-                Ship(shields, location),
-                energy(energy), torpedoes(torpedoes), docked(docked) {}
+                Ship(energy, location),
+                shields(shields), torpedoes(torpedoes), docked(docked) {}
 
-Enterprise::Enterprise(double shields, int energy, 
+Enterprise::Enterprise(int energy, double shields, 
                 int torpedoes, bool docked) :
-                Ship(shields),
-                energy(energy), torpedoes(torpedoes), docked(docked) {}
+                Ship(energy),
+                shields(shields), torpedoes(torpedoes), docked(docked) {}
 
 // Returns if the Enterprise is destroyed.
 // Will return true if the Enterprise is destoryed.
 bool Enterprise::isDestroyed() const noexcept {
-    return getShields() <= 0;
+    return shields < 0;
 }
 
 // Makes the Enterprise move based off warpFactor
@@ -28,14 +28,7 @@ std::vector<common::Location> Enterprise::calculatePath(double warpFactor, doubl
         common::IO::println("Warp engines are damaged, maximum warp is 0.2");
         return {};
     }
-    
-    int energyUsed = (int)(warpFactor * 8 + 0.5);
-    if (energy < energyUsed) {
-        common::IO::println("Insufficient energy for warp");
-        return {};
-    }
 
-    energy -= energyUsed;
     return Ship::calculatePath(warpFactor, warpDirection);
 }
 
@@ -43,8 +36,21 @@ std::vector<common::Location> Enterprise::calculatePath(double warpFactor, doubl
 // Makes the Enterprise take damage based off
 // the effective phaser energy.
 bool Enterprise::takeDamage(double phaserEnergy) {
-    devices.hitDamage(phaserEnergy, this->getShields());
-    return Ship::takeDamage(phaserEnergy);
+    devices.hitDamage(phaserEnergy, this->getEnergy());
+
+    shields -= phaserEnergy;
+    return isDestroyed();
+}
+
+void Enterprise::adjustShields(double shields) {
+    double diffShields = this->shields - shields;
+    if (-diffShields > getEnergy()) {
+        common::IO::println("Not enough energy to adjust shields to: " + std::to_string(shields));
+        return;
+    }
+
+    adjustEnergy((int)(diffShields));
+    this->shields = shields;
 }
 
 // Prints a damage report for all the device's state of
@@ -54,9 +60,9 @@ void Enterprise::damageReport() const {
 }
 
 std::string Enterprise::toString() const {
-    return "Energy: " + std::to_string(energy) +
+    return "Energy: " + std::to_string(getEnergy()) +
                 "\nLocation: " + getLocation().toString() +
                 "\nTorpedoes: " + std::to_string(torpedoes) +
-                "\nShields: " + std::to_string(getShields()) +
+                "\nShields: " + std::to_string(shields) +
                 "\nDocked: " + std::to_string(docked); 
 }

@@ -6,21 +6,8 @@
 
 /**
  * 
- * TODO:
- * Resonably large issue. Not sure how to handle it currently,
- * but essentially, the QuadrantMap is upside-down. As y goes
- * up it goes down. This is backwards to what is normal. This
- * issue is currently fixed by adjusting the delta-y to be 
- * negative, this makes North = up, but we might want to flip
- * the QuadrantMap, maybe just in the printing section. Any 
- * ideas? 
- * 
- */
-
-/**
- * 
  * This is the base Ship class. The ship class
- * consists of shield, and position information.
+ * consists of energy, and position information.
  * It handles movement calculation, damage reduction,
  * and phaser firing for all base ships. Other ships
  * like the Enterprise might use this as a super
@@ -40,14 +27,18 @@
 class Ship {
 public:
     Ship();
-    Ship(double shields);
-    Ship(double shields, common::Location location);
+    Ship(int energy);
+    Ship(int energy, common::Location location);
     
     common::Location getLocation() const noexcept;
-    double getShields() const noexcept;
+
+    int getEnergy() const noexcept;
+    void adjustEnergy(int energy);
+
+    virtual bool isDestroyed() const noexcept;
 
     virtual std::vector<common::Location> calculatePath(double warpFactor, double warpDirection);
-    virtual void move(common::Location location);
+    virtual void move(common::Location location, double warpFactor);
 
     virtual bool takeDamage(double phaserEnergy);
     virtual int firePhasers(double phaserEnergy, int x, int y, int numKlingons);
@@ -57,7 +48,7 @@ private:
     static double calculateNextBoundaryY(double y, double dy);
 
 private:
-    double shields;
+    int energy;
 
     common::Location location;
 

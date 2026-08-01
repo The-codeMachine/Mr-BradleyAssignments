@@ -1,16 +1,17 @@
 #include "Ship.hpp"
 
 #include <common/GameLib.hpp>
+#include <common/IO.hpp>
 
 #include <cmath>
 #include <numbers>
 #include <algorithm>
 
-Ship::Ship() : shields(0) {}
+Ship::Ship() : energy(0) {}
 
-Ship::Ship(double shields) : shields(shields) {}
+Ship::Ship(int energy) : energy(energy) {}
 
-Ship::Ship(double shields, common::Location location) : shields(shields), 
+Ship::Ship(int energy, common::Location location) : energy(energy), 
     location(location) {}
 
 
@@ -54,9 +55,20 @@ common::Location Ship::getLocation() const noexcept {
     return location;
 }
 
-// Gets the shields of the ship and returns it.
-double Ship::getShields() const noexcept {
-    return shields;
+// Gets the energy of the ship and returns it
+int Ship::getEnergy() const noexcept {
+    return energy;
+}
+
+// Adjusts the energy by the amount. Does not check that
+// the energy can go into negatives. 
+void Ship::adjustEnergy(int amount) {
+    energy += amount;
+}
+
+// Checks whether the ship is destroyed based off its energy (true if it is)
+bool Ship::isDestroyed() const noexcept {
+    return energy < 0;
 }
 
 // Makes the ship move based off a warp
@@ -163,16 +175,24 @@ std::vector<common::Location> Ship::calculatePath(double warpFactor, double warp
 // Moves the ship to the new location.
 // Does not do any checks to validate
 // that the location is a valid position.
-void Ship::move(common::Location location) {
+void Ship::move(common::Location location, double warpFactor) {
+    int energyUsed = (int) (warpFactor * 8 + 0.5);
+    if (energy < energyUsed) {
+        common::IO::println("Insufficient energy for warp");
+        return;
+    }
+
+    energy -= energyUsed;
     this->location = location;
 }
 
 // Makes the ship take damage. Returns whether
-// the damage destroys the ship or not. 
+// the damage destroys the ship or not. Based off the
+// ship's energy (because of how klingons work).
 bool Ship::takeDamage(double phaserEnergy) {
-    shields -= phaserEnergy;
-    if (shields <= 0) {
-        shields = 0;
+    energy -= phaserEnergy;
+    if (energy <= 0) {
+        energy = 0;
         return true;
     }
 

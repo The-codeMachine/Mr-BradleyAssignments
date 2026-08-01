@@ -19,16 +19,21 @@
  * specific game mechanic is unavailable for the
  * player.
  * 
+ * The Enterprise is constructed using a random
+ * location, or a specified location. 
+ * 
  */
 class Enterprise : public Ship {
 public:
-    Enterprise(double shields, common::Location location, int energy, int torpedoes, bool docked);
-    Enterprise(double shields, int energy, int torpedoes, bool docked);
+    Enterprise(int energy, common::Location location, double shields, int torpedoes, bool docked);
+    Enterprise(int energy, double shields, int torpedoes, bool docked);
 
-    bool isDestroyed() const noexcept;
+    bool isDestroyed() const noexcept override;
 
     std::vector<common::Location> calculatePath(double warpFactor, double warpDirection) override;
     bool takeDamage(double phaserEnergy) override;
+
+    void adjustShields(double shields);
 
     void damageReport() const;
 
@@ -37,7 +42,7 @@ public:
 private:
     Devices devices;
 
-    int energy;
+    double shields;
     int torpedoes;
     bool docked;
 };

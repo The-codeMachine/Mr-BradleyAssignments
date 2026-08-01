@@ -2,7 +2,7 @@
 
 #include <common/IO.hpp>
 
-Game::Game() : enterprise(300.0, 3000, 10, false) {
+Game::Game() : enterprise(3000, 0, 10, false) {
     for (int i = 0; i < 8; ++i) {
         for (int j = 0; j < 8; ++j) {
             map[i][j] = QuadrantMap(galaxy.getQuadrant(i, j));
@@ -76,7 +76,7 @@ bool Game::move(double warpFactor, double warpDirection) {
     at(common::toBase1(last.quadrantX), common::toBase1(last.quadrantY))
             .place(common::toBase1(last.sectorX), common::toBase1(last.sectorY), QuadrantMap::ENTERPRISE);
 
-    enterprise.move(last);
+    enterprise.move(last, warpFactor);
 
     return last == path.back();
 }
@@ -100,6 +100,8 @@ bool Game::handleCommand() {
         shortRangeCommand();
     } else if (cmd == "LRS") {
         longRangeCommand();
+    } else if (cmd == "SHE") {
+        shieldCommand(command);
     } else if (cmd == "DAM") {
         damageReportCommand();
     } else if (cmd == "XXX") {
@@ -155,6 +157,17 @@ void Game::longRangeCommand() {
         }
 
         common::IO::println("");
+    }
+}
+
+void Game::shieldCommand(const std::vector<std::string>& command) {
+    try {
+        double newShields = std::stod(command[1]);
+
+        enterprise.adjustShields(newShields);
+    } catch (const std::exception& e) {
+        common::IO::warning("Invalid usage of SHE");
+        common::IO::println("SHE usage: SHE <new shields>");
     }
 }
 

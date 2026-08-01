@@ -8,21 +8,8 @@ import common.GameLib.Location;
 
 /**
  * 
- * TODO:
- * Resonably large issue. Not sure how to handle it currently,
- * but essentially, the QuadrantMap is upside-down. As y goes
- * up it goes down. This is backwards to what is normal. This
- * issue is currently fixed by adjusting the delta-y to be 
- * negative, this makes North = up, but we might want to flip
- * the QuadrantMap, maybe just in the printing section. Any 
- * ideas? 
- * 
- */
-
-/**
- * 
  * This is the base Ship class. The ship class
- * consists of shield, and position information.
+ * consists of energy, and position information.
  * It handles movement calculation, damage reduction,
  * and phaser firing for all base ships. Other ships
  * like the Enterprise might use this as a super
@@ -40,19 +27,19 @@ import common.GameLib.Location;
  * 
  */
 public class Ship {
-    public Ship(double shields, Location location) {
-        this.shields = shields;
+    public Ship(int energy, Location location) {
+        this.energy = energy;
         this.location = location;
     }
 
-    public Ship(double shields) {
-        this.shields = shields;
+    public Ship(int energy) {
+        this.energy = energy;
 
         location = new Location();
     }
 
     public Ship() {
-        shields = 0;
+        energy = 0;
         location = new Location();
     }
 
@@ -69,12 +56,33 @@ public class Ship {
 
     /**
      * 
-     * Gets the shields of the ship and returns it.
+     * Gets the energy of the ship and returns it.
      * 
-     * @return the shields of the ship
+     * @return the energy of the ship
      */
-    public double shields() {
-        return shields;
+    public double energy() {
+        return energy;
+    }
+
+    /**
+     * 
+     * Adjusts the energy by the amount. Does not check that
+     * the energy can go into negatives. 
+     * 
+     * @param energy
+     */
+    public void adjustEnergy(int energy) {
+        this.energy += energy;
+    }
+
+    /**
+     * 
+     * Checks whether the ship is destroyed based off its energy
+     * 
+     * @return true if the ship is destroyed
+     */
+    public boolean isDestroyed() {
+        return energy < 0;
     }
 
     /**
@@ -318,22 +326,30 @@ public class Ship {
      * 
      * @param location
      */
-    public void move(Location location) {
+    public void move(Location location, double warpFactor) {
+        int energyUsed = (int) (warpFactor * 8 + 0.5);
+        if (energy < energyUsed) {
+            IO.println("Insufficient energy for warp");
+            return;
+        }
+
+        energy -= energyUsed;
         this.location = location;
     }
 
     /**
      * 
      * Makes the ship take damage. Returns whether
-     * the damage destroys the ship or not.
+     * the damage destroys the ship or not. Based off the
+     * ship's energy (because of how klingons work).
      * 
      * @param phaserEnergy
      * @return true if the ship is destoryed
      */
     public boolean takeDamage(double phaserEnergy) {
-        shields -= phaserEnergy;
-        if (shields <= 0) {
-            shields = 0;
+        energy -= phaserEnergy;
+        if (energy <= 0) {
+            energy = 0;
             return true;
         }
 
@@ -409,7 +425,7 @@ public class Ship {
         return Double.POSITIVE_INFINITY;
     }
 
-    private double shields;
+    private double energy;
 
     private Location location;
 

@@ -28,20 +28,20 @@ import ship.*;
  * 
  */
 public class Enterprise extends Ship {
-    public Enterprise(double shields, Location location, int energy, int torpedoes, boolean docked) {
-        super(shields, location);
+    public Enterprise(int energy, Location location, double shields, int torpedoes, boolean docked) {
+        super(energy, location);
 
         devices = new Devices();
-        this.energy = energy;
+        this.shields = shields;
         this.torpedoes = torpedoes;
         this.docked = docked;
     }
 
-    public Enterprise(double shields, int energy, int torpedoes, boolean docked) {
-        super(shields);
+    public Enterprise(int energy, double shields, int torpedoes, boolean docked) {
+        super(energy);
 
         devices = new Devices();
-        this.energy = energy;
+        this.shields = shields;
         this.torpedoes = torpedoes;
         this.docked = docked;
     }
@@ -64,13 +64,6 @@ public class Enterprise extends Ship {
             return new ArrayList<>();
         }
 
-        int energyUsed = (int) (warpFactor * 8 + 0.5);
-        if (energy < energyUsed) {
-            IO.println("Insufficient energy for warp");
-            return new ArrayList<>();
-        }
-
-        energy -= energyUsed;
         return super.calculatePath(warpFactor, warpDirection);
     }
 
@@ -82,9 +75,30 @@ public class Enterprise extends Ship {
      * @param phaserEnergy
      * 
      */
+    @Override
     public boolean takeDamage(double phaserEnergy) {
-        devices.hitDamage(phaserEnergy, super.shields());
-        return super.takeDamage(phaserEnergy);
+        devices.hitDamage(phaserEnergy, super.energy());
+
+        shields -= phaserEnergy;
+        return isDestroyed();
+    }
+
+    /**
+     * 
+     * Adjusts the shields to the new shields value. Will log
+     * an error if there is not sufficient energy. 
+     * 
+     * @param shields
+     */
+    public void adjustShields(double shields) {
+        double diffShields = this.shields - shields;
+        if (-diffShields > energy()) {
+            IO.println("Not enough energy to adjust shields to: " + shields);
+            return;
+        }
+        
+        adjustEnergy((int)diffShields);
+        this.shields = shields;
     }
 
     /**
@@ -94,8 +108,9 @@ public class Enterprise extends Ship {
      * 
      * @return whether the Enterprise is destroyed or not
      */
+    @Override
     public boolean isDestroyed() {
-        return shields() <= 0;
+        return shields < 0;
     }
 
     /**
@@ -109,16 +124,16 @@ public class Enterprise extends Ship {
     }
 
     public String toString() {
-        return "Energy: " + energy +
+        return "Energy: " + energy() +
                 "\nLocation: " + getLocation() +
                 "\nTorpedoes: " + torpedoes +
-                "\nShields: " + shields() +
+                "\nShields: " + shields +
                 "\nDocked: " + docked;
     }
 
     private Devices devices;
 
-    private int energy;
+    private double shields;
     private int torpedoes;
     private boolean docked;
 }

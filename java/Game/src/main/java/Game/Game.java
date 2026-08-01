@@ -29,7 +29,7 @@ import galaxy.Galaxy;
 public class Game {
 
     public Game() {
-        enterprise = new Enterprise(300.0, 3000, 10, false);
+        enterprise = new Enterprise(3000, 0, 10, false);
 
         galaxy = new Galaxy();
         map = new QuadrantMap[8][8];
@@ -136,7 +136,7 @@ public class Game {
         at(GameLib.toBase1(last.quadrantX), GameLib.toBase1(last.quadrantY))
                 .place(GameLib.toBase1(last.sectorX), GameLib.toBase1(last.sectorY), QuadrantMap.ENTERPRISE);
 
-        enterprise.move(last);
+        enterprise.move(last, warpFactor);
 
         return last == path.getLast();
     }
@@ -169,6 +169,9 @@ public class Game {
                 break;
             case "LRS":
                 longRangeCommand();
+                break;
+            case "SHE":
+                shieldCommand(command);
                 break;
             case "DAM":
                 damageReportCommand();
@@ -235,6 +238,29 @@ public class Game {
         }
     }
 
+    /**
+     * 
+     * Adjusts shields acording to the user. Will replenish the available
+     * energy from the shields. 
+     * 
+     * @param command
+     */
+    private void shieldCommand(ArrayList<String> command) {
+        try {
+            double newShields = Double.parseDouble(command.get(1));
+
+            enterprise.adjustShields(newShields);
+        } catch (Exception e) {
+            IO.warning("Invalid usage of SHE");
+            IO.println("SHE Usage: SHE <new shields>");
+        }
+    }
+
+    /**
+     * 
+     * Calls the damage report command. 
+     * 
+     */
     private void damageReportCommand() {
         enterprise.damageReport();
     }

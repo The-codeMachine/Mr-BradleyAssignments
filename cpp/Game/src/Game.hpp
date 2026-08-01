@@ -40,6 +40,7 @@ private:
     void moveCommand(const std::vector<std::string>& command);
     void shortRangeCommand();
     void longRangeCommand();
+    void shieldCommand(const std::vector<std::string>& command);
     void damageReportCommand();
 
 private:
