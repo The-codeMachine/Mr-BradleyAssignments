@@ -4,6 +4,7 @@
 #include <Enterprise.hpp>
 #include <Galaxy.hpp>
 #include <Ship.hpp>
+#include <Klingon.hpp>
 
 /**
  * 
@@ -43,10 +44,26 @@ private:
     void shieldCommand(const std::vector<std::string>& command);
     void damageReportCommand();
 
+    static int convertTo1D(common::Location loc);
+
 private:
     Enterprise enterprise;
     Galaxy galaxy;
 
     QuadrantMap map[8][8];
+    
+    std::vector<Klingon> klingons;
 
+    /*
+    I'm going soon, so I wanted to write this down.
+    We can make Klingon access by adding a reference
+    table to Game. Something like:
+
+    row             col         actual vector of klingons
+    std::vector<std::vector<std::vector<Klingon>>> klingons
+    
+    then access is simply klingon[y][x][klingon id number]
+
+    this will be initialized at the creation of Game
+    */
 };

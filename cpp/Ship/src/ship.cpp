@@ -190,7 +190,7 @@ void Ship::move(common::Location location, double warpFactor) {
 // the damage destroys the ship or not. Based off the
 // ship's energy (because of how klingons work).
 bool Ship::takeDamage(double phaserEnergy) {
-    energy -= phaserEnergy;
+    adjustEnergy(-phaserEnergy);
     if (energy <= 0) {
         energy = 0;
         return true;
@@ -203,10 +203,9 @@ bool Ship::takeDamage(double phaserEnergy) {
 // based off how much is fired, how 
 // far the ship is, and how many klingons
 // are in the quadant currently.
-int Ship::firePhasers(double phaserEnergy, int x, int y, int numKlingons) {
+int Ship::firePhasers(double phaserEnergy, int x, int y) {
     double distance = std::sqrt((location.sectorX - x) * (location.sectorX - x) + 
         (location.sectorY - y) * (location.sectorY - y));
-    double h = phaserEnergy / numKlingons;
 
-    return (h / distance) * (common::random() + 2);
+    return (phaserEnergy / distance) * (common::random() + 2);
 }

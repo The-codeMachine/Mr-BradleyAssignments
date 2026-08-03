@@ -36,7 +36,9 @@ private:
 
 private:
     Quadrant map[8][8];
+
     int totalBases;
+    int numKlingons;
 
 };
 

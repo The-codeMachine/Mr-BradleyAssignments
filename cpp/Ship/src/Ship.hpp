@@ -41,7 +41,7 @@ public:
     virtual void move(common::Location location, double warpFactor);
 
     virtual bool takeDamage(double phaserEnergy);
-    virtual int firePhasers(double phaserEnergy, int x, int y, int numKlingons);
+    virtual int firePhasers(double phaserEnergy, int x, int y);
 
 private:
     static double calculateNextBoundaryX(double x, double dx);
