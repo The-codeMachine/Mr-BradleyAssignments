@@ -1,5 +1,7 @@
 package QuadrantMap;
 
+import java.util.ArrayList;
+
 import common.GameLib;
 import quadrant.*;
 
@@ -66,6 +68,7 @@ public class QuadrantMap {
      * @param y
      */
     public QuadrantMap(Quadrant q, int x, int y) {
+        klingons = new ArrayList<>();
         initializeQuadrant(q, x, y);
     }
 
@@ -76,6 +79,7 @@ public class QuadrantMap {
      * @param q
      */
     public QuadrantMap(Quadrant q) {
+        klingons = new ArrayList<>();
         initializeQuadrant(q);
     }
 
@@ -170,6 +174,16 @@ public class QuadrantMap {
 
     /**
      * 
+     * Gets the locations of all the klingons within this Quadrant
+     * 
+     * @return the locations of all the klingons within this Quadrant
+     */
+    public ArrayList<GameLib.Location> klingons() {
+        return klingons;
+    }
+
+    /**
+     * 
      * Returns the symbol stored at the specified sector.
      * The 2D coordinates are converted into a 1D index into
      * the backing String, and the fixed-width symbol stored
@@ -248,6 +262,28 @@ public class QuadrantMap {
 
     /**
      * 
+     * Places all the Klingons within the QuadrantMap and record
+     * where they are located. 
+     * 
+     * @param amount
+     */
+    private void placeKlingons(int amount) {
+        assert amount <= ROWS * COLS;
+
+        for (int i = 0; i < amount; ++i) {
+            int[] pos = generateRandomPosition();
+
+            while (!empty(pos[X], pos[Y])) {
+                pos = generateRandomPosition();
+            }
+
+            place(pos[X], pos[Y], KLINGON);
+            klingons.add(new GameLib.Location(pos[X], pos[Y], -1, -1));
+        }
+    }
+
+    /**
+     * 
      * Initializes the Quadrant by placing the Enterprise at (x, y),
      * and uses the Quadrant information to place the rest of the
      * objects.
@@ -260,7 +296,7 @@ public class QuadrantMap {
         quadrantString = new QuadrantString();
 
         place(x, y, ENTERPRISE);
-        placeValues(q.klingons(), KLINGON);
+        placeKlingons(q.klingons());
         placeValues(q.bases(), BASE);
         placeValues(q.stars(), STAR);
     }
@@ -276,7 +312,7 @@ public class QuadrantMap {
     private void initializeQuadrant(Quadrant q) {
         quadrantString = new QuadrantString();
 
-        placeValues(q.klingons(), KLINGON);
+        placeKlingons(q.klingons());
         placeValues(q.bases(), BASE);
         placeValues(q.stars(), STAR);
     }
@@ -338,6 +374,7 @@ public class QuadrantMap {
     }
 
     private QuadrantString quadrantString;
+    private ArrayList<GameLib.Location> klingons;
 
     private static final int ROWS = 8;
     private static final int COLS = 8;

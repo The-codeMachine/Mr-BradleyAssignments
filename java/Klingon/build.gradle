@@ -1,0 +1,16 @@
+plugins {
+    id 'application'
+}
+
+dependencies {
+    implementation project(':common')
+    implementation project(':ship')
+}
+
+tasks.withType(JavaExec).configureEach {
+    enableAssertions = true
+}
+
+application {
+    mainClass = 'klingon.Main'
+}

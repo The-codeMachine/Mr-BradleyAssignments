@@ -68,7 +68,7 @@ void Ship::adjustEnergy(int amount) {
 
 // Checks whether the ship is destroyed based off its energy (true if it is)
 bool Ship::isDestroyed() const noexcept {
-    return energy < 0;
+    return energy <= 0;
 }
 
 // Makes the ship move based off a warp
@@ -182,7 +182,7 @@ void Ship::move(common::Location location, double warpFactor) {
         return;
     }
 
-    energy -= energyUsed;
+    adjustEnergy(-energyUsed);
     this->location = location;
 }
 

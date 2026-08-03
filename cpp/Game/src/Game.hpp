@@ -64,8 +64,8 @@ private:
 
 private:
     Enterprise enterprise;
+    
     Galaxy galaxy;
-
     QuadrantMap map[8][8];
     
     std::vector<std::vector<std::vector<Klingon>>> klingons;

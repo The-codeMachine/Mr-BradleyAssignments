@@ -82,7 +82,7 @@ public class Ship {
      * @return true if the ship is destroyed
      */
     public boolean isDestroyed() {
-        return energy < 0;
+        return energy <= 0;
     }
 
     /**
@@ -333,7 +333,7 @@ public class Ship {
             return;
         }
 
-        energy -= energyUsed;
+        adjustEnergy(-energyUsed);
         this.location = location;
     }
 
@@ -347,7 +347,7 @@ public class Ship {
      * @return true if the ship is destoryed
      */
     public boolean takeDamage(double phaserEnergy) {
-        energy -= phaserEnergy;
+        adjustEnergy((int)-phaserEnergy);
         if (energy <= 0) {
             energy = 0;
             return true;
@@ -370,11 +370,10 @@ public class Ship {
      * 
      * @return the effective phaserEnergy based off calculations
      */
-    public int firePhasers(double phaserEnergy, int x, int y, int numKlingons) {
+    public int firePhasers(double phaserEnergy, int x, int y) {
         double distance = Math.sqrt(Math.pow(location.sectorX - x, 2) + Math.pow(location.sectorY - y, 2));
-        double h = phaserEnergy / numKlingons;
 
-        return (int) ((h / distance) * (common.GameLib.random() + 2));
+        return (int) ((phaserEnergy / distance) * (common.GameLib.random() + 2));
     }
 
     /**

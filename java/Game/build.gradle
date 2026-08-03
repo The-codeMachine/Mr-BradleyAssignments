@@ -9,6 +9,7 @@ dependencies {
     implementation project(':ship')
     implementation project(':enterprise')
     implementation project(':galaxy')
+    implementation project(':klingon')
 }
 
 tasks.withType(JavaExec).configureEach {

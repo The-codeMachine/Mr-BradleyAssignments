@@ -10,27 +10,6 @@
 #include <cstdint>
 
 /**
- * 
- * TODO:
- * Resonably large issue. Not sure how to handle it currently,
- * but essentially, the QuadrantMap is upside-down. As y goes
- * up it goes down. This is backwards to what is normal. This
- * issue is currently fixed by adjusting the delta-y to be 
- * negative, this makes North = up, but we might want to flip
- * the QuadrantMap, maybe just in the printing section. Any 
- * ideas? 
- * 
- */
-
-
-/**
- * TODO:
- * Assertions are currently used to document preconditions during
- * development, and handle exceptions. Error handling with exceptions
- * return values, etc. will be visited later as the design evolves.  
- */
-
-/**
  * QuadrantMap handles all of the movement and positional
  * status for all objects within a Quadrant. Currently this
  * includes: klingons, stars, bases, and the Enterprise. 

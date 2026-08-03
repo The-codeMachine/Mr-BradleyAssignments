@@ -1,6 +1,7 @@
 package enterprise;
 
 import common.GameLib.Location;
+import common.GameLib;
 import common.IO;
 import java.util.ArrayList;
 
@@ -81,6 +82,19 @@ public class Enterprise extends Ship {
 
         shields -= phaserEnergy;
         return isDestroyed();
+    }
+
+    /**
+     * 
+     * Calculates the amount of damage phasers do to a klingon
+     * 
+     * @return the amount of damage the phasers do to a klingon
+     */
+    public int firePhasers(double phaserEnergy, int x, int y, int numKlingons) {
+        double distance = Math.sqrt(Math.pow(getLocation().sectorX - x, 2) + Math.pow(getLocation().sectorY - y, 2));
+        double h = phaserEnergy / numKlingons;
+
+        return (int)((h / distance) * (GameLib.random() + 2));
     }
 
     /**

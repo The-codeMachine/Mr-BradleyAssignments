@@ -161,7 +161,7 @@ bool Game::move(double warpFactor, double warpDirection) {
 }
 
 // Handles firing the phasers at all klingons. If a klingon is
-// destroyed, it will handle destroying the klingon has well
+// destroyed, it will handle destroying the klingon as well
 void Game::firePhasers(double phaserEnergy) {
     enterprise.adjustEnergy(-phaserEnergy);
 

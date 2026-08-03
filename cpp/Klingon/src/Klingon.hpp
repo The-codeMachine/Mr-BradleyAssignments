@@ -2,6 +2,14 @@
 
 #include <Ship.hpp>
 
+/**
+ * 
+ * The Klingon class extends Ship. It represents 
+ * the enemy the Enterprise will run into during
+ * all of its gameplay. It can fire and take damage.
+ * Both come out of its energy pool. 
+ * 
+ */
 class Klingon : public Ship {
 public:
     Klingon();

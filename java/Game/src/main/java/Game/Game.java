@@ -4,11 +4,13 @@ import common.GameLib;
 import common.IO;
 import common.GameLib.Location;
 
+import java.util.Iterator;
 import java.util.ArrayList;
 
 import QuadrantMap.QuadrantMap;
 import enterprise.Enterprise;
 import galaxy.Galaxy;
+import klingon.Klingon;
 
 /**
  * 
@@ -97,42 +99,20 @@ public class Game {
      */
     public boolean move(double warpFactor, double warpDirection) {
         enterprise.updateDocked(false);
-
         ArrayList<Location> path = enterprise.calculatePath(warpFactor, warpDirection);
 
         if (path.isEmpty())
             return false;
 
-        Location last = enterprise.getLocation();
+        Location oldLocation = enterprise.getLocation();
+        Location newLocation = findMovementDestination(path);
 
-        for (Location location : path) {
-            IO.printf("Location (row, column): %s\n", location.toString());
+        updateEnterpriseMap(oldLocation, newLocation);
 
-            if (!map[location.quadrantX][location.quadrantY]
-                    .empty(GameLib.toBase1(location.sectorX), GameLib.toBase1(location.sectorY))) {
-                    break;
-            }
+        enterprise.move(newLocation, warpFactor);
+        enterprise.updateDocked(canDock());
 
-            last = location;
-        }
-
-        Location oldEnterpriseLocation = enterprise.getLocation();
-
-        // clears old enterprise location
-        at(oldEnterpriseLocation)
-                .clearSector(GameLib.toBase1(oldEnterpriseLocation.sectorX), GameLib.toBase1(oldEnterpriseLocation.sectorY));
-
-        // sets new enterprise location
-        at(GameLib.toBase1(last.quadrantX), GameLib.toBase1(last.quadrantY))
-                .place(GameLib.toBase1(last.sectorX), GameLib.toBase1(last.sectorY), QuadrantMap.ENTERPRISE);
-
-        enterprise.move(last, warpFactor);
-
-        if (canDock()) {
-            enterprise.updateDocked(true);
-        }
-
-        return last == path.getLast();
+        return newLocation == path.getLast();
     }
 
     /**
@@ -142,18 +122,98 @@ public class Game {
      */
     private void constructGame() {
         enterprise = new Enterprise(3000, 0, 10, false);
-
         galaxy = new Galaxy();
         map = new QuadrantMap[8][8];
-        for (int i = 0; i < 8; ++i) {
-            for (int j = 0; j < 8; ++j) {
-                map[i][j] = new QuadrantMap(galaxy.getQuadrant(i, j));
+        
+        initializeQuadrants();
+        initializeKlingons();
+        placeEnterprise();
+    }
+
+    /**
+     * 
+     * Initializes all Quadrants for the Game
+     * 
+     */
+    private void initializeQuadrants() {
+        for (int x = 0; x < MAP_SIZE; ++x) {
+            for (int y = 0; y < MAP_SIZE; ++y) {
+                map[x][y] = new QuadrantMap(galaxy.getQuadrant(x, y));
             }
         }
+    }
 
-        Location enterpriseLocation = enterprise.getLocation();
-        map[enterpriseLocation.quadrantX][enterpriseLocation.quadrantY]
-            .place(GameLib.toBase1(enterpriseLocation.sectorX), GameLib.toBase1(enterpriseLocation.sectorY), QuadrantMap.ENTERPRISE);
+    /**
+     * 
+     * Initializes all Klingons for the Game. 
+     * 
+     */
+    private void initializeKlingons() {
+        klingons = new ArrayList<>();
+
+        for (int x = 0; x < MAP_SIZE; ++x) {
+            ArrayList<ArrayList<Klingon>> rowKlingons = new ArrayList<>();
+            
+            for (int y = 0; y < MAP_SIZE; ++y) {
+                ArrayList<Klingon> klingonsInQuadrant = new ArrayList<>();
+                for (Location loc : map[x][y].klingons()) {
+                    klingonsInQuadrant.add(new Klingon(loc));
+                }
+
+                rowKlingons.add(klingonsInQuadrant);
+            }
+
+            klingons.add(rowKlingons);
+        }
+    }
+
+    /**
+     * 
+     * Places the Enterprise in its random location. 
+     * 
+     */
+    private void placeEnterprise() {
+        Location location = enterprise.getLocation();
+
+        at(location).place(GameLib.toBase1(location.sectorX), GameLib.toBase1(location.sectorY), QuadrantMap.ENTERPRISE);
+    }
+
+    /**
+     * 
+     * Finds the movement destination based off the path and what it collides with. 
+     * 
+     * @param path
+     * @return the destintion of an object based off a path
+     */
+    private Location findMovementDestination(ArrayList<Location> path) {
+        Location destination = enterprise.getLocation();
+
+        for (Location location : path) {
+            QuadrantMap quadrant = at(location);
+
+            if (!quadrant.empty(GameLib.toBase1(location.sectorX), GameLib.toBase1(location.sectorY)))
+                break;
+
+            destination = location;
+        }
+
+        return destination;
+    }
+
+    /**
+     * 
+     * Updates the Enterprise's map based off the new and old locations.
+     * 
+     * @param oldLocation
+     * @param newLocation
+     */
+    private void updateEnterpriseMap(Location oldLocation, Location newLocation) {
+        QuadrantMap oldQuadrant = at(oldLocation);
+        QuadrantMap newQuadrant = at(newLocation);
+        
+        oldQuadrant.clearSector(GameLib.toBase1(oldLocation.sectorX), GameLib.toBase1(oldLocation.sectorY));
+        newQuadrant.place(GameLib.toBase1(newLocation.sectorX), GameLib.toBase1(newLocation.sectorY), QuadrantMap.ENTERPRISE);
+
     }
 
     /**
@@ -163,21 +223,54 @@ public class Game {
      * @return true if the Enterprise can dock, and false if else
      */
     private boolean canDock() {
-        Location loc = enterprise.getLocation();
+        Location location = enterprise.getLocation();
+        QuadrantMap quadrant = at(location);
 
-        // done like this for base0 to base1 conversion
-        for (int i = GameLib.toBase1(loc.sectorY - 1); i < GameLib.toBase1(loc.sectorY + 2); ++i) {
-            for (int j = GameLib.toBase1(loc.sectorX - 1); j < GameLib.toBase1(loc.sectorX + 2); ++j) {
-                if (i < 1 || i > 8 || j < 1 || j > 8)
+        int centerX = GameLib.toBase1(location.sectorX);
+        int centerY = GameLib.toBase1(location.sectorY);
+
+        for (int y = centerY - 1; y <= centerY + 1; ++y) {
+            for (int x = centerX - 1; x <= centerX + 1; ++x) {
+                if (x < MIN_SECTOR || x > MAX_SECTOR || y < MIN_SECTOR || y > MAX_SECTOR)
                     continue;
 
-                if (at(loc).at(j, i).equals(QuadrantMap.BASE)) {
+                if (quadrant.at(x, y).equals(QuadrantMap.BASE))
                     return true;
-                }
             }
         }
 
         return false;
+    }
+
+    /**
+     * 
+     * Handles firing the phasers at all klingons. If a klingon is
+     * destroyed, it will handle destroying the klingon as well. 
+     * 
+     * @param phaserEnergy
+     */
+    private void firePhasers(double phaserEnergy) {
+        enterprise.adjustEnergy((int)-phaserEnergy);
+
+        Location location = enterprise.getLocation();
+        ArrayList<Klingon> currentKlingons = klingons.get(location.quadrantX).get(location.quadrantY);
+
+        Iterator<Klingon> it = currentKlingons.iterator();
+        while (it.hasNext()) {
+            Klingon klingon = it.next();
+
+            klingon.adjustEnergy(enterprise.firePhasers(phaserEnergy, klingon.getLocation().sectorX,
+                klingon.getLocation().sectorY, currentKlingons.size()));
+
+            if (!klingon.isDestroyed()) {
+                continue;
+            }
+
+            galaxy.getQuadrant(location.quadrantX, location.quadrantY).reduceKlingons();
+            at(location).removeObject(klingon.getLocation().sectorX, klingon.getLocation().sectorY, QuadrantMap.KLINGON);
+
+            it.remove();
+        }
     }
 
     /**
@@ -209,6 +302,9 @@ public class Game {
             case "LRS":
                 longRangeCommand();
                 break;
+            case "PHA":
+                phaserCommand(command);
+                break;
             case "SHE":
                 shieldCommand(command);
                 break;
@@ -229,6 +325,11 @@ public class Game {
      * 
      */
     private void moveCommand(ArrayList<String> command) {
+        if (command.size() < 3) {
+            IO.warning("NAV usage <warp direction> <warp factor>");
+            return;
+        }
+
         try {
             double warpDirection = Double.parseDouble(command.get(1));
             double warpFactor = Double.parseDouble(command.get(2));
@@ -277,6 +378,22 @@ public class Game {
         }
     }
 
+    private void phaserCommand(ArrayList<String> command) {
+        if (command.size() < 2) {
+            IO.warning("PHA usage <phaser energy>");
+            return;
+        }
+
+        try {
+            double phaserEnergy = Double.parseDouble(command.get(1));
+            firePhasers(phaserEnergy);
+            shortRangeCommand();
+        } catch (Exception e) {
+            IO.warning("Please enter valid doubles");
+            return;
+        }
+    }
+
     /**
      * 
      * Adjusts shields acording to the user. Will replenish the available
@@ -285,6 +402,11 @@ public class Game {
      * @param command
      */
     private void shieldCommand(ArrayList<String> command) {
+         if (command.size() < 2) {
+            IO.warning("SHE usage <new shield>");
+            return;
+        }
+
         try {
             double newShields = Double.parseDouble(command.get(1));
 
@@ -305,9 +427,15 @@ public class Game {
     }
 
     private Enterprise enterprise;
+    
     private Galaxy galaxy;
-
     private QuadrantMap[][] map;
+
+    private ArrayList<ArrayList<ArrayList<Klingon>>> klingons; 
+
+    private static final int MAP_SIZE = 8;
+    private static final int MIN_SECTOR = 1;
+    private static final int MAX_SECTOR = 8;
 }
 
 /**
