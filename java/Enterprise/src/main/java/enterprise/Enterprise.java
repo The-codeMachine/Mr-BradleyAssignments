@@ -85,6 +85,30 @@ public class Enterprise extends Ship {
 
     /**
      * 
+     * Gets the Enterprise's current docked status
+     * 
+     * @return true if the Enterprise is currently docked and false if it is not
+     */
+    public boolean getDocked() {
+        return docked;
+    }
+
+    /**
+     * 
+     * Updates the docked value of the Enterprise to value. If it
+     * becomes true it will dock the Enterprise. 
+     * 
+     * @param value
+     */
+    public void updateDocked(boolean value) {
+        docked = value;
+
+        if (docked)
+            dock();
+    }
+
+    /**
+     * 
      * Adjusts the shields to the new shields value. Will log
      * an error if there is not sufficient energy. 
      * 
@@ -129,6 +153,21 @@ public class Enterprise extends Ship {
                 "\nTorpedoes: " + torpedoes +
                 "\nShields: " + shields +
                 "\nDocked: " + docked;
+    }
+
+    /**
+     * 
+     * This will dock the Enterprise by replenishing all 
+     * its energy, and torpedoes as well as repairing all
+     * devices. 
+     * 
+     */
+    private void dock() {
+        adjustEnergy(3000 - energy());
+        torpedoes = 10;
+
+        // repairs all devices fully
+        devices.repairAll(10000);
     }
 
     private Devices devices;

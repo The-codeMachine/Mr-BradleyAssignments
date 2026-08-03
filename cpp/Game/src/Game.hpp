@@ -29,6 +29,9 @@ public:
     QuadrantMap& at(int x, int y);
     QuadrantMap& at(common::Location location);
 
+    const QuadrantMap& at(int x, int y) const;
+    const QuadrantMap& at(common::Location location) const;
+
     Enterprise getEnterprise() const;
 
     void run();
@@ -37,6 +40,8 @@ public:
 
 private:
     void constructGame();
+
+    bool canDock() const noexcept;
 
     bool handleCommand();
     

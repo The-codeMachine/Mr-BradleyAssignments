@@ -60,7 +60,7 @@ public class Ship {
      * 
      * @return the energy of the ship
      */
-    public double energy() {
+    public int energy() {
         return energy;
     }
 
@@ -425,7 +425,7 @@ public class Ship {
         return Double.POSITIVE_INFINITY;
     }
 
-    private double energy;
+    private int energy;
 
     private Location location;
 

@@ -29,19 +29,7 @@ import galaxy.Galaxy;
 public class Game {
 
     public Game() {
-        enterprise = new Enterprise(3000, 0, 10, false);
-
-        galaxy = new Galaxy();
-        map = new QuadrantMap[8][8];
-        for (int i = 0; i < 8; ++i) {
-            for (int j = 0; j < 8; ++j) {
-                map[i][j] = new QuadrantMap(galaxy.getQuadrant(i, j));
-            }
-        }
-
-        Location enterpriseLocation = enterprise.getLocation();
-        map[enterpriseLocation.quadrantX][enterpriseLocation.quadrantY]
-            .place(GameLib.toBase1(enterpriseLocation.sectorX), GameLib.toBase1(enterpriseLocation.sectorY), QuadrantMap.ENTERPRISE);
+        constructGame();
     }
 
     /**
@@ -108,6 +96,8 @@ public class Game {
      * @return true if the move was successful
      */
     public boolean move(double warpFactor, double warpDirection) {
+        enterprise.updateDocked(false);
+
         ArrayList<Location> path = enterprise.calculatePath(warpFactor, warpDirection);
 
         if (path.isEmpty())
@@ -138,7 +128,56 @@ public class Game {
 
         enterprise.move(last, warpFactor);
 
+        if (canDock()) {
+            enterprise.updateDocked(true);
+        }
+
         return last == path.getLast();
+    }
+
+    /**
+     * 
+     * Constructs the game  
+     * 
+     */
+    private void constructGame() {
+        enterprise = new Enterprise(3000, 0, 10, false);
+
+        galaxy = new Galaxy();
+        map = new QuadrantMap[8][8];
+        for (int i = 0; i < 8; ++i) {
+            for (int j = 0; j < 8; ++j) {
+                map[i][j] = new QuadrantMap(galaxy.getQuadrant(i, j));
+            }
+        }
+
+        Location enterpriseLocation = enterprise.getLocation();
+        map[enterpriseLocation.quadrantX][enterpriseLocation.quadrantY]
+            .place(GameLib.toBase1(enterpriseLocation.sectorX), GameLib.toBase1(enterpriseLocation.sectorY), QuadrantMap.ENTERPRISE);
+    }
+
+    /**
+     * 
+     * Checks whether the Enterprise can dock or not
+     * 
+     * @return true if the Enterprise can dock, and false if else
+     */
+    private boolean canDock() {
+        Location loc = enterprise.getLocation();
+
+        // done like this for base0 to base1 conversion
+        for (int i = GameLib.toBase1(loc.sectorY - 1); i < GameLib.toBase1(loc.sectorY + 2); ++i) {
+            for (int j = GameLib.toBase1(loc.sectorX - 1); j < GameLib.toBase1(loc.sectorX + 2); ++j) {
+                if (i < 1 || i > 8 || j < 1 || j > 8)
+                    continue;
+
+                if (at(loc).at(j, i).equals(QuadrantMap.BASE)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     /**

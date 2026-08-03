@@ -6,6 +6,52 @@ Game::Game() : enterprise(3000, 0, 10, false) {
     constructGame();
 }
 
+// Constructs a game
+void Game::constructGame() {
+    klingons.resize(8);
+    for (int i = 0; i < 8; ++i) {
+        klingons[i].resize(8);
+        for (int j = 0; j < 8; ++j) {
+            map[i][j] = QuadrantMap(galaxy.getQuadrant(i, j));
+
+            /*
+            int numKlingons = galaxy.getQuadrant(i, j).klingons();
+            klingons[i][j].resize(numKlingons);
+
+            for (int k = 0; k < numKlingons; ++k) {
+                // IDK how to do this. Find where the klingon is somehow, idk
+                // maybe loop through the quadrantmap to find it, or maybe
+                // quadrant map will do it somehow 
+                klingons[i][j][k] = Klingon(map[i][j]);
+            }
+            */
+        }
+    }
+
+    common::Location enterpriseLocation = enterprise.getLocation();
+    map[enterpriseLocation.quadrantX][enterpriseLocation.quadrantY]
+        .place(common::toBase1(enterpriseLocation.sectorX), common::toBase1(enterpriseLocation.sectorY), QuadrantMap::ENTERPRISE);
+}
+
+// Checks whether or not the Enterprise can dock, if it can it returns true
+bool Game::canDock() const noexcept {
+    common::Location loc = enterprise.getLocation();
+
+    // done like this for base0 to base1 conversion
+    for (int i = common::toBase1(loc.sectorY - 1); i < common::toBase1(loc.sectorY + 2); ++i) {
+        for (int j = common::toBase1(loc.sectorX - 1); j < common::toBase1(loc.sectorX + 2); ++j) {
+            if (i < 1 || i > 8 || j < 1 || j > 8)
+                continue;
+
+            if (at(loc).at(j, i) == QuadrantMap::BASE) {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
 // Gets the QuadrantMap at (x, y). This
 // method takes base-1 coordinates.
 QuadrantMap& Game::at(int x, int y) {
@@ -15,6 +61,18 @@ QuadrantMap& Game::at(int x, int y) {
 // Gets the QuadrantMap at (x, y). This
 // method takes base-0 location coordinates.
 QuadrantMap& Game::at(common::Location location) {
+    return map[location.quadrantX][location.quadrantY];
+}
+
+// Gets the QuadrantMap at (x, y). This
+// method takes base-1 coordinates.
+const QuadrantMap& Game::at(int x, int y) const {
+    return map[common::toBase0(x)][common::toBase0(y)];
+}
+
+// Gets the QuadrantMap at (x, y). This
+// method takes base-0 location coordinates.
+const QuadrantMap& Game::at(common::Location location) const {
     return map[location.quadrantX][location.quadrantY];
 }
 
@@ -41,6 +99,7 @@ void Game::run() {
 // the old and new QuadrantMap, adjusting values
 // within there.
 bool Game::move(double warpFactor, double warpDirection) {
+    enterprise.updateDocked(false);
     std::vector<common::Location> path = enterprise.calculatePath(warpFactor, warpDirection);
 
     if (path.empty())
@@ -70,46 +129,10 @@ bool Game::move(double warpFactor, double warpDirection) {
 
     enterprise.move(last, warpFactor);
 
-    // done like this for base0 to base1 conversion
-    for (int i = last.sectorY; i < last.sectorY + 2; ++i) {
-        for (int j = last.sectorX; j < last.sectorX + 2; ++j) {
-            if (i < 1 || i > 8 || j < 1 || j > 8)
-                continue;
-
-            if (at(last).at(j, i) == QuadrantMap::BASE) {
-                enterprise.updateDocked(true);
-            }
-        }
-    }
+    if (canDock())
+        enterprise.updateDocked(true);
 
     return last == path.back();
-}
-
-// Constructs a game
-void Game::constructGame() {
-    klingons.resize(8);
-    for (int i = 0; i < 8; ++i) {
-        klingons[i].resize(8);
-        for (int j = 0; j < 8; ++j) {
-            map[i][j] = QuadrantMap(galaxy.getQuadrant(i, j));
-
-            /*
-            int numKlingons = galaxy.getQuadrant(i, j).klingons();
-            klingons[i][j].resize(numKlingons);
-
-            for (int k = 0; k < numKlingons; ++k) {
-                // IDK how to do this. Find where the klingon is somehow, idk
-                // maybe loop through the quadrantmap to find it, or maybe
-                // quadrant map will do it somehow 
-                klingons[i][j][k] = Klingon(map[i][j]);
-            }
-            */
-        }
-    }
-
-    common::Location enterpriseLocation = enterprise.getLocation();
-    map[enterpriseLocation.quadrantX][enterpriseLocation.quadrantY]
-        .place(common::toBase1(enterpriseLocation.sectorX), common::toBase1(enterpriseLocation.sectorY), QuadrantMap::ENTERPRISE);
 }
 
 // Handles a command from the user. Takes the input
