@@ -8,36 +8,83 @@ Game::Game() : enterprise(3000, 0, 10, false) {
 
 // Constructs a game
 void Game::constructGame() {
-    klingons.resize(8);
-    for (int i = 0; i < 8; ++i) {
-        klingons[i].resize(8);
-        for (int j = 0; j < 8; ++j) {
-            map[i][j] = QuadrantMap(galaxy.getQuadrant(i, j));
+    initializeQuadrants();
+    initializeKlingons();
+    placeEnterprise();
+}
 
-            for (const auto& loc : map[i][j].klingons()) {
-                klingons[j][i].push_back(common::Location(loc.sectorX, loc.sectorX, j, i));
-            }
+// Initializes all Quadrants in the Game
+void Game::initializeQuadrants() {
+    for (int x = 0; x < MAP_SIZE; ++x) {
+        for (int y = 0; y < MAP_SIZE; ++y) {
+            map[x][y] = QuadrantMap(galaxy.getQuadrant(x, y));
         }
     }
-
-    common::Location enterpriseLocation = enterprise.getLocation();
-    map[enterpriseLocation.quadrantX][enterpriseLocation.quadrantY]
-        .place(common::toBase1(enterpriseLocation.sectorX), common::toBase1(enterpriseLocation.sectorY), QuadrantMap::ENTERPRISE);
 }
+
+// Initializes all klingons for the Game
+void Game::initializeKlingons() {
+    klingons.resize(MAP_SIZE);
+
+    for (int x = 0; x < MAP_SIZE; ++x) {
+        klingons[x].resize(MAP_SIZE);
+
+        for (int y = 0; y < MAP_SIZE; ++y) {
+            for (const auto& loc : map[x][y].klingons()) {
+                klingons[x][y].emplace_back(common::Location(loc.sectorX, loc.sectorY, x, y));
+            }
+        }
+    } 
+}
+
+// Places the Enterprise in its initial location
+void Game::placeEnterprise() {
+    const auto location = enterprise.getLocation();
+
+    at(location).place(common::toBase1(location.sectorX), common::toBase1(location.sectorY), QuadrantMap::ENTERPRISE);
+}
+
+// Finds the movement destination based off the path
+common::Location Game::findMovementDestination(const std::vector<common::Location>& path) {
+    auto destination = enterprise.getLocation();
+
+    for (const auto& location : path) {
+        const auto& quadrant = at(location);
+
+        if (!quadrant.empty(common::toBase1(location.sectorX), common::toBase1(location.sectorY)))
+            break;
+
+        destination = location;
+    }
+
+    return destination;
+}
+
+// Updates the Enterprise's map
+void Game::updateEnterpriseMap(common::Location oldLocation, common::Location newLocation) {
+    auto& oldQuadrant = at(oldLocation);
+    auto& newQuadrant = at(newLocation);
+
+    oldQuadrant.clearSector(common::toBase1(oldLocation.sectorX), common::toBase1(oldLocation.sectorY));
+    newQuadrant.place(common::toBase1(newLocation.sectorX), common::toBase1(newLocation.sectorY), QuadrantMap::ENTERPRISE);
+}
+
 
 // Checks whether or not the Enterprise can dock, if it can it returns true
 bool Game::canDock() const noexcept {
-    common::Location loc = enterprise.getLocation();
+    const auto location = enterprise.getLocation();
+    const auto& quadrant = at(location);
 
-    // done like this for base0 to base1 conversion
-    for (int i = common::toBase1(loc.sectorY - 1); i < common::toBase1(loc.sectorY + 2); ++i) {
-        for (int j = common::toBase1(loc.sectorX - 1); j < common::toBase1(loc.sectorX + 2); ++j) {
-            if (i < 1 || i > 8 || j < 1 || j > 8)
+    const int centerX = common::toBase1(location.sectorX);
+    const int centerY = common::toBase1(location.sectorY);
+    
+    for (int y = centerY - 1; y <= centerY + 1; ++y) {
+        for (int x = centerX - 1; x <= centerX + 1; ++x) {
+            if (x < MIN_SECTOR || x > MAX_SECTOR || y < MIN_SECTOR || y > MAX_SECTOR)
                 continue;
 
-            if (at(loc).at(j, i) == QuadrantMap::BASE) {
+            if (quadrant.at(x, y) == QuadrantMap::BASE) 
                 return true;
-            }
         }
     }
 
@@ -68,8 +115,13 @@ const QuadrantMap& Game::at(common::Location location) const {
     return map[location.quadrantX][location.quadrantY];
 }
 
-// Gets the current Enterprise. 
-Enterprise Game::getEnterprise() const {
+// Gets the current Enterprise and returns a reference
+Enterprise& Game::getEnterprise() {
+    return enterprise;
+}
+
+// Gets the current Enterprise and returns a constant reference
+const Enterprise& Game::getEnterprise() const {
     return enterprise;
 }
 
@@ -92,39 +144,20 @@ void Game::run() {
 // within there.
 bool Game::move(double warpFactor, double warpDirection) {
     enterprise.updateDocked(false);
-    std::vector<common::Location> path = enterprise.calculatePath(warpFactor, warpDirection);
+    const auto path = enterprise.calculatePath(warpFactor, warpDirection);
 
     if (path.empty())
         return false;
 
-    common::Location last = enterprise.getLocation();
+    const auto oldLocation = enterprise.getLocation();
+    const auto newLocation = findMovementDestination(path);
+
+    updateEnterpriseMap(oldLocation, newLocation);
     
-    for (common::Location location : path) {
-        common::IO::println(location.toString());
+    enterprise.move(newLocation, warpFactor);
+    enterprise.updateDocked(canDock());
 
-        if (!map[location.quadrantX][location.quadrantY]
-            .empty(common::toBase1(location.sectorX), common::toBase1(location.sectorY)))
-            break;
-
-        last = location;
-    }
-
-    common::Location oldEnterpriseLocation = enterprise.getLocation();
-
-    // clears old enterprise location
-    at(oldEnterpriseLocation)
-            .clearSector(common::toBase1(oldEnterpriseLocation.sectorX), common::toBase1(oldEnterpriseLocation.sectorY));
-
-    // sets new enterprise location
-    at(common::toBase1(last.quadrantX), common::toBase1(last.quadrantY))
-            .place(common::toBase1(last.sectorX), common::toBase1(last.sectorY), QuadrantMap::ENTERPRISE);
-
-    enterprise.move(last, warpFactor);
-
-    if (canDock())
-        enterprise.updateDocked(true);
-
-    return last == path.back();
+    return newLocation == path.back();
 }
 
 // Handles firing the phasers at all klingons. If a klingon is
@@ -132,23 +165,22 @@ bool Game::move(double warpFactor, double warpDirection) {
 void Game::firePhasers(double phaserEnergy) {
     enterprise.adjustEnergy(-phaserEnergy);
 
-    common::Location loc = enterprise.getLocation();
+    const auto location = enterprise.getLocation();
+    auto& currentKlingons = klingons[location.quadrantX][location.quadrantY];
 
-    auto& currentKlingons = klingons[loc.quadrantY][loc.quadrantX];
-    auto it = currentKlingons.begin();
+    for (auto it = currentKlingons.begin(); it != currentKlingons.end();) {
+        auto& klingon = *it;
 
-    while (it != currentKlingons.end()) {
-        it->adjustEnergy(enterprise.firePhasers(phaserEnergy, it->getLocation().sectorX, it->getLocation().sectorY, 
-                        currentKlingons.size()));
+        klingon.adjustEnergy(enterprise.firePhasers(phaserEnergy, klingon.getLocation().sectorX,
+                            klingon.getLocation().sectorY, currentKlingons.size()));
 
-        if (it->isDestroyed()) {
-            galaxy.getQuadrant(loc.quadrantY, loc.quadrantX).reduceKlingons();
-            map[loc.quadrantY][loc.quadrantX].removeObject(it->getLocation().sectorX, it->getLocation().sectorY, QuadrantMap::KLINGON);
-            
-            it = currentKlingons.erase(it); 
-        } else {
-            ++it; 
+        if (!klingon.isDestroyed()) {
+            ++it;
+            continue;
         }
+
+        galaxy.getQuadrant(location.quadrantX, location.quadrantY).reduceKlingons();
+        at(location).removeObject(klingon.getLocation().sectorX, klingon.getLocation().sectorY, QuadrantMap::KLINGON);
     }
 }
 
@@ -163,19 +195,21 @@ bool Game::handleCommand() {
     if (command.empty())
         return true;
 
-    const std::string& cmd = command[0];
+    const auto& name = command.front();
 
-    if (cmd == "NAV") {
+    if (name == "NAV") {
         moveCommand(command);
-    } else if (cmd == "SRS") {
+    } else if (name == "SRS") {
         shortRangeCommand();
-    } else if (cmd == "LRS") {
+    } else if (name == "LRS") {
         longRangeCommand();
-    } else if (cmd == "SHE") {
+    } else if (name == "PHA") {
+        phaserCommand(command);
+    } else if (name == "SHE") {
         shieldCommand(command);
-    } else if (cmd == "DAM") {
+    } else if (name == "DAM") {
         damageReportCommand();
-    } else if (cmd == "XXX") {
+    } else if (name == "XXX") {
         return false;
     }
 
@@ -204,9 +238,9 @@ void Game::moveCommand(const std::vector<std::string>& command) {
 
 // The Enterprise does a short range scan.
 void Game::shortRangeCommand() {
-    common::Location enterpriseLocation = enterprise.getLocation();
-    common::IO::println(map[enterpriseLocation.quadrantX][enterpriseLocation.quadrantY].toString());
-
+    const auto& location = enterprise.getLocation();
+    
+    common::IO::println(at(location).toString());
     common::IO::println(enterprise.toString());
 }
 
@@ -214,13 +248,13 @@ void Game::shortRangeCommand() {
 // Does a long range scan around the Enterprise. Returns
 // the quadrant's KBS value around the Enterprise. 
 void Game::longRangeCommand() {
-    common::Location loc = enterprise.getLocation();
+    const auto location = enterprise.getLocation();
 
-    int startY = std::max(0, loc.quadrantY - 1);
-    int endY = std::min(7, loc.quadrantY + 1);
+    const int startY = std::max(0, location.quadrantY - 1);
+    const int endY = std::min(7, location.quadrantY + 1);
 
-    int startX = std::max(0, loc.quadrantX - 1);
-    int endX = std::min(7, loc.quadrantX + 1);
+    const int startX = std::max(0, location.quadrantX - 1);
+    const int endX = std::min(7, location.quadrantX + 1);
 
     for (int y = startY; y <= endY; ++y) {
         for (int x = startX; x <= endX; ++x) {
@@ -240,8 +274,8 @@ void Game::phaserCommand(const std::vector<std::string>& command) {
     
     try {
         double phaserEnergy = std::stod(command[1]);
-
         firePhasers(phaserEnergy);
+        shortRangeCommand();
     } catch (const std::exception& e) {
         common::IO::warning("Please enter valid doubles");
         return;
@@ -256,11 +290,10 @@ void Game::shieldCommand(const std::vector<std::string>& command) {
 
     try {
         double newShields = std::stod(command[1]);
-
         enterprise.adjustShields(newShields);
     } catch (const std::exception& e) {
-        common::IO::warning("Invalid usage of SHE");
-        common::IO::println("SHE usage: SHE <new shields>");
+        common::IO::warning("Please enter valid doubles");
+        return;
     }
 }
 

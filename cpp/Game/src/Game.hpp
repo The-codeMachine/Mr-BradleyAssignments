@@ -32,7 +32,8 @@ public:
     const QuadrantMap& at(int x, int y) const;
     const QuadrantMap& at(common::Location location) const;
 
-    Enterprise getEnterprise() const;
+    Enterprise& getEnterprise();
+    const Enterprise& getEnterprise() const;
 
     void run();
 
@@ -41,6 +42,12 @@ public:
 private:
     void constructGame();
 
+    void initializeQuadrants();
+    void initializeKlingons();
+    void placeEnterprise();
+
+    common::Location findMovementDestination(const std::vector<common::Location>& path);
+    void updateEnterpriseMap(common::Location oldLocation, common::Location newLocation);
     bool canDock() const noexcept;
 
     void firePhasers(double phaserEnergy);
@@ -62,4 +69,11 @@ private:
     QuadrantMap map[8][8];
     
     std::vector<std::vector<std::vector<Klingon>>> klingons;
+
+private:
+    static inline constexpr int MAP_SIZE = 8;
+
+    static inline constexpr int MIN_SECTOR = 1;
+    static inline constexpr int MAX_SECTOR = 8;
+
 };

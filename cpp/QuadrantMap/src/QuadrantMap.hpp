@@ -2,9 +2,11 @@
 
 #include <QuadrantString.hpp>
 #include <quadrant.hpp>
+#include <common/GameLib.hpp>
 
 #include <string>
 #include <ostream>
+#include <vector>
 #include <cstdint>
 
 /**
