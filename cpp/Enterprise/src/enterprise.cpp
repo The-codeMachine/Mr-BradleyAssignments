@@ -12,6 +12,16 @@ Enterprise::Enterprise(int energy, double shields,
                 Ship(energy),
                 shields(shields), torpedoes(torpedoes), docked(docked) {}
 
+// Docks the Enterprise. Replenishes energy, torpedoes
+// and repairs all devices
+void Enterprise::dock() {
+    adjustEnergy(3000 - getEnergy());
+    torpedoes = 10;
+
+    // repairs all devices fully
+    devices.repairAll(10000);
+}
+
 // Returns if the Enterprise is destroyed.
 // Will return true if the Enterprise is destoryed.
 bool Enterprise::isDestroyed() const noexcept {
@@ -36,6 +46,9 @@ std::vector<common::Location> Enterprise::calculatePath(double warpFactor, doubl
 // Makes the Enterprise take damage based off
 // the effective phaser energy.
 bool Enterprise::takeDamage(double phaserEnergy) {
+    if (docked)
+        return isDestroyed();
+
     devices.hitDamage(phaserEnergy, this->getEnergy());
 
     shields -= phaserEnergy;
@@ -51,6 +64,19 @@ void Enterprise::adjustShields(double shields) {
 
     adjustEnergy((int)(diffShields));
     this->shields = shields;
+}
+
+// Returns whether the Enterprise is docked or not
+bool Enterprise::getDocked() const noexcept {
+    return docked;
+}
+
+// Updates the docked status to this and does all repairs
+void Enterprise::updateDocked(bool value) {
+    docked = value;
+
+    if (docked)
+        dock();
 }
 
 // Prints a damage report for all the device's state of

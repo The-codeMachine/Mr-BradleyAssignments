@@ -33,11 +33,17 @@ public:
     std::vector<common::Location> calculatePath(double warpFactor, double warpDirection) override;
     bool takeDamage(double phaserEnergy) override;
 
+    bool getDocked() const noexcept;
+    void updateDocked(bool value);
+
     void adjustShields(double shields);
 
     void damageReport() const;
 
     std::string toString() const;
+
+private:
+    void dock();
 
 private:
     Devices devices;

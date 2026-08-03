@@ -3,15 +3,7 @@
 #include <common/IO.hpp>
 
 Game::Game() : enterprise(3000, 0, 10, false) {
-    for (int i = 0; i < 8; ++i) {
-        for (int j = 0; j < 8; ++j) {
-            map[i][j] = QuadrantMap(galaxy.getQuadrant(i, j));
-        }
-    }
-
-    common::Location enterpriseLocation = enterprise.getLocation();
-    map[enterpriseLocation.quadrantX][enterpriseLocation.quadrantY]
-        .place(common::toBase1(enterpriseLocation.sectorX), common::toBase1(enterpriseLocation.sectorY), QuadrantMap::ENTERPRISE);
+    constructGame();
 }
 
 // Gets the QuadrantMap at (x, y). This
@@ -78,7 +70,46 @@ bool Game::move(double warpFactor, double warpDirection) {
 
     enterprise.move(last, warpFactor);
 
+    // done like this for base0 to base1 conversion
+    for (int i = last.sectorY; i < last.sectorY + 2; ++i) {
+        for (int j = last.sectorX; j < last.sectorX + 2; ++j) {
+            if (i < 1 || i > 8 || j < 1 || j > 8)
+                continue;
+
+            if (at(last).at(j, i) == QuadrantMap::BASE) {
+                enterprise.updateDocked(true);
+            }
+        }
+    }
+
     return last == path.back();
+}
+
+// Constructs a game
+void Game::constructGame() {
+    klingons.resize(8);
+    for (int i = 0; i < 8; ++i) {
+        klingons[i].resize(8);
+        for (int j = 0; j < 8; ++j) {
+            map[i][j] = QuadrantMap(galaxy.getQuadrant(i, j));
+
+            /*
+            int numKlingons = galaxy.getQuadrant(i, j).klingons();
+            klingons[i][j].resize(numKlingons);
+
+            for (int k = 0; k < numKlingons; ++k) {
+                // IDK how to do this. Find where the klingon is somehow, idk
+                // maybe loop through the quadrantmap to find it, or maybe
+                // quadrant map will do it somehow 
+                klingons[i][j][k] = Klingon(map[i][j]);
+            }
+            */
+        }
+    }
+
+    common::Location enterpriseLocation = enterprise.getLocation();
+    map[enterpriseLocation.quadrantX][enterpriseLocation.quadrantY]
+        .place(common::toBase1(enterpriseLocation.sectorX), common::toBase1(enterpriseLocation.sectorY), QuadrantMap::ENTERPRISE);
 }
 
 // Handles a command from the user. Takes the input
