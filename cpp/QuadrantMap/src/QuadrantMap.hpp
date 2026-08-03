@@ -66,6 +66,9 @@ public:
    void move(int x, int y, int newX, int newY, const std::string& value);
    void removeObject(int x, int y, const std::string& object);
 
+   std::vector<common::Location>& klingons();
+   const std::vector<common::Location>& klingons() const;
+
    std::string at(int x, int y) const;
    bool empty(int x, int y) const;
 
@@ -92,11 +95,14 @@ private:
    static bool validPos(int x, int y);
 
    void placeValues(int amount, const std::string &value);
+   void placeKlingons(int amount);
    void initializeQuadrant(Quadrant q, int x, int y);
    void initializeQuadrant(Quadrant q);
 
 private:
    QuadrantString quadrantString;
+
+   std::vector<common::Location> klingonLocations;
 
    static inline constexpr size_t ROWS = 8;
    static inline constexpr size_t COLS = 8;

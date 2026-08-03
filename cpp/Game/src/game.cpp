@@ -14,17 +14,9 @@ void Game::constructGame() {
         for (int j = 0; j < 8; ++j) {
             map[i][j] = QuadrantMap(galaxy.getQuadrant(i, j));
 
-            /*
-            int numKlingons = galaxy.getQuadrant(i, j).klingons();
-            klingons[i][j].resize(numKlingons);
-
-            for (int k = 0; k < numKlingons; ++k) {
-                // IDK how to do this. Find where the klingon is somehow, idk
-                // maybe loop through the quadrantmap to find it, or maybe
-                // quadrant map will do it somehow 
-                klingons[i][j][k] = Klingon(map[i][j]);
+            for (const auto& loc : map[i][j].klingons()) {
+                klingons[j][i].push_back(common::Location(loc.sectorX, loc.sectorX, j, i));
             }
-            */
         }
     }
 
@@ -135,6 +127,31 @@ bool Game::move(double warpFactor, double warpDirection) {
     return last == path.back();
 }
 
+// Handles firing the phasers at all klingons. If a klingon is
+// destroyed, it will handle destroying the klingon has well
+void Game::firePhasers(double phaserEnergy) {
+    enterprise.adjustEnergy(-phaserEnergy);
+
+    common::Location loc = enterprise.getLocation();
+
+    auto& currentKlingons = klingons[loc.quadrantY][loc.quadrantX];
+    auto it = currentKlingons.begin();
+
+    while (it != currentKlingons.end()) {
+        it->adjustEnergy(enterprise.firePhasers(phaserEnergy, it->getLocation().sectorX, it->getLocation().sectorY, 
+                        currentKlingons.size()));
+
+        if (it->isDestroyed()) {
+            galaxy.getQuadrant(loc.quadrantY, loc.quadrantX).reduceKlingons();
+            map[loc.quadrantY][loc.quadrantX].removeObject(it->getLocation().sectorX, it->getLocation().sectorY, QuadrantMap::KLINGON);
+            
+            it = currentKlingons.erase(it); 
+        } else {
+            ++it; 
+        }
+    }
+}
+
 // Handles a command from the user. Takes the input
 // and handles the command (gets the correct data, 
 // and calls the functions). Returns a boolean 
@@ -214,7 +231,29 @@ void Game::longRangeCommand() {
     }
 }
 
+// Fires the phasers based off the energy
+void Game::phaserCommand(const std::vector<std::string>& command) {
+    if (command.size() < 2) {
+        common::IO::warning("PHA usage <phaser energy>");
+        return;
+    }
+    
+    try {
+        double phaserEnergy = std::stod(command[1]);
+
+        firePhasers(phaserEnergy);
+    } catch (const std::exception& e) {
+        common::IO::warning("Please enter valid doubles");
+        return;
+    }
+}
+
 void Game::shieldCommand(const std::vector<std::string>& command) {
+    if (command.size() < 2) {
+        common::IO::warning("SHE usage <new shields>");
+        return;
+    }
+
     try {
         double newShields = std::stod(command[1]);
 

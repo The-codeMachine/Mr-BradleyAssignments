@@ -55,6 +55,14 @@ bool Enterprise::takeDamage(double phaserEnergy) {
     return isDestroyed();
 }
 
+// Calculates the amount of damage the phaser does to a klingon
+int Enterprise::firePhasers(double phaserEnergy, int x, int y, int numKlingons) {
+    double distance = std::sqrt(std::pow(getLocation().sectorX - x, 2) + std::pow(getLocation().sectorY - y, 2));
+    double h = phaserEnergy / numKlingons;
+
+    return (int) ((h / distance) * (common::random() + 2));
+}
+
 void Enterprise::adjustShields(double shields) {
     double diffShields = this->shields - shields;
     if (-diffShields > getEnergy()) {

@@ -33,6 +33,8 @@ public:
     std::vector<common::Location> calculatePath(double warpFactor, double warpDirection) override;
     bool takeDamage(double phaserEnergy) override;
 
+    int firePhasers(double phaserEnergy, int x, int y, int numKlingons);
+
     bool getDocked() const noexcept;
     void updateDocked(bool value);
 

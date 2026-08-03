@@ -83,13 +83,33 @@ void QuadrantMap::placeValues(int amount, const std::string &value)
     }
 }
 
+// Places klingons and records their positions
+void QuadrantMap::placeKlingons(int amount) {
+    assert(amount <= ROWS * COLS);
+
+    while (amount--)
+    {
+        int x, y;
+
+        generateRandomPosition(x, y);
+
+        while (!empty(x, y))
+        {
+            generateRandomPosition(x, y);
+        }
+
+        place(x, y, KLINGON);
+        klingonLocations.emplace_back(common::Location(x, y, -1, -1));
+    }
+}
+
 // Initializes the Quadrant by placing the Enterprise at (x, y),
 // and uses the Quadrant information to place the rest of the
 // objects.
 void QuadrantMap::initializeQuadrant(Quadrant q, int x, int y)
 {
     place(x, y, ENTERPRISE);
-    placeValues(q.klingons(), KLINGON);
+    placeKlingons(q.klingons());
     placeValues(q.bases(), BASE);
     placeValues(q.stars(), STAR);
 }
@@ -99,7 +119,7 @@ void QuadrantMap::initializeQuadrant(Quadrant q, int x, int y)
 // objects.
 void QuadrantMap::initializeQuadrant(Quadrant q)
 {
-    placeValues(q.klingons(), KLINGON);
+    placeKlingons(q.klingons());
     placeValues(q.bases(), BASE);
     placeValues(q.stars(), STAR);
 }
@@ -160,6 +180,15 @@ void QuadrantMap::removeObject(int x, int y, const std::string &object)
         clearSector(x, y);
     }
 }
+
+std::vector<common::Location>& QuadrantMap::klingons() {
+    return klingonLocations;
+}
+
+const std::vector<common::Location>& QuadrantMap::klingons() const {
+    return klingonLocations;
+}
+
 
 // Returns the symbol stored at the specified sector.
 // The 2D coordinates are converted into a 1D index into

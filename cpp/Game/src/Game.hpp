@@ -43,11 +43,15 @@ private:
 
     bool canDock() const noexcept;
 
+    void firePhasers(double phaserEnergy);
+    void klingonsFire();
+
     bool handleCommand();
     
     void moveCommand(const std::vector<std::string>& command);
     void shortRangeCommand();
     void longRangeCommand();
+    void phaserCommand(const std::vector<std::string>& command);
     void shieldCommand(const std::vector<std::string>& command);
     void damageReportCommand();
 
