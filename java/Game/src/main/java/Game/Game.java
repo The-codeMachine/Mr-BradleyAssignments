@@ -259,15 +259,18 @@ public class Game {
         while (it.hasNext()) {
             Klingon klingon = it.next();
 
-            klingon.adjustEnergy(enterprise.firePhasers(phaserEnergy, klingon.getLocation().sectorX,
+            klingon.adjustEnergy(-enterprise.firePhasers(phaserEnergy, klingon.getLocation().sectorX,
                 klingon.getLocation().sectorY, currentKlingons.size()));
 
             if (!klingon.isDestroyed()) {
                 continue;
             }
 
+            IO.printf("(%d, %d)\n", GameLib.toBase1(klingon.getLocation().sectorX), GameLib.toBase1(klingon.getLocation().sectorY));
+
             galaxy.getQuadrant(location.quadrantX, location.quadrantY).reduceKlingons();
-            at(location).removeObject(klingon.getLocation().sectorX, klingon.getLocation().sectorY, QuadrantMap.KLINGON);
+            at(location).removeObject(GameLib.toBase1(klingon.getLocation().sectorX), 
+                                    GameLib.toBase1(klingon.getLocation().sectorY), QuadrantMap.KLINGON);
 
             it.remove();
         }

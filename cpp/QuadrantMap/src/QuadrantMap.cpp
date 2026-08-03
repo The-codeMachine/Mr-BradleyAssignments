@@ -99,7 +99,7 @@ void QuadrantMap::placeKlingons(int amount) {
         }
 
         place(x, y, KLINGON);
-        klingonLocations.emplace_back(common::Location(x, y, -1, -1));
+        klingonLocations.emplace_back(common::Location(common::toBase0(x), common::toBase0(y), -1, -1));
     }
 }
 

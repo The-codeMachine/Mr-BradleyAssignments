@@ -278,7 +278,7 @@ public class QuadrantMap {
             }
 
             place(pos[X], pos[Y], KLINGON);
-            klingons.add(new GameLib.Location(pos[X], pos[Y], -1, -1));
+            klingons.add(new GameLib.Location(GameLib.toBase0(pos[X]), GameLib.toBase0(pos[Y]), -1, -1));
         }
     }
 

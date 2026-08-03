@@ -171,7 +171,7 @@ void Game::firePhasers(double phaserEnergy) {
     for (auto it = currentKlingons.begin(); it != currentKlingons.end();) {
         auto& klingon = *it;
 
-        klingon.adjustEnergy(enterprise.firePhasers(phaserEnergy, klingon.getLocation().sectorX,
+        klingon.adjustEnergy(-enterprise.firePhasers(phaserEnergy, klingon.getLocation().sectorX,
                             klingon.getLocation().sectorY, currentKlingons.size()));
 
         if (!klingon.isDestroyed()) {
@@ -180,7 +180,10 @@ void Game::firePhasers(double phaserEnergy) {
         }
 
         galaxy.getQuadrant(location.quadrantX, location.quadrantY).reduceKlingons();
-        at(location).removeObject(klingon.getLocation().sectorX, klingon.getLocation().sectorY, QuadrantMap::KLINGON);
+        at(location).removeObject(common::toBase1(klingon.getLocation().sectorX), 
+                                common::toBase1(klingon.getLocation().sectorY), QuadrantMap::KLINGON);
+
+        it = currentKlingons.erase(it);
     }
 }
 
