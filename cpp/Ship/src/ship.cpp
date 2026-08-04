@@ -203,6 +203,7 @@ bool Ship::takeDamage(double phaserEnergy) {
 // based off how much is fired, how 
 // far the ship is, and how many klingons
 // are in the quadant currently.
+// Takes base-0 input
 int Ship::firePhasers(double phaserEnergy, int x, int y) {
     double distance = std::sqrt((location.sectorX - x) * (location.sectorX - x) + 
         (location.sectorY - y) * (location.sectorY - y));

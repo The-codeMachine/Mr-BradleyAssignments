@@ -133,6 +133,10 @@ void Game::run() {
     while (handleCommand()) {
         
     }
+
+    // currently we only have a lose condition, once we
+    // have a win condition too we will adjust this
+    common::IO::println("YOU LOST");
 }
 
 // Moves the Enterprise based off warpFactor
@@ -227,6 +231,22 @@ void Game::fireTorpedo(double warpDirection) {
         destroyKlingon(*it);
 }
 
+// Makes all the klingons within the Enterprise's current Quadrant fire at it
+void Game::klingonsFire() {
+    auto position = enterprise.getLocation();
+    auto& currKlingons = klingons[position.quadrantX][position.quadrantY];
+
+    for (auto& k : currKlingons) {
+        int damage = k.firePhasers(position.sectorX, position.sectorY);
+
+        common::IO::printf("Klingon (%d, %d) has fired their phasers dealing: %d damage\n",
+                            common::toBase1(k.getLocation().sectorY), 
+                            common::toBase1(k.getLocation().sectorX), damage);
+
+        enterprise.takeDamage(damage);
+    }
+}
+
 // Destroys the klingon at a position. Removes it from QuadrantMap,
 // the klingons vector, and galaxy. 
 void Game::destroyKlingon(common::Location position) {
@@ -298,6 +318,7 @@ void Game::moveCommand(const std::vector<std::string>& command) {
         double warpFactor = std::stod(command[2]);
 
         move(warpFactor, warpDirection);
+        klingonsFire();
         shortRangeCommand();
     } catch (const std::exception& e) {
         common::IO::warning("Please enter valid doubles");
@@ -307,6 +328,11 @@ void Game::moveCommand(const std::vector<std::string>& command) {
 
 // The Enterprise does a short range scan.
 void Game::shortRangeCommand() {
+    if (enterprise.isDeviceBroken(std::string(Devices::SHORT_RANGE_SENSORS))) {
+        common::IO::println("Short Range Sensors need repair, cannot do scan");
+        return;
+    }
+
     const auto& location = enterprise.getLocation();
     
     common::IO::println(at(location).toString());
@@ -317,6 +343,11 @@ void Game::shortRangeCommand() {
 // Does a long range scan around the Enterprise. Returns
 // the quadrant's KBS value around the Enterprise. 
 void Game::longRangeCommand() {
+    if (enterprise.isDeviceBroken(std::string(Devices::LONG_RANGE_SENSORS))) {
+        common::IO::println("Long Range Sensors need repair, cannot do scan");
+        return;
+    }
+
     const auto location = enterprise.getLocation();
 
     const int startY = std::max(0, location.quadrantY - 1);
@@ -336,6 +367,11 @@ void Game::longRangeCommand() {
 
 // Fires the phasers based off the energy
 void Game::phaserCommand(const std::vector<std::string>& command) {
+    if (enterprise.isDeviceBroken(std::string(Devices::PHASER_CONTROL))) {
+        common::IO::println("Phaser control needs repair, cannot fire phasers");
+        return;
+    }
+
     if (command.size() < 2) {
         common::IO::warning("PHA usage <phaser energy>");
         return;
@@ -344,6 +380,7 @@ void Game::phaserCommand(const std::vector<std::string>& command) {
     try {
         double phaserEnergy = std::stod(command[1]);
         firePhasers(phaserEnergy);
+        klingonsFire();
         shortRangeCommand();
     } catch (const std::exception& e) {
         common::IO::warning("Please enter valid doubles");
@@ -353,6 +390,11 @@ void Game::phaserCommand(const std::vector<std::string>& command) {
 
 // Fires a torpedo to a certain location based off the command
 void Game::torpedoCommand(const std::vector<std::string>& command) {
+    if (enterprise.isDeviceBroken(std::string(Devices::TORPEDO_CONTROL))) {
+        common::IO::println("Torpedo control needs repair. Cannot fire a torpedo");
+        return;
+    }
+
     if (command.size() < 2) {
         common::IO::warning("TOR usage <warp direction>");
         return;
@@ -361,6 +403,7 @@ void Game::torpedoCommand(const std::vector<std::string>& command) {
     try {
         double warpDirection = std::stod(command[1]);
         fireTorpedo(warpDirection);
+        klingonsFire();
         shortRangeCommand();
     } catch (const std::exception& e) {
         common::IO::warning("Please enter valid doubles");
@@ -370,6 +413,11 @@ void Game::torpedoCommand(const std::vector<std::string>& command) {
 
 // Adjusts the shields based off the new shields
 void Game::shieldCommand(const std::vector<std::string>& command) {
+    if (enterprise.isDeviceBroken(std::string(Devices::SHIELD_CONTROL))) {
+        common::IO::println("Shield control needs repair. Cannot raise/lower shields");
+        return;
+    }
+
     if (command.size() < 2) {
         common::IO::warning("SHE usage <new shields>");
         return;
@@ -378,6 +426,7 @@ void Game::shieldCommand(const std::vector<std::string>& command) {
     try {
         double newShields = std::stod(command[1]);
         enterprise.adjustShields(newShields);
+        klingonsFire();
     } catch (const std::exception& e) {
         common::IO::warning("Please enter valid doubles");
         return;
@@ -386,5 +435,10 @@ void Game::shieldCommand(const std::vector<std::string>& command) {
 
 // Prints a damage report based off the Enterprise's devices
 void Game::damageReportCommand() {
+    if (enterprise.isDeviceBroken(std::string(Devices::DAMAGE_CONTROL))) {
+        common::IO::println("Damage control needs repair. Cannot get damage control");
+        return;
+    }
+
     enterprise.damageReport();
 }

@@ -12,6 +12,7 @@ int Klingon::generateRandomEnergy() {
 // Calculates the amount of phaser damage to give the Enterprise
 // based off the Enterprise's current location. Will deplete
 // this Klingon's energy supply by diving it by (3, 4].
+// Takes base-0 input
 int Klingon::firePhasers(int x, int y) {
     int damage = Ship::firePhasers(getEnergy(), x, y);
     

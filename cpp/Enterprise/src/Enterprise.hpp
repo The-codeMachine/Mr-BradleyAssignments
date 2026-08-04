@@ -43,6 +43,8 @@ public:
 
     void adjustShields(double shields);
 
+    bool isDeviceBroken(const std::string& str) const;
+    
     void damageReport() const;
 
     std::string toString() const;

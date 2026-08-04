@@ -76,6 +76,7 @@ void Enterprise::reduceTorpedoes() {
     torpedoes--;
 }
 
+// adjusts the shields of the enterprise
 void Enterprise::adjustShields(double shields) {
     double diffShields = this->shields - shields;
     if (-diffShields > getEnergy()) {
@@ -85,6 +86,11 @@ void Enterprise::adjustShields(double shields) {
 
     adjustEnergy((int)(diffShields));
     this->shields = shields;
+}
+
+// gets the status of a specific device
+bool Enterprise::isDeviceBroken(const std::string& str) const {
+    return devices.isDamaged(str);
 }
 
 // Returns whether the Enterprise is docked or not
