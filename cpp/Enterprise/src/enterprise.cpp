@@ -63,6 +63,19 @@ int Enterprise::firePhasers(double phaserEnergy, int x, int y, int numKlingons) 
     return (int) ((h / distance) * (common::random() + 2));
 }
 
+// Gets the number of torpedoes the enterprise has
+int Enterprise::getTorpedoes() const noexcept {
+    return torpedoes;
+}
+
+// Reduces the torpedoes by 1
+void Enterprise::reduceTorpedoes() {
+    if (torpedoes <= 0)
+        return;
+    
+    torpedoes--;
+}
+
 void Enterprise::adjustShields(double shields) {
     double diffShields = this->shields - shields;
     if (-diffShields > getEnergy()) {

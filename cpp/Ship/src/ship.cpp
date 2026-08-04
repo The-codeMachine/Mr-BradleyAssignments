@@ -123,8 +123,8 @@ std::vector<common::Location> Ship::calculatePath(double warpFactor, double warp
     dy /= length;
 
     // Current galaxy position (makes it start in the middle of the sector)
-    double x = location.quadrantX * GRID_SIZE + location.sectorX + 0.5;
-    double y = location.quadrantY * GRID_SIZE + location.sectorY + 0.5;
+    double x = location.quadrantX * GRID_SIZE + location.sectorX;
+    double y = location.quadrantY * GRID_SIZE + location.sectorY;
 
     int lastX = (int) std::floor(x);
     int lastY = (int) std::floor(y);

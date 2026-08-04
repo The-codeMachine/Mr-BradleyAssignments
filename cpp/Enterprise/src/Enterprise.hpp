@@ -35,6 +35,9 @@ public:
 
     int firePhasers(double phaserEnergy, int x, int y, int numKlingons);
 
+    int getTorpedoes() const noexcept;
+    void reduceTorpedoes();
+
     bool getDocked() const noexcept;
     void updateDocked(bool value);
 

@@ -2,6 +2,8 @@
 
 #include <common/IO.hpp>
 
+#include <algorithm>
+
 Game::Game() : enterprise(3000, 0, 10, false) {
     constructGame();
 }
@@ -179,11 +181,73 @@ void Game::firePhasers(double phaserEnergy) {
             continue;
         }
 
-        galaxy.getQuadrant(location.quadrantX, location.quadrantY).reduceKlingons();
-        at(location).removeObject(common::toBase1(klingon.getLocation().sectorX), 
-                                common::toBase1(klingon.getLocation().sectorY), QuadrantMap::KLINGON);
+        auto klingonLocation = it->getLocation();
+        
+        if (klingonLocation != klingonLocation) {
+            ++it;
+            continue;
+        }
+        
+        galaxy.getQuadrant(klingonLocation.quadrantX, klingonLocation.quadrantY).reduceKlingons();
+        at(klingonLocation).removeObject(common::toBase1(klingonLocation.sectorX), 
+                            common::toBase1(klingonLocation.sectorY), QuadrantMap::KLINGON);
 
         it = currentKlingons.erase(it);
+        common::IO::printf("Destroyed klingon at %s\n", klingonLocation.toString().c_str());
+    }
+}
+
+// Fires a torpedo from the Enterprise based off a warpFactor and
+// warpDircetion.
+void Game::fireTorpedo(double warpDirection) {
+    if (enterprise.getTorpedoes() <= 0)
+        return;
+
+    enterprise.reduceTorpedoes();
+    // biggest warp factor possible so it won't stop
+    const auto& path = enterprise.calculatePath(8, warpDirection);
+
+    auto destination = findMovementDestination(path);
+    auto currLocation = enterprise.getLocation();
+
+    // checks that the torpedo is in the same quadrant
+    if (destination.quadrantX != currLocation.quadrantX || destination.quadrantY != currLocation.quadrantY)
+        return;
+
+    auto it = std::find(path.begin(), path.end(), destination);
+    if (it == path.end())
+        return;
+
+    // if the next object in the path is a klingon then destroy it
+    ++it;
+    if (it == path.end())
+        return;
+
+    if (at(*it).at(common::toBase1(it->sectorX), common::toBase1(it->sectorY)) == QuadrantMap::KLINGON)
+        destroyKlingon(*it);
+}
+
+// Destroys the klingon at a position. Removes it from QuadrantMap,
+// the klingons vector, and galaxy. 
+void Game::destroyKlingon(common::Location position) {
+    auto& currKlingons = klingons[position.quadrantX][position.quadrantY];
+
+    for (auto it = currKlingons.begin(); it != currKlingons.end();) {
+        auto klingonLocation = it->getLocation();
+        
+        if (klingonLocation != position) {
+            ++it;
+            continue;
+        }
+        
+        galaxy.getQuadrant(position.quadrantX, position.quadrantY).reduceKlingons();
+        at(position).removeObject(common::toBase1(klingonLocation.sectorX), 
+                            common::toBase1(klingonLocation.sectorY), QuadrantMap::KLINGON);
+
+        currKlingons.erase(it);
+        common::IO::printf("Destroyed klingon at %s\n", klingonLocation.toString().c_str());
+
+        return;
     }
 }
 
@@ -208,6 +272,8 @@ bool Game::handleCommand() {
         longRangeCommand();
     } else if (name == "PHA") {
         phaserCommand(command);
+    } else if (name == "TOR") {
+        torpedoCommand(command);
     } else if (name == "SHE") {
         shieldCommand(command);
     } else if (name == "DAM") {
@@ -285,6 +351,24 @@ void Game::phaserCommand(const std::vector<std::string>& command) {
     }
 }
 
+// Fires a torpedo to a certain location based off the command
+void Game::torpedoCommand(const std::vector<std::string>& command) {
+    if (command.size() < 2) {
+        common::IO::warning("PHA usage <phaser energy>");
+        return;
+    }
+    
+    try {
+        double warpDirection = std::stod(command[1]);
+        fireTorpedo(warpDirection);
+        shortRangeCommand();
+    } catch (const std::exception& e) {
+        common::IO::warning("Please enter valid doubles");
+        return;
+    }
+}
+
+// Adjusts the shields based off the new shields
 void Game::shieldCommand(const std::vector<std::string>& command) {
     if (command.size() < 2) {
         common::IO::warning("SHE usage <new shields>");

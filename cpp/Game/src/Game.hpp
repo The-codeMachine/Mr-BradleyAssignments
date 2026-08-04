@@ -51,7 +51,10 @@ private:
     bool canDock() const noexcept;
 
     void firePhasers(double phaserEnergy);
+    void fireTorpedo(double warpDirection);
+
     void klingonsFire();
+    void destroyKlingon(common::Location position);
 
     bool handleCommand();
     
@@ -59,6 +62,7 @@ private:
     void shortRangeCommand();
     void longRangeCommand();
     void phaserCommand(const std::vector<std::string>& command);
+    void torpedoCommand(const std::vector<std::string>& command);
     void shieldCommand(const std::vector<std::string>& command);
     void damageReportCommand();
 
