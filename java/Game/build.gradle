@@ -7,6 +7,7 @@ dependencies {
     implementation project(':quadrant')
     implementation project(':QuadrantMap')
     implementation project(':ship')
+    implementation project(':device')
     implementation project(':enterprise')
     implementation project(':galaxy')
     implementation project(':klingon')

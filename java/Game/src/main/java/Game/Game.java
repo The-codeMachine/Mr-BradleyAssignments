@@ -3,6 +3,7 @@ package Game;
 import common.GameLib;
 import common.IO;
 import common.GameLib.Location;
+import device.Devices;
 
 import java.util.Iterator;
 import java.time.LocalDate;
@@ -276,6 +277,12 @@ public class Game {
         }
     }
 
+    /**
+     * 
+     * Fires a torpedo from the Enterprise in the direction of warpDirection
+     * 
+     * @param warpDirection
+     */
     private void fireTorpedo(double warpDirection) {
         if (enterprise.getTorpedoes() <= 0)
             return;
@@ -300,6 +307,27 @@ public class Game {
         Location loc = path.get(indexOf);
         if (at(loc).at(GameLib.toBase1(loc.sectorX), GameLib.toBase1(loc.sectorY)).equals(QuadrantMap.KLINGON)) {
             destroyKlingon(loc);
+        }
+    }
+
+    /**
+     * 
+     * Makes the klingons within the Enterprise's quadrant fire at it. 
+     * 
+     */
+    private void klingonsFire() {
+        Location pos = enterprise.getLocation();
+        ArrayList<Klingon> currKlingons = klingons.get(pos.quadrantX).get(pos.quadrantY);
+
+        for (Klingon k : currKlingons) {
+            int damage = k.firePhasers(pos.sectorX, pos.sectorY);
+
+            IO.printf("Klingon (%d, %d) has fired their phasers dealing: %d damage\n",
+                    GameLib.toBase1(k.getLocation().sectorX), GameLib.toBase1(k.getLocation().sectorY),
+                    damage
+                );
+
+            enterprise.takeDamage(damage);
         }
     }
 
@@ -395,6 +423,7 @@ public class Game {
             double warpFactor = Double.parseDouble(command.get(2));
 
             move(warpFactor, warpDirection);
+            klingonsFire();
             shortRangeCommand();
         } catch (Exception e) {
             IO.warning("Invalid usage of NAV");
@@ -408,6 +437,11 @@ public class Game {
      * 
      */
     private void shortRangeCommand() {
+        if (enterprise.isDeviceBroken(Devices.SHORT_RANGE_SENSORS)) {
+            IO.println("Short Range Sensors needs repair, cannot do scan");
+            return;
+        }
+
         Location enterpriseLocation = enterprise.getLocation();
         IO.println(map[enterpriseLocation.quadrantX][enterpriseLocation.quadrantY].toString());
         
@@ -421,6 +455,11 @@ public class Game {
      * 
      */
     private void longRangeCommand() {
+        if (enterprise.isDeviceBroken(Devices.LONG_RANGE_SENSORS)) {
+            IO.println("Long Range Sensors needs repair, cannot do scan");
+            return;
+        }
+
         Location loc = enterprise.getLocation();
         
         int startY = Math.max(0, loc.quadrantY - 1);
@@ -445,6 +484,11 @@ public class Game {
      * @param command
      */
     private void phaserCommand(ArrayList<String> command) {
+        if (enterprise.isDeviceBroken(Devices.PHASER_CONTROL)) {
+            IO.println("Phaser control needs repair, cannot fire phasers");
+            return;
+        }
+
         if (command.size() < 2) {
             IO.warning("PHA usage <phaser energy>");
             return;
@@ -453,6 +497,7 @@ public class Game {
         try {
             double phaserEnergy = Double.parseDouble(command.get(1));
             firePhasers(phaserEnergy);
+            klingonsFire();
             shortRangeCommand();
         } catch (Exception e) {
             IO.warning("Please enter valid doubles");
@@ -467,6 +512,11 @@ public class Game {
      * @param command
      */
     private void torpedoCommand(ArrayList<String> command) {
+        if (enterprise.isDeviceBroken(Devices.TORPEDO_CONTROL)) {
+            IO.println("Torpedo control needs repair, cannot fire a torpedo");
+            return;
+        }
+
         if (command.size() < 2) {
             IO.warning("TOR usage <warp direction>");
             return;
@@ -475,6 +525,7 @@ public class Game {
         try {
             double warpDirection = Double.parseDouble(command.get(1));
             fireTorpedo(warpDirection);
+            klingonsFire();
             shortRangeCommand();
         } catch (Exception e) {
             IO.warning("Please enter valid doubles");
@@ -490,6 +541,11 @@ public class Game {
      * @param command
      */
     private void shieldCommand(ArrayList<String> command) {
+        if (enterprise.isDeviceBroken(Devices.SHIELD_CONTROL)) {
+            IO.println("Shield control needs repair, adjust shields");
+            return;
+        }
+
          if (command.size() < 2) {
             IO.warning("SHE usage <new shield>");
             return;
@@ -497,8 +553,8 @@ public class Game {
 
         try {
             double newShields = Double.parseDouble(command.get(1));
-
             enterprise.adjustShields(newShields);
+            klingonsFire();
         } catch (Exception e) {
             IO.warning("Invalid usage of SHE");
             IO.println("SHE Usage: SHE <new shields>");
@@ -511,6 +567,12 @@ public class Game {
      * 
      */
     private void damageReportCommand() {
+        if (enterprise.isDeviceBroken(Devices.DAMAGE_CONTROL)) {
+            IO.println("Damage control needs repair, cannot report damage");
+            return;
+        }
+
+
         enterprise.damageReport();
     }
 

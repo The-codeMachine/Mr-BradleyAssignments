@@ -163,6 +163,17 @@ public class Enterprise extends Ship {
 
     /**
      * 
+     * Gets whether a device is broken or not
+     * 
+     * @param device
+     * @return true if the device is broken and false if it is not
+     */
+    public boolean isDeviceBroken(String device) {
+        return devices.isDamaged(device);
+    }
+
+    /**
+     * 
      * Returns if the Enterprise is destroyed.
      * Will return true if the Enterprise is destoryed.
      * 

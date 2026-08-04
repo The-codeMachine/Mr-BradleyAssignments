@@ -241,7 +241,8 @@ void Game::klingonsFire() {
 
         common::IO::printf("Klingon (%d, %d) has fired their phasers dealing: %d damage\n",
                             common::toBase1(k.getLocation().sectorY), 
-                            common::toBase1(k.getLocation().sectorX), damage);
+                            common::toBase1(k.getLocation().sectorX), damage
+                        );
 
         enterprise.takeDamage(damage);
     }
