@@ -205,7 +205,7 @@ void Game::fireTorpedo(double warpDirection) {
 
     enterprise.reduceTorpedoes();
     // biggest warp factor possible so it won't stop
-    const auto& path = enterprise.calculatePath(8, warpDirection);
+    const auto& path = enterprise.calculatePath(8.0, warpDirection);
 
     auto destination = findMovementDestination(path);
     auto currLocation = enterprise.getLocation();
@@ -354,7 +354,7 @@ void Game::phaserCommand(const std::vector<std::string>& command) {
 // Fires a torpedo to a certain location based off the command
 void Game::torpedoCommand(const std::vector<std::string>& command) {
     if (command.size() < 2) {
-        common::IO::warning("PHA usage <phaser energy>");
+        common::IO::warning("TOR usage <warp direction>");
         return;
     }
     

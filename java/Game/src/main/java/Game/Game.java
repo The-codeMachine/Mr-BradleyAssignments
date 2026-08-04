@@ -5,6 +5,7 @@ import common.IO;
 import common.GameLib.Location;
 
 import java.util.Iterator;
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 import QuadrantMap.QuadrantMap;
@@ -157,7 +158,7 @@ public class Game {
             for (int y = 0; y < MAP_SIZE; ++y) {
                 ArrayList<Klingon> klingonsInQuadrant = new ArrayList<>();
                 for (Location loc : map[x][y].klingons()) {
-                    klingonsInQuadrant.add(new Klingon(loc));
+                    klingonsInQuadrant.add(new Klingon(new Location(loc.sectorX, loc.sectorY, x, y)));
                 }
 
                 rowKlingons.add(klingonsInQuadrant);
@@ -266,13 +267,66 @@ public class Game {
                 continue;
             }
 
-            IO.printf("(%d, %d)\n", GameLib.toBase1(klingon.getLocation().sectorX), GameLib.toBase1(klingon.getLocation().sectorY));
-
             galaxy.getQuadrant(location.quadrantX, location.quadrantY).reduceKlingons();
             at(location).removeObject(GameLib.toBase1(klingon.getLocation().sectorX), 
                                     GameLib.toBase1(klingon.getLocation().sectorY), QuadrantMap.KLINGON);
 
             it.remove();
+            IO.printf("Destroyed klingon at %s\n", klingon.getLocation().toString());
+        }
+    }
+
+    private void fireTorpedo(double warpDirection) {
+        if (enterprise.getTorpedoes() <= 0)
+            return;
+
+        enterprise.reduceTorpedoes();
+        // biggest warp factor possible so it won't stop
+        ArrayList<Location> path = enterprise.calculatePath(8.0, warpDirection);
+
+        Location destination = findMovementDestination(path);
+        Location currLocation = enterprise.getLocation();
+
+        // checks that the torpedo is in the same quadrant
+        if (destination.quadrantX != currLocation.quadrantX || destination.quadrantY != currLocation.quadrantY)
+            return;
+
+        // if the next object in the path is a klingon then destroy it
+        int indexOf = path.indexOf(destination);
+        if (indexOf == -1 || indexOf + 1 >= path.size())
+            return;
+
+        indexOf++;
+        Location loc = path.get(indexOf);
+        if (at(loc).at(GameLib.toBase1(loc.sectorX), GameLib.toBase1(loc.sectorY)).equals(QuadrantMap.KLINGON)) {
+            destroyKlingon(loc);
+        }
+    }
+
+    /**
+     * 
+     * Destroys a Klingon. This will remove it from QuadrantMap, Quadrant, and
+     * from the Klingons 3D array. 
+     * 
+     * @param position
+     */
+    private void destroyKlingon(Location position) {
+        ArrayList<Klingon> currKlingons = klingons.get(position.quadrantX).get(position.quadrantY);
+
+        Iterator<Klingon> it = currKlingons.iterator();
+        while (it.hasNext()) {
+            Klingon klingon = it.next();
+            Location klingonLocation = klingon.getLocation();
+
+            if (klingonLocation.sectorX != position.sectorX || klingonLocation.sectorY != position.sectorY)
+                continue;
+
+            galaxy.getQuadrant(position.quadrantX, position.quadrantY).reduceKlingons();
+            at(position).removeObject(GameLib.toBase1(klingonLocation.sectorX), 
+                                    GameLib.toBase1(klingonLocation.sectorY), QuadrantMap.KLINGON);
+
+            it.remove();
+            IO.printf("Destroyed klingon at %s\n", klingonLocation.toString());
         }
     }
 
@@ -307,6 +361,9 @@ public class Game {
                 break;
             case "PHA":
                 phaserCommand(command);
+                break;
+            case "TOR":
+                torpedoCommand(command);
                 break;
             case "SHE":
                 shieldCommand(command);
@@ -381,6 +438,12 @@ public class Game {
         }
     }
 
+    /**
+     * 
+     * Fires the Enterprise's phasers at Klingons
+     * 
+     * @param command
+     */
     private void phaserCommand(ArrayList<String> command) {
         if (command.size() < 2) {
             IO.warning("PHA usage <phaser energy>");
@@ -390,6 +453,28 @@ public class Game {
         try {
             double phaserEnergy = Double.parseDouble(command.get(1));
             firePhasers(phaserEnergy);
+            shortRangeCommand();
+        } catch (Exception e) {
+            IO.warning("Please enter valid doubles");
+            return;
+        }
+    }
+
+    /**
+     * 
+     * Fires a torpedoe in a certain direction. 
+     * 
+     * @param command
+     */
+    private void torpedoCommand(ArrayList<String> command) {
+        if (command.size() < 2) {
+            IO.warning("TOR usage <warp direction>");
+            return;
+        }
+
+        try {
+            double warpDirection = Double.parseDouble(command.get(1));
+            fireTorpedo(warpDirection);
             shortRangeCommand();
         } catch (Exception e) {
             IO.warning("Please enter valid doubles");

@@ -143,8 +143,8 @@ public class Ship {
         dy /= length;
 
         // Current galaxy position
-        double x = location.quadrantX * GRID_SIZE + location.sectorX + 0.5;
-        double y = location.quadrantY * GRID_SIZE + location.sectorY + 0.5;
+        double x = location.quadrantX * GRID_SIZE + location.sectorX;
+        double y = location.quadrantY * GRID_SIZE + location.sectorY;
 
         int lastX = (int) Math.floor(x);
         int lastY = (int) Math.floor(y);

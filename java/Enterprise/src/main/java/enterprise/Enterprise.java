@@ -99,6 +99,28 @@ public class Enterprise extends Ship {
 
     /**
      * 
+     * Gets the number of torpedoes the Enterprise currently has
+     * 
+     * @return the amount of torpedoes the Enterprise has
+     */
+    public int getTorpedoes() {
+        return torpedoes;
+    }
+
+    /**
+     * 
+     * Reduces the torpedoes by one
+     * 
+     */
+    public void reduceTorpedoes() {
+        if (torpedoes <= 0)
+            return;
+
+        torpedoes--;
+    }
+
+    /**
+     * 
      * Gets the Enterprise's current docked status
      * 
      * @return true if the Enterprise is currently docked and false if it is not
