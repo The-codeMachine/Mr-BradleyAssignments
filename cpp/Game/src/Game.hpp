@@ -42,11 +42,12 @@ public:
 private:
     void constructGame();
 
+    void initializeTime();
     void initializeQuadrants();
     void initializeKlingons();
     void placeEnterprise();
 
-    common::Location findMovementDestination(const std::vector<common::Location>& path);
+    common::Location findMovementDestination(const std::vector<common::Location>& path, double& starDateChange);
     void updateEnterpriseMap(common::Location oldLocation, common::Location newLocation);
     bool canDock() const noexcept;
 
@@ -73,6 +74,10 @@ private:
     QuadrantMap map[8][8];
     
     std::vector<std::vector<std::vector<Klingon>>> klingons;
+
+    double currentStardate;
+    int startingStardate;
+    int missionDuration;
 
 private:
     static inline constexpr int MAP_SIZE = 8;

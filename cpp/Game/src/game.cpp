@@ -12,6 +12,7 @@ Game::Game() : enterprise(3000, 0, 10, false) {
 void Game::constructGame() {
     initializeQuadrants();
     initializeKlingons();
+    initializeTime();
     placeEnterprise();
 }
 
@@ -27,16 +28,31 @@ void Game::initializeQuadrants() {
 // Initializes all klingons for the Game
 void Game::initializeKlingons() {
     klingons.resize(MAP_SIZE);
+    int numKlingons = 0;
 
     for (int x = 0; x < MAP_SIZE; ++x) {
         klingons[x].resize(MAP_SIZE);
 
         for (int y = 0; y < MAP_SIZE; ++y) {
             for (const auto& loc : map[x][y].klingons()) {
+                numKlingons++;
                 klingons[x][y].emplace_back(common::Location(loc.sectorX, loc.sectorY, x, y));
             }
         }
     } 
+
+    common::IO::printf("Your orders are as follows: \n");
+    common::IO::printf("destroy the %d Klingon warships which have invaded\n", numKlingons);
+    common::IO::printf("the galaxy before they can attack Federation headquarters\n");
+}
+
+// Initializes the current time
+void Game::initializeTime() {
+    currentStardate = (int)(common::random() * 20 + 20) * 100;
+    startingStardate = currentStardate;
+    missionDuration = 25 + (int)(common::random() * 10);
+
+    common::IO::printf("on stardate: %d, this gives you %d days\n", startingStardate + missionDuration, missionDuration);
 }
 
 // Places the Enterprise in its initial location
@@ -47,16 +63,29 @@ void Game::placeEnterprise() {
 }
 
 // Finds the movement destination based off the path
-common::Location Game::findMovementDestination(const std::vector<common::Location>& path) {
-    auto destination = enterprise.getLocation();
+// Calculates the movement cost in time as well
+common::Location Game::findMovementDestination(const std::vector<common::Location>& path, double& starDateChange) {
+    const auto startingLocation = enterprise.getLocation();
+    auto destination = startingLocation;
+
+    starDateChange = 0.0;
+
+    auto previousLocation = startingLocation;
 
     for (const auto& location : path) {
         const auto& quadrant = at(location);
 
-        if (!quadrant.empty(common::toBase1(location.sectorX), common::toBase1(location.sectorY)))
+        if (!quadrant.empty(common::toBase1(location.sectorX), common::toBase1(location.sectorY))) {
             break;
+        }
+
+        if (location.quadrantX != previousLocation.quadrantX ||
+            location.quadrantY != previousLocation.quadrantY) {
+            starDateChange += 1.0;
+        }
 
         destination = location;
+        previousLocation = location;
     }
 
     return destination;
@@ -156,7 +185,19 @@ bool Game::move(double warpFactor, double warpDirection) {
         return false;
 
     const auto oldLocation = enterprise.getLocation();
-    const auto newLocation = findMovementDestination(path);
+    double starDateChange = 0;
+    const auto newLocation = findMovementDestination(path, starDateChange);
+
+    // updates time
+    
+    // If no quadrant boundary was crossed, normal movement time applies.
+    if (starDateChange == 0.0 && oldLocation != newLocation) {
+        starDateChange = warpFactor < 1.0
+            ? 0.1 * std::floor(10.0 * warpFactor)
+            : 1.0;
+    }
+    
+    currentStardate += starDateChange;
 
     updateEnterpriseMap(oldLocation, newLocation);
     
@@ -211,7 +252,8 @@ void Game::fireTorpedo(double warpDirection) {
     // biggest warp factor possible so it won't stop
     const auto& path = enterprise.calculatePath(8.0, warpDirection);
 
-    auto destination = findMovementDestination(path);
+    double nullValue = 0;
+    auto destination = findMovementDestination(path, nullValue);
     auto currLocation = enterprise.getLocation();
 
     // checks that the torpedo is in the same quadrant
@@ -338,6 +380,7 @@ void Game::shortRangeCommand() {
     
     common::IO::println(at(location).toString());
     common::IO::println(enterprise.toString());
+    common::IO::printf("Star date: %.6f\n", currentStardate);
 }
 
  
