@@ -34,7 +34,7 @@ bool Enterprise::isDestroyed() const noexcept {
 // the user to use impulse engines if the warp
 // engines are offline. 
 std::vector<common::Location> Enterprise::calculatePath(double warpFactor, double warpDirection) {
-    if (devices.isDamaged(Devices::WARP_ENGINES) && warpFactor >= 0.2) {
+    if (devices.isDamaged(Devices::WARP_ENGINES) && warpFactor > 0.2) {
         common::IO::println("Warp engines are damaged, maximum warp is 0.2");
         return {};
     }
@@ -42,6 +42,11 @@ std::vector<common::Location> Enterprise::calculatePath(double warpFactor, doubl
     return Ship::calculatePath(warpFactor, warpDirection);
 }
 
+// Moves the Enterprise and repairs its devices. 
+void Enterprise::move(common::Location loc, double warpFactor) {
+    devices.repairOverTime(warpFactor);
+    Ship::move(loc, warpFactor);
+}
 
 // Makes the Enterprise take damage based off
 // the effective phaser energy.

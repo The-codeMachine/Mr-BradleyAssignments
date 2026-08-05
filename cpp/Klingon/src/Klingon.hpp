@@ -2,6 +2,8 @@
 
 #include <Ship.hpp>
 
+#include <common/GameLib.hpp>
+
 /**
  * 
  * The Klingon class extends Ship. It represents 
@@ -17,6 +19,9 @@ public:
     Klingon(common::Location loc, int energy);
 
     int firePhasers(int x, int y);
+
+    common::Location calculateDestination() const;
+    void move(common::Location loc);
 
 private:
     static int generateRandomEnergy();

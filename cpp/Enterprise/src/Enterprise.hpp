@@ -31,8 +31,9 @@ public:
     bool isDestroyed() const noexcept override;
 
     std::vector<common::Location> calculatePath(double warpFactor, double warpDirection) override;
+    void move(common::Location loc, double warpFactor) override;
+    
     bool takeDamage(double phaserEnergy) override;
-
     int firePhasers(double phaserEnergy, int x, int y, int numKlingons);
 
     int getTorpedoes() const noexcept;

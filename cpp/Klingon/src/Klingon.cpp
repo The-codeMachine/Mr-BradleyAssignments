@@ -14,9 +14,23 @@ int Klingon::generateRandomEnergy() {
 // this Klingon's energy supply by diving it by (3, 4].
 // Takes base-0 input
 int Klingon::firePhasers(int x, int y) {
-    int damage = Ship::firePhasers(getEnergy(), x, y);
-    
-    adjustEnergy((getEnergy() / common::randomInRange(3, 4)) - getEnergy());
+    int energy = getEnergy();
+    adjustEnergy((energy / common::randomInRange(3, 4)) - energy);
 
-    return damage;
+    return Ship::firePhasers(energy, x, y);
+}
+
+// This moves the Klingon to a new random sector in the Quadrant.
+// This function returns that random sector. This does NOT consume
+// energy, and essentially teleports the Klingon (like the original)
+common::Location Klingon::calculateDestination() const {
+    common::Location randomLocation = common::Location();
+    
+    return common::Location(randomLocation.sectorX, randomLocation.sectorY,
+                            getLocation().quadrantX, getLocation().quadrantY);
+}
+
+// Moves the klingon to a new location
+void Klingon::move(common::Location loc) {
+    Ship::move(loc, 0);
 }

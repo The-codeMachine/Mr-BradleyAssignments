@@ -290,6 +290,27 @@ void Game::klingonsFire() {
     }
 }
 
+// Moves all the Klingons within a Quadrant to a random unoccupied location 
+// in its current Quadrant. Essentially teleports the Klingon (does not check
+// the paths towards the destination), similar to the original.
+void Game::klingonsMove() {
+    auto position = enterprise.getLocation();
+    auto& currKlingons = klingons[position.quadrantX][position.quadrantY];
+
+    for (Klingon& k : currKlingons) {
+        auto location = k.calculateDestination();
+        while (!at(location).empty(common::toBase1(location.sectorX), common::toBase1(location.sectorY)))
+        {
+            location = k.calculateDestination();
+        }
+
+        auto& quadrant = at(location);
+        quadrant.move(common::toBase1(k.getLocation().sectorX), common::toBase1(k.getLocation().sectorY),
+                    common::toBase1(location.sectorX), common::toBase1(location.sectorY), QuadrantMap::KLINGON);
+        k.move(location);
+    }
+}
+
 // Destroys the klingon at a position. Removes it from QuadrantMap,
 // the klingons vector, and galaxy. 
 void Game::destroyKlingon(common::Location position) {
@@ -360,8 +381,14 @@ void Game::moveCommand(const std::vector<std::string>& command) {
         double warpDirection = std::stod(command[1]);
         double warpFactor = std::stod(command[2]);
 
+        auto oldPos = enterprise.getLocation();
         move(warpFactor, warpDirection);
-        klingonsFire();
+
+        if (oldPos != enterprise.getLocation()) {
+            klingonsMove();
+            klingonsFire();
+        }
+
         shortRangeCommand();
     } catch (const std::exception& e) {
         common::IO::warning("Please enter valid doubles");
@@ -470,7 +497,6 @@ void Game::shieldCommand(const std::vector<std::string>& command) {
     try {
         double newShields = std::stod(command[1]);
         enterprise.adjustShields(newShields);
-        klingonsFire();
     } catch (const std::exception& e) {
         common::IO::warning("Please enter valid doubles");
         return;

@@ -55,6 +55,7 @@ private:
     void fireTorpedo(double warpDirection);
 
     void klingonsFire();
+    void klingonsMove();
     void destroyKlingon(common::Location position);
 
     bool handleCommand();
