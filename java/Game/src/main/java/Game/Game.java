@@ -140,7 +140,7 @@ public class Game {
     private void initializeQuadrants() {
         for (int x = 0; x < MAP_SIZE; ++x) {
             for (int y = 0; y < MAP_SIZE; ++y) {
-                map[x][y] = new QuadrantMap(galaxy.getQuadrant(x, y));
+                map[x][y] = new QuadrantMap(galaxy.getQuadrant(GameLib.toBase1(x), GameLib.toBase1(y)));
             }
         }
     }
@@ -177,7 +177,7 @@ public class Game {
     private void placeEnterprise() {
         Location location = enterprise.getLocation();
 
-        at(location).place(GameLib.toBase1(location.sectorX), GameLib.toBase1(location.sectorY), QuadrantMap.ENTERPRISE);
+        at(location).place(location, QuadrantMap.ENTERPRISE);
     }
 
     /**
@@ -193,7 +193,7 @@ public class Game {
         for (Location location : path) {
             QuadrantMap quadrant = at(location);
 
-            if (!quadrant.empty(GameLib.toBase1(location.sectorX), GameLib.toBase1(location.sectorY)))
+            if (!quadrant.empty(location))
                 break;
 
             destination = location;
@@ -213,8 +213,8 @@ public class Game {
         QuadrantMap oldQuadrant = at(oldLocation);
         QuadrantMap newQuadrant = at(newLocation);
         
-        oldQuadrant.clearSector(GameLib.toBase1(oldLocation.sectorX), GameLib.toBase1(oldLocation.sectorY));
-        newQuadrant.place(GameLib.toBase1(newLocation.sectorX), GameLib.toBase1(newLocation.sectorY), QuadrantMap.ENTERPRISE);
+        oldQuadrant.clearSector(oldLocation);
+        newQuadrant.place(newLocation, QuadrantMap.ENTERPRISE);
 
     }
 
@@ -255,7 +255,7 @@ public class Game {
         enterprise.adjustEnergy((int)-phaserEnergy);
 
         Location location = enterprise.getLocation();
-        ArrayList<Klingon> currentKlingons = klingons.get(location.quadrantX).get(location.quadrantY);
+        ArrayList<Klingon> currentKlingons = getKlingons(location);
 
         Iterator<Klingon> it = currentKlingons.iterator();
         while (it.hasNext()) {
@@ -268,9 +268,8 @@ public class Game {
                 continue;
             }
 
-            galaxy.getQuadrant(location.quadrantX, location.quadrantY).reduceKlingons();
-            at(location).removeObject(GameLib.toBase1(klingon.getLocation().sectorX), 
-                                    GameLib.toBase1(klingon.getLocation().sectorY), QuadrantMap.KLINGON);
+            galaxy.getQuadrant(location).reduceKlingons();
+            at(location).removeObject(klingon.getLocation(), QuadrantMap.KLINGON);
 
             it.remove();
             IO.printf("Destroyed klingon at %s\n", klingon.getLocation().toString());
@@ -295,17 +294,25 @@ public class Game {
         Location currLocation = enterprise.getLocation();
 
         // checks that the torpedo is in the same quadrant
-        if (destination.quadrantX != currLocation.quadrantX || destination.quadrantY != currLocation.quadrantY)
+        if (!destination.sameQuadrant(currLocation))
             return;
 
         // if the next object in the path is a klingon then destroy it
         int indexOf = path.indexOf(destination);
-        if (indexOf == -1 || indexOf + 1 >= path.size())
+        if (indexOf == -1) {
+            Location loc = path.get(0);
+            if (at(loc).at(loc).equals(QuadrantMap.KLINGON)) {
+                destroyKlingon(loc);
+                return;
+            }
+        }
+        
+        indexOf++;
+        if (indexOf >= path.size())
             return;
 
-        indexOf++;
         Location loc = path.get(indexOf);
-        if (at(loc).at(GameLib.toBase1(loc.sectorX), GameLib.toBase1(loc.sectorY)).equals(QuadrantMap.KLINGON)) {
+        if (at(loc).at(loc).equals(QuadrantMap.KLINGON)) {
             destroyKlingon(loc);
         }
     }
@@ -328,6 +335,22 @@ public class Game {
                 );
 
             enterprise.takeDamage(damage);
+        }
+    }
+
+    public void klingonsMove() {
+        Location position = enterprise.getLocation();
+        ArrayList<Klingon> currKlingons = getKlingons(position);
+
+        for (Klingon k : currKlingons) {
+            Location location = k.calculateDestination();
+            while (!at(location).empty(location)) {
+                location = k.calculateDestination();
+            }
+
+            QuadrantMap quadrant = at(location);
+            quadrant.move(k.getLocation(), location, QuadrantMap.KLINGON);
+            k.move(location); 
         }
     }
 
@@ -356,6 +379,31 @@ public class Game {
             it.remove();
             IO.printf("Destroyed klingon at %s\n", klingonLocation.toString());
         }
+    }
+
+    /**
+     * 
+     * Gets the Klingons at (x, y). Returns a reference to that klingon
+     * vector. Takes base-1 coordinates. 
+     * 
+     * @param x
+     * @param y
+     * @return
+     */
+    private ArrayList<Klingon> getKlingons(int x, int y) {
+        return klingons.get(GameLib.toBase0(x)).get(GameLib.toBase0(y));
+    }
+
+    /**
+     * 
+     * Gets the Klingons at (x, y). Returns a reference to that klingon
+     * vector. Takes base-0 coordinates through location.
+     * 
+     * @param position
+     * @return
+     */
+    private ArrayList<Klingon> getKlingons(Location position) {
+        return klingons.get(position.quadrantX).get(position.quadrantY);
     }
 
     /**
@@ -553,7 +601,18 @@ public class Game {
 
         try {
             double newShields = Double.parseDouble(command.get(1));
+            if (newShields < 0.0) {
+                IO.println("Invalid shields value; must be 0 or greater");
+                return;
+            }
+
+            if (enterprise.getDocked()) {
+                IO.println("Cannot raise shields while docked");
+                return;
+            }
+
             enterprise.adjustShields(newShields);
+
             klingonsFire();
         } catch (Exception e) {
             IO.warning("Invalid usage of SHE");

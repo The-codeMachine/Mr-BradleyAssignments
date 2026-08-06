@@ -15,6 +15,7 @@ package galaxy;
 
 import quadrant.Quadrant;
 import common.GameLib;
+import common.GameLib.Location;
 
 public class Galaxy {
     public Galaxy() {
@@ -23,22 +24,37 @@ public class Galaxy {
     }
 
     /**
-     * Gets the quadrant located at [index][index2]
+     * Gets the quadrant located at [index][index2]. 
+     * 
+     * Takes base-1 coordinates.
      * 
      * @param index 
      * @param index2
      * 
-     * @apiNote index, and index2 must be between 0-7 (referencing an 8 by 8 grid)
+     * @apiNote index, and index2 must be between 1-8 (referencing an 8 by 8 grid)
      * @apiNote index represents the row
      * @apiNote index2 represents the column
      * 
      * @return a Quadrant located at [index][index2]
      */
     public Quadrant getQuadrant(int index, int index2) {
-        assert index >= 0 && index <= 7 && index2 >= 0 && index2 <= 7 : "Index must be within given parameters (an 8, by 8 grid)";
+        assert index >= 1 && index <= 8 && index2 >= 1 && index2 <= 8 : "Index must be within given parameters (an 8, by 8 grid)";
 
-        return map[index][index2];
+        return map[GameLib.toBase0(index)][GameLib.toBase0(index2)];
     } 
+
+    /**
+     * 
+     * Gets the Quadrant located at (quadrantX, quadrantY). 
+     * 
+     * Takes base-0 coordinates through Location.
+     * 
+     * @param loc
+     * @return a Quadrant located at (quadrantX, quadrantY)
+     */
+    public Quadrant getQuadrant(Location loc) {
+        return getQuadrant(GameLib.toBase1(loc.quadrantX), GameLib.toBase1(loc.quadrantY));
+    }
 
     /**
      * Prints the map into the console

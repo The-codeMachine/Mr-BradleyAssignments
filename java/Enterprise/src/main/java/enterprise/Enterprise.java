@@ -68,6 +68,22 @@ public class Enterprise extends Ship {
         return super.calculatePath(warpFactor, warpDirection);
     }
 
+    
+
+
+    /**
+     * 
+     * Moves the Enterprise and repairs all devices while at it.
+     * 
+     * @param loc
+     * @param warpFactor
+     */
+    @Override
+    public void move(Location loc, double warpFactor) {
+        devices.repairOverTime(warpFactor);
+        super.move(loc, warpFactor);
+    }
+
     /**
      * 
      * Makes the Enterprise take damage based off
@@ -78,6 +94,9 @@ public class Enterprise extends Ship {
      */
     @Override
     public boolean takeDamage(double phaserEnergy) {
+        if (docked)
+            return isDestroyed();
+
         devices.hitDamage(phaserEnergy, super.energy());
 
         shields -= phaserEnergy;
@@ -151,6 +170,10 @@ public class Enterprise extends Ship {
      * @param shields
      */
     public void adjustShields(double shields) {
+        if (shields < 0) {
+            return;
+        }
+
         double diffShields = this.shields - shields;
         if (-diffShields > energy()) {
             IO.println("Not enough energy to adjust shields to: " + shields);
@@ -210,6 +233,11 @@ public class Enterprise extends Ship {
      * 
      */
     private void dock() {
+        if (shields > 0) {
+            IO.println("Shields lowered for docking");
+            adjustShields(0);
+        }
+
         adjustEnergy(3000 - energy());
         torpedoes = 10;
 

@@ -23,6 +23,8 @@ int Klingon::firePhasers(int x, int y) {
 // This moves the Klingon to a new random sector in the Quadrant.
 // This function returns that random sector. This does NOT consume
 // energy, and essentially teleports the Klingon (like the original)
+// This does not actually move the klingon but rather returns the 
+// sector where it should go. 
 common::Location Klingon::calculateDestination() const {
     common::Location randomLocation = common::Location();
     

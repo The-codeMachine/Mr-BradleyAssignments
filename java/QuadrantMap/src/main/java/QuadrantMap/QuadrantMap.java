@@ -3,6 +3,7 @@ package QuadrantMap;
 import java.util.ArrayList;
 
 import common.GameLib;
+import common.GameLib.Location;
 import quadrant.*;
 
 /**
@@ -102,6 +103,18 @@ public class QuadrantMap {
 
     /**
      * 
+     * Writes a fixed-width symbol into the specified sector.
+     * Uses base-0 coordinates through Location.
+     * 
+     * @param loc
+     * @param value
+     */
+    public void place(Location loc, String value) {
+        place(GameLib.toBase1(loc.sectorX), GameLib.toBase1(loc.sectorY), value);
+    }
+
+    /**
+     * 
      * Removes whatever occupies the specified sector.
      * Clearing is implemented by replacing the sector with
      * the empty-space symbol.
@@ -115,6 +128,20 @@ public class QuadrantMap {
     public void clearSector(int x, int y) {
         // Checks like validPos are done within place
         place(x, y, EMPTY);
+    }
+
+    /**
+     * 
+     * Removes whatever occupies the specific sector.
+     * Clearing is implemented by replacing the sectory with
+     * the empty-space symbol.
+     * 
+     * Uses base-0 coordinates through Location.
+     * 
+     * @param loc
+     */
+    public void clearSector(Location loc) {
+        clearSector(GameLib.toBase1(loc.sectorX), GameLib.toBase1(loc.sectorY));
     }
 
     /**
@@ -134,7 +161,7 @@ public class QuadrantMap {
      * @param newY
      * @param value
      */
-    public boolean move(int x, int y, int newX, int newY, String value) {
+    public void move(int x, int y, int newX, int newY, String value) {
         // you assert with expressions
         assert validPos(x, y) : "(x, y) sector must be valid";
         assert validPos(newX, newY) : "(newX, newY) sector must be valid";
@@ -147,11 +174,27 @@ public class QuadrantMap {
         if (empty(newX, newY)) {
             clearSector(x, y);
             place(newX, newY, value);
-            
-            return true;
         }
+    }
 
-        return false;
+    /**
+     * 
+     * Moves a value from (x, y) to (newX, newY). It does
+     * this by checking if (x, y) is actually the value, and
+     * then clearing it, and inserting it into (newX, newY) after
+     * verifying that (newX, newY) is empty. Can be used to move
+     * Enterprise or Klingons. Checks that the path between
+     * the two coordinates is clear. 
+     * 
+     * Uses base-0 coordinates through Location. 
+     * 
+     * @param oldLocation
+     * @param newLocation
+     * @param value
+     */
+    public void move(Location oldLocation, Location newLocation, String value) {
+        move(GameLib.toBase1(oldLocation.sectorX), GameLib.toBase1(oldLocation.sectorY),
+            GameLib.toBase1(newLocation.sectorX), GameLib.toBase1(newLocation.sectorY), value);
     }
 
     /**
@@ -170,6 +213,20 @@ public class QuadrantMap {
         assert at(x, y).equals(object) : "Sector (x, y) must be the object";
 
         clearSector(x, y);
+    }
+
+    /**
+     * 
+     * Clears a sector only if it has value as
+     * its object. If it does then it is cleared.
+     * 
+     * Uses base-0 coordinates through Location.
+     * 
+     * @param loc
+     * @param object
+     */
+    public void removeObject(Location loc, String object) {
+        removeObject(GameLib.toBase1(loc.sectorX), GameLib.toBase1(loc.sectorY), object);
     }
 
     /**
@@ -205,6 +262,23 @@ public class QuadrantMap {
 
     /**
      * 
+     * 
+     * Returns the symbol stored at the specified sector.
+     * The 2D coordinates are converted into a 1D index into
+     * the backing String, and the fixed-width symbol stored
+     * at that location is returned.
+     * 
+     * Uses base-0 coordinates through Location.
+     * 
+     * @param loc
+     * @return the symbol as a string from (sectorX, sectorY)
+     */
+    public String at(Location loc) {
+        return at(GameLib.toBase1(loc.sectorX), GameLib.toBase1(loc.sectorY));
+    }
+
+    /**
+     * 
      * Checks if sector (x, y) is empty.
      * X, and y both use base-1 positions.
      * Checks if at(x, y) == " ".
@@ -219,6 +293,21 @@ public class QuadrantMap {
         // getIndexFrom converts (x, y) to a 0-based index for quadrantString
         int index = getIndexFrom(x, y);
         return quadrantString.isEmpty(index);
+    }
+
+    /**
+     * 
+     * Checks if sector (x, y) is empty.
+     * X, and y both use base-1 positions.
+     * Checks if at(x, y) == " ".
+     * 
+     * Uses base-0 coordinates through Location
+     * 
+     * @param loc
+     * @return
+     */
+    public boolean empty(Location loc) {
+        return empty(GameLib.toBase1(loc.sectorX), GameLib.toBase1(loc.sectorY));
     }
 
     @Override

@@ -47,6 +47,30 @@ public class GameLib {
             quadrantY = GameLib.randomInt(MIN, MAX);
         }
 
+        /**
+         * 
+         * Checks whether this Location and another share the same
+         * quadrant location.
+         * 
+         * @param other
+         * @return true if the two locations share the same quadrant location
+         */
+        public boolean sameQuadrant(Location other) {
+            return quadrantX == other.quadrantX && quadrantY == other.quadrantY;
+        }
+
+        /**
+         * 
+         * Checks whether this Location and another share the same
+         * sector location.
+         * 
+         * @param other
+         * @return true if the two locations share the same sector location
+         */
+        public boolean sameSector(Location other) {
+            return sectorX == other.sectorX && sectorY == other.sectorY;
+        }
+
         @Override
         public String toString() {
             return "(" + toBase1(sectorY) + ", " + toBase1(sectorX) + ") in (" + toBase1(quadrantY) + ", " + toBase1(quadrantX) + ")";

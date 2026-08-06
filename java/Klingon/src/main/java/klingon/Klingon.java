@@ -43,6 +43,33 @@ public class Klingon extends Ship {
 
         return damage;
     }
+
+    /**
+     * 
+     * This moves the Klingon to a new random sector in the Quadrant.
+     * This function returns that random sector. This does NOT consume
+     * energy, and essentially teleports the Klingon (like the original).
+     * 
+     * This will not actually move the Klingon, but rather return
+     * where it should go.
+     * 
+     * @return the random sector calculated 
+     */
+    public Location calculateDestination() {
+        Location randomLocation = new Location();
+        return new Location(randomLocation.sectorX, randomLocation.sectorY, 
+                            getLocation().quadrantX, getLocation().quadrantY);
+    }
+
+    /**
+     * 
+     * Moves the klingon to a new location.
+     * 
+     * @param loc
+     */
+    public void move(Location loc) {
+        super.move(loc, 0);
+    }
     
     /**
      * 
