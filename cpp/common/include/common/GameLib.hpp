@@ -36,7 +36,11 @@ namespace common {
         Location();
         Location(int sectorX, int sectorY, int quadrantX, int quadrantY);
 
+        bool operator!=(const Location& other) const;
         bool operator==(const Location& other) const;
+
+        bool sameQuadrant(const Location& other) const;
+        bool sameSector(const Location& other) const;
 
         std::string toString() const;
 

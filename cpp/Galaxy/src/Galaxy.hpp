@@ -1,4 +1,7 @@
 #pragma once
+
+#include <common/GameLib.hpp>
+
 #include <quadrant.hpp>
 
 #include <ostream>
@@ -21,6 +24,10 @@ public:
 
     Quadrant& getQuadrant(int index, int index2);
     const Quadrant& getQuadrant(int index, int index2) const;
+
+    Quadrant& getQuadrant(common::Location loc);
+    const Quadrant& getQuadrant(common::Location loc) const;
+
     void printMap();
 
 #ifndef NDEBUG

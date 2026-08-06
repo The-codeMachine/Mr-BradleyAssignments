@@ -125,8 +125,6 @@ void QuadrantMap::initializeQuadrant(Quadrant q)
 }
 
 // Writes a fixed-width symbol into the specified sector.
-// The backing String is copied into a StringBuilder so the
-// three characters representing the sector can be replaced.
 // The updated String then becomes the new map.
 // Uses base-1 coordinates
 void QuadrantMap::place(int x, int y, const std::string &value)
@@ -138,6 +136,13 @@ void QuadrantMap::place(int x, int y, const std::string &value)
     quadrantString.place(index, value);
 }
 
+// Writes a fixed-width symbol into the specified sector.
+// The updated String then becomes the new map.
+// Uses base-0 coordinates through Location
+void QuadrantMap::place(common::Location loc, const std::string& value) {
+    place(common::toBase1(loc.sectorX), common::toBase1(loc.sectorY), value);
+}
+
 // Removes whatever occupies the specified sector.
 // Clearing is implemented by replacing the sector with
 // the empty-space symbol.
@@ -146,6 +151,14 @@ void QuadrantMap::clearSector(int x, int y)
 {
     // checks like validPos are done within place
     place(x, y, EMPTY);
+}
+
+// Removes whatever occupies the specified sector.
+// Clearing is implemented by replacing the sector with
+// the empty-space symbol.
+// Uses base-0 coordinates through Location.
+void QuadrantMap::clearSector(common::Location loc) {
+    clearSector(common::toBase1(loc.sectorX), common::toBase1(loc.sectorY));
 }
 
 // Moves a value from (x, y) to (newX, newY). It does
@@ -168,6 +181,17 @@ void QuadrantMap::move(int x, int y, int newX, int newY, const std::string &valu
     }
 }
 
+// Moves a value from (x, y) to (newX, newY). It does
+// this by checking if (x, y) is actually the value, and
+// then clearing it, and inserting it into (newX, newY) after
+// verifying that (newX, newY) is empty. Can be used to move
+// Enterprise or Klingons.
+// Uses base-0 coordinates through location
+void QuadrantMap::move(common::Location oldLocation, common::Location newLocation, const std::string& value) {
+    move(common::toBase1(oldLocation.sectorX), common::toBase1(oldLocation.sectorY),
+        common::toBase1(newLocation.sectorX), common::toBase1(newLocation.sectorY), value);
+}
+
 // Clears a sector only if it has value as its object. If it does then
 // it is cleared.
 // Uses base-1 coordinates. 
@@ -181,10 +205,19 @@ void QuadrantMap::removeObject(int x, int y, const std::string &object)
     }
 }
 
+// Clears a sector only if it has value as its object. If it does then
+// it is cleared.
+// Uses base-0 coordinates through Location. 
+void QuadrantMap::removeObject(common::Location loc, const std::string& object) {
+    removeObject(common::toBase1(loc.sectorX), common::toBase1(loc.sectorY), object);
+}
+
+// Gets the locations of all the klingons within this QuadrantMap (reference)
 std::vector<common::Location>& QuadrantMap::klingons() {
     return klingonLocations;
 }
 
+// Gets the locations of all the klingons within this QuadrantMap (const refernce)
 const std::vector<common::Location>& QuadrantMap::klingons() const {
     return klingonLocations;
 }
@@ -204,6 +237,15 @@ std::string QuadrantMap::at(int x, int y) const
     return quadrantString.at(index);
 }
 
+// Returns the symbol stored at the specified sector.
+// The 2D coordinates are converted into a 1D index into
+// the backing String, and the fixed-width symbol stored
+// at that location is returned.
+// Uses base-0 coordinates through Location.
+std::string QuadrantMap::at(common::Location loc) const {
+    return at(common::toBase1(loc.sectorX), common::toBase1(loc.sectorY));
+}
+
 // Checks if sector (x, y) is empty.
 // X, and y both use base-1 positions.
 // Checks if at(x, y) == "   ".
@@ -213,6 +255,14 @@ bool QuadrantMap::empty(int x, int y) const
     // getIndexFrom converts it to a base-0 1D index for quadrantString
     int index = getIndexFrom(x, y);
     return quadrantString.isEmpty(index);
+}
+
+// Checks if sector (x, y) is empty.
+// X, and y both use base-1 positions.
+// Checks if at(x, y) == "   ".
+// Uses base-0 coordinates through location
+bool QuadrantMap::empty(common::Location loc) const {
+    return empty(common::toBase1(loc.sectorX), common::toBase1(loc.sectorY));
 }
 
 // Converts the QuadrantMap into a string

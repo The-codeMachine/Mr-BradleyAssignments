@@ -58,6 +58,9 @@ private:
     void klingonsMove();
     void destroyKlingon(common::Location position);
 
+    std::vector<Klingon>& getKlingons(int x, int y);
+    std::vector<Klingon>& getKlingons(common::Location loc);
+
     bool handleCommand();
     
     void moveCommand(const std::vector<std::string>& command);

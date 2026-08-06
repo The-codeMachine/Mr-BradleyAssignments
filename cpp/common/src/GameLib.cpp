@@ -20,6 +20,18 @@ namespace common
             && quadrantX == other.quadrantX && quadrantY == other.quadrantY);
     }
 
+    bool Location::operator!=(const Location& other) const {
+        return !(*this == other);
+    }
+
+    bool Location::sameQuadrant(const Location& other) const {
+        return quadrantX == other.quadrantX && quadrantY == other.quadrantY;
+    }
+
+    bool Location::sameSector(const Location& other) const {
+        return sectorX == other.sectorX && sectorY == other.sectorY;
+    }
+
     std::string Location::toString() const {
         return "(" + std::to_string(toBase1(sectorY)) + ", " + std::to_string(toBase1(sectorX)) + ") in ("
          + std::to_string(toBase1(quadrantY)) + ", " + std::to_string(toBase1(quadrantX)) + ")";

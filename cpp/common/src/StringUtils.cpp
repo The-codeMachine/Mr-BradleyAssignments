@@ -31,13 +31,14 @@ namespace common {
     }
 
     // fills a string with zeros (e.g. 12, (size 3) becomes (012))
-    std::string zeroFill(int input, size_t size) {
-        std::string in = std::to_string(input);
-        
-        if (in.length() >= size)
-            return in;
+    std::string zeroFill(int input, std::size_t size) {
+        std::string result = std::to_string(input);
 
-        return std::string(size - in.length(), '0') + in;
+        if (result.size() < size) {
+            result.insert(0, size - result.size(), '0');
+        }
+
+        return result;
     }
 
     // tests that the string utils works correctly

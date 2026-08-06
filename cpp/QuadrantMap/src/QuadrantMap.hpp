@@ -42,16 +42,25 @@ public:
    QuadrantMap();
 
    void place(int x, int y, const std::string& value);
+   void place(common::Location loc, const std::string& value);
+
    void clearSector(int x, int y);
+   void clearSector(common::Location loc);
    
    void move(int x, int y, int newX, int newY, const std::string& value);
+   void move(common::Location oldLocation, common::Location newLocation, const std::string& value);
+   
    void removeObject(int x, int y, const std::string& object);
+   void removeObject(common::Location loc, const std::string& object);
 
    std::vector<common::Location>& klingons();
    const std::vector<common::Location>& klingons() const;
 
    std::string at(int x, int y) const;
+   std::string at(common::Location loc) const;
+
    bool empty(int x, int y) const;
+   bool empty(common::Location loc) const;
 
    std::string toString() const;
 

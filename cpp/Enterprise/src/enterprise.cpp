@@ -15,6 +15,11 @@ Enterprise::Enterprise(int energy, double shields,
 // Docks the Enterprise. Replenishes energy, torpedoes
 // and repairs all devices
 void Enterprise::dock() {
+    if (shields > 0) {
+        common::IO::println("Shields lowered for docking");
+        adjustShields(0);
+    }
+
     adjustEnergy(3000 - getEnergy());
     torpedoes = 10;
 
@@ -81,8 +86,13 @@ void Enterprise::reduceTorpedoes() {
     torpedoes--;
 }
 
-// adjusts the shields of the enterprise
+// Adjusts the shields of the enterprise. Sets the shields
+// to this exact value replenishes the energy
 void Enterprise::adjustShields(double shields) {
+    if (shields < 0) {
+        return;
+    }
+    
     double diffShields = this->shields - shields;
     if (-diffShields > getEnergy()) {
         common::IO::println("Not enough energy to adjust shields to: " + std::to_string(shields));

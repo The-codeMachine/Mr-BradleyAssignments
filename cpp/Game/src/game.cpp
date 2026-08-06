@@ -20,7 +20,7 @@ void Game::constructGame() {
 void Game::initializeQuadrants() {
     for (int x = 0; x < MAP_SIZE; ++x) {
         for (int y = 0; y < MAP_SIZE; ++y) {
-            map[x][y] = QuadrantMap(galaxy.getQuadrant(x, y));
+            map[x][y] = QuadrantMap(galaxy.getQuadrant(common::toBase1(x), common::toBase1(y)));
         }
     }
 }
@@ -59,7 +59,7 @@ void Game::initializeTime() {
 void Game::placeEnterprise() {
     const auto location = enterprise.getLocation();
 
-    at(location).place(common::toBase1(location.sectorX), common::toBase1(location.sectorY), QuadrantMap::ENTERPRISE);
+    at(location).place(location, QuadrantMap::ENTERPRISE);
 }
 
 // Finds the movement destination based off the path
@@ -75,12 +75,11 @@ common::Location Game::findMovementDestination(const std::vector<common::Locatio
     for (const auto& location : path) {
         const auto& quadrant = at(location);
 
-        if (!quadrant.empty(common::toBase1(location.sectorX), common::toBase1(location.sectorY))) {
+        if (!quadrant.empty(location)) {
             break;
         }
 
-        if (location.quadrantX != previousLocation.quadrantX ||
-            location.quadrantY != previousLocation.quadrantY) {
+        if (!location.sameQuadrant(previousLocation)) {
             starDateChange += 1.0;
         }
 
@@ -96,8 +95,8 @@ void Game::updateEnterpriseMap(common::Location oldLocation, common::Location ne
     auto& oldQuadrant = at(oldLocation);
     auto& newQuadrant = at(newLocation);
 
-    oldQuadrant.clearSector(common::toBase1(oldLocation.sectorX), common::toBase1(oldLocation.sectorY));
-    newQuadrant.place(common::toBase1(newLocation.sectorX), common::toBase1(newLocation.sectorY), QuadrantMap::ENTERPRISE);
+    oldQuadrant.clearSector(oldLocation);
+    newQuadrant.place(newLocation, QuadrantMap::ENTERPRISE);
 }
 
 
@@ -213,7 +212,7 @@ void Game::firePhasers(double phaserEnergy) {
     enterprise.adjustEnergy(-phaserEnergy);
 
     const auto location = enterprise.getLocation();
-    auto& currentKlingons = klingons[location.quadrantX][location.quadrantY];
+    auto& currentKlingons = getKlingons(location);
 
     for (auto it = currentKlingons.begin(); it != currentKlingons.end();) {
         auto& klingon = *it;
@@ -228,14 +227,8 @@ void Game::firePhasers(double phaserEnergy) {
 
         auto klingonLocation = it->getLocation();
         
-        if (klingonLocation != klingonLocation) {
-            ++it;
-            continue;
-        }
-        
-        galaxy.getQuadrant(klingonLocation.quadrantX, klingonLocation.quadrantY).reduceKlingons();
-        at(klingonLocation).removeObject(common::toBase1(klingonLocation.sectorX), 
-                            common::toBase1(klingonLocation.sectorY), QuadrantMap::KLINGON);
+        galaxy.getQuadrant(klingonLocation).reduceKlingons();
+        at(klingonLocation).removeObject(klingonLocation, QuadrantMap::KLINGON);
 
         it = currentKlingons.erase(it);
         common::IO::printf("Destroyed klingon at %s\n", klingonLocation.toString().c_str());
@@ -257,26 +250,32 @@ void Game::fireTorpedo(double warpDirection) {
     auto currLocation = enterprise.getLocation();
 
     // checks that the torpedo is in the same quadrant
-    if (destination.quadrantX != currLocation.quadrantX || destination.quadrantY != currLocation.quadrantY)
+    if (!destination.sameQuadrant(currLocation))
         return;
 
+    // if destination is not in path it is equal to the enterprise meaning the first one in the path
     auto it = std::find(path.begin(), path.end(), destination);
-    if (it == path.end())
-        return;
+    if (it == path.end()) {
+        common::Location loc = *path.begin();
+        if (at(loc).at(loc) == QuadrantMap::KLINGON) {
+            destroyKlingon(loc);
+            return;
+        }
+    }
 
     // if the next object in the path is a klingon then destroy it
     ++it;
     if (it == path.end())
         return;
 
-    if (at(*it).at(common::toBase1(it->sectorX), common::toBase1(it->sectorY)) == QuadrantMap::KLINGON)
+    if (at(*it).at(*it) == QuadrantMap::KLINGON)
         destroyKlingon(*it);
 }
 
 // Makes all the klingons within the Enterprise's current Quadrant fire at it
 void Game::klingonsFire() {
     auto position = enterprise.getLocation();
-    auto& currKlingons = klingons[position.quadrantX][position.quadrantY];
+    auto& currKlingons = getKlingons(position);
 
     for (auto& k : currKlingons) {
         int damage = k.firePhasers(position.sectorX, position.sectorY);
@@ -295,18 +294,17 @@ void Game::klingonsFire() {
 // the paths towards the destination), similar to the original.
 void Game::klingonsMove() {
     auto position = enterprise.getLocation();
-    auto& currKlingons = klingons[position.quadrantX][position.quadrantY];
+    auto& currKlingons = getKlingons(position);
 
     for (Klingon& k : currKlingons) {
         auto location = k.calculateDestination();
-        while (!at(location).empty(common::toBase1(location.sectorX), common::toBase1(location.sectorY)))
+        while (!at(location).empty(location))
         {
             location = k.calculateDestination();
         }
 
         auto& quadrant = at(location);
-        quadrant.move(common::toBase1(k.getLocation().sectorX), common::toBase1(k.getLocation().sectorY),
-                    common::toBase1(location.sectorX), common::toBase1(location.sectorY), QuadrantMap::KLINGON);
+        quadrant.move(k.getLocation(), location, QuadrantMap::KLINGON);
         k.move(location);
     }
 }
@@ -314,7 +312,7 @@ void Game::klingonsMove() {
 // Destroys the klingon at a position. Removes it from QuadrantMap,
 // the klingons vector, and galaxy. 
 void Game::destroyKlingon(common::Location position) {
-    auto& currKlingons = klingons[position.quadrantX][position.quadrantY];
+    auto& currKlingons = getKlingons(position);
 
     for (auto it = currKlingons.begin(); it != currKlingons.end();) {
         auto klingonLocation = it->getLocation();
@@ -324,15 +322,26 @@ void Game::destroyKlingon(common::Location position) {
             continue;
         }
         
-        galaxy.getQuadrant(position.quadrantX, position.quadrantY).reduceKlingons();
-        at(position).removeObject(common::toBase1(klingonLocation.sectorX), 
-                            common::toBase1(klingonLocation.sectorY), QuadrantMap::KLINGON);
+        galaxy.getQuadrant(position).reduceKlingons();
+        at(position).removeObject(klingonLocation, QuadrantMap::KLINGON);
 
         currKlingons.erase(it);
         common::IO::printf("Destroyed klingon at %s\n", klingonLocation.toString().c_str());
 
         return;
     }
+}
+
+// Gets the Klingons at (x, y). Returns a reference to that klingon
+// vector. Takes base-1 coordinates
+std::vector<Klingon>& Game::getKlingons(int x, int y) {
+    return klingons[common::toBase0(x)][common::toBase0(y)];
+}
+
+// Gets the Klingons at (x, y). Returns a reference to that klingon
+// vector. Takes base-0 coordinates through location
+std::vector<Klingon>& Game::getKlingons(common::Location loc) {
+    return klingons[loc.quadrantX][loc.quadrantY];
 }
 
 // Handles a command from the user. Takes the input
@@ -370,7 +379,8 @@ bool Game::handleCommand() {
 }
 
 // Handles the move command (gets the correct data,
-// then calls the move function). 
+// then calls the move function). Calls klingons to fire and 
+// move after. 
 void Game::moveCommand(const std::vector<std::string>& command) {
     if (command.size() < 3) {
         common::IO::warning("NAV usage <warp direction> <warp factor>");
@@ -429,14 +439,15 @@ void Game::longRangeCommand() {
 
     for (int y = startY; y <= endY; ++y) {
         for (int x = startX; x <= endX; ++x) {
-            common::IO::print(galaxy.getQuadrant(x, y).toString() + " ");
+            common::IO::print(galaxy.getQuadrant(common::toBase1(x), common::toBase1(y)).toString() + " ");
         }
 
         common::IO::println("");
     }
 }
 
-// Fires the phasers based off the energy
+// Fires the phasers based off the energy. Makes the klingons fire after
+// and then does a short range scan
 void Game::phaserCommand(const std::vector<std::string>& command) {
     if (enterprise.isDeviceBroken(std::string(Devices::PHASER_CONTROL))) {
         common::IO::println("Phaser control needs repair, cannot fire phasers");
@@ -459,7 +470,8 @@ void Game::phaserCommand(const std::vector<std::string>& command) {
     }
 }
 
-// Fires a torpedo to a certain location based off the command
+// Fires a torpedo to a certain location based off the command. Makes the klingons fire after
+// and then does a short range scan
 void Game::torpedoCommand(const std::vector<std::string>& command) {
     if (enterprise.isDeviceBroken(std::string(Devices::TORPEDO_CONTROL))) {
         common::IO::println("Torpedo control needs repair. Cannot fire a torpedo");
@@ -496,6 +508,16 @@ void Game::shieldCommand(const std::vector<std::string>& command) {
 
     try {
         double newShields = std::stod(command[1]);
+        if (newShields < 0.0) {
+            common::IO::println("Invalid shields value; must be 0 or greater");
+            return;
+        }
+
+        if (enterprise.getDocked()) {
+            common::IO::println("Cannot raise shields while docked");
+            return;
+        }
+
         enterprise.adjustShields(newShields);
     } catch (const std::exception& e) {
         common::IO::warning("Please enter valid doubles");

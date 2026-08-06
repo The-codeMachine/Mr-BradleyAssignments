@@ -47,7 +47,6 @@ public:
     bool isDeviceBroken(const std::string& str) const;
     
     void damageReport() const;
-
     std::string toString() const;
 
 private:

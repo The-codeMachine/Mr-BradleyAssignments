@@ -1,4 +1,5 @@
 #include "Galaxy.hpp"
+
 #include <common/GameLib.hpp>
 
 #include <iostream>
@@ -11,18 +12,32 @@ Galaxy::Galaxy() : totalBases(0)
     populateGalaxy();
 }
 
-// Gets the quadrant located at [index][index2]
+// Gets the quadrant located at [index][index2]. Takes base-1 coordinates
+// (reference)
 Quadrant& Galaxy::getQuadrant(int index, int index2)
 {
-    assert(index >= 0 && index <= 7 && index2 >= 0 && index2 <= 7);
-    return map[index][index2];
+    assert(index >= 1 && index <= 8 && index2 >= 1 && index2 <= 8);
+    return map[common::toBase0(index)][common::toBase0(index2)];
 }
 
-// Gets the quadrant located at [index][index2]
+// Gets the quadrant located at [index][index2]. Takes base-1 coordinates.
+// (const reference)
 const Quadrant& Galaxy::getQuadrant(int index, int index2) const 
 {
-    assert(index >= 0 && index <= 7 && index2 >= 0 && index2 <= 7);
-    return map[index][index2];
+    assert(index >= 1 && index <= 8 && index2 >= 1 && index2 <= 8);
+    return map[common::toBase0(index)][common::toBase0(index2)];
+}
+
+// Gets a Quadrant from the map. Takes the base-0 coordinates through location 
+// (reference)
+Quadrant& Galaxy::getQuadrant(common::Location loc) {
+    return map[loc.quadrantX][loc.quadrantY];
+}
+
+// Gets a Quadrant from the map. Takes the base-0 coordinates through location
+// (const reference)
+const Quadrant& Galaxy::getQuadrant(common::Location loc) const {
+    return map[loc.quadrantX][loc.quadrantY];
 }
 
 // Prints the map into the console
@@ -84,7 +99,7 @@ void Galaxy::whiteBoxTest()
     {
         for (int j = 0; j < 8; ++j)
         {
-            const Quadrant q = g.getQuadrant(i, j);
+            const Quadrant q = g.getQuadrant(common::toBase1(i), common::toBase1(j));
 
             int klingons = q.klingons();
             if (klingons == 1)
