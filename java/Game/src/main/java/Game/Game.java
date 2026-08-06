@@ -6,7 +6,6 @@ import common.GameLib.Location;
 import device.Devices;
 
 import java.util.Iterator;
-import java.time.LocalDate;
 import java.util.ArrayList;
 
 import QuadrantMap.QuadrantMap;
@@ -129,6 +128,7 @@ public class Game {
         
         initializeQuadrants();
         initializeKlingons();
+        initializeTime();
         placeEnterprise();
     }
 
@@ -152,6 +152,7 @@ public class Game {
      */
     private void initializeKlingons() {
         klingons = new ArrayList<>();
+        int numKlingons = 0;
 
         for (int x = 0; x < MAP_SIZE; ++x) {
             ArrayList<ArrayList<Klingon>> rowKlingons = new ArrayList<>();
@@ -160,6 +161,7 @@ public class Game {
                 ArrayList<Klingon> klingonsInQuadrant = new ArrayList<>();
                 for (Location loc : map[x][y].klingons()) {
                     klingonsInQuadrant.add(new Klingon(new Location(loc.sectorX, loc.sectorY, x, y)));
+                    numKlingons++;
                 }
 
                 rowKlingons.add(klingonsInQuadrant);
@@ -167,6 +169,24 @@ public class Game {
 
             klingons.add(rowKlingons);
         }
+
+            IO.printf("Your orders are as follows: \n");
+            IO.printf("destroy the %d Klingon warships which have invaded\n", numKlingons);
+            IO.printf("the galaxy before they can attack Federation headquarters\n");
+    }
+
+    /**
+     * 
+     * Initilizes the time, including the starting
+     * star date, and the ending star date
+     * 
+     */
+    private void initializeTime() {
+        currentStardate = (int)(GameLib.random() * 20 + 20) * 100;
+        startingStardate = (int)currentStardate;
+        missionDuration = 25 + (int)(GameLib.random() * 10);
+        
+        IO.printf("on stardate: %d, this gives you %d days\n", startingStardate + missionDuration, missionDuration);
     }
 
     /**
@@ -323,6 +343,11 @@ public class Game {
      * 
      */
     private void klingonsFire() {
+        if (enterprise.getDocked()) {
+            IO.println("Starbase shields protect you from incoming klingon attacks");
+            return;
+        }
+
         Location pos = enterprise.getLocation();
         ArrayList<Klingon> currKlingons = klingons.get(pos.quadrantX).get(pos.quadrantY);
 
@@ -372,9 +397,8 @@ public class Game {
             if (klingonLocation.sectorX != position.sectorX || klingonLocation.sectorY != position.sectorY)
                 continue;
 
-            galaxy.getQuadrant(position.quadrantX, position.quadrantY).reduceKlingons();
-            at(position).removeObject(GameLib.toBase1(klingonLocation.sectorX), 
-                                    GameLib.toBase1(klingonLocation.sectorY), QuadrantMap.KLINGON);
+            galaxy.getQuadrant(position).reduceKlingons();
+            at(position).removeObject(klingonLocation, QuadrantMap.KLINGON);
 
             it.remove();
             IO.printf("Destroyed klingon at %s\n", klingonLocation.toString());
@@ -472,6 +496,7 @@ public class Game {
 
             move(warpFactor, warpDirection);
             klingonsFire();
+            klingonsMove();
             shortRangeCommand();
         } catch (Exception e) {
             IO.warning("Invalid usage of NAV");
@@ -491,9 +516,9 @@ public class Game {
         }
 
         Location enterpriseLocation = enterprise.getLocation();
-        IO.println(map[enterpriseLocation.quadrantX][enterpriseLocation.quadrantY].toString());
-        
+        IO.println(at(enterpriseLocation).toString());
         IO.println(enterprise.toString());
+        IO.printf("Star date: %.6f\n", currentStardate);
     }
 
     /**
@@ -518,7 +543,7 @@ public class Game {
 
         for (int y = startY; y <= endY; ++y) {
             for (int x = startX; x <= endX; ++x) {
-                IO.print(galaxy.getQuadrant(x, y).toString() + " ");
+                IO.print(galaxy.getQuadrant(GameLib.toBase1(x), GameLib.toBase1(y)).toString() + " ");
             }
 
             IO.println("");
@@ -641,6 +666,10 @@ public class Game {
     private QuadrantMap[][] map;
 
     private ArrayList<ArrayList<ArrayList<Klingon>>> klingons; 
+
+    private double currentStardate;
+    private int startingStardate;
+    private int missionDuration;
 
     private static final int MAP_SIZE = 8;
     private static final int MIN_SECTOR = 1;

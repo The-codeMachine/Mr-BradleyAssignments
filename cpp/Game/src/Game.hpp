@@ -42,9 +42,9 @@ public:
 private:
     void constructGame();
 
-    void initializeTime();
     void initializeQuadrants();
     void initializeKlingons();
+    void initializeTime();
     void placeEnterprise();
 
     common::Location findMovementDestination(const std::vector<common::Location>& path, double& starDateChange);

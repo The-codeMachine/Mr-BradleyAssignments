@@ -38,10 +38,10 @@ public class Klingon extends Ship {
      * @return
      */
     public int firePhasers(int x, int y) {
-        int damage = super.firePhasers(energy(), x, y);
-        adjustEnergy((int)(energy() / GameLib.randomInRange(3, 4)) - energy());
-
-        return damage;
+        int energy = energy();
+        adjustEnergy((int)(energy / GameLib.randomInRange(3, 4)) - energy);
+        
+        return super.firePhasers(energy, x, y);
     }
 
     /**

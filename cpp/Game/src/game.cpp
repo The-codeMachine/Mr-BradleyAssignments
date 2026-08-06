@@ -274,6 +274,11 @@ void Game::fireTorpedo(double warpDirection) {
 
 // Makes all the klingons within the Enterprise's current Quadrant fire at it
 void Game::klingonsFire() {
+    if (enterprise.getDocked()) {
+        common::IO::println("Starbase shields protect you from incoming klingon attacks");
+        return;
+    }
+    
     auto position = enterprise.getLocation();
     auto& currKlingons = getKlingons(position);
 
