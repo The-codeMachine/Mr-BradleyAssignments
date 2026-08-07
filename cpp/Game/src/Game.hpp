@@ -78,6 +78,7 @@ private:
     QuadrantMap map[8][8];
     
     std::vector<std::vector<std::vector<Klingon>>> klingons;
+    int numKlingons;
 
     double currentStardate;
     int startingStardate;

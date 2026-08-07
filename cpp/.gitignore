@@ -1,7 +1,10 @@
 *.exe
+*.log
 
 build/
 out/
+log/
+test_logs/
 
 .vscode/
 

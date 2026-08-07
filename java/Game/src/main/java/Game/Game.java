@@ -77,9 +77,34 @@ public class Game {
      * 
      */
     public void run() {
-        while (handleCommand()) {
+        while ( handleCommand() && 
+            numKlingons > 0 && 
+        currentStardate <= missionDuration + startingStardate) {}
 
+        // success
+        if (numKlingons <= 0) {
+            IO.println("Congratulations, captain! The last klingon battle cruiser");
+            IO.println("menacing the Federation has been destroyed.");
+            IO.printf("Your efficiency rating is: %.6f", 1000 * Math.pow(currentStardate - startingStardate, 2));
+            return;
         }
+
+        // lost because of time
+        if (currentStardate > missionDuration + startingStardate) {
+            IO.printf("It is stardate: %.6f\n", currentStardate);
+            IO.println("You have failed to destroy all the Klingon warships");
+            IO.println("before they could launch their attack against the");
+            IO.println("Federation. They will destroy the Enterprise as well");
+            IO.println("as the Federation");
+            return;
+        }
+        
+        // they destroyed the Enterprise elsewise or the user quitted
+        IO.printf("It is stardate: %.6f\n", currentStardate);
+        IO.println("You have failed to destroy all the Klingon warships");
+        IO.println("The Enterprise has been destroyed and now there is ");
+        IO.println("nothing stopping the Klingons from destroying the");
+        IO.println("Federation. ");
     }
 
     /**
@@ -100,20 +125,36 @@ public class Game {
      */
     public boolean move(double warpFactor, double warpDirection) {
         enterprise.updateDocked(false);
-        ArrayList<Location> path = enterprise.calculatePath(warpFactor, warpDirection);
+
+        ArrayList<Location> path =
+            enterprise.calculatePath(warpFactor, warpDirection);
 
         if (path.isEmpty())
             return false;
 
         Location oldLocation = enterprise.getLocation();
-        Location newLocation = findMovementDestination(path);
+
+        MovementResult result = findMovementDestination(path);
+
+        Location newLocation = result.destination();
+        double starDateChange = result.starDateChange();
+
+        // If we did not cross a quadrant boundary, normal movement
+        // time applies.
+        if (starDateChange == 0.0 && !oldLocation.equals(newLocation)) {
+            starDateChange = warpFactor < 1.0
+                ? 0.1 * Math.floor(10.0 * warpFactor)
+                : 1.0;
+        }
+
+        currentStardate += starDateChange;
 
         updateEnterpriseMap(oldLocation, newLocation);
 
         enterprise.move(newLocation, warpFactor);
         enterprise.updateDocked(canDock());
 
-        return newLocation == path.getLast();
+        return newLocation.equals(path.getLast());
     }
 
     /**
@@ -152,7 +193,7 @@ public class Game {
      */
     private void initializeKlingons() {
         klingons = new ArrayList<>();
-        int numKlingons = 0;
+        numKlingons = 0;
 
         for (int x = 0; x < MAP_SIZE; ++x) {
             ArrayList<ArrayList<Klingon>> rowKlingons = new ArrayList<>();
@@ -201,25 +242,37 @@ public class Game {
     }
 
     /**
-     * 
-     * Finds the movement destination based off the path and what it collides with. 
-     * 
-     * @param path
-     * @return the destintion of an object based off a path
+     * Finds the movement destination based off the path and what it collides with.
+     * Also calculates the Stardate cost of the movement.
+     *
+     * A successfully crossed quadrant boundary costs 1 Stardate.
+     *
+     * @param path the calculated movement path
+     * @return the final destination and Stardate cost
      */
-    private Location findMovementDestination(ArrayList<Location> path) {
-        Location destination = enterprise.getLocation();
+    private MovementResult findMovementDestination(ArrayList<Location> path) {
+        Location startingLocation = enterprise.getLocation();
+        Location destination = startingLocation;
+
+        double starDateChange = 0.0;
+        Location previousLocation = startingLocation;
 
         for (Location location : path) {
             QuadrantMap quadrant = at(location);
 
+            // The Enterprise cannot enter an occupied sector.
             if (!quadrant.empty(location))
                 break;
 
+            // Successfully entering a different quadrant costs 1 Stardate.
+            if (!location.sameQuadrant(previousLocation))
+                starDateChange += 1.0;
+
             destination = location;
+            previousLocation = location;
         }
 
-        return destination;
+        return new MovementResult(destination, starDateChange);
     }
 
     /**
@@ -310,7 +363,7 @@ public class Game {
         // biggest warp factor possible so it won't stop
         ArrayList<Location> path = enterprise.calculatePath(8.0, warpDirection);
 
-        Location destination = findMovementDestination(path);
+        Location destination = findMovementDestination(path).destination();
         Location currLocation = enterprise.getLocation();
 
         // checks that the torpedo is in the same quadrant
@@ -667,6 +720,8 @@ public class Game {
 
     private ArrayList<ArrayList<ArrayList<Klingon>>> klingons; 
 
+    private int numKlingons;
+
     private double currentStardate;
     private int startingStardate;
     private int missionDuration;
@@ -674,6 +729,8 @@ public class Game {
     private static final int MAP_SIZE = 8;
     private static final int MIN_SECTOR = 1;
     private static final int MAX_SECTOR = 8;
+
+    private record MovementResult(Location destination, double starDateChange) {}
 }
 
 /**

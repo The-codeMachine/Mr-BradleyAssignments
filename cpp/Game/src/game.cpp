@@ -28,7 +28,7 @@ void Game::initializeQuadrants() {
 // Initializes all klingons for the Game
 void Game::initializeKlingons() {
     klingons.resize(MAP_SIZE);
-    int numKlingons = 0;
+    numKlingons = 0;
 
     for (int x = 0; x < MAP_SIZE; ++x) {
         klingons[x].resize(MAP_SIZE);
@@ -158,13 +158,34 @@ const Enterprise& Game::getEnterprise() const {
 // Runs the game (takes input from the user,
 // and runs those commands in game).
 void Game::run() {
-    while (handleCommand()) {
-        
+    while ( handleCommand() && 
+            numKlingons > 0 && 
+    currentStardate <= missionDuration + startingStardate) {}
+
+    // success
+    if (numKlingons <= 0) {
+        common::IO::println("Congratulations, captain! The last klingon battle cruiser");
+        common::IO::println("menacing the Federation has been destroyed.");
+        common::IO::printf("Your efficiency rating is: %0.6f", 1000 * std::pow(currentStardate - startingStardate, 2));
+        return;
     }
 
-    // currently we only have a lose condition, once we
-    // have a win condition too we will adjust this
-    common::IO::println("YOU LOST");
+    // lost because of time
+    if (currentStardate > missionDuration + startingStardate) {
+        common::IO::printf("It is stardate: %0.6f\n", currentStardate);
+        common::IO::println("You have failed to destroy all the Klingon warships");
+        common::IO::println("before they could launch their attack against the");
+        common::IO::println("Federation. They will destroy the Enterprise as well");
+        common::IO::println("as the Federation");
+        return;
+    }
+    
+    // they destroyed the Enterprise elsewise
+    common::IO::printf("It is stardate: %0.6f\n", currentStardate);
+    common::IO::println("You have failed to destroy all the Klingon warships");
+    common::IO::println("The Enterprise has been destroyed and now there is ");
+    common::IO::println("nothing stopping the Klingons from destroying the");
+    common::IO::println("Federation. ");
 }
 
 // Moves the Enterprise based off warpFactor
@@ -261,6 +282,8 @@ void Game::fireTorpedo(double warpDirection) {
             destroyKlingon(loc);
             return;
         }
+
+        return;
     }
 
     // if the next object in the path is a klingon then destroy it
@@ -331,6 +354,7 @@ void Game::destroyKlingon(common::Location position) {
         at(position).removeObject(klingonLocation, QuadrantMap::KLINGON);
 
         currKlingons.erase(it);
+        numKlingons--;
         common::IO::printf("Destroyed klingon at %s\n", klingonLocation.toString().c_str());
 
         return;
@@ -422,6 +446,7 @@ void Game::shortRangeCommand() {
     
     common::IO::println(at(location).toString());
     common::IO::println(enterprise.toString());
+    common::IO::printf("Klingons left: %d\n", numKlingons);
     common::IO::printf("Star date: %.6f\n", currentStardate);
 }
 
