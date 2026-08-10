@@ -82,6 +82,9 @@ private:
     void computerLibraryCommandDC() const;
     void computerLibraryCommandGRNM() const;
 
+    static void calculateDD(common::Location startingLocation, 
+        common::Location endingLocation, int& direction, int& factor);
+
 private:
     Enterprise enterprise;
     

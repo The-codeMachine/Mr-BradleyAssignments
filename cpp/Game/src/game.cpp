@@ -2,6 +2,7 @@
 
 #include <common/IO.hpp>
 
+#include <numbers>
 #include <algorithm>
 
 Game::Game() : enterprise(3000, 0, 10, false) {
@@ -666,4 +667,34 @@ void Game::computerLibraryCommandDC() const {
 // across the game's world. 
 void Game::computerLibraryCommandGRNM() const {
     
+}
+
+// Calculates the distance and direction something must travel to reach another 
+// position. Returns the direction and factor as references. 
+void Game::calculateDD(common::Location startingLocation, 
+        common::Location endingLocation, int& direction, int& factor)         
+{
+    direction = 0;
+    factor = 0;
+    
+    // calculate distance
+    double dx = std::pow(startingLocation.sectorX - endingLocation.sectorX, 2);
+    double dy = std::pow(startingLocation.sectorY - endingLocation.sectorY, 2);
+
+    double distance = std::sqrt(dx + dy);
+
+    if (distance == 0)
+        return;
+
+    factor = distance / MAP_SIZE;
+
+    double radians = std::atan2(dy, dx);
+    double degrees = radians * (180 / std::numbers::pi);
+
+    if (degrees < 0)
+        degrees += 360;
+
+    direction = 1 + degrees / 45;
+    if (direction = 9)
+        direction = 1;
 }
