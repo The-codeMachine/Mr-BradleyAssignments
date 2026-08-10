@@ -79,6 +79,8 @@ void Game::updateEnterpriseMap(common::Location oldLocation, common::Location ne
 
     oldQuadrant.clearSector(oldLocation);
     newQuadrant.place(newLocation, QuadrantMap::ENTERPRISE);
+
+    common::IO::printf("\nNow entering %s quadrant ...\n\n", Galaxy::getGalaticRegionName(newLocation).c_str());
 }
 
 // Gets the QuadrantMap at (x, y). This
@@ -359,7 +361,7 @@ void Game::shortRangeCommand() {
     common::IO::println(at(location).toString());
     common::IO::println(enterprise.toString());
     common::IO::printf("Klingons left: %d\n", galaxy.getKlingons());
-    common::IO::printf("Star date: %.6f\n", currentStardate);
+    common::IO::printf("Star date: %.3f\n\n", currentStardate);
 }
 
  
@@ -605,31 +607,7 @@ void Game::computerLibraryCommandDC() const {
 // Prints the galatic region name map. There are 16 major galatic regions mapped
 // across the game's world. 
 void Game::computerLibraryCommandGRNM() const {
-    constexpr int COLUMN_WIDTH = 20;
-
-    constexpr std::array<std::array<std::string_view, 2>, 8> regions = {{
-        { "Antares",     "Sirius" },
-        { "Rigel",       "Deneb" },
-        { "Procyon",     "Capella" },
-        { "Vega",        "Betelgeuse" },
-        { "Canopus",     "Aldebaran" },
-        { "Altair",      "Regulus" },
-        { "Sagittarius", "Arcturus" },
-        { "Pollux",      "Spica" }
-    }};
-
-    common::IO::println("");
-    common::IO::println(common::padCenter("THE GALAXY", COLUMN_WIDTH * 2));
-
-    for (const auto& row : regions) {
-        common::IO::printf(
-            "%s%s\n",
-            common::padCenter(std::string(row[0]), COLUMN_WIDTH).c_str(),
-            common::padCenter(std::string(row[1]), COLUMN_WIDTH).c_str()
-        );
-    }
-
-    common::IO::println("");
+    Galaxy::printGalaticRegionMap();
 }
 
 // Calculates the distance and direction something must travel to reach another 

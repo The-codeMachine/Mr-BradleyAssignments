@@ -6,6 +6,8 @@
 
 #include <array>
 #include <optional>
+#include <string>
+#include <string_view>
 #include <ostream>
 
 /**
@@ -24,11 +26,22 @@ class Galaxy {
 public:
     Galaxy();
 
-    Quadrant& getQuadrant(int index, int index2);
-    const Quadrant& getQuadrant(int index, int index2) const;
+    Quadrant& getQuadrant(int x, int y);
+    const Quadrant& getQuadrant(int x, int y) const;
 
     Quadrant& getQuadrant(common::Location loc);
     const Quadrant& getQuadrant(common::Location loc) const;
+
+    static std::string getQuadrantRegionName(int x, int y);
+    static std::string getQuadrantRegionName(common::Location location);
+
+    static std::string getQuadrantRomanNumeral(int x, int y);
+    static std::string getQuadrantRomanNumeral(common::Location location);
+
+    static std::string getGalaticRegionName(int x, int y);
+    static std::string getGalaticRegionName(common::Location location);
+
+    static void printGalaticRegionMap();
 
     int starBases() const noexcept;
     
@@ -52,10 +65,30 @@ friend std::ostream &operator<<(std::ostream &os, const Galaxy &g);
 private:
     void populateGalaxy();
 
+    static bool validIndex(int index);
+
 private:
+    static inline constexpr int MIN_INDEX = 0;
+    static inline constexpr int MAX_INDEX = 7;
 
     static inline constexpr int MAP_SIZE = 8;
 
+    static inline constexpr std::array<std::array<std::string_view, 2>, 8> GALATIC_REGION_NAMES = {{
+        {"ANTARES",     "SIRIUS"},
+        {"RIGEL",       "DENEB"},
+        {"PROCYON",     "CAPELLA"},
+        {"VEGA",        "BETELGEUSE"},
+        {"CANOPUS",     "ALDEBARAN"},
+        {"ALTAIR",      "REGULUS"},
+        {"SAGITTARIUS", "ARCTURUS"},
+        {"POLLUX",      "SPICA"}
+    }};
+
+    static inline constexpr std::array<std::string_view, 4> numerals = {
+        "I", "II", "III", "IV"
+    };
+
+private:
     Quadrant map[MAP_SIZE][MAP_SIZE];
     std::array<std::array<std::optional<Quadrant>, MAP_SIZE>, MAP_SIZE> scannedGalaxy;
 
