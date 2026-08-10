@@ -401,6 +401,8 @@ bool Game::handleCommand() {
         shieldCommand(command);
     } else if (name == "DAM") {
         damageReportCommand();
+    } else if (name == "COM") {
+        computerLibraryCommand(command);
     } else if (name == "XXX") {
         return false;
     }
@@ -469,14 +471,26 @@ void Game::longRangeCommand() {
     const int endX = std::min(7, location.quadrantX + 1);
 
     for (int y = startY; y <= endY; ++y) {
-        for (int x = startX; x <= endX; ++x) {
-            Quadrant q = galaxy.getQuadrant(common::toBase1(x), common::toBase1(y));
-            common::IO::print(q.toString() + " ");
-            scannedGalaxy[x][y] = q;
+        for (int i = startX; i <= endX; ++i) {
+            common::IO::print("+-----");
         }
 
-        common::IO::println("");
+        common::IO::println("+");
+        
+        for (int x = startX; x <= endX; ++x) {
+            Quadrant q = galaxy.getQuadrant(common::toBase1(x), common::toBase1(y));
+            common::IO::print("| " + q.toString() + " ");
+            scannedGalaxy[y][x] = q;
+        }
+
+        common::IO::println("|");
     }
+
+    for (int i = startX; i <= endX; ++i) {
+        common::IO::print("+-----");
+    }
+
+    common::IO::println("+");
 }
 
 // Fires the phasers based off the energy. Makes the klingons fire after
@@ -617,20 +631,20 @@ void Game::computerLibraryCommand(const std::vector<std::string>& command) {
 // a full memory grid of all historical short range and long range
 // scans the user has done so far. 
 void Game::computerLibraryCommandCGR() const {
-    common::IO::println("\n+---+---+---+---+---+---+---+---+\n");
+    common::IO::println("\n+-----+-----+-----+-----+-----+-----+-----+-----+");
     
-    for (int x = 0; x < MAP_SIZE; ++x) {
-        for (int y = 0; y < MAP_SIZE; ++y) {
-            auto q = scannedGalaxy[x][y];
+    for (int y = 0; y < MAP_SIZE; ++y) {
+        for (int x = 0; x < MAP_SIZE; ++x) {
+            auto q = scannedGalaxy[y][x];
             if (q == std::nullopt) {
-                common::IO::printf("---|");
+                common::IO::printf("| --- ");
                 continue;
             }
 
-            common::IO::printf("%s|", q.value().toString());
+            common::IO::printf("| %s ", q.value().toString().c_str());
         }
 
-        common::IO::println("\n+---+---+---+---+---+---+---+---+\n");
+        common::IO::println("|\n+-----+-----+-----+-----+-----+-----+-----+-----+");
     }
 }
 
@@ -656,8 +670,8 @@ void Game::computerLibraryCommandPTD() {
         return;
     }
     
-    int direction;
-    int factor;
+    double direction;
+    double factor;
 
     for (const auto& k : currKlingons) {
         // direction and factor are set to 0 in calculateDD
@@ -678,10 +692,10 @@ void Game::computerLibraryCommandSND() const {
 // specific sector in inside its current Quadrant. 
 void Game::computerLibraryCommandDC() const {
     common::Location startingPosition = enterprise.getLocation();
-    common::Location endingPosition = common::IO::promptLocation();
+    common::Location endingPosition = common::IO::promptSector();
 
-    int direction;
-    int factor;
+    double direction;
+    double factor;
 
     calculateDD(startingPosition, endingPosition, direction, factor);
 
@@ -697,29 +711,29 @@ void Game::computerLibraryCommandGRNM() const {
 // Calculates the distance and direction something must travel to reach another 
 // position. Returns the direction and factor as references. 
 void Game::calculateDD(common::Location startingLocation, 
-        common::Location endingLocation, int& direction, int& factor)         
+        common::Location endingLocation, double& direction, double& factor)         
 {
-    direction = 0;
-    factor = 0;
+    direction = 0.0;
+    factor = 0.0;
     
     // calculate distance
-    double dx = std::pow(startingLocation.sectorX - endingLocation.sectorX, 2);
-    double dy = std::pow(startingLocation.sectorY - endingLocation.sectorY, 2);
+    const double dx = endingLocation.sectorX - startingLocation.sectorX;
+    const double dy = startingLocation.sectorY - endingLocation.sectorY;
 
-    double distance = std::sqrt(dx + dy);
+    double distance = std::hypot(dx, dy);
 
-    if (distance == 0)
+    if (distance == 0.0)
         return;
 
     factor = distance / MAP_SIZE;
 
     double radians = std::atan2(dy, dx);
-    double degrees = radians * (180 / std::numbers::pi);
+    double degrees = radians * (180.0 / std::numbers::pi);
 
-    if (degrees < 0)
+    if (degrees < 0.0)
         degrees += 360;
 
     direction = 1 + degrees / 45;
-    if (direction = 9)
-        direction = 1;
+    if (direction >= 9.0)
+        direction -= 8.0;
 }
