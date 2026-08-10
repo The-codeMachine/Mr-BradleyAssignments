@@ -2,6 +2,7 @@
 
 #include <common/random.hpp>
 #include <common/GameLib.hpp>
+#include <common/IO.hpp>
 
 #include <cassert>
 #include <iostream>
@@ -99,7 +100,29 @@ void QuadrantMap::placeKlingons(int amount) {
         }
 
         place(x, y, KLINGON);
-        klingonLocations.emplace_back(common::Location(common::toBase0(x), common::toBase0(y), -1, -1));
+        klingons.emplace_back(common::Location(common::toBase0(x), common::toBase0(y), -1, -1));
+    }
+}
+
+// Places a starbase inside the QuadrantMap. Records the position at baseLocation.
+void QuadrantMap::placeBase(int amount) {
+    baseLocation = {-1, -1, -1, -1};
+    
+    assert(amount <= ROWS * COLS);
+
+    while (amount--)
+    {
+        int x, y;
+
+        generateRandomPosition(x, y);
+
+        while (!empty(x, y))
+        {
+            generateRandomPosition(x, y);
+        }
+
+        place(x, y, BASE);
+        baseLocation = common::Location(common::toBase0(x), common::toBase0(y), -1, -1);
     }
 }
 
@@ -110,7 +133,7 @@ void QuadrantMap::initializeQuadrant(Quadrant q, int x, int y)
 {
     place(x, y, ENTERPRISE);
     placeKlingons(q.klingons());
-    placeValues(q.bases(), BASE);
+    placeBase(q.bases());
     placeValues(q.stars(), STAR);
 }
 
@@ -120,7 +143,7 @@ void QuadrantMap::initializeQuadrant(Quadrant q, int x, int y)
 void QuadrantMap::initializeQuadrant(Quadrant q)
 {
     placeKlingons(q.klingons());
-    placeValues(q.bases(), BASE);
+    placeBase(q.bases());
     placeValues(q.stars(), STAR);
 }
 
@@ -134,6 +157,11 @@ void QuadrantMap::place(int x, int y, const std::string &value)
     // checks are done within place
     int index = getIndexFrom(x, y);
     quadrantString.place(index, value);
+
+    if (value == ENTERPRISE) {
+        enterprise.sectorX = common::toBase1(x);
+        enterprise.sectorY = common::toBase1(y);
+    }
 }
 
 // Writes a fixed-width symbol into the specified sector.
@@ -149,6 +177,11 @@ void QuadrantMap::place(common::Location loc, const std::string& value) {
 // Uses base-1 coordinates.
 void QuadrantMap::clearSector(int x, int y)
 {
+    if (at(x, y) == ENTERPRISE) {
+        enterprise.sectorX = -1;
+        enterprise.sectorY = -1;
+    }
+    
     // checks like validPos are done within place
     place(x, y, EMPTY);
 }
@@ -213,15 +246,81 @@ void QuadrantMap::removeObject(common::Location loc, const std::string& object) 
 }
 
 // Gets the locations of all the klingons within this QuadrantMap (reference)
-std::vector<common::Location>& QuadrantMap::klingons() {
-    return klingonLocations;
+std::vector<Klingon>& QuadrantMap::getKlingons() {
+    return klingons;
 }
 
 // Gets the locations of all the klingons within this QuadrantMap (const refernce)
-const std::vector<common::Location>& QuadrantMap::klingons() const {
-    return klingonLocations;
+const std::vector<Klingon>& QuadrantMap::getKlingons() const {
+    return klingons;
 }
 
+// Returns the amount of damage klingons used to damage the Enterprise. Calculates
+// damage based off distance, and reduces the Klingon's energy reserves
+int QuadrantMap::klingonsFire() {
+    int out = 0;
+
+    for (Klingon& klingon : klingons) {
+        int damage = klingon.firePhasers(enterprise.sectorX, enterprise.sectorY);
+
+        common::IO::printf("Klingon (%d, %d) has fired their phasers dealing: %d damage\n",
+                            common::toBase1(klingon.getLocation().sectorY),
+                            common::toBase1(klingon.getLocation().sectorX), 
+                            damage
+                        );
+
+        out += damage;
+    }
+
+    return out;
+}
+
+// Moves the klingons in the Quadrant to a random sector. Checks that it is a valid 
+// sector and that the klingon can move there. 
+void QuadrantMap::klingonsMove() {
+    for (Klingon& klingon : klingons) {
+        auto location = klingon.calculateDestination();
+        while (!empty(location)) {
+            location = klingon.calculateDestination();
+        }
+
+        move(klingon.getLocation(), location, QuadrantMap::KLINGON);
+        klingon.move(location);
+    }
+}
+
+// Gets the location of the starbase within the QuadrantMap (reference)
+common::Location& QuadrantMap::base() {
+    return baseLocation;
+}
+
+// Gets the location of the starbase within the QuadrantMap (const reference)
+const common::Location& QuadrantMap::base() const {
+    return baseLocation;
+}
+
+
+// Checks whether the Enterprise can dock or not based off its current position.
+// Returns true if the Enterprise can dock, and false elsewise. 
+bool QuadrantMap::canDock() const noexcept {
+    constexpr int MIN_SECTOR = 1;
+    constexpr int MAX_SECTOR = 8;
+
+    const int centerX = common::toBase1(enterprise.sectorX);
+    const int centerY = common::toBase1(enterprise.sectorY);
+
+    for (int y = centerY - 1; y <= centerY + 1; ++y) {
+        for (int x = centerX - 1; x <= centerX + 1; ++x) {
+            if (x < MIN_SECTOR || x > MAX_SECTOR || y < MIN_SECTOR || y > MAX_SECTOR)
+                continue;
+
+            if (at(x, y) == QuadrantMap::BASE)
+                return true;
+        }
+    }
+
+    return false;
+}
 
 // Returns the symbol stored at the specified sector.
 // The 2D coordinates are converted into a 1D index into

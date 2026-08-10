@@ -2,6 +2,7 @@
 
 #include <QuadrantString.hpp>
 #include <quadrant.hpp>
+#include <Klingon.hpp>
 #include <common/GameLib.hpp>
 
 #include <string>
@@ -53,8 +54,16 @@ public:
    void removeObject(int x, int y, const std::string& object);
    void removeObject(common::Location loc, const std::string& object);
 
-   std::vector<common::Location>& klingons();
-   const std::vector<common::Location>& klingons() const;
+   std::vector<Klingon>& getKlingons();
+   const std::vector<Klingon>& getKlingons() const;
+
+   int klingonsFire();
+   void klingonsMove();
+
+   common::Location& base();
+   const common::Location& base() const; 
+
+   bool canDock() const noexcept;
 
    std::string at(int x, int y) const;
    std::string at(common::Location loc) const;
@@ -86,13 +95,16 @@ private:
 
    void placeValues(int amount, const std::string &value);
    void placeKlingons(int amount);
+   void placeBase(int amount);
    void initializeQuadrant(Quadrant q, int x, int y);
    void initializeQuadrant(Quadrant q);
 
 private:
    QuadrantString quadrantString;
 
-   std::vector<common::Location> klingonLocations;
+   std::vector<Klingon> klingons;
+   common::Location baseLocation;
+   common::Location enterprise;
 
    static inline constexpr size_t ROWS = 8;
    static inline constexpr size_t COLS = 8;

@@ -6,9 +6,6 @@
 #include <Ship.hpp>
 #include <Klingon.hpp>
 
-#include <array>
-#include <optional>
-
 /**
  * 
  * The Game class is the main class of the
@@ -46,23 +43,16 @@ private:
     void constructGame();
 
     void initializeQuadrants();
-    void initializeKlingons();
     void initializeTime();
     void placeEnterprise();
 
     common::Location findMovementDestination(const std::vector<common::Location>& path, double& starDateChange);
     void updateEnterpriseMap(common::Location oldLocation, common::Location newLocation);
-    bool canDock() const noexcept;
 
     void firePhasers(double phaserEnergy);
     void fireTorpedo(double warpDirection);
 
-    void klingonsFire();
-    void klingonsMove();
     void destroyKlingon(common::Location position);
-
-    std::vector<Klingon>& getKlingons(int x, int y);
-    std::vector<Klingon>& getKlingons(common::Location loc);
 
     bool handleCommand();
     
@@ -90,11 +80,6 @@ private:
     
     Galaxy galaxy;
     QuadrantMap map[8][8];
-
-    std::array<std::array<std::optional<Quadrant>, 8>, 8> scannedGalaxy;
-    
-    std::vector<std::vector<std::vector<Klingon>>> klingons;
-    int numKlingons;
 
     double currentStardate;
     int startingStardate;

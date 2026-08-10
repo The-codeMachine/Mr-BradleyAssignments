@@ -1,13 +1,14 @@
 #include "Galaxy.hpp"
 
 #include <common/GameLib.hpp>
+#include <common/IO.hpp>
 
 #include <iostream>
 #include <cassert>
 #include <iomanip>
 #include <string>
 
-Galaxy::Galaxy() : totalBases(0)
+Galaxy::Galaxy() : totalBases(0), totalKlingons(0)
 {
     populateGalaxy();
 }
@@ -45,6 +46,76 @@ int Galaxy::starBases() const noexcept {
     return totalBases;
 }
 
+// Gets and returns the total number of klingons in the galaxy
+int Galaxy::getKlingons() const noexcept {
+    return totalKlingons;
+}
+
+// Reduces the amount of klingons in both the specific Quadrant and the
+// total number of klingons. Checks that there is actually a klingon in
+// that quadrant. Takes base-1 coordinates. 
+void Galaxy::reduceKlingons(int x, int y) {
+    Quadrant& q = getQuadrant(x, y);
+    if (q.klingons() >= 1 && totalKlingons > 0) {
+        q.reduceKlingons();
+        totalKlingons -= 1;
+    }
+}
+
+// Reduces the amount of klingons in both the specific Quadrant and the
+// total number of klingons. Checks that there is actually a klingon in
+// that quadrant. Takes base-0 coordinates through Location. 
+void Galaxy::reduceKlingons(common::Location location) {
+    reduceKlingons(common::toBase1(location.quadrantX), common::toBase1(location.quadrantY));
+}
+
+// Makes a long range scan around the Enterprise (inputted as location). 
+// Updates the scanned galaxy. 
+void Galaxy::longRangeScan(common::Location location) {
+    const int startY = std::clamp(location.quadrantY - 1, 0, 7);
+    const int endY   = std::clamp(location.quadrantY + 1, 0, 7);
+    const int startX = std::clamp(location.quadrantX - 1, 0, 7);
+    const int endX   = std::clamp(location.quadrantX + 1, 0, 7);
+
+    for (int y = startY; y <= endY; ++y) {
+        for (int x = startX; x <= endX; ++x)
+            common::IO::print("+-----");
+
+        common::IO::println("+");
+
+        for (int x = startX; x <= endX; ++x) {
+            Quadrant q = getQuadrant(common::toBase1(x), common::toBase1(y));
+            common::IO::print("| " + q.toString() + " ");
+            scannedGalaxy[y][x] = q;
+        }
+        common::IO::println("|");
+    }
+
+    for (int i = startX; i <= endX; ++i) 
+        common::IO::print("+-----");
+
+    common::IO::println("+");
+}
+
+// Prints the entire scanned galaxy. 
+void Galaxy::printScannedGalaxy() const noexcept {
+    common::IO::println("\n+-----+-----+-----+-----+-----+-----+-----+-----+");
+
+    for (int y = 0; y < MAP_SIZE; ++y) {
+        for (int x = 0; x < MAP_SIZE; ++x) {
+            auto q = scannedGalaxy[y][x];
+            if (q == std::nullopt) {
+                common::IO::printf("| --- ");
+                continue;
+            }
+
+            common::IO::printf("| %s ", q.value().toString().c_str());
+        }
+
+        common::IO::println("|\n+-----+-----+-----+-----+-----+-----+-----+-----+");
+    }
+}
+
 // Prints the map into the console
 void Galaxy::printMap()
 {
@@ -69,6 +140,8 @@ void Galaxy::populateGalaxy()
                     map[i][j].removeBase();
                 }
             }
+
+            totalKlingons += map[i][j].klingons();
         }
     }
 

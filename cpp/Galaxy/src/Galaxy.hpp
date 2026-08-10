@@ -4,6 +4,8 @@
 
 #include <quadrant.hpp>
 
+#include <array>
+#include <optional>
 #include <ostream>
 
 /**
@@ -29,6 +31,13 @@ public:
     const Quadrant& getQuadrant(common::Location loc) const;
 
     int starBases() const noexcept;
+    
+    int getKlingons() const noexcept;
+    void reduceKlingons(int x, int y);
+    void reduceKlingons(common::Location location);
+
+    void longRangeScan(common::Location location);
+    void printScannedGalaxy() const noexcept;
 
     void printMap();
 
@@ -44,10 +53,14 @@ private:
     void populateGalaxy();
 
 private:
-    Quadrant map[8][8];
+
+    static inline constexpr int MAP_SIZE = 8;
+
+    Quadrant map[MAP_SIZE][MAP_SIZE];
+    std::array<std::array<std::optional<Quadrant>, MAP_SIZE>, MAP_SIZE> scannedGalaxy;
 
     int totalBases;
-    int numKlingons;
+    int totalKlingons;
 
 };
 
