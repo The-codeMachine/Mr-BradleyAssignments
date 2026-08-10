@@ -147,6 +147,104 @@ namespace common {
             return {};
         }
 
+        std::vector<int> separateByCommas(const std::string& str) {
+            std::string cleaned = "";
+            
+            for (const char& c : str) {
+                if (std::isdigit(c) || c == ',')
+                    cleaned += c;
+            }
+
+            std::stringstream ss(cleaned);
+            std::string token;
+            std::vector<int> numbers;
+
+            while (std::getline(ss, token, ',')) {
+                if (!token.empty())
+                    numbers.push_back(std::stoi(token));
+            }
+
+            return numbers;
+        }
+
+        // Checks whether a number is invalid. Takes base-1 
+        // coordinates. Will return true if the number is an invalid
+        // coordinate. 
+        bool invalidPosition(int num) { 
+            return num > 8 || num < 1;
+        }
+
+        // Prompts the user to input a valid location within the
+        // quadrant. Checks that they are valid, converts them to
+        // (column, row) from (row, column) and validates their positions
+        Location promptLocation() {
+            print("Input a location (row, column), (row, column): ");
+
+            std::string input;
+            std::cin >> input;
+            
+            std::vector<int> numbers = separateByCommas(input);
+            if (numbers.size() != 4) {
+                warning("A location must have 4 coordinates");
+                return {-1, -1, -1, -1};
+            } 
+
+            if (invalidPosition(numbers[0]) || invalidPosition(numbers[1]) ||
+                invalidPosition(numbers[2]) || invalidPosition(numbers[3])) {
+                warning("Number is invalid, try again");
+                return {-1, -1, -1, -1};
+            }
+
+            // converts from (row, column) to (column, row) by switching the numbers
+            return {toBase0(numbers[1]), toBase0(numbers[0]), toBase0(numbers[3]), toBase0(numbers[2])};
+        }
+
+        // Prompts the user to enter a valid sector using the (row, column) convention.
+        // Will return a base-0 coordinate using the Location class. 
+        Location promptSector() {
+            print("Input a sector (row, column): ");
+
+            std::string input;
+            std::cin >> input;
+            
+            std::vector<int> numbers = separateByCommas(input);
+            if (numbers.size() != 2) {
+                warning("A location must have 2 coordinates");
+                return {-1, -1, -1, -1};
+            } 
+
+            if (invalidPosition(numbers[0]) || invalidPosition(numbers[1])) {
+                warning("Number is invalid, try again");
+                return {-1, -1, -1, -1};
+            }
+
+            // converts from (row, column) to (column, row) by switching the numbers
+            return {toBase0(numbers[1]), toBase0(numbers[0]), -1, -1};
+        }
+
+        // Prompts the user to enter a valid quadrant using the (row, column) convention.
+        // Wil return a base-0 coordinate using the Location class. 
+        Location promptQuadrant() {
+            print("Input a quadrant (row, column): ");
+
+            std::string input;
+            std::cin >> input;
+            
+            std::vector<int> numbers = separateByCommas(input);
+            if (numbers.size() != 2) {
+                warning("A location must have 2 coordinates");
+                return {-1, -1, -1, -1};
+            } 
+
+            if (invalidPosition(numbers[0]) || invalidPosition(numbers[1])) {
+                warning("Number is invalid, try again");
+                return {-1, -1, -1, -1};
+            }
+
+            // converts from (row, column) to (column, row) by switching the numbers
+            return {-1, -1, toBase0(numbers[1]), toBase0(numbers[0])};
+        }
+
         // Logs a trace message. 
         void trace(const std::string& message) {
             LOGGER.log(LogLevel::Trace, message);

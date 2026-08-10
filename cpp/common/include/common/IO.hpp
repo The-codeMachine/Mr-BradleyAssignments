@@ -1,4 +1,5 @@
 #include "Logger.hpp"
+#include "GameLib.hpp"
 
 #include <string>
 #include <cstdarg>
@@ -42,6 +43,10 @@ namespace common
         int promptInt(const std::string &message);
         double promptDouble(const std::string &message);
         std::vector<std::string> readCommand();
+
+        Location promptLocation();
+        Location promptSector();
+        Location promptQuadrant();
 
         void trace(const std::string& message);
         void warning(const std::string& message);

@@ -77,7 +77,7 @@ private:
 
     void computerLibraryCommandCGR() const;
     void computerLibraryCommandSR() const;
-    void computerLibraryCommandPTD() const;
+    void computerLibraryCommandPTD();
     void computerLibraryCommandSND() const;
     void computerLibraryCommandDC() const;
     void computerLibraryCommandGRNM() const;

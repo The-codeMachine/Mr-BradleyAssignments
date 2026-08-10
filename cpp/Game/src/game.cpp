@@ -647,8 +647,25 @@ void Game::computerLibraryCommandSR() const {
 
 // Calculates the prints the precise firing directions and distances
 // from the Enterprise to every Klingon inside the Enterprise's current Quadrant.
-void Game::computerLibraryCommandPTD() const {
+void Game::computerLibraryCommandPTD() {
+    common::Location startingLocation = enterprise.getLocation();
+    std::vector<Klingon>& currKlingons = getKlingons(startingLocation);
+    
+    if (currKlingons.size() <= 0) {
+        common::IO::println("No klingons found in this quadrant");
+        return;
+    }
+    
+    int direction;
+    int factor;
 
+    for (const auto& k : currKlingons) {
+        // direction and factor are set to 0 in calculateDD
+        calculateDD(startingLocation, k.getLocation(), direction, factor);
+
+        // no need for factor for a torpedo
+        common::IO::printf("Direction: %.6f\n", direction);
+    }
 }
 
 // Provides the user with exact warp direction and distance needed to reach a 
@@ -660,7 +677,15 @@ void Game::computerLibraryCommandSND() const {
 // Calculates the distance and direction the Enterprise must travel to reach a 
 // specific sector in inside its current Quadrant. 
 void Game::computerLibraryCommandDC() const {
+    common::Location startingPosition = enterprise.getLocation();
+    common::Location endingPosition = common::IO::promptLocation();
 
+    int direction;
+    int factor;
+
+    calculateDD(startingPosition, endingPosition, direction, factor);
+
+    common::IO::printf("Direction: %.6f\nFactor: %.6f\n", direction, factor);
 }
 
 // Prints the galatic region name map. There are 16 major galatic regions mapped
