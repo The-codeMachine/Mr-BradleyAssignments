@@ -40,6 +40,11 @@ const Quadrant& Galaxy::getQuadrant(common::Location loc) const {
     return map[loc.quadrantX][loc.quadrantY];
 }
 
+// Gets and returns the total number of starbases in the galaxy 
+int Galaxy::starBases() const noexcept {
+    return totalBases;
+}
+
 // Prints the map into the console
 void Galaxy::printMap()
 {

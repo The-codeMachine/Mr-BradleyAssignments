@@ -28,6 +28,8 @@ public:
     Quadrant& getQuadrant(common::Location loc);
     const Quadrant& getQuadrant(common::Location loc) const;
 
+    int starBases() const noexcept;
+
     void printMap();
 
 #ifndef NDEBUG

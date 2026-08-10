@@ -469,7 +469,9 @@ void Game::longRangeCommand() {
 
     for (int y = startY; y <= endY; ++y) {
         for (int x = startX; x <= endX; ++x) {
-            common::IO::print(galaxy.getQuadrant(common::toBase1(x), common::toBase1(y)).toString() + " ");
+            Quadrant q = galaxy.getQuadrant(common::toBase1(x), common::toBase1(y));
+            common::IO::print(q.toString() + " ");
+            scannedGalaxy[x][y] = q;
         }
 
         common::IO::println("");
@@ -556,11 +558,112 @@ void Game::shieldCommand(const std::vector<std::string>& command) {
 }
 
 // Prints a damage report based off the Enterprise's devices
-void Game::damageReportCommand() {
+void Game::damageReportCommand() const {
     if (enterprise.isDeviceBroken(std::string(Devices::DAMAGE_CONTROL))) {
         common::IO::println("Damage control needs repair. Cannot get damage control");
         return;
     }
 
     enterprise.damageReport();
+}
+
+// Starts the library computer and forwards the user's request to 
+// the specific library function. 
+void Game::computerLibraryCommand(const std::vector<std::string>& command) {
+    if (enterprise.isDeviceBroken("COMPUTER SYSTEMS")) {
+        common::IO::println("Computer systems needs repairs, cannot access library computer");
+        return;
+    }
+    
+    if (command.size() < 2) {
+        common::IO::warning("COM usage <COMMAND INDEX>");
+        return;
+    }
+
+    try {
+        int cmd = std::stoi(command[1]);
+
+        switch(cmd) {
+        case 0:
+            computerLibraryCommandCGR();
+            break;
+        case 1:
+            computerLibraryCommandSR();
+            break;
+        case 2:
+            computerLibraryCommandPTD();
+            break;
+        case 3:
+            computerLibraryCommandSND();
+            break;
+        case 4:
+            computerLibraryCommandDC();
+            break;
+        case 5:
+            computerLibraryCommandGRNM();
+            break;
+        default:
+            common::IO::println("Invalid command index");
+            break;
+        }
+    } catch (const std::exception& e) {
+        common::IO::warning("Please enter a valid int");
+        return;
+    }
+}
+
+// Prints the cumulative galactic record to the user. This displays
+// a full memory grid of all historical short range and long range
+// scans the user has done so far. 
+void Game::computerLibraryCommandCGR() const {
+    common::IO::println("\n+---+---+---+---+---+---+---+---+\n");
+    
+    for (int x = 0; x < MAP_SIZE; ++x) {
+        for (int y = 0; y < MAP_SIZE; ++y) {
+            auto q = scannedGalaxy[x][y];
+            if (q == std::nullopt) {
+                common::IO::printf("---|");
+                continue;
+            }
+
+            common::IO::printf("%s|", q.value().toString());
+        }
+
+        common::IO::println("\n+---+---+---+---+---+---+---+---+\n");
+    }
+}
+
+// Prints a status report. Shows remaining Klingon warships,
+// stardates left, starbases available, and the ship's current condition.
+void Game::computerLibraryCommandSR() const {
+    common::IO::println("Status Report:");
+    common::IO::printf("Klingons left: %d\n", numKlingons);
+    common::IO::printf("Mission must be completed in %d stardates\n", missionDuration + startingStardate - currentStardate);
+    common::IO::printf("The Federation is maintaining %d starbases in the galaxy\n", galaxy.starBases());
+    
+    damageReportCommand();
+}
+
+// Calculates the prints the precise firing directions and distances
+// from the Enterprise to every Klingon inside the Enterprise's current Quadrant.
+void Game::computerLibraryCommandPTD() const {
+
+}
+
+// Provides the user with exact warp direction and distance needed to reach a 
+// starbase located inside the Enterprise's current Quadrant.
+void Game::computerLibraryCommandSND() const {
+
+}
+
+// Calculates the distance and direction the Enterprise must travel to reach a 
+// specific sector in inside its current Quadrant. 
+void Game::computerLibraryCommandDC() const {
+
+}
+
+// Prints the galatic region name map. There are 16 major galatic regions mapped
+// across the game's world. 
+void Game::computerLibraryCommandGRNM() const {
+    
 }

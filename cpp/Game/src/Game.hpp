@@ -6,6 +6,9 @@
 #include <Ship.hpp>
 #include <Klingon.hpp>
 
+#include <array>
+#include <optional>
+
 /**
  * 
  * The Game class is the main class of the
@@ -69,13 +72,23 @@ private:
     void phaserCommand(const std::vector<std::string>& command);
     void torpedoCommand(const std::vector<std::string>& command);
     void shieldCommand(const std::vector<std::string>& command);
-    void damageReportCommand();
+    void damageReportCommand() const;
+    void computerLibraryCommand(const std::vector<std::string>& command);
+
+    void computerLibraryCommandCGR() const;
+    void computerLibraryCommandSR() const;
+    void computerLibraryCommandPTD() const;
+    void computerLibraryCommandSND() const;
+    void computerLibraryCommandDC() const;
+    void computerLibraryCommandGRNM() const;
 
 private:
     Enterprise enterprise;
     
     Galaxy galaxy;
     QuadrantMap map[8][8];
+
+    std::array<std::array<std::optional<Quadrant>, 8>, 8> scannedGalaxy;
     
     std::vector<std::vector<std::vector<Klingon>>> klingons;
     int numKlingons;
