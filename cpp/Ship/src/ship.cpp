@@ -25,7 +25,7 @@ double Ship::calculateNextBoundaryX(double x, double dx) {
     if (dx > 0)
         return (std::floor(x) + 1 - x) / dx;
 
-    if (dx < 0 ) 
+    if (dx < 0) 
         return (std::ceil(x) - 1 - x) / dx;
 
     return 1e199;
@@ -42,7 +42,7 @@ double Ship::calculateNextBoundaryY(double y, double dy) {
     if (dy > 0)
         return (std::floor(y) + 1 - y) / dy;
 
-    if (dy < 0 ) 
+    if (dy < 0) 
         return (std::ceil(y) - 1 - y) / dy;
 
     return 1e199;
@@ -121,7 +121,6 @@ std::vector<common::Location> Ship::calculatePath(double warpFactor, double warp
     dx /= length;
     dy /= length;
 
-    // Current galaxy position (makes it start in the middle of the sector)
     double x = location.quadrantX * GRID_SIZE + location.sectorX;
     double y = location.quadrantY * GRID_SIZE + location.sectorY;
 

@@ -91,7 +91,7 @@ private:
 private:
     double devices[8];
 
-    const std::map<std::string_view, int> map = {
+    static inline const std::map<std::string_view, int> map = {
         {WARP_ENGINES, 0},
         {SHORT_RANGE_SENSORS, 1},
         {LONG_RANGE_SENSORS, 2},

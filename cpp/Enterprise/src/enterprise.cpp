@@ -81,6 +81,7 @@ void Enterprise::move(common::Location loc, double warpFactor) {
         // uses the shields to complete navigation
         shields -= energyUsed - getEnergy();
         adjustEnergy(-getEnergy()); // sets energy to 0
+        common::IO::println("Shield control supplies energy to complete the maneuver");
 
         return;
     }
@@ -113,7 +114,9 @@ int Enterprise::firePhasers(double phaserEnergy, int x, int y, int numKlingons) 
     double distance = std::sqrt(std::pow(getLocation().sectorX - x, 2) + std::pow(getLocation().sectorY - y, 2));
     double h = phaserEnergy / numKlingons;
 
-    return (int) ((h / distance) * (common::random() + 2));
+    return isDeviceBroken(std::string(Devices::COMPUTER_SYSTEMS)) ? 
+    (int) ((h / distance) * (common::random() + 2) * common::random()) : 
+    (int) ((h / distance) * (common::random() + 2));
 }
 
 // Gets the number of torpedoes the enterprise has
@@ -136,14 +139,17 @@ void Enterprise::adjustShields(double shields) {
         return;
     }
     
+    common::IO::println("Shield Control reports: ");
     double diffShields = this->shields - shields;
     if (-diffShields > getEnergy()) {
-        common::IO::println("Not enough energy to adjust shields to: " + std::to_string(shields));
+        common::IO::printf("Not enough energy to adjust shields to: %d\n", shields);
+        common::IO::println("This is not the Federation treasury");
         return;
     }
 
     adjustEnergy((int)(diffShields));
     this->shields = shields;
+    common::IO::printf("Shields now at %.3f units per your command\n", this->shields);
 }
 
 // gets the status of a specific device
@@ -171,7 +177,9 @@ void Enterprise::repairDevices() {
 
 // Estimates how much time it would take to repair all devices. 
 double Enterprise::estimateRepairDevices() const {
-    return std::min(0.1 * devices.numDamaged() + randomRepairModifier, 0.9);
+    int num = devices.numDamaged();
+
+    return num > 0 ? std::min(0.1 * devices.numDamaged() + randomRepairModifier, 0.9) : 0;
 }
 
 // Prints a damage report for all the device's state of

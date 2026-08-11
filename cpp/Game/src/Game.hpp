@@ -56,10 +56,12 @@ private:
     common::Location findMovementDestination(const std::vector<common::Location>& path, double& starDateChange);
     void updateEnterpriseMap(common::Location oldLocation, common::Location newLocation);
 
+    void destoryStarbase(common::Location location);
+
     void firePhasers(double phaserEnergy);
     void fireTorpedo(double warpDirection);
 
-    void destroyKlingon(common::Location position);
+    std::vector<Klingon>::iterator destroyKlingon(common::Location position);
 
     bool handleCommand();
     
@@ -69,11 +71,11 @@ private:
     void phaserCommand(const std::vector<std::string>& command);
     void torpedoCommand(const std::vector<std::string>& command);
     void shieldCommand(const std::vector<std::string>& command);
-    void damageReportCommand() const;
+    void damageReportCommand();
     void computerLibraryCommand(const std::vector<std::string>& command);
 
     void computerLibraryCommandCGR() const;
-    void computerLibraryCommandSR() const;
+    void computerLibraryCommandSR();
     void computerLibraryCommandPTD() const;
     void computerLibraryCommandSND() const;
     void computerLibraryCommandDC() const;

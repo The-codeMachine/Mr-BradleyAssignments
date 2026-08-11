@@ -49,7 +49,7 @@ void Devices::damage(int index, double amount)
     assert(isValidIndex(index) && isValidAmount(amount));
 
     devices[index] -= amount;
-    common::IO::printf("Damaged %s by: %.3f\n", getNameByIndex(index), amount);
+    common::IO::printf("Damaged %s by: %.3f\n", std::string(getNameByIndex(index)).c_str(), amount);
 }
 
 // Damages the device (index) by an amount
@@ -57,15 +57,13 @@ void Devices::repair(int index, double amount)
 {
     assert(isValidIndex(index) && isValidAmount(amount));
 
+    amount = std::min(-devices[index], amount);
+
     if (devices[index] == UNDAMAGED)
         return;
 
     devices[index] += amount;
-
-    if (devices[index] > UNDAMAGED)
-        devices[index] = UNDAMAGED;
-
-    common::IO::printf("Repaired %s by: %.3f\n", getNameByIndex(index), amount);
+    common::IO::printf("Repaired %s by: %.3f\n", std::string(getNameByIndex(index)).c_str(), amount);
 }
 
 // Repairs the device (random device) by a random amount (1 <= x < 4)
