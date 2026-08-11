@@ -105,7 +105,7 @@ std::vector<common::Location> Ship::calculatePath(double warpFactor, double warp
     warpFactor = std::min(warpFactor, 8.0);
 
     // Warp 1 = 8 sectors
-    int distance = (int) std::round(warpFactor * GRID_SIZE);
+    double distance = warpFactor * GRID_SIZE;
 
     // Convert direction into angle
     double angleDegrees = (warpDirection - 1.0) * 45.0;
@@ -151,8 +151,9 @@ std::vector<common::Location> Ship::calculatePath(double warpFactor, double warp
             break;
         }
 
-        int globalX = (int) std::floor(x);
-        int globalY = (int) std::floor(y);
+        constexpr double EPSILON = 1e-9;
+        int globalX = (int) std::floor(x + EPSILON);
+        int globalY = (int) std::floor(y + EPSILON);
 
         if (globalX != lastX || globalY != lastY) {
 
