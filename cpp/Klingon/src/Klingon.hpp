@@ -6,10 +6,18 @@
 
 /**
  * 
- * The Klingon class extends Ship. It represents 
- * the enemy the Enterprise will run into during
- * all of its gameplay. It can fire and take damage.
- * Both come out of its energy pool. 
+ * The Klingon class extends publicly from Ship. It
+ * extends functionality minimally. Fire phasers now
+ * reduces the Klingon's energy pool. The Klingon can
+ * now also generate a random energy pool. 
+ * 
+ * This random energy pool is based off the algorithm:
+ * 
+ * ENERGY = BASE_ENERGY x (0.5 + RND(1))
+ * 
+ * Where BASE_ENERGY is equal to 200 and RND(1) returns 
+ * a random number [0, 1). This allows a range between
+ * [100, 300). 
  * 
  */
 class Klingon : public Ship {
@@ -27,7 +35,6 @@ private:
     static int generateRandomEnergy();
 
 private:
-
     static inline constexpr int BASE_ENERGY = 200;
 
 };

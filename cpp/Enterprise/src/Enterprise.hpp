@@ -4,23 +4,25 @@
 #include <Device.hpp>
 
 /**
- * The Enterprise represents the player's
- * ship. It can do everything other ships
- * can, and more. This includes:
- * - Moving
- * - Firing phasers
- * - Firing torpedoes
- * - Docking
  * 
- * If the Enterprise is destroyed, the game
- * ends for the player.
+ * The Enterprise represents the player's ship. It inherits
+ * publicly from the Ship class. This class extends its
+ * functionalities by adding:
  * 
- * If a certain device is destroyed, then that
- * specific game mechanic is unavailable for the
- * player.
+ *  - Shields
+ *  - Torpedoes
+ *  - Docking capabilities
+ *  - Device functionality
  * 
- * The Enterprise is constructed using a random
- * location, or a specified location. 
+ * You can adjust the Enterprise's shields, check whether it 
+ * is destroyed, or a device is destroyed. You can calculate
+ * its movement path based off warp factor and direction.
+ * You can update its dock value, print a damage report, or
+ * reduce its torpedoes. 
+ * 
+ * This functionality is more or less forwarded to the Game
+ * class which uses the Enterprise's public functions to 
+ * allows the user to do specific commands.  
  * 
  */
 class Enterprise : public Ship {

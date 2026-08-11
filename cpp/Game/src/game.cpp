@@ -55,6 +55,8 @@ common::Location Game::findMovementDestination(const std::vector<common::Locatio
     auto previousLocation = startingLocation;
 
     for (const auto& location : path) {
+        common::IO::println(location.toString());        
+
         const auto& quadrant = at(location);
 
         if (!quadrant.empty(location)) {
@@ -80,7 +82,9 @@ void Game::updateEnterpriseMap(common::Location oldLocation, common::Location ne
     oldQuadrant.clearSector(oldLocation);
     newQuadrant.place(newLocation, QuadrantMap::ENTERPRISE);
 
-    common::IO::printf("\nNow entering %s quadrant ...\n\n", Galaxy::getGalaticRegionName(newLocation).c_str());
+    // checks that it entered a new quadrant
+    if (!newLocation.sameQuadrant(oldLocation))
+        common::IO::printf("\nNow entering %s quadrant ...\n\n", Galaxy::getGalaticRegionName(newLocation).c_str());
 }
 
 // Gets the QuadrantMap at (x, y). This
@@ -120,6 +124,10 @@ const Enterprise& Game::getEnterprise() const {
 // Runs the game (takes input from the user,
 // and runs those commands in game).
 void Game::run() {
+    // checks the current quadrant
+    shortRangeCommand();
+
+    // handles command parsing 
     while ( handleCommand() && 
             galaxy.getKlingons() > 0 && 
     currentStardate <= missionDuration + startingStardate) {}
@@ -134,20 +142,31 @@ void Game::run() {
 
     // lost because of time
     if (currentStardate > missionDuration + startingStardate) {
-        common::IO::printf("It is stardate: %0.6f\n", currentStardate);
-        common::IO::println("You have failed to destroy all the Klingon warships");
+        common::IO::printf("It is stardate: %0.3f\n", currentStardate);
+        common::IO::printf("There were %d Klingon warships left to destroy\n", galaxy.getKlingons());
         common::IO::println("before they could launch their attack against the");
         common::IO::println("Federation. They will destroy the Enterprise as well");
-        common::IO::println("as the Federation");
+        common::IO::println("as the Federation. ");
         return;
     }
     
-    // they destroyed the Enterprise elsewise
-    common::IO::printf("It is stardate: %0.6f\n", currentStardate);
-    common::IO::println("You have failed to destroy all the Klingon warships");
-    common::IO::println("The Enterprise has been destroyed and now there is ");
-    common::IO::println("nothing stopping the Klingons from destroying the");
-    common::IO::println("Federation. ");
+    // the enterprise got destroyed
+    if (enterprise.isDestroyed()) {
+        common::IO::printf("It is stardate: %0.3f\n", currentStardate);
+        common::IO::printf("There were %d Klingon warships left to destroy\n", galaxy.getKlingons());
+        common::IO::println("The Enterprise has been destroyed and now there is ");
+        common::IO::println("nothing stopping the Klingons from destroying the");
+        common::IO::println("Federation. ");
+    }
+
+    common::IO::println("The Federation is in need of a new starship commander");
+    common::IO::println("for a similar mission -- if there is a volunteer let");
+    common::IO::println("him step forward and say \"Aye.\"");
+
+    // restart the game if the player enters AYE
+    if (common::IO::toUpper(common::IO::prompt("")) == "AYE") {
+        run();
+    }
 }
 
 // Moves the Enterprise based off warpFactor
@@ -178,7 +197,7 @@ bool Game::move(double warpFactor, double warpDirection) {
             ? 0.1 * std::floor(10.0 * warpFactor)
             : 1.0;
     }
-    
+
     currentStardate += starDateChange;
 
     updateEnterpriseMap(oldLocation, newLocation);
@@ -267,7 +286,7 @@ void Game::destroyKlingon(common::Location position) {
     for (auto it = currKlingons.begin(); it != currKlingons.end();) {
         auto klingonLocation = it->getLocation();
         
-        if (klingonLocation != position) {
+        if (!klingonLocation.sameSector(position)) {
             ++it;
             continue;
         }
@@ -522,7 +541,7 @@ void Game::computerLibraryCommandCGR() const {
 void Game::computerLibraryCommandSR() const {
     common::IO::println("Status Report:\n");
     common::IO::printf("Klingons left: %d\n", galaxy.getKlingons());
-    common::IO::printf("Mission must be completed in %.6f stardates\n", missionDuration + (startingStardate - currentStardate));
+    common::IO::printf("Mission must be completed in %.3f stardates\n", missionDuration + (startingStardate - currentStardate));
     common::IO::printf("The Federation is maintaining %d starbases in the galaxy\n\n", galaxy.starBases());
     
     damageReportCommand();
@@ -530,9 +549,9 @@ void Game::computerLibraryCommandSR() const {
 
 // Calculates the prints the precise firing directions and distances
 // from the Enterprise to every Klingon inside the Enterprise's current Quadrant.
-void Game::computerLibraryCommandPTD() {
+void Game::computerLibraryCommandPTD() const {
     common::Location startingLocation = enterprise.getLocation();
-    std::vector<Klingon>& currKlingons = at(startingLocation).getKlingons();
+    const std::vector<Klingon>& currKlingons = at(startingLocation).getKlingons();
     
     if (currKlingons.size() <= 0) {
         common::IO::println("No klingons found in this quadrant");
@@ -630,7 +649,7 @@ void Game::calculateDD(common::Location startingLocation,
     factor = distance / MAP_SIZE;
 
     double radians = std::atan2(dy, dx);
-    double degrees = radians * (180.0 / std::numbers::pi);
+    double degrees = common::degrees(radians);
 
     if (degrees < 0.0)
         degrees += 360;

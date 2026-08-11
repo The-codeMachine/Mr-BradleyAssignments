@@ -11,32 +11,38 @@
 #include <cstdint>
 
 /**
- * QuadrantMap handles all of the movement and positional
- * status for all objects within a Quadrant. Currently this
- * includes: klingons, stars, bases, and the Enterprise. 
- * Operations include:
- *  - Construction (through Quadrant, with or without an Enterprise)
- *  - Insert an object
- *  - Clear a sector
- *  - Move an object
- *  - Remove an object
- *  - Check what object is at a certain sector
- *  - Check if a sector is empty
- *  - Convert map to string
- *
- * Currently, there are 8 rows and 8 columns, with each
- * symbol being 3 characters long.
  * 
- * All methods use 1-based coordinates because they represent
- * the quadrant from the player's perspective. Players naturally
- * think of the first sector as (1,1), rather than (0,0).
- *
- * Conversion between the two coordinate systems occurs only at the
- * getIndexFrom. 
- *
+ * QuadrantMap encapsulates all the positional values of objects
+ * within a Quadrant. This includes:
+ *  - Klingons
+ *  - Bases
+ *  - Stars
+ *  - The Enterprise
+ * 
+ * A QuadrantMap can be constructed from a quadrant and/or the Enterprise's
+ * initial position. 
+ * 
+ * A QuadrantMap owns the Klingons within its quadrant as well. Not just
+ * their positional value, but the actual Klingon object. These can be
+ * access through the getKlingons function. 
+ * 
+ * QuadrantMap can also check whether the Enterprise can dock or not. This
+ * checks if the Enterprise is beside a base within the Quadrant. 
+ * 
+ * All functions which include:
+ *  - Placing a new value
+ *  - Clearing a sector
+ *  - Moving an object from (x, y) to (newX, newY)
+ *  - Removing an object from (x, y)
+ *  - Getting the string representation of an object at (x, y)
+ *  - Checking whether (x, y) is empty
+ * 
+ * take either base-1 coordinates or base-0 through Location. We recommend 
+ * using the Location functions, but both are possible. QuadrantMap
+ * takes (column, row) notation. 
+ * 
  */
-class QuadrantMap
-{
+class QuadrantMap {
 public:
    QuadrantMap(Quadrant q, int x, int y);
    QuadrantMap(Quadrant q);

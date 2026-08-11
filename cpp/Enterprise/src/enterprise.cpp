@@ -40,16 +40,41 @@ bool Enterprise::isDestroyed() const noexcept {
 // engines are offline. 
 std::vector<common::Location> Enterprise::calculatePath(double warpFactor, double warpDirection) {
     if (devices.isDamaged(Devices::WARP_ENGINES) && warpFactor > 0.2) {
-        common::IO::println("Warp engines are damaged, maximum warp is 0.2");
+        common::IO::printf("Chief engineer Scott reports \"The engines won't take warp %.3f!\"\n", warpFactor);
+        common::IO::println("Warp engines are damaged. Maximum speed is warp 0.2");
         return {};
     }
 
     return Ship::calculatePath(warpFactor, warpDirection);
 }
 
-// Moves the Enterprise and repairs its devices. 
+// Moves the Enterprise and repairs its devices. It also makes a
+// random event occur to the devices
 void Enterprise::move(common::Location loc, double warpFactor) {
+    int energyUsed = (int) (warpFactor * 8 + 0.5);
+    if (getEnergy() < energyUsed) {
+        common::IO::println("Engineering reports: ");
+        common::IO::printf("\"Insufficient energy available for manuvering at warp %.3f!\"", warpFactor);
+        
+        if (shields < energyUsed - getEnergy() || devices.isDamaged("SHIELD CONTROL")) {
+            common::IO::println("** Fatal Error **");
+            common::IO::println("You have just stranded your ship in space;");
+            common::IO::println("You have insufficient maneuvering energy,");
+            common::IO::println("and shield control is presently incapable of");
+            common::IO::println("cross-circutting to the engine room!");
+            shields = -1; // kills the enterprise
+            return;
+        }
+
+        common::IO::printf("Deflector control room acknowledges %d units of energy are presently deployed to the shields\n", shields);
+
+        return;
+    }
+
+    adjustEnergy(-energyUsed);
+    
     devices.repairOverTime(warpFactor);
+    devices.randomEvent();
     Ship::move(loc, warpFactor);
 }
 

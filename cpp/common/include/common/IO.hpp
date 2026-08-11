@@ -35,6 +35,8 @@ namespace common
             ::printf(message.c_str(), std::forward<Args>(args)...);
         }
 
+        std::string toUpper(const std::string& command);
+
         std::string readString();
         int readInt();
         double readDouble();

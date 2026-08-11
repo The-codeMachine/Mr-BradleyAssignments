@@ -85,6 +85,7 @@ private:
     bool isValidAmount(double amount) const;
 
     int convertToIndex(const std::string_view &deviceName) const;
+    std::string_view getNameByIndex(int index) const;
 
 private:
     double devices[8];

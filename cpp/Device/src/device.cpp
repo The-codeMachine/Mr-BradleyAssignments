@@ -1,6 +1,7 @@
 #include "Device.hpp"
 
 #include <common/random.hpp>
+#include <common/IO.hpp>
 
 #include <cassert>
 #include <iostream>
@@ -48,6 +49,7 @@ void Devices::damage(int index, double amount)
     assert(isValidIndex(index) && isValidAmount(amount));
 
     devices[index] -= amount;
+    common::IO::printf("Damaged %s by: %.3f\n", getNameByIndex(index), amount);
 }
 
 // Damages the device (index) by an amount
@@ -62,6 +64,8 @@ void Devices::repair(int index, double amount)
 
     if (devices[index] > UNDAMAGED)
         devices[index] = UNDAMAGED;
+
+    common::IO::printf("Repaired %s by: %.3f\n", getNameByIndex(index), amount);
 }
 
 // Repairs the device (random device) by a random amount (1 <= x < 4)
@@ -75,6 +79,18 @@ void Devices::repair()
 // Converts a device name to an index
 int Devices::convertToIndex(const std::string_view& deviceName) const {
     return map.at(deviceName);
+}
+
+// Converts an index to a device name
+std::string_view Devices::getNameByIndex(int index) const {
+    assert(isValidIndex(index));
+    
+    for (const auto& [name, index] : map) {
+        if (index == index) 
+            return name;
+    }
+
+    return "UNKNOWN";
 }
 
 // Makes a random device take damage. 60% chance that it will
@@ -114,7 +130,6 @@ void Devices::hitDamage(double phaserEnergy, double shields)
 void Devices::damageEvent()
 {
     int index = randomDevice();
-
     damage(index, common::randomInRange(1, 6));
 }
 

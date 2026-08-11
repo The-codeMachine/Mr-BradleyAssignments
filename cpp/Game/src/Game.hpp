@@ -8,18 +8,25 @@
 
 /**
  * 
- * The Game class is the main class of the
- * entire Super Star Trek recreation. It 
- * owns everything. It is responsible for 
- * the game loop, forwarding commands to the
- * Enterprise, handling game quiting, lost
- * and winning. A full list of its operations
+ * The Game class is the largest in Super Star Trek. It
+ * is the entry point of the entire system. It owns 
+ * everything from the Enterprise to Klingons, and the
+ * Galaxy. As such, there are few public functions, these
  * include:
- *  - Construction (initializes everything)
- *  - Getting a QuadrantMap at a certain coordinate 
- *      (either by location, or global quadrant coordinates)
- *  - Running the game loop
- *  - Moving the Enterprise (and later other ships)
+ *  - Access a quadrant map at (x, y) 
+ *  - Access to the Enterprise
+ *  - Running the game
+ *  - Moving the Enterprise (probably will be moved to private but
+ *      it was public for tests).
+ * 
+ * All functions either take base-1 coordinates through raw values
+ * (x, y), or base-0 coordinates through the Location class. 
+ * 
+ * Game handles the time as well. 
+ * 
+ * Game forwards the user's commands to their specific functions. It
+ * tells the Klingons to fire, and move. Game handles win and lose 
+ * conditions. It also handles all library computer functions. 
  * 
  */
 class Game {
@@ -67,7 +74,7 @@ private:
 
     void computerLibraryCommandCGR() const;
     void computerLibraryCommandSR() const;
-    void computerLibraryCommandPTD();
+    void computerLibraryCommandPTD() const;
     void computerLibraryCommandSND() const;
     void computerLibraryCommandDC() const;
     void computerLibraryCommandGRNM() const;

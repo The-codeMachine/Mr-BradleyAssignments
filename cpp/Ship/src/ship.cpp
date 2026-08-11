@@ -4,7 +4,6 @@
 #include <common/IO.hpp>
 
 #include <cmath>
-#include <numbers>
 #include <algorithm>
 
 Ship::Ship() : energy(0) {}
@@ -110,7 +109,7 @@ std::vector<common::Location> Ship::calculatePath(double warpFactor, double warp
 
     // Convert direction into angle
     double angleDegrees = (warpDirection - 1.0) * 45.0;
-    double radians = angleDegrees * (std::numbers::pi / 180);
+    double radians = common::radians(angleDegrees);
 
     // Direction ratio
     double dx = std::cos(radians);
@@ -176,13 +175,6 @@ std::vector<common::Location> Ship::calculatePath(double warpFactor, double warp
 // Does not do any checks to validate
 // that the location is a valid position.
 void Ship::move(common::Location location, double warpFactor) {
-    int energyUsed = (int) (warpFactor * 8 + 0.5);
-    if (energy < energyUsed) {
-        common::IO::println("Insufficient energy for warp");
-        return;
-    }
-
-    adjustEnergy(-energyUsed);
     this->location = location;
 }
 
@@ -205,8 +197,7 @@ bool Ship::takeDamage(double phaserEnergy) {
 // are in the quadant currently.
 // Takes base-0 input
 int Ship::firePhasers(double phaserEnergy, int x, int y) {
-    double distance = std::sqrt((location.sectorX - x) * (location.sectorX - x) + 
-        (location.sectorY - y) * (location.sectorY - y));
+    double distance = std::hypot(location.sectorX - x, location.sectorY - y);
 
     return (phaserEnergy / distance) * (common::random() + 2);
 }

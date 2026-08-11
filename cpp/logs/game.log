@@ -26,3 +26,10 @@ Invalid command was entered: X
 No command entered
 Invalid command was entered: XX
 No command entered
+NAV usage <warp direction> <warp factor>
+A location must have 2 coordinates
+Invalid command was entered: 2)
+A location must have 2 coordinates
+Invalid command was entered: 6)
+A location must have 2 coordinates
+Invalid command was entered: 6

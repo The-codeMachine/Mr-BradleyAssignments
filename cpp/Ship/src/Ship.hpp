@@ -6,22 +6,28 @@
 
 /**
  * 
- * This is the base Ship class. The ship class
- * consists of energy, and position information.
- * It handles movement calculation, damage reduction,
- * and phaser firing for all base ships. Other ships
- * like the Enterprise might use this as a super
- * class and work upon the current functions
- * (e.g. adding checks for devices).
- * Current list of operations consist of:
- * - Move (move the ship based off warp factor, and direction)
- * - Make the ship take damage
- * - Fire the ship's phasers
+ * The Ship class is the base class to all moveable
+ * objects within this game. This includes the Enterprise
+ * and Klingons. Every Ship has a specific energy level
+ * and location. Location is represented through the
+ * Location class. 
  * 
- * Ship's get location, construction, and fire phasers all
- * take base-1 as input.
+ * Ship implements the following non-virtual functions:
+ *  - Getting the current energy level
+ *  - Adjusting the current energy level
+ *  - Getting the current location
  * 
- * Internally, all the variables are base-0.
+ * The rest of Ship's functions are virtual:
+ *  - Checking whether the ship is destroyed (check through energy level <= 0)
+ *  - Calculating the path of a ship based off a warp factor and direction
+ *  - Moving the ship (simply adjusts the Ship's location and reduces the energy
+ *      level based off how far it went).
+ *  - Makes the ship take damage (reduces the energy levels).
+ *  - Makes the ship fire its phasers (simply calculates the damage output).
+ * 
+ * All functions take base-0 coordinates. This includes the firePhasers function.
+ * Despite it taking raw coordinates, unlike most classes where it would take
+ * base-1 coordinates, this takes base-0 coordinates. 
  * 
  */
 class Ship {

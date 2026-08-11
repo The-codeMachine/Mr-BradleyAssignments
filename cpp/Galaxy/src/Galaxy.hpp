@@ -11,15 +11,30 @@
 #include <ostream>
 
 /**
- * A galaxy holds 64 Quadrants, using an 8 by 8 grid. 
- * A galaxy can only have 2 bases at most, and a minimum
- * of 1 base.
  * 
- * Operations include:
- *  - Constructing a galaxy (creates 64 quadrants, and ensures it has at least 1 base, and at most 2)
- *  - index the quadrant using a 2d map 
- *  - printing the map 
- *  - formats the map into a string
+ * The Galaxy represents this game's world. It encapsulates
+ * 64 quadrants in an 8 x 8 grid. Every quadrant is accessible
+ * through the getQuadrant function. All functions take base-1
+ * coordinates or a Location (using base-0). 
+ * 
+ * The Galaxy ensures there is a maximum of 2 star bases and a 
+ * minimum of 1 star base. You can get the total number of 
+ * klingons in the galaxy, and reduce klingons from a specific
+ * quadrant. 
+ * 
+ * The Galaxy implements the long range scan, and scanned galaxy
+ * for the Enterprise. Based off previous long range scans the
+ * Enterprise can see more of the scanned galaxy. This only 
+ * updates if the Enterprise scans that quadrant again (like the
+ * original game).
+ * 
+ * Every quadrant has a galatic region name, and galatic region
+ * roman numeral. These can be accessed statically (since it does
+ * not change between different galaxies). You can get a quadrant's
+ * full name using the getGalaticRegionName function. 
+ * 
+ * Using the functions mentioned above, Galaxy allows you to print
+ * the galatic region name map. 
  * 
  */
 class Galaxy {

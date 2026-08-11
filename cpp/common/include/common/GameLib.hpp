@@ -21,14 +21,23 @@ namespace common {
 
     /**
      * 
-     * This is a helper class which represents a 
-     * paired (x, y) coordinate. This allows public
-     * access to its x, and y value. You can 
-     * construct it with an inital x, and y value, or
-     * none. If the location is unassigned a random number
-     * between 0-7 will be generated.
+     * Location is a helper class which represents a complete
+     * position within this game. It includes quadrant
+     * coordinates, and sector coordinates. Both are valid 
+     * [0, 7]. As such, this class represents base-0 coordinates.
+     * Everything is stored in (column, row) notation. 
      * 
-     * Both coordinates are stored as base-0. 
+     * Construction does not check or validate the coordinates 
+     * inputted. 
+     * 
+     * -1 is a valid value. It represents something that is not
+     * represented. toString will skip any value set as -1. E.g.
+     * if one of the quadrant coordinates are set to -1 it will 
+     * only print the sector coordinates (given that neither of
+     * those are equal to -1 as well).
+     * 
+     * Output through toString prints in (row, column) notation
+     * as base-1. This is to help the users understand it better. 
      * 
      */
     class Location {
@@ -59,6 +68,9 @@ namespace common {
 
     int toBase0(int c);
     int toBase1(int c);
+
+    double radians(double degrees);
+    double degrees(double radian);
 
     void isBetweenTest();
     void testDriver();

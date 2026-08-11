@@ -83,7 +83,7 @@ namespace common {
         }
 
         // Makes all characters in a string capitalized.
-        static std::string toUpper(const std::string& command) {
+        std::string toUpper(const std::string& command) {
             std::string out = command;
 
             for (char& c : out) {
@@ -160,7 +160,7 @@ namespace common {
             std::vector<int> numbers;
 
             while (std::getline(ss, token, ',')) {
-                if (!token.empty())
+                if (!token.empty()) 
                     numbers.push_back(std::stoi(token));
             }
 
@@ -181,7 +181,7 @@ namespace common {
             print("Input a location (row, column), (row, column): ");
 
             std::string input;
-            std::cin >> input;
+            std::getline(std::cin, input);
             
             std::vector<int> numbers = separateByCommas(input);
             if (numbers.size() != 4) {
@@ -196,7 +196,7 @@ namespace common {
             }
 
             // converts from (row, column) to (column, row) by switching the numbers
-            return {toBase0(numbers[1]), toBase0(numbers[0]), toBase0(numbers[3]), toBase0(numbers[2])};
+            return Location(toBase0(numbers[1]), toBase0(numbers[0]), toBase0(numbers[3]), toBase0(numbers[2]));
         }
 
         // Prompts the user to enter a valid sector using the (row, column) convention.
@@ -205,7 +205,7 @@ namespace common {
             print("Input a sector (row, column): ");
 
             std::string input;
-            std::cin >> input;
+            std::getline(std::cin, input);
             
             std::vector<int> numbers = separateByCommas(input);
             if (numbers.size() != 2) {
@@ -219,7 +219,7 @@ namespace common {
             }
 
             // converts from (row, column) to (column, row) by switching the numbers
-            return {toBase0(numbers[1]), toBase0(numbers[0]), -1, -1};
+            return Location(toBase0(numbers[1]), toBase0(numbers[0]), -1, -1);
         }
 
         // Prompts the user to enter a valid quadrant using the (row, column) convention.
@@ -228,7 +228,7 @@ namespace common {
             print("Input a quadrant (row, column): ");
 
             std::string input;
-            std::cin >> input;
+            std::getline(std::cin, input);
             
             std::vector<int> numbers = separateByCommas(input);
             if (numbers.size() != 2) {
@@ -242,7 +242,7 @@ namespace common {
             }
 
             // converts from (row, column) to (column, row) by switching the numbers
-            return {-1, -1, toBase0(numbers[1]), toBase0(numbers[0])};
+            return Location(-1, -1, toBase0(numbers[1]), toBase0(numbers[0]));
         }
 
         // Logs a trace message. 
