@@ -31,6 +31,7 @@ public:
     Enterprise(int energy, double shields, int torpedoes, bool docked);
 
     bool isDestroyed() const noexcept override;
+    void kill();
 
     std::vector<common::Location> calculatePath(double warpFactor, double warpDirection) override;
     void move(common::Location loc, double warpFactor) override;
@@ -48,7 +49,10 @@ public:
 
     bool isDeviceBroken(const std::string& str) const;
     
+    void repairDevices();
+    double estimateRepairDevices() const;
     void damageReport() const;
+
     std::string toString() const;
 
 private:
@@ -56,6 +60,7 @@ private:
 
 private:
     Devices devices;
+    double randomRepairModifier;
 
     double shields;
     int torpedoes;

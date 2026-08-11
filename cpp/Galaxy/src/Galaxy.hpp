@@ -59,6 +59,8 @@ public:
     static void printGalaticRegionMap();
 
     int starBases() const noexcept;
+    void reduceStarBases(int x, int y);
+    void reduceStarBases(common::Location location);
     
     int getKlingons() const noexcept;
     void reduceKlingons(int x, int y);

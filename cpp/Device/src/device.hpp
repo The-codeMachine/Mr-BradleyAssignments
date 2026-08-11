@@ -58,6 +58,7 @@ public:
     bool isDamaged(const std::string_view &deviceName) const;
     double getDamage(const std::string_view &deviceName) const;
     std::string getStatus(const std::string_view &deviceName) const;
+    int numDamaged() const;
 
     std::string damageReport() const;
 

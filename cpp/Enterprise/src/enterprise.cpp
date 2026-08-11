@@ -1,16 +1,19 @@
 #include "Enterprise.hpp"
 
 #include <common/IO.hpp>
+#include <common/random.hpp>
 
 Enterprise::Enterprise(int energy, common::Location location, double shields, 
                 int torpedoes, bool docked) :
                 Ship(energy, location),
-                shields(shields), torpedoes(torpedoes), docked(docked) {}
+                shields(shields), torpedoes(torpedoes), docked(docked), 
+                randomRepairModifier(common::randomInRange(0, 0.5)) {}
 
 Enterprise::Enterprise(int energy, double shields, 
                 int torpedoes, bool docked) :
                 Ship(energy),
-                shields(shields), torpedoes(torpedoes), docked(docked) {}
+                shields(shields), torpedoes(torpedoes), docked(docked),
+                randomRepairModifier(common::randomInRange(0, 0.5)) {}
 
 // Docks the Enterprise. Replenishes energy, torpedoes
 // and repairs all devices
@@ -31,6 +34,12 @@ void Enterprise::dock() {
 // Will return true if the Enterprise is destoryed.
 bool Enterprise::isDestroyed() const noexcept {
     return shields < 0;
+}
+
+// Sets the Enterprise's shields to -1. This essentially
+// kills the enterprise and destroys it. 
+void Enterprise::kill() {
+    shields = -1;
 }
 
 // Makes the Enterprise move based off warpFactor
@@ -56,23 +65,32 @@ void Enterprise::move(common::Location loc, double warpFactor) {
         common::IO::println("Engineering reports: ");
         common::IO::printf("\"Insufficient energy available for manuvering at warp %.3f!\"", warpFactor);
         
+        // reduces by 10 because of lost between circulation
+        energyUsed -= 10; 
         if (shields < energyUsed - getEnergy() || devices.isDamaged("SHIELD CONTROL")) {
             common::IO::println("** Fatal Error **");
             common::IO::println("You have just stranded your ship in space;");
             common::IO::println("You have insufficient maneuvering energy,");
             common::IO::println("and shield control is presently incapable of");
             common::IO::println("cross-circutting to the engine room!");
-            shields = -1; // kills the enterprise
+            kill();
             return;
         }
 
         common::IO::printf("Deflector control room acknowledges %d units of energy are presently deployed to the shields\n", shields);
+        // uses the shields to complete navigation
+        shields -= energyUsed - getEnergy();
+        adjustEnergy(-getEnergy()); // sets energy to 0
 
         return;
     }
 
     adjustEnergy(-energyUsed);
     
+    // set a new modifier if the quadrant location is different
+    if (!getLocation().sameQuadrant(loc))
+        randomRepairModifier = common::randomInRange(0, 0.5);
+
     devices.repairOverTime(warpFactor);
     devices.randomEvent();
     Ship::move(loc, warpFactor);
@@ -144,6 +162,16 @@ void Enterprise::updateDocked(bool value) {
 
     if (docked)
         dock();
+}
+
+// Repairs all devices.  
+void Enterprise::repairDevices() {
+    devices.repairAll(100000); // repairs all devices completely
+}
+
+// Estimates how much time it would take to repair all devices. 
+double Enterprise::estimateRepairDevices() const {
+    return std::min(0.1 * devices.numDamaged() + randomRepairModifier, 0.9);
 }
 
 // Prints a damage report for all the device's state of

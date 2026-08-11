@@ -205,6 +205,18 @@ std::string Devices::getStatus(const std::string_view &deviceName) const
     return std::string(deviceName) + ": " + std::to_string(devices[convertToIndex(deviceName)]);
 }
 
+// Gets the number of damaged devices
+int Devices::numDamaged() const {
+    int out = 0;
+    
+    for (int i = 0; i < 8; ++i) {
+        if (devices[i] < 0)
+            out++;
+    }
+
+    return out;
+}
+
 // Makes a damager report of all the devices
 std::string Devices::damageReport() const
 {

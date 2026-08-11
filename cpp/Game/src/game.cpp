@@ -261,9 +261,25 @@ void Game::fireTorpedo(double warpDirection) {
     auto it = std::find(path.begin(), path.end(), destination);
     if (it == path.end()) {
         common::Location loc = *path.begin();
-        if (at(loc).at(loc) == QuadrantMap::KLINGON) {
+        QuadrantMap& q = at(loc);
+        if (q.at(loc) == QuadrantMap::KLINGON) {
             destroyKlingon(loc);
             return;
+        } else if (q.at(loc) == QuadrantMap::BASE) {
+            common::IO::println("***Starbase Destroyed***");
+            galaxy.reduceStarBases(loc);
+            q.removeObject(loc, QuadrantMap::BASE);
+
+            if (galaxy.starBases() > 0 || galaxy.getKlingons() > missionDuration + startingStardate - currentStardate) {
+                common::IO::println("Starfleet command is reviewing your record to consider court martial");
+            } else {
+                common::IO::println("That does it, Captain! You are hereby relieved of command");
+                common::IO::println("and sentenced to 99 stardates at hard labour on Cygnus 12!");
+                enterprise.kill();
+            }
+
+        } else if (q.at(loc) == QuadrantMap::STAR) {
+            common::IO::printf("Star at (%d, %d) absorbed torpedo energy\n", loc.sectorY, loc.sectorY);
         }
 
         return;
@@ -353,12 +369,16 @@ void Game::moveCommand(const std::vector<std::string>& command) {
         double warpFactor = std::stod(command[2]);
 
         auto oldPos = enterprise.getLocation();
-        move(warpFactor, warpDirection);
+        bool moveSuccess = move(warpFactor, warpDirection);
 
         auto newLocation = enterprise.getLocation();
         if (oldPos != newLocation) {
             at(newLocation).klingonsMove();
             enterprise.takeDamage(at(newLocation).klingonsFire());
+        }
+
+        if (!moveSuccess) {
+            common::IO::printf("Warp engines shut down at (%d, %d) due to bad navigation\n", newLocation.sectorY, newLocation.sectorX);
         }
 
         shortRangeCommand();
@@ -375,8 +395,20 @@ void Game::shortRangeCommand() {
         return;
     }
 
+    // status conditions
     const auto& location = enterprise.getLocation();
+    std::string condition = "Green";
+
+    if (enterprise.getEnergy() < 300)
+        condition = "Yellow";
     
+    if (galaxy.getQuadrant(location).klingons() > 0)
+        condition = "*Red*";
+
+    if (enterprise.getDocked()) 
+        condition = "Docked";
+    
+    common::IO::printf("Status condition: %s\n", condition.c_str());
     common::IO::println(at(location).toString());
     common::IO::println(enterprise.toString());
     common::IO::printf("Klingons left: %d\n", galaxy.getKlingons());
@@ -482,6 +514,13 @@ void Game::damageReportCommand() const {
     }
 
     enterprise.damageReport();
+    
+    // repair the devices
+    common::IO::println("Technicians standing by to effect repairs to your ship;");
+    common::IO::printf("estimated time to repair %.3f stardates\n", enterprise.estimateRepairDevices());
+
+    char ans = common::IO::prompt("will you authorize the repair order (Y/N): ")[0];
+    if (std::toupper)
 }
 
 // Starts the library computer and forwards the user's request to 
@@ -542,7 +581,13 @@ void Game::computerLibraryCommandSR() const {
     common::IO::println("Status Report:\n");
     common::IO::printf("Klingons left: %d\n", galaxy.getKlingons());
     common::IO::printf("Mission must be completed in %.3f stardates\n", missionDuration + (startingStardate - currentStardate));
-    common::IO::printf("The Federation is maintaining %d starbases in the galaxy\n\n", galaxy.starBases());
+
+    // checks that there are still starbases in the galaxy
+    if (galaxy.starBases() < 1) {
+        common::IO::println("Your stupidity has left you on your on in the galaxy -- you have no starbases left");
+    } else {
+        common::IO::printf("The Federation is maintaining %d starbases in the galaxy\n\n", galaxy.starBases());
+    }
     
     damageReportCommand();
 }

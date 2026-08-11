@@ -127,6 +127,22 @@ int Galaxy::starBases() const noexcept {
     return totalBases;
 }
 
+// Reduces the number of star bases by one, and removes it from
+// the quadrant. Takes base-1 coordinates
+void Galaxy::reduceStarBases(int x, int y) {
+    Quadrant& q = getQuadrant(x, y);
+    if (q.bases() >= 1 && totalBases > 0) {
+        q.removeBase();
+        totalBases--;
+    }
+}
+
+// Reduces the number of star bases by one, and removes it from
+// the quadrant. Takes base-0 coordinates through location
+void Galaxy::reduceStarBases(common::Location location) {
+    reduceStarBases(common::toBase1(location.quadrantX), common::toBase1(location.quadrantY));
+}
+
 // Gets and returns the total number of klingons in the galaxy
 int Galaxy::getKlingons() const noexcept {
     return totalKlingons;
