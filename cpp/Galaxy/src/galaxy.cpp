@@ -154,7 +154,7 @@ void Galaxy::reduceKlingons(int x, int y) {
     Quadrant& q = getQuadrant(x, y);
     if (q.klingons() >= 1 && totalKlingons > 0) {
         q.reduceKlingons();
-        totalKlingons -= 1;
+        totalKlingons--;
     }
 }
 

@@ -59,6 +59,7 @@ public class QuadrantMap {
      */
     public QuadrantMap(Quadrant q, int x, int y) {
         klingons = new ArrayList<>();
+        enterprise = new Location(-1, -1, -1, -1);
         initializeQuadrant(q, x, y);
     }
 
@@ -70,6 +71,7 @@ public class QuadrantMap {
      */
     public QuadrantMap(Quadrant q) {
         klingons = new ArrayList<>();
+        enterprise = new Location(-1, -1, -1, -1);
         initializeQuadrant(q);
     }
 
@@ -285,6 +287,30 @@ public class QuadrantMap {
      */
     public Location base() {
         return baseLocation;
+    }
+
+    /**
+     * 
+     * Checks whether the Enterprise can dock or not based off its current position.
+     * Returns true if the Enterprise can dock, and false elsewise. 
+     * 
+     * @return true if the Enterprise can dock and false if it cannot
+     */
+    public boolean canDock() {
+        int centerX = GameLib.toBase1(enterprise.sectorX);
+        int centerY = GameLib.toBase1(enterprise.sectorY);
+
+        for (int y = centerY - 1; y <= centerY + 1; ++y) {
+            for (int x = centerX - 1; x <= centerX + 1; ++x) {
+                if (x < MIN_SECTOR || x > MAX_SECTOR || y < MIN_SECTOR || y > MAX_SECTOR)
+                    continue;
+
+                if (at(x, y).equals(BASE))
+                    return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -534,6 +560,9 @@ public class QuadrantMap {
 
     private static final int ROWS = 8;
     private static final int COLS = 8;
+
+    private static final int MIN_SECTOR = 1;
+    private static final int MAX_SECTOR = 8;
 
     private static final int X = 0, Y = 1; // array point index names
 

@@ -32,11 +32,11 @@ public class GameLib {
      */
     public static class Location {
         public Location(int sectorX, int sectorY, int quadrantX, int quadrantY) {
-            this.sectorX = (int)MathUtils.clamp(sectorX, MIN, MAX);
-            this.sectorY = (int)MathUtils.clamp(sectorY, MIN, MAX);
+            this.sectorX = sectorX;
+            this.sectorY = sectorY;
 
-            this.quadrantX = (int)MathUtils.clamp(quadrantX, MIN, MAX);
-            this.quadrantY = (int)MathUtils.clamp(quadrantY, MIN, MAX);
+            this.quadrantX = quadrantX;
+            this.quadrantY = quadrantY;
         }
 
         public Location() {
@@ -73,7 +73,16 @@ public class GameLib {
 
         @Override
         public String toString() {
-            return "(" + toBase1(sectorY) + ", " + toBase1(sectorX) + ") in (" + toBase1(quadrantY) + ", " + toBase1(quadrantX) + ")";
+            String out = "";
+        
+            if (sectorX != -1 && sectorY != -1) {
+                out += "(" + toBase1(sectorY) + ", " + toBase1(sectorX) + ")";
+            }
+            if (quadrantX != -1 && quadrantY != -1) {
+                out += " in ("+ toBase1(quadrantY) + ", " + toBase1(quadrantX) + ")";
+            }
+            
+            return out;
         }
 
         public int sectorX;

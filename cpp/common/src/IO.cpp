@@ -147,6 +147,8 @@ namespace common {
             return {};
         }
 
+        // Seperates a string into a vector of numbers, separated
+        // by commas. 
         std::vector<int> separateByCommas(const std::string& str) {
             std::string cleaned = "";
             
@@ -180,8 +182,7 @@ namespace common {
         Location promptLocation() {
             print("Input a location (row, column), (row, column): ");
 
-            std::string input;
-            std::getline(std::cin, input);
+            std::string input = prompt("");
             
             std::vector<int> numbers = separateByCommas(input);
             if (numbers.size() != 4) {
@@ -204,12 +205,11 @@ namespace common {
         Location promptSector() {
             print("Input a sector (row, column): ");
 
-            std::string input;
-            std::getline(std::cin, input);
+            std::string input = prompt("");
             
             std::vector<int> numbers = separateByCommas(input);
             if (numbers.size() != 2) {
-                warning("A location must have 2 coordinates");
+                warning("A sector must have 2 coordinates");
                 return {-1, -1, -1, -1};
             } 
 
@@ -227,12 +227,11 @@ namespace common {
         Location promptQuadrant() {
             print("Input a quadrant (row, column): ");
 
-            std::string input;
-            std::getline(std::cin, input);
+            std::string input = prompt("");
             
             std::vector<int> numbers = separateByCommas(input);
             if (numbers.size() != 2) {
-                warning("A location must have 2 coordinates");
+                warning("A quadrant must have 2 coordinates");
                 return {-1, -1, -1, -1};
             } 
 

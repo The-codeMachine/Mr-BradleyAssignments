@@ -152,7 +152,9 @@ void Game::run() {
     }
     
     // the enterprise got destroyed
-    if (enterprise.isDestroyed()) {
+    // if the shields are == -1 then that means a special death occurred
+    // and that death message already printed, so skip a death message. 
+    if (enterprise.isDestroyed() && enterprise.getShields() != -1) {
         common::IO::printf("It is stardate: %0.3f\n", currentStardate);
         common::IO::printf("There were %d Klingon warships left to destroy\n", galaxy.getKlingons());
         common::IO::println("The Enterprise has been destroyed and now there is ");
@@ -211,7 +213,7 @@ bool Game::move(double warpFactor, double warpDirection) {
     return newLocation == path.back();
 }
 
-// Destroyed a star base within the Galaxy. Removes it from the quadrant
+// Destroys a star base within the Galaxy. Removes it from the quadrant
 // and the galaxy
 void Game::destoryStarbase(common::Location location) {
     common::IO::println("***Starbase Destroyed***");
@@ -231,16 +233,16 @@ void Game::destoryStarbase(common::Location location) {
 // Handles firing the phasers at all klingons. If a klingon is
 // destroyed, it will handle destroying the klingon as well
 void Game::firePhasers(double phaserEnergy) {
-    enterprise.adjustEnergy(-phaserEnergy);
-
     const auto location = enterprise.getLocation();
     auto& currentKlingons = at(location).getKlingons();
-
+    
     if (currentKlingons.size() <= 0) {
         common::IO::println("Science officer Spock reports: ");
         common::IO::println("\"Sensors show no enemy ships in this quadrant\"");
         return;
     }
+    
+    enterprise.adjustEnergy(-phaserEnergy);
 
     if (enterprise.isDeviceBroken(std::string(Devices::COMPUTER_SYSTEMS))) {
         common::IO::println("Computer failure hampers accuracy");
@@ -248,12 +250,13 @@ void Game::firePhasers(double phaserEnergy) {
 
     common::IO::println("Phasers locked on target.");
 
+    int klingonSize = currentKlingons.size();
     for (auto it = currentKlingons.begin(); it != currentKlingons.end();) {
         auto& klingon = *it;
         auto klingonLocation = klingon.getLocation();
 
         int damage = enterprise.firePhasers(phaserEnergy, klingonLocation.sectorX,
-                            klingonLocation.sectorY, currentKlingons.size());
+                            klingonLocation.sectorY, klingonSize);
 
         klingon.adjustEnergy(-damage);
 
@@ -262,7 +265,7 @@ void Game::firePhasers(double phaserEnergy) {
 
 
         if (!klingon.isDestroyed()) {
-            common::IO::printf("(Sensors show %d units remaining on klingon: %s)", 
+            common::IO::printf("(Sensors show %d units remaining on klingon: %s)\n", 
                                 klingon.getEnergy(), klingonLocation.toString().c_str());
             
             ++it;
@@ -299,8 +302,10 @@ void Game::fireTorpedo(double warpDirection) {
     } else {
         // if the next object is not within the path it went out of the galaxy
         ++it;
-        if (it == path.end())
+        if (it == path.end()) {
+            common::IO::println("Torpedo missed");
             return;
+        }
     }
 
     // prints the torpedo's track

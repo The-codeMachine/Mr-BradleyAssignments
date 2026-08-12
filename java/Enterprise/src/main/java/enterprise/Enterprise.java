@@ -82,7 +82,6 @@ public class Enterprise extends Ship {
      * @param loc
      * @param warpFactor
      */
-    @Override
     public void move(Location loc, double warpFactor) {
         int energyUsed = (int) (warpFactor * 8 + 0.5);
         if (energy() < energyUsed) {
@@ -136,7 +135,13 @@ public class Enterprise extends Ship {
 
         devices.hitDamage(phaserEnergy, energy());
 
+        // if the enterprise is destroyed set it
+        // to -2 so it does not interfere with the
+        // kill function -1. 
         shields -= phaserEnergy;
+        if (shields < 0)
+            shields = -2;
+
         return isDestroyed();
     }
 
@@ -214,6 +219,16 @@ public class Enterprise extends Ship {
 
     /**
      * 
+     * Gets the shields of the Enterprise. 
+     * 
+     * @return the shields of the enterprise. 
+     */
+    public double shields() {
+        return shields;
+    }
+
+    /**
+     * 
      * Adjusts the shields to the new shields value. Will log
      * an error if there is not sufficient energy. 
      * 
@@ -269,6 +284,17 @@ public class Enterprise extends Ship {
      */
     public void kill() {
         shields = -1;
+    }
+
+    /**
+     * 
+     * Estimates how much time it would take to repair all devices. 
+     * 
+     * @return the amount of time it would take to repair all devices
+     */
+    public double estimateRepairDevices() {
+        int num = devices.numDamaged();
+        return num > 0 ? Math.min(0.1 * devices.numDamaged() + randomRepairModifier, 0.9) : 0;
     }
 
     /**

@@ -105,7 +105,13 @@ bool Enterprise::takeDamage(double phaserEnergy) {
 
     devices.hitDamage(phaserEnergy, this->getEnergy());
 
+    // if the enterprise is destroyed set it
+    // to -2 so it does not interfere with the
+    // kill function -1. 
     shields -= phaserEnergy;
+    if (shields < 0)
+        shields = -2;
+
     return isDestroyed();
 }
 
@@ -132,6 +138,11 @@ void Enterprise::reduceTorpedoes() {
         return;
     
     torpedoes--;
+}
+
+// Gets and returns the Enterprise's shields 
+double Enterprise::getShields() const noexcept {
+    return shields;
 }
 
 // Adjusts the shields of the enterprise. Sets the shields

@@ -258,6 +258,9 @@ const std::vector<Klingon>& QuadrantMap::getKlingons() const {
 // Returns the amount of damage klingons used to damage the Enterprise. Calculates
 // damage based off distance, and reduces the Klingon's energy reserves
 int QuadrantMap::klingonsFire() {
+    if (klingons.size() <= 0)
+        return 0;
+    
     int out = 0;
 
     for (Klingon& klingon : klingons) {
@@ -278,6 +281,9 @@ int QuadrantMap::klingonsFire() {
 // Moves the klingons in the Quadrant to a random sector. Checks that it is a valid 
 // sector and that the klingon can move there. 
 void QuadrantMap::klingonsMove() {
+    if (klingons.size() <= 0)
+        return;
+
     for (Klingon& klingon : klingons) {
         auto location = klingon.calculateDestination();
         while (!empty(location)) {

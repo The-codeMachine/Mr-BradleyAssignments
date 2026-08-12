@@ -45,6 +45,7 @@ public:
     bool getDocked() const noexcept;
     void updateDocked(bool value);
 
+    double getShields() const noexcept;
     void adjustShields(double shields);
 
     bool isDeviceBroken(const std::string& str) const;

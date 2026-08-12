@@ -25,3 +25,6 @@
 [2026-08-04 12:43:31] [WARNING] Invalid command was entered: 6
 [2026-08-04 12:50:04] [WARNING] NAV usage <warp direction> <warp factor>
 [2026-08-06 10:17:12] [WARNING] NAV usage <warp direction> <warp factor>
+[2026-08-12 11:51:56] [WARNING] Please enter valid doubles
+[2026-08-12 11:52:09] [WARNING] Please enter valid doubles
+[2026-08-12 12:10:20] [WARNING] Invalid command was entered: XX

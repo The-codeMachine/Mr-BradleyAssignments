@@ -8,6 +8,7 @@ import common.GameLib;
 import common.IO;
 import common.StringUtils;
 import common.GameLib.Location;
+import common.MathUtils;
 
 /**
  * 
@@ -178,7 +179,7 @@ public class Galaxy {
      * not their roman numerals. 
      * 
      */
-    public void printGalaticRegionMap() {
+    public static void printGalaticRegionMap() {
         IO.println(StringUtils.padLeft(StringUtils.padCenter("The Galaxy", 48), 52));
         IO.println(StringUtils.padLeft("  1     2     3     4     5     6     7     8  ", 52));
         IO.println(StringUtils.padLeft("----- ----- ----- ----- ----- ----- ----- -----", 52));
@@ -201,6 +202,128 @@ public class Galaxy {
      */
     public int starBases() {
         return totalBases;
+    }
+
+    /**
+     * 
+     * Reduces the number of starbases by one, and removes it from
+     * the quadrant. Takes base-1 coordinates. 
+     * 
+     * @param x
+     * @param y
+     */
+    public void reduceStarBases(int x, int y) {
+        Quadrant q = getQuadrant(x, y);
+        if (q.bases() >= 1 && totalBases > 0) {
+            q.removeBase();
+            totalBases--;
+        }
+    }
+
+    /**
+     * 
+     * Reduces the number of star bases by one, and removes it from
+     * the quadrant. Takes base-0 coordinates through location. 
+     * 
+     * @param location
+     */
+    public void reduceStarBases(Location location) {
+        reduceStarBases(GameLib.toBase1(location.quadrantX), GameLib.toBase1(location.quadrantY));
+    }
+
+    /**
+     * 
+     * Gets and returns the total number of Klingons in the galaxy.
+     * 
+     * @return the total number of Klingons in the galaxy. 
+     */
+    public int klingons() {
+        return totalKingons;
+    }
+
+    /**
+     * 
+     * Reduces the amount of klingons in both the specific Quadrant and the
+     * total number of klingons. Checks that there is actually a klingon in
+     * that quadrant. Takes base-1 coordinates. 
+     * 
+     * @param x
+     * @param y
+     */
+    public void reduceKlingons(int x, int y) {
+        Quadrant q = getQuadrant(x, y);
+        if (q.klingons() >= 1 && totalKingons > 0) {
+            q.reduceKlingons();
+            totalKingons--;
+        }
+    }
+
+    /**
+     * 
+     * Reduces the amount of klingons in both the specific Quadrant and the
+     * total number of klingons. Checks that there is actually a klingon in
+     * that quadrant. Takes base-0 coordinates through Location.
+     * 
+     * @param location
+     */
+    public void reduceKlingons(Location location) {
+        reduceKlingons(GameLib.toBase1(location.quadrantX), GameLib.toBase1(location.quadrantY));
+    }
+
+    /**
+     * 
+     * Makes a long range scan around the Enterprise (inputted as location). 
+     * Updates the scanned galaxy. 
+     * 
+     * @param location
+     */
+    public void longRangeScan(Location location) {
+        int startY = (int)MathUtils.clamp(location.quadrantY - 1, MIN_INDEX, MAX_INDEX);
+        int endY   = (int)MathUtils.clamp(location.quadrantY + 1, MIN_INDEX, MAX_INDEX);
+        int startX = (int)MathUtils.clamp(location.quadrantX - 1, MIN_INDEX, MAX_INDEX);
+        int endX   = (int)MathUtils.clamp(location.quadrantX + 1, MIN_INDEX, MAX_INDEX);
+
+        for (int y = startY; y <= endY; ++y) {
+            for (int x = startX; x <= endX; ++x)
+                IO.print("+-----");
+
+            IO.println("+");
+
+            for (int x = startX; x <= endX; ++x) {
+                Quadrant q = getQuadrant(GameLib.toBase1(x), GameLib.toBase1(y));
+                IO.print("| " + q.toString() + " ");
+                scannedGalaxy[y][x] = q;
+            }
+            IO.println("|");
+        }
+
+        for (int i = startX; i <= endX; ++i) 
+            IO.print("+-----");
+
+        IO.println("+");
+    }
+
+    /**
+     * 
+     * Prints the entire scanned galaxy. 
+     * 
+     */
+    public void printScannedGalaxy() {
+        IO.println("\n+-----+-----+-----+-----+-----+-----+-----+-----+");
+
+        for (int y = 0; y < MAP_SIZE; ++y) {
+            for (int x = 0; x < MAP_SIZE; ++x) {
+                Quadrant q = scannedGalaxy[y][x];
+                if (q == null) {
+                    IO.printf("| --- ");
+                    continue;
+                }
+
+                IO.printf("| %s ", q.toString());
+            }
+
+            IO.println("|\n+-----+-----+-----+-----+-----+-----+-----+-----+");
+        }
     }
 
     /**
