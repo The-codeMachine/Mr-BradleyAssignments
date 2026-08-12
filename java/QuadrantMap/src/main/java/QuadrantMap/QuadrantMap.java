@@ -4,52 +4,41 @@ import java.util.ArrayList;
 
 import common.GameLib;
 import common.GameLib.Location;
+import common.IO;
 import quadrant.*;
+import klingon.*;
 
 /**
  * 
- * TODO:
- * Resonably large issue. Not sure how to handle it currently,
- * but essentially, the QuadrantMap is upside-down. As y goes
- * up it goes down. This is backwards to what is normal. This
- * issue is currently fixed by adjusting the delta-y to be 
- * negative, this makes North = up, but we might want to flip
- * the QuadrantMap, maybe just in the printing section. Any 
- * ideas? 
+ * QuadrantMap encapsulates all the positional values of objects
+ * within a Quadrant. This includes:
+ *  - Klingons
+ *  - Bases
+ *  - Stars
+ *  - The Enterprise
  * 
- */
-
-/**
- * TODO:
- * Assertions are currently used to document preconditions during
- * development, and handle exceptions. Error handling with exceptions
- * return values, etc. will be visited later as the design evolves.  
- */
-
-/**
- * QuadrantMap handles all of the movement and positional
- * status for all objects within a Quadrant. Currently this
- * includes: klingons, stars, bases, and the Enterprise. 
- * Operations include:
- *  - Construction (through Quadrant, with or without an Enterprise)
- *  - Insert an object
- *  - Clear a sector
- *  - Move an object
- *  - Remove an object
- *  - Check what object is at a certain sector
- *  - Check if a sector is empty
- *  - Convert map to string
- *
- * Currently, there are 8 rows and 8 columns, with each
- * symbol being 3 characters long.
+ * A QuadrantMap can be constructed from a quadrant and/or the Enterprise's
+ * initial position. 
  * 
- * All methods use 1-based coordinates because they represent
- * the quadrant from the player's perspective. Players naturally
- * think of the first sector as (1,1), rather than (0,0).
- *
- * Conversion between the two coordinate systems occurs only at the
- * getIndexFrom. 
- *
+ * A QuadrantMap owns the Klingons within its quadrant as well. Not just
+ * their positional value, but the actual Klingon object. These can be
+ * access through the getKlingons function. 
+ * 
+ * QuadrantMap can also check whether the Enterprise can dock or not. This
+ * checks if the Enterprise is beside a base within the Quadrant. 
+ * 
+ * All functions which include:
+ *  - Placing a new value
+ *  - Clearing a sector
+ *  - Moving an object from (x, y) to (newX, newY)
+ *  - Removing an object from (x, y)
+ *  - Getting the string representation of an object at (x, y)
+ *  - Checking whether (x, y) is empty
+ * 
+ * take either base-1 coordinates or base-0 through Location. We recommend 
+ * using the Location functions, but both are possible. QuadrantMap
+ * takes (column, row) notation. 
+ * 
  */
 public class QuadrantMap {
     /**
@@ -99,6 +88,11 @@ public class QuadrantMap {
         // Checks are done in the .place function
         int index = getIndexFrom(x, y);
         quadrantString.place(index, value);
+
+        if (value.equals(ENTERPRISE)) {
+            enterprise.sectorX = GameLib.toBase0(x);
+            enterprise.sectorY = GameLib.toBase0(y);
+        }
     }
 
     /**
@@ -235,8 +229,62 @@ public class QuadrantMap {
      * 
      * @return the locations of all the klingons within this Quadrant
      */
-    public ArrayList<GameLib.Location> klingons() {
+    public ArrayList<Klingon> klingons() {
         return klingons;
+    }
+
+    /**
+     * 
+     * Returns the amount of damage the klingons used to damage the Enterprise. Calculates
+     * the damage based off distance, and reduces the Klingon's energy reserves. 
+     * 
+     * @return
+     */
+    public int klingonsFire() {
+        int out = 0;
+
+        for (Klingon klingon : klingons) {
+            int damage = klingon.firePhasers(enterprise.sectorX, enterprise.sectorY);
+
+            IO.printf("Klingon (%d, %d) has fireed their phasers dealing: %d damage\n",
+                    GameLib.toBase1(klingon.getLocation().sectorY),
+                    GameLib.toBase1(klingon.getLocation().sectorX),
+                    damage
+            );
+
+            out += damage;
+        }
+
+        return out;
+    }
+
+    /**
+     * 
+     * Moves the klingons in the Quadrant to a random sector. Checks that it is a valid
+     * sector and that the klingon can move there. 
+     * 
+     */
+    public void klingonsMove() {
+        for (Klingon klingon : klingons) {
+            Location location = klingon.calculateDestination();
+            while (!empty(location)) {
+                location = klingon.calculateDestination();
+            }
+
+            move(klingon.getLocation(), location, KLINGON);
+            klingon.move(location);
+        }
+    }
+
+    /**
+     * 
+     * Gets the location of the starbase within the QuadrantMap.
+     * If there is no starbase it will return {-1, -1, -1, -1}.
+     * 
+     * @return the location of the starbase within the QuadrantMap
+     */
+    public Location base() {
+        return baseLocation;
     }
 
     /**
@@ -367,7 +415,24 @@ public class QuadrantMap {
             }
 
             place(pos[X], pos[Y], KLINGON);
-            klingons.add(new GameLib.Location(GameLib.toBase0(pos[X]), GameLib.toBase0(pos[Y]), -1, -1));
+            klingons.add(new Klingon(new Location(GameLib.toBase0(pos[X]), GameLib.toBase0(pos[Y]), -1, -1)));
+        }
+    }
+
+    private void placeBases(int amount) {
+        baseLocation = new Location(-1, -1, -1, -1);
+
+        assert(amount <= ROWS * COLS);
+
+        for (int i = 0; i < amount; ++i) {
+            int[] pos = generateRandomPosition();
+
+            while (!empty(pos[X], pos[Y])) {
+                pos = generateRandomPosition();
+            }
+            
+            place(pos[X], pos[Y], BASE);
+            baseLocation = new Location(GameLib.toBase0(pos[X]), GameLib.toBase0(pos[Y]), -1, -1);
         }
     }
 
@@ -386,7 +451,7 @@ public class QuadrantMap {
 
         place(x, y, ENTERPRISE);
         placeKlingons(q.klingons());
-        placeValues(q.bases(), BASE);
+        placeBases(q.bases());
         placeValues(q.stars(), STAR);
     }
 
@@ -402,7 +467,7 @@ public class QuadrantMap {
         quadrantString = new QuadrantString();
 
         placeKlingons(q.klingons());
-        placeValues(q.bases(), BASE);
+        placeBases(q.bases());
         placeValues(q.stars(), STAR);
     }
 
@@ -463,11 +528,12 @@ public class QuadrantMap {
     }
 
     private QuadrantString quadrantString;
-    private ArrayList<GameLib.Location> klingons;
+    private ArrayList<Klingon> klingons;
+    private Location baseLocation;
+    private Location enterprise;
 
     private static final int ROWS = 8;
     private static final int COLS = 8;
-    private static final int SYMBOL_SIZE = 3;
 
     private static final int X = 0, Y = 1; // array point index names
 

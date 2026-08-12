@@ -116,7 +116,7 @@ std::vector<common::Location> Ship::calculatePath(double warpFactor, double warp
     double dy = -std::sin(radians);
 
     // Normalize
-    double length = std::sqrt(dx * dx + dy * dy);
+    double length = std::hypot(dx, dy);
 
     dx /= length;
     dy /= length;
@@ -151,7 +151,7 @@ std::vector<common::Location> Ship::calculatePath(double warpFactor, double warp
             break;
         }
 
-        constexpr double EPSILON = 1e-9;
+        static constexpr double EPSILON = 1e-9;
         int globalX = (int) std::floor(x + EPSILON);
         int globalY = (int) std::floor(y + EPSILON);
 
@@ -174,7 +174,7 @@ std::vector<common::Location> Ship::calculatePath(double warpFactor, double warp
 // Moves the ship to the new location.
 // Does not do any checks to validate
 // that the location is a valid position.
-void Ship::move(common::Location location, double warpFactor) {
+void Ship::move(common::Location location) {
     this->location = location;
 }
 

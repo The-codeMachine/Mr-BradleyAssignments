@@ -44,7 +44,7 @@ public:
     virtual bool isDestroyed() const noexcept;
 
     virtual std::vector<common::Location> calculatePath(double warpFactor, double warpDirection);
-    virtual void move(common::Location location, double warpFactor);
+    virtual void move(common::Location location);
 
     virtual bool takeDamage(double phaserEnergy);
     virtual int firePhasers(double phaserEnergy, int x, int y);

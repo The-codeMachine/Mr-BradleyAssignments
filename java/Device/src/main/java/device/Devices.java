@@ -4,29 +4,40 @@ import common.*;
 import java.util.Map;
 
 /**
- * 
- * The Devices class holds all the information for
- * the devices within the Enterprise. It allows the
- * Enterprise to do certain actions. Each device
+ *
+ * The Devices class holds the control for
+ * the damage level for the devices within
+ * the Enterprise. It allows the Enterprise
+ * to do certain actions. Each device
  * index correlates to a different device:
  * 0: WARP ENGINES
  * 1: SHORT RANGE SENSORS
  * 2: LONG RANGE SENSORS
  * 3: PHASER CONTROL
- * 4: TORPEDO CONTROL
+ * 4: TORPEDO CONTROl
  * 5: SHIELD CONTROL
  * 6: DAMAGE CONTROL
  * 7: COMPUTER SYSTEMS
- * 
+ *
  * Devices' operations include:
  *  - Construction
- *  - Repairs the device by an amount (equal to the warp factor)
- *  - Takes damage (based off a phaser)
- *  - Has a random damage/repair event occur
- *  - Repairs all the devices (for docking)
- *  - Checks if a device is operational
- *  - Prints a status report
- * 
+ *  - Take Damage (random)
+ *  - Take damage over time (based off the time)
+ *  - Take hit damage (based off energy)
+ *  - Make a damage event occur
+ *
+ *  - Make a repair (based off index, and amount)
+ *  - Repair all the devices (by an amount)
+ *  - Repairs all the devices over a time
+ *  - Make a repair event occur
+ *  - Repair all devices completely
+ *
+ *  - Check the damage of a device
+ *  - Check if a device is damaged or not
+ *  - Check how many devices are damaged
+ *
+ *  - Print a status report / Convert to string
+ *
  */
 public class Devices {
     public Devices() {
@@ -75,7 +86,7 @@ public class Devices {
             double damage = phaserEnergy / shields + 0.5 * GameLib.random();
             this.damage(randomDevice(), damage);
 
-            System.out.println(damageReport());
+            IO.println(damageReport());
         }
     }
 
@@ -111,6 +122,18 @@ public class Devices {
     public void repairAll(double amount) {
         for (int i = 0; i < devices.length; ++i) {
             repair(i, amount);
+        }
+    }
+
+    /**
+     * 
+     * Repairs all devices completely. No device will be
+     * broken after this.
+     * 
+     */
+    public void repairAllDevicesFully() {
+        for (int i = 0; i < devices.length; ++i) {
+            devices[i] = 0;
         }
     }
 
@@ -166,6 +189,7 @@ public class Devices {
         assert isValidIndex(index) && isValidAmount(amount) : "Invalid index or amount";
 
         devices[index] -= amount;
+        IO.printf("Damaged %s by: %.3f\n", getNameByIndex(index), amount);
     }
 
     /**
@@ -179,13 +203,13 @@ public class Devices {
     private void repair(int index, double amount) {
         assert isValidIndex(index) && isValidAmount(amount) : "Invalid index or amount";
 
+        amount = Math.min(-devices[index], amount);
+
         if (devices[index] == UNDAMAGED)
             return;
 
         devices[index] += amount;
-        
-        if (devices[index] > UNDAMAGED)
-            devices[index] = UNDAMAGED;
+        IO.printf("Repaired %s by: %.3f\n", getNameByIndex(index), amount);
     }
 
     /**
@@ -257,6 +281,22 @@ public class Devices {
 
     /**
      * 
+     * Gets the number of damaged devices. 
+     * 
+     * @return the number of damaged devices
+     */
+    public int numDamaged() {
+        int out = 0;
+        for (int i = 0; i < devices.length; ++i) {
+            if (devices[i] < 0)
+                out++;
+        }
+
+        return out;
+    }
+
+    /**
+     * 
      * Gets the status of the device and returns it as a string
      * 
      * @param deviceName
@@ -307,6 +347,26 @@ public class Devices {
      */
     private int convertToIndex(String deviceName) {
         return map.get(deviceName);
+    }
+
+    /**
+     * 
+     * Gets the device name by an index. If it cannot be
+     * found it will return "UNKNOWN". If the index is invalid
+     * it will kill the program. 
+     * 
+     * @param index
+     * @return the name of the device at index
+     */
+    private String getNameByIndex(int index) {
+        assert(isValidIndex(index));
+
+        for (Map.Entry<String, Integer> entry : map.entrySet()) {
+            if (entry.getValue() == index) 
+                    return entry.getKey();
+        }
+
+        return "UNKNOWN";
     }
 
     @Override

@@ -5,6 +5,8 @@ plugins {
 dependencies {
     implementation project(':common')
     implementation project(':quadrant')
+    implementation project(':ship')
+    implementation project(':klingon')
 }
 
 tasks.withType(JavaExec).configureEach {

@@ -82,7 +82,7 @@ std::string Galaxy::getQuadrantRomanNumeral(common::Location location) {
     if (!validIndex(x) || !validIndex(y))
         return "";
 
-    return std::string(numerals[x % 4]);    
+    return std::string(NUMERALS[x % 4]);    
 }
 
 // Gets a quadrant's full galatic region name based off a location. Takes base-1 
@@ -119,7 +119,6 @@ void Galaxy::printGalaticRegionMap() {
                         );
         common::IO::println(common::padLeft("----- ----- ----- ----- ----- ----- ----- -----", 52));
     }
-    
 }
 
 // Gets and returns the total number of starbases in the galaxy 

@@ -34,7 +34,7 @@ public:
     void kill();
 
     std::vector<common::Location> calculatePath(double warpFactor, double warpDirection) override;
-    void move(common::Location loc, double warpFactor) override;
+    void move(common::Location loc, double warpFactor);
     
     bool takeDamage(double phaserEnergy) override;
     int firePhasers(double phaserEnergy, int x, int y, int numKlingons);
@@ -65,4 +65,7 @@ private:
     double shields;
     int torpedoes;
     bool docked;
+
+    static inline constexpr double RANDOM_MODIFIER_MIN = 0;
+    static inline constexpr double RANDOM_MODIFIER_MAX = 0.5;
 };

@@ -1,22 +1,41 @@
-/**
- * A galaxy holds 64 Quadrants, using an 8 by 8 grid. 
- * A galaxy can only have 2 bases at most, and a minimum
- * of 1 base.
- * 
- * Operations include:
- *  - Constructing a galaxy (creates 64 quadrants, and ensures it has at least 1 base, and at most 2)
- *  - index the quadrant using a 2d map 
- *  - printing the map 
- *  - formats the map into a string
- * 
- */
-
 package galaxy;
 
 import quadrant.Quadrant;
+
+import java.util.List;
+
 import common.GameLib;
+import common.IO;
+import common.StringUtils;
 import common.GameLib.Location;
 
+/**
+ * 
+ * The Galaxy represents this game's world. It encapsulates
+ * 64 quadrants in an 8 x 8 grid. Every quadrant is accessible
+ * through the getQuadrant function. All functions take base-1
+ * coordinates or a Location (using base-0). 
+ * 
+ * The Galaxy ensures there is a maximum of 2 star bases and a 
+ * minimum of 1 star base. You can get the total number of 
+ * klingons in the galaxy, and reduce klingons from a specific
+ * quadrant. 
+ * 
+ * The Galaxy implements the long range scan, and scanned galaxy
+ * for the Enterprise. Based off previous long range scans the
+ * Enterprise can see more of the scanned galaxy. This only 
+ * updates if the Enterprise scans that quadrant again (like the
+ * original game).
+ * 
+ * Every quadrant has a galatic region name, and galatic region
+ * roman numeral. These can be accessed statically (since it does
+ * not change between different galaxies). You can get a quadrant's
+ * full name using the getGalaticRegionName function. 
+ * 
+ * Using the functions mentioned above, Galaxy allows you to print
+ * the galatic region name map. 
+ * 
+ */
 public class Galaxy {
     public Galaxy() {
         totalBases = 0;
@@ -28,8 +47,8 @@ public class Galaxy {
      * 
      * Takes base-1 coordinates.
      * 
-     * @param index 
-     * @param index2
+     * @param x 
+     * @param y
      * 
      * @apiNote index, and index2 must be between 1-8 (referencing an 8 by 8 grid)
      * @apiNote index represents the row
@@ -37,10 +56,13 @@ public class Galaxy {
      * 
      * @return a Quadrant located at [index][index2]
      */
-    public Quadrant getQuadrant(int index, int index2) {
-        assert index >= 1 && index <= 8 && index2 >= 1 && index2 <= 8 : "Index must be within given parameters (an 8, by 8 grid)";
+    public Quadrant getQuadrant(int x, int y) {
+        x = GameLib.toBase0(x);
+        y = GameLib.toBase0(y);    
+        
+        assert validIndex(x) && validIndex(y) : "Index must be within given parameters (an 8, by 8 grid)";
 
-        return map[GameLib.toBase0(index)][GameLib.toBase0(index2)];
+        return map[x][y];
     } 
 
     /**
@@ -54,6 +76,131 @@ public class Galaxy {
      */
     public Quadrant getQuadrant(Location loc) {
         return getQuadrant(GameLib.toBase1(loc.quadrantX), GameLib.toBase1(loc.quadrantY));
+    }
+
+    /**
+     * 
+     * Returns the galatic region name of a particular quadrant. Takes base-1
+     * coordinates. 
+     * 
+     * @param x
+     * @param y
+     * @return the galatic region name of quadrant (x, y)
+     */
+    public static String getQuadrantRegionName(int x, int y) {
+        return getQuadrantRegionName(new Location(-1, -1, GameLib.toBase0(x), GameLib.toBase0(y)));
+    }
+
+    /**
+     * 
+     * Returns the galatic region name of a particular quadrant. Takes base-0
+     * coordinates through Location. 
+     * 
+     * @param location
+     * @return the galatic region name of quadrant at Location
+     */
+    public static String getQuadrantRegionName(Location location) {
+        int x = location.quadrantX;
+        int y = location.quadrantY;
+
+        if (!validIndex(x) || !validIndex(y))
+            return "";
+
+        return GALACTIC_REGION_NAMES.get(y).get(x > 4 ? 1 : 0);
+    }
+
+    /**
+     * 
+     * Gets the Quadrant's roman numeral for a particular region. Takes
+     * base-1 coordinates. 
+     * 
+     * @param x
+     * @param y
+     * @return the Quadrant's roman numeral for a particular region. 
+     */
+    public static String getQuadrantRomanNumeral(int x, int y) {
+        return getQuadrantRegionName(new Location(-1, -1, GameLib.toBase0(x), GameLib.toBase0(y)));
+    }
+
+    /**
+     * 
+     * Gets a quadrant's roman numeral for a paritcular region. Takes
+     * base-0 coordinates through location. 
+     * 
+     * @param location
+     * @return the Quadrant's roman numeral for a particular region
+     */
+    public static String getQuadrantRomanNumeral(Location location) {
+        int x = location.quadrantX;
+        int y = location.quadrantY;
+
+        if (!validIndex(x) || !validIndex(y))
+            return "";
+
+        return NUMERALS.get(x % 4);
+    }
+
+    /**
+     * 
+     * Gets a quadrant's full galatic region name based off a location. Takes base-1 
+     * coordinates.
+     * 
+     * @param x
+     * @param y
+     * @return the quadrant's full galatic region name 
+     */
+    public static String getGalaticRegionName(int x, int y) {
+        return getGalaticRegionName(new Location(-1, -1, GameLib.toBase0(x), GameLib.toBase0(y)));
+    }
+
+    /**
+     * 
+     * Gets a quadrant's full galatic region name based off a location. Takes base-0
+     * coordinates through location.
+     * 
+     * @param location
+     * @return
+     */
+    public static String getGalaticRegionName(Location location) {
+        String name = getQuadrantRegionName(location);
+        if (name.isEmpty())
+            return "";
+
+        name += ' ';
+        name += getQuadrantRomanNumeral(location);
+
+        return name.isEmpty() ? "" : name;
+    }
+
+    /**
+     * 
+     * Prints the galatic region map. This includes only the names of the regions, and
+     * not their roman numerals. 
+     * 
+     */
+    public void printGalaticRegionMap() {
+        IO.println(StringUtils.padLeft(StringUtils.padCenter("The Galaxy", 48), 52));
+        IO.println(StringUtils.padLeft("  1     2     3     4     5     6     7     8  ", 52));
+        IO.println(StringUtils.padLeft("----- ----- ----- ----- ----- ----- ----- -----", 52));
+
+        for (int y = MIN_INDEX; y <= MAX_INDEX; ++y) {
+            IO.printf("%d   %s%s\n",
+                                GameLib.toBase1(y), 
+                                StringUtils.padCenter(getQuadrantRegionName(new Location(-1, -1, 0, y)), 24), 
+                                StringUtils.padCenter(getQuadrantRegionName(new Location(-1, -1, 5, y)), 24)
+                            );
+            IO.println(StringUtils.padLeft("----- ----- ----- ----- ----- ----- ----- -----", 52));
+        }
+    }
+
+    /**
+     * 
+     * Gets the total number of starbases in the galaxy. 
+     * 
+     * @return the total number of starbases in the galaxy. 
+     */
+    public int starBases() {
+        return totalBases;
     }
 
     /**
@@ -99,6 +246,7 @@ public class Galaxy {
      */
     private void populateGalaxy() {
         totalBases = 0;
+        totalKingons = 0;
 
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
@@ -111,6 +259,8 @@ public class Galaxy {
                         map[i][j].removeBase();
                     }
                 }
+
+                totalKingons += map[i][j].klingons();
             }
         }
 
@@ -175,9 +325,44 @@ public class Galaxy {
         System.out.println("White box test success");
     }
 
-    // Data
+    /**
+     * 
+     * Checks whether index is a valid index for the galaxy. Takes
+     * base-0 coordinates. 
+     * 
+     * @param index
+     * @return
+     */
+    private static boolean validIndex(int index) {
+        return index >= MIN_INDEX && index <= MAX_INDEX;
+    }
+
     private Quadrant[][] map = new Quadrant[8][8];
+    private Quadrant[][] scannedGalaxy = new Quadrant[8][8];
+
     private int totalBases;
+    private int totalKingons;
+
+
+    private static final int MIN_INDEX = 0;
+    private static final int MAX_INDEX = 7;
+    
+    private static final int MAP_SIZE = 8;
+
+    private static final List<List<String>> GALACTIC_REGION_NAMES = List.of(
+        List.of("ANTARES",     "SIRIUS"),
+        List.of("RIGEL",       "DENEB"),
+        List.of("PROCYON",     "CAPELLA"),
+        List.of("VEGA",        "BETELGEUSE"),
+        List.of("CANOPUS",     "ALDEBARAN"),
+        List.of("ALTAIR",      "REGULUS"),
+        List.of("SAGITTARIUS", "ARCTURUS"),
+        List.of("POLLUX",      "SPICA")
+    );
+
+    private static final List<String> NUMERALS = List.of(
+        "I", "II", "III", "IV"
+    );
 }
 
 /**

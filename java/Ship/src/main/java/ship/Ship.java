@@ -2,28 +2,32 @@ package ship;
 
 import java.util.ArrayList;
 
-import common.IO;
-import common.GameLib;
 import common.GameLib.Location;
 
 /**
  * 
- * This is the base Ship class. The ship class
- * consists of energy, and position information.
- * It handles movement calculation, damage reduction,
- * and phaser firing for all base ships. Other ships
- * like the Enterprise might use this as a super
- * class and work upon the current functions
- * (e.g. adding checks for devices).
- * Current list of operations consist of:
- * - Move (move the ship based off warp factor, and direction)
- * - Make the ship take damage
- * - Fire the ship's phasers
+ * The Ship class is the base class to all moveable
+ * objects within this game. This includes the Enterprise
+ * and Klingons. Every Ship has a specific energy level
+ * and location. Location is represented through the
+ * Location class. 
  * 
- * Ship's get location, construction, and fire phasers all
- * take base-1 as input.
+ * Ship implements the following non-virtual functions:
+ *  - Getting the current energy level
+ *  - Adjusting the current energy level
+ *  - Getting the current location
  * 
- * Internally, all the variables are base-0.
+ * The rest of Ship's functions are virtual:
+ *  - Checking whether the ship is destroyed (check through energy level <= 0)
+ *  - Calculating the path of a ship based off a warp factor and direction
+ *  - Moving the ship (simply adjusts the Ship's location and reduces the energy
+ *      level based off how far it went).
+ *  - Makes the ship take damage (reduces the energy levels).
+ *  - Makes the ship fire its phasers (simply calculates the damage output).
+ * 
+ * All functions take base-0 coordinates. This includes the firePhasers function.
+ * Despite it taking raw coordinates, unlike most classes where it would take
+ * base-1 coordinates, this takes base-0 coordinates. 
  * 
  */
 public class Ship {
@@ -34,7 +38,6 @@ public class Ship {
 
     public Ship(int energy) {
         this.energy = energy;
-
         location = new Location();
     }
 
@@ -127,7 +130,7 @@ public class Ship {
         warpFactor = Math.min(warpFactor, 8.0);
 
         // Warp 1 = 8 sectors
-        int distance = (int) Math.round(warpFactor * GRID_SIZE);
+        double distance = warpFactor * GRID_SIZE;
 
         // Convert direction into angle
         double angleDegrees = (warpDirection - 1.0) * 45.0;
@@ -149,71 +152,9 @@ public class Ship {
         int lastX = (int) Math.floor(x);
         int lastY = (int) Math.floor(y);
 
-        IO.println("==================================================");
-        IO.println("Navigation Calculation");
-        IO.println("==================================================");
-
-        IO.printf("Start Quadrant (column, row) : (%d, %d)\n",
-                GameLib.toBase1(location.quadrantX),
-                GameLib.toBase1(location.quadrantY));
-
-        IO.printf("Start Sector (column, row)   : (%d, %d)\n",
-                GameLib.toBase1(location.sectorX),
-                GameLib.toBase1(location.sectorY));
-
-        IO.println("");
-
-        IO.printf("Global Position (column, row)\n");
-        IO.printf("X = %d * %d + %d + 0.5 = %.3f\n",
-                location.quadrantX,
-                GRID_SIZE,
-                location.sectorX,
-                x);
-
-        IO.printf("Y = %d * %d + %d + 0.5 = %.3f\n",
-                location.quadrantY,
-                GRID_SIZE,
-                location.sectorY,
-                y);
-
-        IO.println("");
-
-        IO.printf("Warp Factor = %.2f\n", warpFactor);
-        IO.printf("Distance = round(%.2f * %d) = %d sectors\n",
-                warpFactor,
-                GRID_SIZE,
-                distance);
-
-        IO.println("");
-
-        IO.printf("Direction = %.3f\n", warpDirection);
-
-        IO.printf("Angle = ((%.3f - 1.0) * 45)\n", warpDirection);
-        IO.printf("      = %.6f degrees\n", angleDegrees);
-
-        IO.printf("Radians = %.6f\n", radians);
-
-        IO.println("");
-
-        IO.printf("Direction Vector\n");
-        IO.printf("dx = cos(%.6f) = %.6f (takes radians)\n", radians, dx);
-        IO.printf("dy = -sin(%.6f) = %.6f (takes radians)\n", radians, dy);
-
-        IO.printf("Vector Length = %.6f\n", length);
-
-        IO.println("");
-
         double travelled = 0;
 
         while (travelled < distance) {
-
-            IO.println("--------------------------------------------------");
-
-            IO.println("");
-
-            IO.println("Current Position (column, row)");
-            IO.printf("x = %.6f\n", x);
-            IO.printf("y = %.6f\n", y);
 
             double distanceToXBoundary = calculateNextBoundaryX(x, dx);
             double distanceToYBoundary = calculateNextBoundaryY(y, dy);
@@ -224,16 +165,6 @@ public class Ship {
             if (travelled + movement > distance)
                 movement = distance - travelled;
 
-            IO.println("");
-
-            IO.println("Movement (column, row)");
-
-            IO.printf("x = %.6f + %.6f * %.6f = %.6f\n",
-                    x, dx, distanceToXBoundary, x + dx * movement);
-
-            IO.printf("y = %.6f + %.6f * %.6f = %.6f\n",
-                    y, dy, distanceToYBoundary, y + dy * movement);
-
             x += dx * movement;
             y += dy * movement;
 
@@ -242,20 +173,11 @@ public class Ship {
             // Outside galaxy
             if (x < 0 || x >= 64 ||
                 y < 0 || y >= 64) {
-
-                IO.println("");
-                IO.println("Movement exits the galaxy.");
                 break;
             }
 
-            int globalX = (int)Math.floor(x);
-            int globalY = (int)Math.floor(y);
-
-            IO.println("");
-            IO.println("Sector Calculation (column, row)");
-
-            IO.printf("floor(%.6f) = %d\n", x, globalX);
-            IO.printf("floor(%.6f) = %d\n", y, globalY);
+            int globalX = (int)Math.floor(x + EPSILON);
+            int globalY = (int)Math.floor(y + EPSILON);
 
             if (globalX != lastX || globalY != lastY) {
 
@@ -265,27 +187,6 @@ public class Ship {
                 int sectorX = globalX % GRID_SIZE;
                 int sectorY = globalY % GRID_SIZE;
 
-                IO.println("");
-                IO.println("Sector boundary crossed.");
-
-                if (globalX != lastX)
-                    IO.printf("X changed: %d -> %d\n", lastX, globalX);
-
-                if (globalY != lastY)
-                    IO.printf("Y changed: %d -> %d\n", lastY, globalY);
-
-                IO.printf("Global Sector : (%d, %d)\n",
-                        globalX,
-                        globalY);
-
-                IO.printf("Quadrant (column, row)     : (%d, %d)\n",
-                        GameLib.toBase1(quadrantX),
-                        GameLib.toBase1(quadrantY));
-
-                IO.printf("Local Sector (column, row) : (%d, %d)\n",
-                        GameLib.toBase1(sectorX),
-                        GameLib.toBase1(sectorY));
-
                 path.add(new Location(
                         sectorX,
                         sectorY,
@@ -294,26 +195,8 @@ public class Ship {
 
                 lastX = globalX;
                 lastY = globalY;
-            } else {
-                IO.println("");
-                IO.println("Still inside the current sector.");
             }
         }
-
-        IO.println("");
-        IO.println("==================================================");
-        IO.println("Visited Sectors");
-        IO.println("==================================================");
-
-        for (Location l : path) {
-            IO.printf("Quadrant (column, row) (%d,%d) Sector (column, row) (%d,%d)\n",
-                    GameLib.toBase1(l.quadrantX),
-                    GameLib.toBase1(l.quadrantY),
-                    GameLib.toBase1(l.sectorX),
-                    GameLib.toBase1(l.sectorY));
-        }
-
-        IO.println("==================================================");
 
         return path;
     }
@@ -326,14 +209,7 @@ public class Ship {
      * 
      * @param location
      */
-    public void move(Location location, double warpFactor) {
-        int energyUsed = (int) (warpFactor * 8 + 0.5);
-        if (energy < energyUsed) {
-            IO.println("Insufficient energy for warp");
-            return;
-        }
-
-        adjustEnergy(-energyUsed);
+    public void move(Location location) {
         this.location = location;
     }
 
@@ -371,7 +247,7 @@ public class Ship {
      * @return the effective phaserEnergy based off calculations
      */
     public int firePhasers(double phaserEnergy, int x, int y) {
-        double distance = Math.sqrt(Math.pow(location.sectorX - x, 2) + Math.pow(location.sectorY - y, 2));
+        double distance = Math.hypot(location.sectorX - x, location.sectorY - y);
 
         return (int) ((phaserEnergy / distance) * (common.GameLib.random() + 2));
     }
@@ -429,4 +305,5 @@ public class Ship {
     private Location location;
 
     private static final int GRID_SIZE = 8;
+    private static final double EPSILON = 1e-9;
 }

@@ -41,7 +41,6 @@
  * @author Mr. Bradley
  * @version SPRING 2026
  */
-
 class Quadrant
 {
 public:

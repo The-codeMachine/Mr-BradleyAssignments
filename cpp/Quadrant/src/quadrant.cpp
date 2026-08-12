@@ -63,7 +63,7 @@ void Quadrant::putBase()
 // Returns true if the quadrant has a base
 bool Quadrant::hasBase() const
 {
-    return bases() == 1;
+    return bases() >= 1;
 }
 
 // Removes all bases from a quadrant

@@ -7,13 +7,13 @@ Enterprise::Enterprise(int energy, common::Location location, double shields,
                 int torpedoes, bool docked) :
                 Ship(energy, location),
                 shields(shields), torpedoes(torpedoes), docked(docked), 
-                randomRepairModifier(common::randomInRange(0, 0.5)) {}
+                randomRepairModifier(common::randomInRange(RANDOM_MODIFIER_MIN, RANDOM_MODIFIER_MAX)) {}
 
 Enterprise::Enterprise(int energy, double shields, 
                 int torpedoes, bool docked) :
                 Ship(energy),
                 shields(shields), torpedoes(torpedoes), docked(docked),
-                randomRepairModifier(common::randomInRange(0, 0.5)) {}
+                randomRepairModifier(common::randomInRange(RANDOM_MODIFIER_MIN, RANDOM_MODIFIER_MAX)) {}
 
 // Docks the Enterprise. Replenishes energy, torpedoes
 // and repairs all devices
@@ -27,7 +27,7 @@ void Enterprise::dock() {
     torpedoes = 10;
 
     // repairs all devices fully
-    devices.repairAll(10000);
+    devices.repairAllDevicesFully();
 }
 
 // Returns if the Enterprise is destroyed.
@@ -58,7 +58,7 @@ std::vector<common::Location> Enterprise::calculatePath(double warpFactor, doubl
 }
 
 // Moves the Enterprise and repairs its devices. It also makes a
-// random event occur to the devices
+// random event occur to the devices. It also consumes energy. 
 void Enterprise::move(common::Location loc, double warpFactor) {
     int energyUsed = (int) (warpFactor * 8 + 0.5);
     if (getEnergy() < energyUsed) {
@@ -66,7 +66,7 @@ void Enterprise::move(common::Location loc, double warpFactor) {
         common::IO::printf("\"Insufficient energy available for manuvering at warp %.3f!\"", warpFactor);
         
         // reduces by 10 because of lost between circulation
-        energyUsed -= 10; 
+        energyUsed += 10; 
         if (shields < energyUsed - getEnergy() || devices.isDamaged("SHIELD CONTROL")) {
             common::IO::println("** Fatal Error **");
             common::IO::println("You have just stranded your ship in space;");
@@ -94,7 +94,7 @@ void Enterprise::move(common::Location loc, double warpFactor) {
 
     devices.repairOverTime(warpFactor);
     devices.randomEvent();
-    Ship::move(loc, warpFactor);
+    Ship::move(loc);
 }
 
 // Makes the Enterprise take damage based off
@@ -109,9 +109,11 @@ bool Enterprise::takeDamage(double phaserEnergy) {
     return isDestroyed();
 }
 
-// Calculates the amount of damage the phaser does to a klingon
+// Calculates the amount of damage the phaser does to a klingon.
+// Reduces accurarcy if the COMPUTER_SYSTEMS are broken (essentially
+// decreases the amount of damage). 
 int Enterprise::firePhasers(double phaserEnergy, int x, int y, int numKlingons) {
-    double distance = std::sqrt(std::pow(getLocation().sectorX - x, 2) + std::pow(getLocation().sectorY - y, 2));
+    double distance = std::hypot(getLocation().sectorX - x, getLocation().sectorY - y);
     double h = phaserEnergy / numKlingons;
 
     return isDeviceBroken(std::string(Devices::COMPUTER_SYSTEMS)) ? 
@@ -172,7 +174,7 @@ void Enterprise::updateDocked(bool value) {
 
 // Repairs all devices.  
 void Enterprise::repairDevices() {
-    devices.repairAll(100000); // repairs all devices completely
+    devices.repairAllDevicesFully(); 
 }
 
 // Estimates how much time it would take to repair all devices. 

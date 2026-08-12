@@ -101,7 +101,7 @@ private:
         {"POLLUX",      "SPICA"}
     }};
 
-    static inline constexpr std::array<std::string_view, 4> numerals = {
+    static inline constexpr std::array<std::string_view, 4> NUMERALS = {
         "I", "II", "III", "IV"
     };
 

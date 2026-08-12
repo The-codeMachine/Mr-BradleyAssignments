@@ -34,5 +34,5 @@ common::Location Klingon::calculateDestination() const {
 
 // Moves the klingon to a new location
 void Klingon::move(common::Location loc) {
-    Ship::move(loc, 0);
+    Ship::move(loc);
 }

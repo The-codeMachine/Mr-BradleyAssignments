@@ -159,8 +159,8 @@ void QuadrantMap::place(int x, int y, const std::string &value)
     quadrantString.place(index, value);
 
     if (value == ENTERPRISE) {
-        enterprise.sectorX = common::toBase1(x);
-        enterprise.sectorY = common::toBase1(y);
+        enterprise.sectorX = common::toBase0(x);
+        enterprise.sectorY = common::toBase0(y);
     }
 }
 
@@ -284,7 +284,7 @@ void QuadrantMap::klingonsMove() {
             location = klingon.calculateDestination();
         }
 
-        move(klingon.getLocation(), location, QuadrantMap::KLINGON);
+        move(klingon.getLocation(), location, KLINGON);
         klingon.move(location);
     }
 }
@@ -298,7 +298,6 @@ common::Location& QuadrantMap::base() {
 const common::Location& QuadrantMap::base() const {
     return baseLocation;
 }
-
 
 // Checks whether the Enterprise can dock or not based off its current position.
 // Returns true if the Enterprise can dock, and false elsewise. 

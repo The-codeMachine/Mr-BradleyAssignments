@@ -34,6 +34,7 @@
  *
  *  - Check the damage of a device
  *  - Check if a device is damaged or not
+ *  - Check how many devices are damaged
  *
  *  - Print a status report / Convert to string
  *
@@ -50,6 +51,7 @@ public:
 
     void makeRepair(const std::string_view &deviceName, double amount);
     void repairAll(double amount);
+    void repairAllDevicesFully();
     void repairOverTime(double time);
     void repairEvent();
 

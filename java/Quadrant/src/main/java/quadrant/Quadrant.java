@@ -1,5 +1,7 @@
 package quadrant;
 
+import common.*;
+
 /**
  * A Quadrant holds the contents of the quadrant in terms
  * of the number of each item present. Each Quadrant may
@@ -39,9 +41,6 @@ package quadrant;
  * @author Mr. Bradley
  * @version SPRING 2026
  */
-
-import common.*;
-
 public class Quadrant {
     /**
      * Generates a quadrant using a RNG
@@ -117,7 +116,7 @@ public class Quadrant {
     }
 
     /**
-     * Removes a base from a quadrant (to ensure it does not exceed 2 per galaxy)
+     * Removes all bases from a quadrant (to ensure it does not exceed 2 per galaxy)
      */
     public void removeBase() {
         kbs = setContent(klingons(), 0, stars());
