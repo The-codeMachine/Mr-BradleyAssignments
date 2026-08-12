@@ -61,7 +61,7 @@ private:
     void firePhasers(double phaserEnergy);
     void fireTorpedo(double warpDirection);
 
-    std::vector<Klingon>::iterator destroyKlingon(common::Location position);
+    bool destroyKlingon(common::Location position);
 
     bool handleCommand();
     

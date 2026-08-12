@@ -272,9 +272,8 @@ void Game::firePhasers(double phaserEnergy) {
             continue;
         }
 
-        it = destroyKlingon(klingonLocation);
-        if (it == currentKlingons.end())
-            break;
+        destroyKlingon(common::Location(klingonLocation.sectorX, klingonLocation.sectorY, location.quadrantX, location.quadrantY));
+        it = currentKlingons.begin();
     }
 }
 
@@ -334,25 +333,28 @@ void Game::fireTorpedo(double warpDirection) {
 // Destroys the klingon at a position. Removes it from QuadrantMap,
 // the klingons vector, and galaxy. Returns an iterator pointing to the
 // next klingon. 
-std::vector<Klingon>::iterator Game::destroyKlingon(common::Location position) {
-    auto& currKlingons = at(position).getKlingons();
+bool Game::destroyKlingon(common::Location position) {
+    auto& klingons = at(position).getKlingons();
 
-    for (auto it = currKlingons.begin(); it != currKlingons.end();) {
-        auto klingonLocation = it->getLocation();
-        
-        if (!klingonLocation.sameSector(position)) {
-            ++it;
+    for (auto it = klingons.begin(); it != klingons.end(); ++it) {
+        if (!it->getLocation().sameSector(position))
             continue;
-        }
 
-        at(enterprise.getLocation()).removeObject(klingonLocation, QuadrantMap::KLINGON);
-        galaxy.reduceKlingons(enterprise.getLocation());
+        const auto klingonLocation = it->getLocation();
 
-        common::IO::printf("***Klingon Destroyed***\nKlingon: %s\n", klingonLocation.toString().c_str());
-        return currKlingons.erase(it);
+        at(position).removeObject(klingonLocation, QuadrantMap::KLINGON);
+        galaxy.reduceKlingons(position);
+
+        common::IO::printf(
+            "***Klingon Destroyed***\nKlingon: %s\n",
+            klingonLocation.toString().c_str()
+        );
+
+        klingons.erase(it);
+        return true;
     }
 
-    return currKlingons.end();
+    return false;
 }
 
 // Handles a command from the user. Takes the input

@@ -149,7 +149,7 @@ void Devices::repairAll(double amount)
 // Repairs all devices completely. No device will be
 // broken after this. 
 void Devices::repairAllDevicesFully() {
-    for (int i = 0; i < sizeof(devices); ++i) {
+    for (int i = 0; i < std::size(devices); ++i) {
         devices[i] = 0;
     }
 }
@@ -215,7 +215,7 @@ std::string Devices::getStatus(const std::string_view &deviceName) const
 int Devices::numDamaged() const {
     int out = 0;
     
-    for (int i = 0; i < sizeof(devices); ++i) {
+    for (int i = 0; i < std::size(devices); ++i) {
         if (devices[i] < 0)
             out++;
     }
