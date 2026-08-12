@@ -206,8 +206,8 @@ public class Game {
      * 
      */
     private void initializeQuadrants() {
-        for (int x = 0; x < MAP_SIZE; ++x) {
-            for (int y = 0; y < MAP_SIZE; ++y) {
+        for (int x = 0; x < GameLib.MAP_SIZE; ++x) {
+            for (int y = 0; y < GameLib.MAP_SIZE; ++y) {
                 map[x][y] = new QuadrantMap(galaxy.getQuadrant(GameLib.toBase1(x), GameLib.toBase1(y)));
             }
         }
@@ -529,7 +529,7 @@ public class Game {
 
             shortRangeCommand();
         } catch (Exception e) {
-            IO.warning("Invalid usage of NAV");
+            IO.exception(e);
         }
     }
 
@@ -601,8 +601,7 @@ public class Game {
             enterprise.takeDamage(at(enterprise.getLocation()).klingonsFire());
             shortRangeCommand();
         } catch (Exception e) {
-            IO.warning("Please enter valid doubles");
-            IO.warning(e.toString());
+            IO.exception(e);
             return;
         }
     }
@@ -630,7 +629,7 @@ public class Game {
             enterprise.takeDamage(at(enterprise.getLocation()).klingonsFire());
             shortRangeCommand();
         } catch (Exception e) {
-            IO.warning("Please enter valid doubles");
+            IO.exception(e);
             return;
         }
     }
@@ -669,7 +668,7 @@ public class Game {
 
             enterprise.takeDamage(at(enterprise.getLocation()).klingonsFire());
         } catch (Exception e) {
-            IO.warning("Invalid usage of SHE");
+            IO.exception(e);
         }
     }
 
@@ -747,7 +746,7 @@ public class Game {
                     break;
             }
         } catch (NumberFormatException e) {
-            IO.warning("Please enter a valid int");
+            IO.exception(e);
         }
     }
 
@@ -920,7 +919,7 @@ public class Game {
         if (distance == 0.0)
             return new DDResult(direction, factor);
 
-        factor = distance / MAP_SIZE;
+        factor = distance / GameLib.MAP_SIZE;
 
         double degrees = Math.toDegrees(Math.atan2(dy, dx));
 
@@ -943,10 +942,6 @@ public class Game {
     private double currentStardate;
     private int startingStardate;
     private int missionDuration;
-
-    private static final int MAP_SIZE = 8;
-    private static final int MIN_SECTOR = 1;
-    private static final int MAX_SECTOR = 8;
 
     private record DDResult(double direction, double factor) {}
     private record MovementResult(Location destination, double starDateChange) {}

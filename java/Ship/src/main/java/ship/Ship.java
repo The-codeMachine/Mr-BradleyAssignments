@@ -2,6 +2,7 @@ package ship;
 
 import java.util.ArrayList;
 
+import common.GameLib;
 import common.GameLib.Location;
 
 /**
@@ -130,7 +131,7 @@ public class Ship {
         warpFactor = Math.min(warpFactor, 8.0);
 
         // Warp 1 = 8 sectors
-        double distance = warpFactor * GRID_SIZE;
+        double distance = warpFactor * GameLib.MAP_SIZE;
 
         // Convert direction into angle
         double angleDegrees = (warpDirection - 1.0) * 45.0;
@@ -146,8 +147,8 @@ public class Ship {
         dy /= length;
 
         // Current galaxy position
-        double x = location.quadrantX * GRID_SIZE + location.sectorX;
-        double y = location.quadrantY * GRID_SIZE + location.sectorY;
+        double x = location.quadrantX * GameLib.COLS + location.sectorX;
+        double y = location.quadrantY * GameLib.ROWS + location.sectorY;
 
         int lastX = (int) Math.floor(x);
         int lastY = (int) Math.floor(y);
@@ -181,11 +182,11 @@ public class Ship {
 
             if (globalX != lastX || globalY != lastY) {
 
-                int quadrantX = globalX / GRID_SIZE;
-                int quadrantY = globalY / GRID_SIZE;
+                int quadrantX = globalX / GameLib.COLS;
+                int quadrantY = globalY / GameLib.ROWS;
 
-                int sectorX = globalX % GRID_SIZE;
-                int sectorY = globalY % GRID_SIZE;
+                int sectorX = globalX % GameLib.COLS;
+                int sectorY = globalY % GameLib.ROWS;
 
                 path.add(new Location(
                         sectorX,
@@ -304,6 +305,5 @@ public class Ship {
 
     private Location location;
 
-    private static final int GRID_SIZE = 8;
     private static final double EPSILON = 1e-9;
 }

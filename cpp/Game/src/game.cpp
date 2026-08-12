@@ -23,8 +23,8 @@ void Game::constructGame() {
 
 // Initializes all Quadrants in the Game
 void Game::initializeQuadrants() {
-    for (int x = 0; x < MAP_SIZE; ++x) {
-        for (int y = 0; y < MAP_SIZE; ++y) {
+    for (int x = 0; x < common::MAP_SIZE; ++x) {
+        for (int y = 0; y < common::MAP_SIZE; ++y) {
             map[x][y] = QuadrantMap(galaxy.getQuadrant(common::toBase1(x), common::toBase1(y)));
         }
     }
@@ -421,7 +421,7 @@ void Game::moveCommand(const std::vector<std::string>& command) {
 
         shortRangeCommand();
     } catch (const std::exception& e) {
-        common::IO::warning("Please enter valid doubles");
+        common::IO::warning("Error occurred: " + std::string(e.what()));
         return;
     }
 }
@@ -484,7 +484,7 @@ void Game::phaserCommand(const std::vector<std::string>& command) {
         enterprise.takeDamage(at(enterprise.getLocation()).klingonsFire());
         shortRangeCommand();
     } catch (const std::exception& e) {
-        common::IO::warning("Please enter valid doubles");
+        common::IO::warning("Error occurred: " + std::string(e.what()));
         return;
     }
 }
@@ -508,7 +508,7 @@ void Game::torpedoCommand(const std::vector<std::string>& command) {
         enterprise.takeDamage(at(enterprise.getLocation()).klingonsFire());
         shortRangeCommand();
     } catch (const std::exception& e) {
-        common::IO::warning("Please enter valid doubles");
+        common::IO::warning("Error occurred: " + std::string(e.what()));
         return;
     }
 }
@@ -539,7 +539,7 @@ void Game::shieldCommand(const std::vector<std::string>& command) {
 
         enterprise.adjustShields(newShields);
     } catch (const std::exception& e) {
-        common::IO::warning("Please enter valid doubles");
+        common::IO::warning("Error occurred: " + std::string(e.what()));
         return;
     }
 }
@@ -555,6 +555,8 @@ void Game::damageReportCommand() {
     
     // repair the devices
     double repairTime = enterprise.estimateRepairDevices();
+
+    // means no devices need repairing, so do not ask
     if (repairTime <= 0.0)  
         return;
 
@@ -608,7 +610,7 @@ void Game::computerLibraryCommand(const std::vector<std::string>& command) {
             break;
         }
     } catch (const std::exception& e) {
-        common::IO::warning("Please enter a valid int");
+        common::IO::warning("Error occurred: " + std::string(e.what()));
         return;
     }
 }
@@ -744,7 +746,7 @@ void Game::calculateDD(common::Location startingLocation,
     if (distance == 0.0)
         return;
 
-    factor = distance / MAP_SIZE;
+    factor = distance / common::MAP_SIZE;
 
     double degrees = common::degrees(std::atan2(dy, dx));
 

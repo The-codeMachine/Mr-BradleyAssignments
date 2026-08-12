@@ -58,10 +58,6 @@ namespace common {
 
         int sectorX;
         int sectorY;
-        
-    private:
-        static constexpr int MIN = 0;
-        static constexpr int MAX = 7;
     };
 
     bool isBetween();
@@ -74,6 +70,24 @@ namespace common {
 
     void isBetweenTest();
     void testDriver();
+
+    // represents the size of one size
+    static inline constexpr int MAP_SIZE = 8;
+    
+    // the number of rows
+    static inline constexpr int ROWS = 8;
+    
+    // the number of columns
+    static inline constexpr int COLS = 8;
+    
+    // the 0-based indices
+    static inline constexpr int MIN_INDEX_0 = 0;
+    static inline constexpr int MAX_INDEX_0 = 7;
+
+    // the 1-based indices
+    static inline constexpr int MIN_INDEX_1 = 1;
+    static inline constexpr int MAX_INDEX_1 = 8;
+
     
 } // namespace common
 

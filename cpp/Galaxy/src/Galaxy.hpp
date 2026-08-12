@@ -85,11 +85,6 @@ private:
     static bool validIndex(int index);
 
 private:
-    static inline constexpr int MIN_INDEX = 0;
-    static inline constexpr int MAX_INDEX = 7;
-
-    static inline constexpr int MAP_SIZE = 8;
-
     static inline constexpr std::array<std::array<std::string_view, 2>, 8> GALATIC_REGION_NAMES = {{
         {"ANTARES",     "SIRIUS"},
         {"RIGEL",       "DENEB"},
@@ -106,8 +101,8 @@ private:
     };
 
 private:
-    Quadrant map[MAP_SIZE][MAP_SIZE];
-    std::array<std::array<std::optional<Quadrant>, MAP_SIZE>, MAP_SIZE> scannedGalaxy;
+    Quadrant map[common::ROWS][common::COLS];
+    std::array<std::array<std::optional<Quadrant>, common::COLS>, common::ROWS> scannedGalaxy;
 
     int totalBases;
     int totalKlingons;

@@ -184,7 +184,7 @@ public class Galaxy {
         IO.println(StringUtils.padLeft("  1     2     3     4     5     6     7     8  ", 52));
         IO.println(StringUtils.padLeft("----- ----- ----- ----- ----- ----- ----- -----", 52));
 
-        for (int y = MIN_INDEX; y <= MAX_INDEX; ++y) {
+        for (int y = GameLib.MIN_INDEX_0; y <= GameLib.MAX_INDEX_0; ++y) {
             IO.printf("%d   %s%s\n",
                                 GameLib.toBase1(y), 
                                 StringUtils.padCenter(getQuadrantRegionName(new Location(-1, -1, 0, y)), 24), 
@@ -278,10 +278,10 @@ public class Galaxy {
      * @param location
      */
     public void longRangeScan(Location location) {
-        int startY = (int)MathUtils.clamp(location.quadrantY - 1, MIN_INDEX, MAX_INDEX);
-        int endY   = (int)MathUtils.clamp(location.quadrantY + 1, MIN_INDEX, MAX_INDEX);
-        int startX = (int)MathUtils.clamp(location.quadrantX - 1, MIN_INDEX, MAX_INDEX);
-        int endX   = (int)MathUtils.clamp(location.quadrantX + 1, MIN_INDEX, MAX_INDEX);
+        int startY = (int)MathUtils.clamp(location.quadrantY - 1, GameLib.MIN_INDEX_0, GameLib.MAX_INDEX_0);
+        int endY   = (int)MathUtils.clamp(location.quadrantY + 1, GameLib.MIN_INDEX_0, GameLib.MAX_INDEX_0);
+        int startX = (int)MathUtils.clamp(location.quadrantX - 1, GameLib.MIN_INDEX_0, GameLib.MAX_INDEX_0);
+        int endX   = (int)MathUtils.clamp(location.quadrantX + 1, GameLib.MIN_INDEX_0, GameLib.MAX_INDEX_0);
 
         for (int y = startY; y <= endY; ++y) {
             for (int x = startX; x <= endX; ++x)
@@ -311,8 +311,8 @@ public class Galaxy {
     public void printScannedGalaxy() {
         IO.println("\n+-----+-----+-----+-----+-----+-----+-----+-----+");
 
-        for (int y = 0; y < MAP_SIZE; ++y) {
-            for (int x = 0; x < MAP_SIZE; ++x) {
+        for (int y = 0; y < GameLib.MAP_SIZE; ++y) {
+            for (int x = 0; x < GameLib.MAP_SIZE; ++x) {
                 Quadrant q = scannedGalaxy[y][x];
                 if (q == null) {
                     IO.printf("| --- ");
@@ -457,7 +457,7 @@ public class Galaxy {
      * @return
      */
     private static boolean validIndex(int index) {
-        return index >= MIN_INDEX && index <= MAX_INDEX;
+        return index >= GameLib.MIN_INDEX_0 && index <= GameLib.MAX_INDEX_0;
     }
 
     private Quadrant[][] map = new Quadrant[8][8];
@@ -465,12 +465,6 @@ public class Galaxy {
 
     private int totalBases;
     private int totalKingons;
-
-
-    private static final int MIN_INDEX = 0;
-    private static final int MAX_INDEX = 7;
-    
-    private static final int MAP_SIZE = 8;
 
     private static final List<List<String>> GALACTIC_REGION_NAMES = List.of(
         List.of("ANTARES",     "SIRIUS"),

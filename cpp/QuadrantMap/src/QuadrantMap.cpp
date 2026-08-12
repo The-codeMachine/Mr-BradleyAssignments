@@ -45,7 +45,7 @@ int QuadrantMap::getIndexFrom(int x, int y)
 {
     assert(validPos(x, y));
 
-    return common::toBase0(x) + common::toBase0(y) * COLS;
+    return common::toBase0(x) + common::toBase0(y) * common::COLS;
 }
 
 // Generates two random ints, one the x (0), and the other
@@ -53,21 +53,21 @@ int QuadrantMap::getIndexFrom(int x, int y)
 // as base-1 positions. Based off the COLS and ROWS.
 void QuadrantMap::generateRandomPosition(int &x, int &y)
 {
-    x = common::randomInt(1, COLS);
-    y = common::randomInt(1, ROWS);
+    x = common::randomInt(1, common::COLS);
+    y = common::randomInt(1, common::ROWS);
 }
 
 // Checks whether the supplied 1-based coordinates lie within
 // the bounds of the quadrant.
 bool QuadrantMap::validPos(int x, int y)
 {
-    return x > 0 && x <= COLS && y > 0 && y <= ROWS;
+    return x > 0 && x <= common::COLS && y > 0 && y <= common::ROWS;
 }
 
 // Inserts a value into a random location. Uses base-1.
 void QuadrantMap::placeValues(int amount, const std::string &value)
 {
-    assert(amount <= ROWS * COLS);
+    assert(amount <= common::ROWS * common::COLS);
 
     while (amount--)
     {
@@ -86,7 +86,7 @@ void QuadrantMap::placeValues(int amount, const std::string &value)
 
 // Places klingons and records their positions
 void QuadrantMap::placeKlingons(int amount) {
-    assert(amount <= ROWS * COLS);
+    assert(amount <= common::ROWS * common::COLS);
 
     while (amount--)
     {
@@ -108,7 +108,7 @@ void QuadrantMap::placeKlingons(int amount) {
 void QuadrantMap::placeBase(int amount) {
     baseLocation = {-1, -1, -1, -1};
     
-    assert(amount <= ROWS * COLS);
+    assert(amount <= common::ROWS * common::COLS);
 
     while (amount--)
     {
@@ -308,15 +308,13 @@ const common::Location& QuadrantMap::base() const {
 // Checks whether the Enterprise can dock or not based off its current position.
 // Returns true if the Enterprise can dock, and false elsewise. 
 bool QuadrantMap::canDock() const noexcept {
-    constexpr int MIN_SECTOR = 1;
-    constexpr int MAX_SECTOR = 8;
-
     const int centerX = common::toBase1(enterprise.sectorX);
     const int centerY = common::toBase1(enterprise.sectorY);
 
     for (int y = centerY - 1; y <= centerY + 1; ++y) {
         for (int x = centerX - 1; x <= centerX + 1; ++x) {
-            if (x < MIN_SECTOR || x > MAX_SECTOR || y < MIN_SECTOR || y > MAX_SECTOR)
+            if (x < common::MIN_INDEX_1 || x > common::MAX_INDEX_1 || 
+                y < common::MIN_INDEX_1 || y > common::MAX_INDEX_1)
                 continue;
 
             if (at(x, y) == QuadrantMap::BASE)
@@ -374,11 +372,11 @@ std::string QuadrantMap::toString() const
 {
     std::string out;
 
-    for (size_t i = 1; i <= ROWS; ++i)
+    for (size_t i = 1; i <= common::ROWS; ++i)
     {
         out += "---+---+---+---+---+---+---+---+\n";
 
-        for (size_t j = 1; j <= COLS; ++j)
+        for (size_t j = 1; j <= common::COLS; ++j)
         {
             out += at(j, i) + "|";
         }

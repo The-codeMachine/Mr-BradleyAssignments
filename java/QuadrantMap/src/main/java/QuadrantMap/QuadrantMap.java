@@ -302,7 +302,8 @@ public class QuadrantMap {
 
         for (int y = centerY - 1; y <= centerY + 1; ++y) {
             for (int x = centerX - 1; x <= centerX + 1; ++x) {
-                if (x < MIN_SECTOR || x > MAX_SECTOR || y < MIN_SECTOR || y > MAX_SECTOR)
+                if (x < GameLib.MIN_INDEX_1 || x > GameLib.MAX_INDEX_1 || 
+                    y < GameLib.MIN_INDEX_1 || y > GameLib.MAX_INDEX_1)
                     continue;
 
                 if (at(x, y).equals(BASE))
@@ -387,12 +388,12 @@ public class QuadrantMap {
     @Override
     public String toString() {
         String out = "";
-        final String dashRow = "---+".repeat(COLS) + "\n";
+        final String dashRow = "---+".repeat(GameLib.COLS) + "\n";
 
-        for (int i = 1; i <= ROWS; ++i) {
+        for (int i = 1; i <= GameLib.ROWS; ++i) {
             out += dashRow;
 
-            for (int j = 1; j <= COLS; ++j) {
+            for (int j = 1; j <= GameLib.COLS; ++j) {
                 out += at(j, i) + "|";
             }
 
@@ -410,7 +411,7 @@ public class QuadrantMap {
      * @param value
      */
     private void placeValues(int amount, String value) {
-        assert amount <= ROWS * COLS;
+        assert amount <= GameLib.ROWS * GameLib.COLS;
 
         for (int i = 0; i < amount; ++i) {
             int[] pos = generateRandomPosition();
@@ -431,7 +432,7 @@ public class QuadrantMap {
      * @param amount
      */
     private void placeKlingons(int amount) {
-        assert amount <= ROWS * COLS;
+        assert amount <= GameLib.ROWS * GameLib.COLS;
 
         for (int i = 0; i < amount; ++i) {
             int[] pos = generateRandomPosition();
@@ -448,7 +449,7 @@ public class QuadrantMap {
     private void placeBases(int amount) {
         baseLocation = new Location(-1, -1, -1, -1);
 
-        assert(amount <= ROWS * COLS);
+        assert(amount <= GameLib.ROWS * GameLib.COLS);
 
         for (int i = 0; i < amount; ++i) {
             int[] pos = generateRandomPosition();
@@ -521,7 +522,7 @@ public class QuadrantMap {
         assert validPos(x, y) : "(x, y) must be a valid sector";
 
         // converts to base-0 because QuadrantString uses base-0
-        return GameLib.toBase0(y) * COLS + GameLib.toBase0(x);
+        return GameLib.toBase0(y) * GameLib.COLS + GameLib.toBase0(x);
     }
 
     /**
@@ -534,8 +535,8 @@ public class QuadrantMap {
      */
     private static int[] generateRandomPosition() {
         int[] out = new int[2];
-        out[X] = GameLib.randomInt(1, COLS);
-        out[Y] = GameLib.randomInt(1, ROWS);
+        out[X] = GameLib.randomInt(1, GameLib.COLS);
+        out[Y] = GameLib.randomInt(1, GameLib.ROWS);
 
         return out;
     }
@@ -550,19 +551,13 @@ public class QuadrantMap {
      * @return true if (x, y) is a valid sector
      */
     private static boolean validPos(int x, int y) {
-        return x > 0 && x <= COLS && y > 0 && y <= ROWS;
+        return x > 0 && x <= GameLib.COLS && y > 0 && y <= GameLib.ROWS;
     }
 
     private QuadrantString quadrantString;
     private ArrayList<Klingon> klingons;
     private Location baseLocation;
     private Location enterprise;
-
-    private static final int ROWS = 8;
-    private static final int COLS = 8;
-
-    private static final int MIN_SECTOR = 1;
-    private static final int MAX_SECTOR = 8;
 
     private static final int X = 0, Y = 1; // array point index names
 

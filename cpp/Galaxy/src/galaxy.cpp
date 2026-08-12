@@ -111,7 +111,7 @@ void Galaxy::printGalaticRegionMap() {
     common::IO::println(common::padLeft("  1     2     3     4     5     6     7     8  ", 52));
     common::IO::println(common::padLeft("----- ----- ----- ----- ----- ----- ----- -----", 52));
 
-    for (int y = MIN_INDEX; y <= MAX_INDEX; ++y) {
+    for (int y = common::MIN_INDEX_0; y <= common::MAX_INDEX_0; ++y) {
         common::IO::printf("%d   %s%s\n",
                             common::toBase1(y), 
                             common::padCenter(getQuadrantRegionName({-1, -1, 0, y}), 24).c_str(), 
@@ -168,10 +168,10 @@ void Galaxy::reduceKlingons(common::Location location) {
 // Makes a long range scan around the Enterprise (inputted as location). 
 // Updates the scanned galaxy. 
 void Galaxy::longRangeScan(common::Location location) {
-    const int startY = std::clamp(location.quadrantY - 1, MIN_INDEX, MAX_INDEX);
-    const int endY   = std::clamp(location.quadrantY + 1, MIN_INDEX, MAX_INDEX);
-    const int startX = std::clamp(location.quadrantX - 1, MIN_INDEX, MAX_INDEX);
-    const int endX   = std::clamp(location.quadrantX + 1, MIN_INDEX, MAX_INDEX);
+    const int startY = std::clamp(location.quadrantY - 1, common::MIN_INDEX_0, common::MAX_INDEX_0);
+    const int endY   = std::clamp(location.quadrantY + 1, common::MIN_INDEX_0, common::MAX_INDEX_0);
+    const int startX = std::clamp(location.quadrantX - 1, common::MIN_INDEX_0, common::MAX_INDEX_0);
+    const int endX   = std::clamp(location.quadrantX + 1, common::MIN_INDEX_0, common::MAX_INDEX_0);
 
     for (int y = startY; y <= endY; ++y) {
         for (int x = startX; x <= endX; ++x)
@@ -197,8 +197,8 @@ void Galaxy::longRangeScan(common::Location location) {
 void Galaxy::printScannedGalaxy() const noexcept {
     common::IO::println("\n+-----+-----+-----+-----+-----+-----+-----+-----+");
 
-    for (int y = 0; y < MAP_SIZE; ++y) {
-        for (int x = 0; x < MAP_SIZE; ++x) {
+    for (int y = 0; y < common::ROWS; ++y) {
+        for (int x = 0; x < common::COLS; ++x) {
             auto q = scannedGalaxy[y][x];
             if (q == std::nullopt) {
                 common::IO::printf("| --- ");
@@ -254,7 +254,7 @@ void Galaxy::populateGalaxy()
 
 // Checks whether index is a valid index for the galaxy. Takes base-0 coordinates. 
 bool Galaxy::validIndex(int index) {
-    return index >= MIN_INDEX && index <= MAX_INDEX;
+    return index >= common::MIN_INDEX_0 && index <= common::MAX_INDEX_0;
 }
 
 #ifndef NDEBUG

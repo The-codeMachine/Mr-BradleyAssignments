@@ -15,8 +15,8 @@ namespace common
         sectorX(sectorX), sectorY(sectorY), quadrantX(quadrantX), quadrantY(quadrantY) {}
 
     // Generates a random sector (x, y) and quadrant (x, y) position. Makes sure it is valid.   
-    Location::Location() : sectorX(common::randomInt(MIN, MAX)), sectorY(common::randomInt(MIN, MAX)),
-        quadrantX(common::randomInt(MIN, MAX)), quadrantY(common::randomInt(MIN, MAX)) {}
+    Location::Location() : sectorX(common::randomInt(MIN_INDEX_0, MAX_INDEX_0)), sectorY(common::randomInt(MIN_INDEX_0, MAX_INDEX_0)),
+        quadrantX(common::randomInt(MIN_INDEX_0, MAX_INDEX_0)), quadrantY(common::randomInt(MIN_INDEX_0, MAX_INDEX_0)) {}
 
     // Checks whether or not this location has the same values as another, returns
     // true if it does 

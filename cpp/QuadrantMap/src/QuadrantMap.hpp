@@ -111,10 +111,6 @@ private:
    std::vector<Klingon> klingons;
    common::Location baseLocation;
    common::Location enterprise;
-
-   static inline constexpr size_t ROWS = 8;
-   static inline constexpr size_t COLS = 8;
-   static inline constexpr size_t SYMBOL_SIZE = 3;
 };
 
 /*

@@ -57,6 +57,4 @@ private:
     int energy;
 
     common::Location location;
-
-    static constexpr int GRID_SIZE = 8;
 };

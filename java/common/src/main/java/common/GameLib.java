@@ -40,11 +40,11 @@ public class GameLib {
         }
 
         public Location() {
-            sectorX = GameLib.randomInt(MIN, MAX);
-            sectorY = GameLib.randomInt(MIN, MAX);
+            sectorX = GameLib.randomInt(MIN_INDEX_0, MAX_INDEX_0);
+            sectorY = GameLib.randomInt(MIN_INDEX_0, MAX_INDEX_0);
             
-            quadrantX = GameLib.randomInt(MIN, MAX);
-            quadrantY = GameLib.randomInt(MIN, MAX);
+            quadrantX = GameLib.randomInt(MIN_INDEX_0, MAX_INDEX_0);
+            quadrantY = GameLib.randomInt(MIN_INDEX_0, MAX_INDEX_0);
         }
 
         /**
@@ -90,9 +90,6 @@ public class GameLib {
 
         public int quadrantX;
         public int quadrantY;
-
-        private static final int MIN = 0;
-        private static final int MAX = 7;
     }
 
     // Random helper functions
@@ -301,6 +298,23 @@ public class GameLib {
 
         System.out.println("GameLib test driver run success");
     }
+
+    // represents the size of one size
+    public static final int MAP_SIZE = 8;
+    
+    // the number of rows
+    public static final int ROWS = 8;
+    
+    // the number of columns
+    public static final int COLS = 8;
+    
+    // the 0-based indices
+    public static final int MIN_INDEX_0 = 0;
+    public static final int MAX_INDEX_0 = 7;
+
+    // the 1-based indices
+    public static final int MIN_INDEX_1 = 1;
+    public static final int MAX_INDEX_1 = 8;
 }
 
 /*

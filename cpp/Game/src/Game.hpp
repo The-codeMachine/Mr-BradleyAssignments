@@ -94,10 +94,4 @@ private:
     int startingStardate;
     int missionDuration;
 
-private:
-    static inline constexpr int MAP_SIZE = 8;
-
-    static inline constexpr int MIN_SECTOR = 1;
-    static inline constexpr int MAX_SECTOR = 8;
-
 };
