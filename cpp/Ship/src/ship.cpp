@@ -75,7 +75,7 @@ bool Ship::isDestroyed() const noexcept {
 // trignonmetry to calculate the precise place
 // the ship will end up. This uses a ray. 
 // 
-// The path will be returned as base-0.
+// The path will be returned as base-1.
 // 
 // This converts the warp direction into radians
 // (degrees). Based off these degrees it calculates

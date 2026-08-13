@@ -15,7 +15,7 @@ import common.MathUtils;
  * The Galaxy represents this game's world. It encapsulates
  * 64 quadrants in an 8 x 8 grid. Every quadrant is accessible
  * through the getQuadrant function. All functions take base-1
- * coordinates or a Location (using base-0). 
+ * coordinates or a Location (using base-1). 
  * 
  * The Galaxy ensures there is a maximum of 2 star bases and a 
  * minimum of 1 star base. You can get the total number of 
@@ -70,7 +70,7 @@ public class Galaxy {
      * 
      * Gets the Quadrant located at (quadrantX, quadrantY). 
      * 
-     * Takes base-0 coordinates through Location.
+     * Takes base-1 coordinates through Location.
      * 
      * @param loc
      * @return a Quadrant located at (quadrantX, quadrantY)
@@ -94,7 +94,7 @@ public class Galaxy {
 
     /**
      * 
-     * Returns the galatic region name of a particular quadrant. Takes base-0
+     * Returns the galatic region name of a particular quadrant. Takes base-1
      * coordinates through Location. 
      * 
      * @param location
@@ -126,7 +126,7 @@ public class Galaxy {
     /**
      * 
      * Gets a quadrant's roman numeral for a paritcular region. Takes
-     * base-0 coordinates through location. 
+     * base-1 coordinates through location. 
      * 
      * @param location
      * @return the Quadrant's roman numeral for a particular region
@@ -157,7 +157,7 @@ public class Galaxy {
 
     /**
      * 
-     * Gets a quadrant's full galatic region name based off a location. Takes base-0
+     * Gets a quadrant's full galatic region name based off a location. Takes base-1
      * coordinates through location.
      * 
      * @param location
@@ -224,7 +224,7 @@ public class Galaxy {
     /**
      * 
      * Reduces the number of star bases by one, and removes it from
-     * the quadrant. Takes base-0 coordinates through location. 
+     * the quadrant. Takes base-1 coordinates through location. 
      * 
      * @param location
      */
@@ -263,7 +263,7 @@ public class Galaxy {
      * 
      * Reduces the amount of klingons in both the specific Quadrant and the
      * total number of klingons. Checks that there is actually a klingon in
-     * that quadrant. Takes base-0 coordinates through Location.
+     * that quadrant. Takes base-1 coordinates through Location.
      * 
      * @param location
      */
@@ -452,7 +452,7 @@ public class Galaxy {
     /**
      * 
      * Checks whether index is a valid index for the galaxy. Takes
-     * base-0 coordinates. 
+     * base-1 coordinates. 
      * 
      * @param index
      * @return

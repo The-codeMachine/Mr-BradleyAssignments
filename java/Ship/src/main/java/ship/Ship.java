@@ -26,9 +26,9 @@ import common.GameLib.Location;
  *  - Makes the ship take damage (reduces the energy levels).
  *  - Makes the ship fire its phasers (simply calculates the damage output).
  * 
- * All functions take base-0 coordinates. This includes the firePhasers function.
+ * All functions take base-1 coordinates. This includes the firePhasers function.
  * Despite it taking raw coordinates, unlike most classes where it would take
- * base-1 coordinates, this takes base-0 coordinates. 
+ * base-1 coordinates, this takes base-1 coordinates. 
  * 
  */
 public class Ship {
@@ -96,7 +96,7 @@ public class Ship {
      * trignonmetry to calculate the precise place
      * the ship will end up. This uses a ray. 
      * 
-     * The path will be returned as base-0.
+     * The path will be returned as base-1.
      * 
      * This converts the warp direction into radians
      * (degrees). Based off these degrees it calculates

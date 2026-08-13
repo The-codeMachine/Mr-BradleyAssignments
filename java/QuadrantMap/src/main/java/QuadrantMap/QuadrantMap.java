@@ -35,7 +35,7 @@ import klingon.*;
  *  - Getting the string representation of an object at (x, y)
  *  - Checking whether (x, y) is empty
  * 
- * take either base-1 coordinates or base-0 through Location. We recommend 
+ * take either base-1 coordinates or base-1 through Location. We recommend 
  * using the Location functions, but both are possible. QuadrantMap
  * takes (column, row) notation. 
  * 
@@ -100,7 +100,7 @@ public class QuadrantMap {
     /**
      * 
      * Writes a fixed-width symbol into the specified sector.
-     * Uses base-0 coordinates through Location.
+     * Uses base-1 coordinates through Location.
      * 
      * @param loc
      * @param value
@@ -132,7 +132,7 @@ public class QuadrantMap {
      * Clearing is implemented by replacing the sectory with
      * the empty-space symbol.
      * 
-     * Uses base-0 coordinates through Location.
+     * Uses base-1 coordinates through Location.
      * 
      * @param loc
      */
@@ -182,7 +182,7 @@ public class QuadrantMap {
      * Enterprise or Klingons. Checks that the path between
      * the two coordinates is clear. 
      * 
-     * Uses base-0 coordinates through Location. 
+     * Uses base-1 coordinates through Location. 
      * 
      * @param oldLocation
      * @param newLocation
@@ -216,7 +216,7 @@ public class QuadrantMap {
      * Clears a sector only if it has value as
      * its object. If it does then it is cleared.
      * 
-     * Uses base-0 coordinates through Location.
+     * Uses base-1 coordinates through Location.
      * 
      * @param loc
      * @param object
@@ -345,7 +345,7 @@ public class QuadrantMap {
      * the backing String, and the fixed-width symbol stored
      * at that location is returned.
      * 
-     * Uses base-0 coordinates through Location.
+     * Uses base-1 coordinates through Location.
      * 
      * @param loc
      * @return the symbol as a string from (sectorX, sectorY)
@@ -378,7 +378,7 @@ public class QuadrantMap {
      * X, and y both use base-1 positions.
      * Checks if at(x, y) == " ".
      * 
-     * Uses base-0 coordinates through Location
+     * Uses base-1 coordinates through Location
      * 
      * @param loc
      * @return
@@ -523,7 +523,6 @@ public class QuadrantMap {
     private static int getIndexFrom(int x, int y) {
         assert validPos(x, y) : "(x, y) must be a valid sector";
 
-        // converts to base-0 because QuadrantString uses base-0
         return GameLib.toBase0(y) * GameLib.COLS + GameLib.toBase0(x);
     }
 
