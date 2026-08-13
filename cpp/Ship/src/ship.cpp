@@ -121,8 +121,8 @@ std::vector<common::Location> Ship::calculatePath(double warpFactor, double warp
     dx /= length;
     dy /= length;
 
-    double x = common::toBase0(location.quadrantY) * common::COLS + common::toBase0(location.sectorY);
-    double y = common::toBase0(location.quadrantX) * common::ROWS + common::toBase0(location.sectorX);
+    double x = common::toBase0(location.getQuadrantY()) * common::COLS + common::toBase0(location.getSectorY());
+    double y = common::toBase0(location.getQuadrantX()) * common::ROWS + common::toBase0(location.getSectorX());
 
     int lastX = (int) std::floor(x);
     int lastY = (int) std::floor(y);
@@ -197,7 +197,7 @@ bool Ship::takeDamage(double phaserEnergy) {
 // are in the quadant currently.
 // Takes base-1 input
 int Ship::firePhasers(double phaserEnergy, int x, int y) {
-    double distance = std::hypot(common::toBase0(location.sectorY) - x, common::toBase0(location.sectorX) - y);
+    double distance = std::hypot(common::toBase0(location.getSectorY()) - x, common::toBase0(location.getSectorX()) - y);
 
     return (phaserEnergy / distance) * (common::random() + 2);
 }

@@ -41,6 +41,66 @@ namespace common
         return sectorY == other.sectorY && sectorX == other.sectorX;
     }
 
+    // Gets the locations's quadrant x value
+    int Location::getQuadrantX() const noexcept {
+        return quadrantX;
+    }
+
+    // Gets the locations's quadrant y value
+    int Location::getQuadrantY() const noexcept {
+        return quadrantY;
+    }
+
+    // Gets the locations's sector x value
+    int Location::getSectorX() const noexcept {
+        return sectorX;
+    }
+
+    // Gets the locations's sector y value
+    int Location::getSectorY() const noexcept {
+        return sectorY;
+    }
+
+    // Sets a new quadrant x value, if it is invalid then it is set to invalid
+    void Location::setQuadrantX(int newValue) {
+        if (invalid(newValue)) {
+            quadrantX = INVALID;
+            return;
+        }
+        
+        quadrantX = newValue;
+    }
+
+    // Sets a new quadrant y value, if it is invalid then it is set to invalid
+    void Location::setQuadrantY(int newValue) {
+        if (invalid(newValue)) {
+            quadrantY = INVALID;
+            return;
+        }
+
+        quadrantY = newValue;
+    }
+
+    // Sets a new sector x value, if it is invalid then it is set to invalid
+    void Location::setSectorX(int newValue) {
+        if (invalid(newValue)) {
+            sectorX = INVALID;
+            return;
+        }
+        
+        sectorX = newValue;
+    }
+
+    // Sets a new sector y value, if it is invalid then it is set to invalid
+    void Location::setSectorY(int newValue) {
+        if (invalid(newValue)) {
+            sectorY = INVALID;
+            return;
+        }
+        
+        sectorY = newValue;
+    }
+
     // Returns a string representing this location's current sector. Returns
     // an empty string if the sector values at invalid
     std::string Location::sectorString() const {
@@ -81,6 +141,11 @@ namespace common
         out += " in " + qStr;
         
         return out;
+    }
+
+    // Checks whether the value is an invalid base-1 value 
+    bool Location::invalid(int value) {
+        return value < MIN_INDEX_1 || value > MAX_INDEX_1;
     }
 
     // Checks whether or not a value is between low and high (inclusive)

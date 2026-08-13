@@ -82,6 +82,110 @@ public class GameLib {
 
         /**
          * 
+         * Gets the current location's quadrant X
+         * 
+         * @return the current Locations quadrant X
+         */
+        public int getQuadrantX() {
+            return quadrantX;
+        }
+
+        /**
+         * 
+         * Gets the current location's quadrant Y
+         * 
+         * @return the current Locations quadrant Y
+         */
+        public int getQuadrantY() {
+            return quadrantY;
+        }
+
+        /**
+         * 
+         * Gets the current location's sector X
+         * 
+         * @return the current Locations sector X
+         */
+        public int getSectorX() {
+            return sectorX;
+        }
+
+        /**
+         * 
+         * Gets the current location's sector Y
+         * 
+         * @return the current Locations sector Y
+         */
+        public int getSectorY() {
+            return sectorY;
+        }
+
+        /**
+         * 
+         * Sets quadrantX to the newValue or -1 if the
+         * new value is invalid
+         * 
+         * @param newValue
+         */
+        public void setQuadrantX(int newValue) {
+            if (invalid(newValue)) {
+                quadrantX = INVALID;
+                return;
+            }
+
+            quadrantX = newValue;
+        }
+
+        /**
+         * 
+         * Sets quadrantY to the newValue or -1 if the
+         * new value is invalid
+         * 
+         * @param newValue
+         */
+        public void setQuadrantY(int newValue) {
+            if (invalid(newValue)) {
+                quadrantY = INVALID;
+                return;
+            }
+
+            quadrantY = newValue;
+        }
+
+        /**
+         * 
+         * Sets sectorX to the newValue or -1 if the
+         * new value is invalid
+         * 
+         * @param newValue
+         */
+        public void setSectorX(int newValue) {
+            if (invalid(newValue)) {
+                sectorX = INVALID;
+                return;
+            }
+
+            sectorX = newValue;
+        }
+        
+        /**
+         * 
+         * Sets sectorY to the newValue or -1 if the
+         * new value is invalid
+         * 
+         * @param newValue
+         */
+        public void setSectorY(int newValue) {
+            if (invalid(newValue)) {
+                sectorY = INVALID;
+                return;
+            }
+
+            sectorY = newValue;
+        }
+
+        /**
+         * 
          * Calculates and returns a string representing this location's
          * sector value. Converts to base-1 coordinates with (row, column)
          * convention. If one of the coordinates are invalid then it will
@@ -139,11 +243,23 @@ public class GameLib {
             return out;
         }
 
-        public int sectorY;
-        public int sectorX;
+        /**
+         * 
+         * Checks whether a value is invalid. Checks if it is
+         * [1, 8] inclusive. 
+         * 
+         * @param value
+         * @return true if it is invalid and false if it is not
+         */
+        private static boolean invalid(int value) {
+            return value < MIN_INDEX_1 || value > MAX_INDEX_1;
+        }
 
-        public int quadrantY;
-        public int quadrantX;
+        private int sectorY;
+        private int sectorX;
+
+        private int quadrantY;
+        private int quadrantX;
 
         public static final int INVALID = -1;
     }

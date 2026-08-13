@@ -38,17 +38,17 @@ const Quadrant& Galaxy::getQuadrant(int x, int y) const
 // Gets a Quadrant from the map. Takes the base-1 coordinates through location 
 // (reference). 
 Quadrant& Galaxy::getQuadrant(common::Location loc) {
-    assert(validIndex(common::toBase0(loc.quadrantY)) && validIndex(common::toBase0(loc.quadrantX)));
+    assert(validIndex(common::toBase0(loc.getQuadrantY())) && validIndex(common::toBase0(loc.getQuadrantX())));
     
-    return map[common::toBase0(loc.quadrantY)][common::toBase0(loc.quadrantX)];
+    return map[common::toBase0(loc.getQuadrantY())][common::toBase0(loc.getQuadrantX())];
 }
 
 // Gets a Quadrant from the map. Takes the base-1 coordinates through location
 // (const reference)
 const Quadrant& Galaxy::getQuadrant(common::Location loc) const {
-    assert(validIndex(common::toBase0(loc.quadrantY)) && validIndex(common::toBase0(loc.quadrantX)));
+    assert(validIndex(common::toBase0(loc.getQuadrantY())) && validIndex(common::toBase0(loc.getQuadrantX())));
     
-    return map[common::toBase0(loc.quadrantY)][common::toBase0(loc.quadrantX)];
+    return map[common::toBase0(loc.getQuadrantY())][common::toBase0(loc.getQuadrantX())];
 }
 
 // Returns the galatic region name of a particular quadrant. Takes base-1 coordinates.
@@ -59,8 +59,8 @@ std::string Galaxy::getQuadrantRegionName(int x, int y) {
 // Returns the galatic region name of a particular quadrant. Takes base-1 coordinates
 // through Location.
 std::string Galaxy::getQuadrantRegionName(common::Location location) {
-    const int x = common::toBase0(location.quadrantY);
-    const int y = common::toBase0(location.quadrantX);
+    const int x = common::toBase0(location.getQuadrantY());
+    const int y = common::toBase0(location.getQuadrantX());
     
     if (!validIndex(x) || !validIndex(y))
         return "";
@@ -76,8 +76,8 @@ std::string Galaxy::getQuadrantRomanNumeral(int x, int y) {
 // Gets the Quadrant's roman numeral for a particular region. Takes base-1 coordinates
 // through Location.
 std::string Galaxy::getQuadrantRomanNumeral(common::Location location) {
-    const int x = common::toBase0(location.quadrantY);
-    const int y = common::toBase0(location.quadrantX);
+    const int x = common::toBase0(location.getQuadrantY());
+    const int y = common::toBase0(location.getQuadrantX());
     
     if (!validIndex(x) || !validIndex(y))
         return "";
@@ -139,7 +139,7 @@ void Galaxy::reduceStarBases(int x, int y) {
 // Reduces the number of star bases by one, and removes it from
 // the quadrant. Takes base-1 coordinates through location
 void Galaxy::reduceStarBases(common::Location location) {
-    reduceStarBases(location.quadrantY, location.quadrantX);
+    reduceStarBases(location.getQuadrantY(), location.getQuadrantX());
 }
 
 // Gets and returns the total number of klingons in the galaxy
@@ -162,16 +162,16 @@ void Galaxy::reduceKlingons(int x, int y) {
 // total number of klingons. Checks that there is actually a klingon in
 // that quadrant. Takes base-1 coordinates through Location. 
 void Galaxy::reduceKlingons(common::Location location) {
-    reduceKlingons(location.quadrantY, location.quadrantX);
+    reduceKlingons(location.getQuadrantY(), location.getQuadrantX());
 }
 
 // Makes a long range scan around the Enterprise (inputted as location). 
 // Updates the scanned galaxy. 
 void Galaxy::longRangeScan(common::Location location) {
-    const int startY = std::clamp(common::toBase0(location.quadrantX) - 1, common::MIN_INDEX_0, common::MAX_INDEX_0);
-    const int endY   = std::clamp(common::toBase0(location.quadrantX) + 1, common::MIN_INDEX_0, common::MAX_INDEX_0);
-    const int startX = std::clamp(common::toBase0(location.quadrantY) - 1, common::MIN_INDEX_0, common::MAX_INDEX_0);
-    const int endX   = std::clamp(common::toBase0(location.quadrantY) + 1, common::MIN_INDEX_0, common::MAX_INDEX_0);
+    const int startY = std::clamp(common::toBase0(location.getQuadrantX()) - 1, common::MIN_INDEX_0, common::MAX_INDEX_0);
+    const int endY   = std::clamp(common::toBase0(location.getQuadrantX()) + 1, common::MIN_INDEX_0, common::MAX_INDEX_0);
+    const int startX = std::clamp(common::toBase0(location.getQuadrantY()) - 1, common::MIN_INDEX_0, common::MAX_INDEX_0);
+    const int endX   = std::clamp(common::toBase0(location.getQuadrantY()) + 1, common::MIN_INDEX_0, common::MAX_INDEX_0);
 
     for (int y = startY; y <= endY; ++y) {
         for (int x = startX; x <= endX; ++x)

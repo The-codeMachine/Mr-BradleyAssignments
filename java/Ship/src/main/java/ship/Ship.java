@@ -147,8 +147,8 @@ public class Ship {
         dy /= length;
 
         // Current galaxy position
-        double x = GameLib.toBase0(location.quadrantY) * GameLib.COLS + GameLib.toBase0(location.sectorY);
-        double y = GameLib.toBase0(location.quadrantX) * GameLib.ROWS + GameLib.toBase0(location.sectorX);
+        double x = GameLib.toBase0(location.getQuadrantY()) * GameLib.COLS + GameLib.toBase0(location.getSectorY());
+        double y = GameLib.toBase0(location.getQuadrantX()) * GameLib.ROWS + GameLib.toBase0(location.getSectorX());
 
         int lastX = (int) Math.floor(x);
         int lastY = (int) Math.floor(y);
@@ -248,7 +248,7 @@ public class Ship {
      * @return the effective phaserEnergy based off calculations
      */
     public int firePhasers(double phaserEnergy, int x, int y) {
-        double distance = Math.hypot(location.sectorY - x, location.sectorX - y);
+        double distance = Math.hypot(location.getSectorY() - x, location.getSectorX() - y);
 
         return (int) ((phaserEnergy / distance) * (common.GameLib.random() + 2));
     }

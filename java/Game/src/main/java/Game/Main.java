@@ -15,8 +15,8 @@ public class Main {
 
         IO.println("Current Quadrant:");
         IO.println(game.at(
-                game.getEnterprise().getLocation().quadrantY,
-                game.getEnterprise().getLocation().quadrantX).toString());
+                game.getEnterprise().getLocation().getQuadrantY(),
+                game.getEnterprise().getLocation().getQuadrantX()).toString());
 
         IO.println("");
     }

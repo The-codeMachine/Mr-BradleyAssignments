@@ -51,17 +51,35 @@ namespace common {
         bool sameQuadrant(const Location& other) const;
         bool sameSector(const Location& other) const;
 
+        int getQuadrantX() const noexcept;
+        int getQuadrantY() const noexcept;
+
+        int getSectorX() const noexcept;
+        int getSectorY() const noexcept;
+
+        void setQuadrantX(int newValue);
+        void setQuadrantY(int newValue);
+
+        void setSectorX(int newValue);
+        void setSectorY(int newValue);
+
         std::string sectorString() const;
         std::string quadrantString() const;
         std::string toString() const;
 
+    public:
+        static inline constexpr int INVALID = -1;
+
+    private:
+        static bool invalid(int value);
+    
+    private:
         int quadrantY;
         int quadrantX;
 
         int sectorY;
         int sectorX;
 
-        static inline constexpr int INVALID = -1;
     };
 
     bool isBetween();

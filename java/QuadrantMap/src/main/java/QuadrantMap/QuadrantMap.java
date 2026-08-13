@@ -92,8 +92,8 @@ public class QuadrantMap {
         quadrantString.place(index, value);
 
         if (value.equals(ENTERPRISE)) {
-            enterprise.sectorY = x;
-            enterprise.sectorX = y;
+            enterprise.setSectorY(x);
+            enterprise.setSectorX(y);
         }
     }
 
@@ -106,7 +106,7 @@ public class QuadrantMap {
      * @param value
      */
     public void place(Location loc, String value) {
-        place(loc.sectorY, loc.sectorX, value);
+        place(loc.getSectorY(), loc.getSectorX(), value);
     }
 
     /**
@@ -137,7 +137,7 @@ public class QuadrantMap {
      * @param loc
      */
     public void clearSector(Location loc) {
-        clearSector(loc.sectorY, loc.sectorX);
+        clearSector(loc.getSectorY(), loc.getSectorX());
     }
 
     /**
@@ -189,8 +189,10 @@ public class QuadrantMap {
      * @param value
      */
     public void move(Location oldLocation, Location newLocation, String value) {
-        move(oldLocation.sectorY, oldLocation.sectorX,
-            newLocation.sectorY, newLocation.sectorX, value);
+        IO.printf("%s\n%s\n", oldLocation.toString(), newLocation.toString());
+        
+        move(oldLocation.getSectorY(), oldLocation.getSectorX(),
+            newLocation.getSectorY(), newLocation.getSectorX(), value);
     }
 
     /**
@@ -222,7 +224,7 @@ public class QuadrantMap {
      * @param object
      */
     public void removeObject(Location loc, String object) {
-        removeObject(loc.sectorY, loc.sectorX, object);
+        removeObject(loc.getSectorY(), loc.getSectorX(), object);
     }
 
     /**
@@ -249,7 +251,7 @@ public class QuadrantMap {
         int out = 0;
 
         for (Klingon klingon : klingons) {
-            int damage = klingon.firePhasers(enterprise.sectorY, enterprise.sectorX);
+            int damage = klingon.firePhasers(enterprise.getSectorY(), enterprise.getSectorX());
 
             IO.printf("Klingon %s has fired their phasers dealing: %d damage\n",
                     klingon.getLocation().sectorString(),
@@ -299,8 +301,8 @@ public class QuadrantMap {
      * @return true if the Enterprise can dock and false if it cannot
      */
     public boolean canDock() {
-        int centerX = enterprise.sectorY;
-        int centerY = enterprise.sectorX;
+        int centerX = enterprise.getSectorY();
+        int centerY = enterprise.getSectorX();
 
         for (int y = centerY - 1; y <= centerY + 1; ++y) {
             for (int x = centerX - 1; x <= centerX + 1; ++x) {
@@ -351,7 +353,7 @@ public class QuadrantMap {
      * @return the symbol as a string from (sectorX, sectorY)
      */
     public String at(Location loc) {
-        return at(loc.sectorY, loc.sectorX);
+        return at(loc.getSectorY(), loc.getSectorX());
     }
 
     /**
@@ -384,7 +386,7 @@ public class QuadrantMap {
      * @return
      */
     public boolean empty(Location loc) {
-        return empty(loc.sectorY, loc.sectorX);
+        return empty(loc.getSectorY(), loc.getSectorX());
     }
 
     @Override
@@ -444,10 +446,16 @@ public class QuadrantMap {
             }
 
             place(pos[X], pos[Y], KLINGON);
-            klingons.add(new Klingon(new Location(GameLib.toBase0(pos[X]), GameLib.toBase0(pos[Y]), Location.INVALID, Location.INVALID)));
+            klingons.add(new Klingon(new Location(pos[X], pos[Y], Location.INVALID, Location.INVALID)));
         }
     }
 
+    /**
+     * 
+     * Places starbases (based off amount) within the quadrant. 
+     * 
+     * @param amount
+     */
     private void placeBases(int amount) {
         baseLocation = new Location(Location.INVALID, Location.INVALID, Location.INVALID, Location.INVALID);
 
@@ -461,7 +469,7 @@ public class QuadrantMap {
             }
             
             place(pos[X], pos[Y], BASE);
-            baseLocation = new Location(GameLib.toBase0(pos[X]), GameLib.toBase0(pos[Y]), Location.INVALID, Location.INVALID);
+            baseLocation = new Location(pos[X], pos[Y], Location.INVALID, Location.INVALID);
         }
     }
 

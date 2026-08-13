@@ -28,8 +28,8 @@ int Klingon::firePhasers(int x, int y) {
 common::Location Klingon::calculateDestination() const {
     common::Location randomLocation = common::Location();
     
-    return common::Location(randomLocation.sectorY, randomLocation.sectorX,
-                            getLocation().quadrantY, getLocation().quadrantX);
+    return common::Location(randomLocation.getSectorY(), randomLocation.getSectorX(),
+                            getLocation().getQuadrantY(), getLocation().getQuadrantX());
 }
 
 // Moves the klingon to a new location

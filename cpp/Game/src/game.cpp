@@ -94,7 +94,7 @@ QuadrantMap& Game::at(int x, int y) {
 // Gets the QuadrantMap at (x, y). This
 // method takes base-1 location coordinates.
 QuadrantMap& Game::at(common::Location location) {
-    return map[common::toBase0(location.quadrantY)][common::toBase0(location.quadrantX)];
+    return map[common::toBase0(location.getQuadrantY())][common::toBase0(location.getQuadrantX())];
 }
 
 // Gets the QuadrantMap at (x, y). This
@@ -106,7 +106,7 @@ const QuadrantMap& Game::at(int x, int y) const {
 // Gets the QuadrantMap at (x, y). This
 // method takes base-1 location coordinates.
 const QuadrantMap& Game::at(common::Location location) const {
-    return map[common::toBase0(location.quadrantY)][common::toBase0(location.quadrantX)];
+    return map[common::toBase0(location.getQuadrantY())][common::toBase0(location.getQuadrantX())];
 }
 
 // Gets the current Enterprise and returns a reference
@@ -255,8 +255,8 @@ void Game::firePhasers(double phaserEnergy) {
         auto& klingon = *it;
         auto klingonLocation = klingon.getLocation();
 
-        int damage = enterprise.firePhasers(phaserEnergy, klingonLocation.sectorY,
-                            klingonLocation.sectorX, klingonSize);
+        int damage = enterprise.firePhasers(phaserEnergy, klingonLocation.getSectorY(),
+                            klingonLocation.getSectorX(), klingonSize);
 
         klingon.adjustEnergy(-damage);
 
@@ -272,7 +272,7 @@ void Game::firePhasers(double phaserEnergy) {
             continue;
         }
 
-        destroyKlingon(common::Location(klingonLocation.sectorY, klingonLocation.sectorX, location.quadrantY, location.quadrantX));
+        destroyKlingon(common::Location(klingonLocation.getSectorY(), klingonLocation.getSectorX(), location.getQuadrantY(), location.getQuadrantX()));
         it = currentKlingons.begin();
     }
 }
@@ -690,8 +690,8 @@ void Game::computerLibraryCommandSND() const {
     }
 
     // Determine which side of the starbase the Enterprise is on.
-    const int dx = startingPosition.sectorY - starbaseLocation.sectorY;
-    const int dy = startingPosition.sectorX - starbaseLocation.sectorX;
+    const int dx = startingPosition.getSectorY() - starbaseLocation.getSectorY();
+    const int dy = startingPosition.getSectorX() - starbaseLocation.getSectorX();
 
     // Select the starbase's neighboring sector closest to the Enterprise.
     //
@@ -700,14 +700,14 @@ void Game::computerLibraryCommandSND() const {
     common::Location targetLocation = starbaseLocation;
 
     if (dx > 0)
-        ++targetLocation.sectorY;
+        targetLocation.setSectorY(targetLocation.getSectorY() + 1);
     else if (dx < 0)
-        --targetLocation.sectorY;
+        targetLocation.setSectorY(targetLocation.getSectorY() - 1);
 
     if (dy > 0)
-        ++targetLocation.sectorX;
+        targetLocation.setSectorX(targetLocation.getSectorX() + 1);
     else if (dy < 0)
-        --targetLocation.sectorX;
+        targetLocation.setSectorX(targetLocation.getSectorX() - 1);
 
     double direction;
     double factor;
@@ -750,8 +750,8 @@ void Game::calculateDD(common::Location startingLocation,
     factor = 0.0;
     
     // calculate distance
-    const double dx = endingLocation.sectorY - startingLocation.sectorY;
-    const double dy = startingLocation.sectorX - endingLocation.sectorX;
+    const double dx = endingLocation.getSectorY() - startingLocation.getSectorY();
+    const double dy = startingLocation.getSectorX() - endingLocation.getSectorX();
 
     double distance = std::hypot(dx, dy);
 

@@ -64,7 +64,7 @@ public class Game {
      * @return the QuadrantMap at (x, y)
      */
     public QuadrantMap at(Location location) {
-        return at(location.quadrantY, location.quadrantX);
+        return at(location.getQuadrantY(), location.getQuadrantX());
     }
 
     /**
@@ -105,7 +105,7 @@ public class Game {
 
         // lost because of time
         if (currentStardate > missionDuration + startingStardate) {
-            IO.printf("It is stardate: %0.3f\n", currentStardate);
+            IO.printf("It is stardate: %.3f\n", currentStardate);
             IO.printf("There were %d Klingon warships left to destroy\n", galaxy.klingons());
             IO.println("before they could launch their attack against the");
             IO.println("Federation. They will destroy the Enterprise as well");
@@ -117,7 +117,7 @@ public class Game {
         // if the shields are == -1 then that means a special death occurred
         // and that death message already printed, so skip a death message. 
         if (enterprise.isDestroyed() && enterprise.shields() != -1) {
-            IO.printf("It is stardate: %0.3f\n", currentStardate);
+            IO.printf("It is stardate: %.3f\n", currentStardate);
             IO.printf("There were %d Klingon warships left to destroy\n", galaxy.klingons());
             IO.println("The Enterprise has been destroyed and now there is ");
             IO.println("nothing stopping the Klingons from destroying the");
@@ -345,8 +345,8 @@ public class Game {
             Klingon klingon = it.next();
             Location klingonLocation = klingon.getLocation();
 
-            int damage = enterprise.firePhasers(phaserEnergy, klingonLocation.sectorY, 
-                                                klingonLocation.sectorX, klingonSize);
+            int damage = enterprise.firePhasers(phaserEnergy, klingonLocation.getSectorY(), 
+                                                klingonLocation.getSectorX(), klingonSize);
             klingon.adjustEnergy(-damage);
 
             IO.printf("%d unit hit on Klingon at %s\n", 
@@ -847,29 +847,31 @@ public class Game {
         }
 
         // Determine which side of the starbase the Enterprise is on.
-        int dx = startingPosition.sectorY - starbaseLocation.sectorY;
-        int dy = startingPosition.sectorX - starbaseLocation.sectorX;
+        int dx = startingPosition.getSectorY() - starbaseLocation.getSectorY();
+        int dy = startingPosition.getSectorX() - starbaseLocation.getSectorX();
 
         // Select the starbase's neighboring sector closest to the Enterprise.
         //
         // If the Enterprise is east of the starbase, target the east neighbor.
         // If it is northeast, target the northeast neighbor, etc.
         Location targetLocation = new Location(
-            starbaseLocation.quadrantY,
-            starbaseLocation.quadrantX,
-            starbaseLocation.sectorY,
-            starbaseLocation.sectorX
+            starbaseLocation.getSectorY(),
+            starbaseLocation.getSectorX(),
+            starbaseLocation.getQuadrantY(),
+            starbaseLocation.getQuadrantX()
         );
 
         if (dx > 0)
-            ++targetLocation.sectorY;
+            targetLocation.setSectorY(targetLocation.getSectorY() + 1);
         else if (dx < 0)
-            --targetLocation.sectorY;
+            targetLocation.setSectorY(targetLocation.getSectorY() - 1);
 
         if (dy > 0)
-            ++targetLocation.sectorX;
+            targetLocation.setSectorX(targetLocation.getSectorX() + 1);
         else if (dy < 0)
-            --targetLocation.sectorX;
+            targetLocation.setSectorX(targetLocation.getSectorX() - 1);
+
+        IO.println(targetLocation.toString());
 
         DDResult dd = calculateDD(startingPosition, targetLocation);
 
@@ -920,8 +922,8 @@ public class Game {
         double factor = 0.0;
 
         // calculate distance
-        double dx = endingLocation.sectorY - startingLocation.sectorY;
-        double dy = startingLocation.sectorX - endingLocation.sectorX;
+        double dx = endingLocation.getSectorY() - startingLocation.getSectorY();
+        double dy = startingLocation.getSectorX() - endingLocation.getSectorX();
 
         double distance = Math.hypot(dx, dy);
 
