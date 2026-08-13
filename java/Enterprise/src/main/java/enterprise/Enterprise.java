@@ -130,8 +130,10 @@ public class Enterprise extends Ship {
      */
     @Override
     public boolean takeDamage(double phaserEnergy) {
-        if (docked)
+        if (docked) {
+            IO.println("Starbase shields protect the Enterprise");
             return isDestroyed();
+        }
 
         devices.hitDamage(phaserEnergy, energy());
 

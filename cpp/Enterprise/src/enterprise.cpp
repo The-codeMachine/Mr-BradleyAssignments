@@ -100,8 +100,10 @@ void Enterprise::move(common::Location loc, double warpFactor) {
 // Makes the Enterprise take damage based off
 // the effective phaser energy.
 bool Enterprise::takeDamage(double phaserEnergy) {
-    if (docked)
+    if (docked) {
+        common::IO::println("Starbase shields protect the Enterprise");
         return isDestroyed();
+    }
 
     devices.hitDamage(phaserEnergy, this->getEnergy());
 

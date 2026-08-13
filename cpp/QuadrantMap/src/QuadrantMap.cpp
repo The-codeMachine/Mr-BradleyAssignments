@@ -261,7 +261,7 @@ const std::vector<Klingon>& QuadrantMap::getKlingons() const {
 // Returns the amount of damage klingons used to damage the Enterprise. Calculates
 // damage based off distance, and reduces the Klingon's energy reserves
 int QuadrantMap::klingonsFire() {
-    if (klingons.size() <= 0)
+    if (klingons.size() <= 0 || canDock())
         return 0;
     
     int out = 0;

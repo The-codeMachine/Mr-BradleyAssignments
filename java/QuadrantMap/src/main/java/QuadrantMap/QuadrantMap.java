@@ -243,12 +243,15 @@ public class QuadrantMap {
      * @return
      */
     public int klingonsFire() {
+        if (klingons.size() <= 0 || canDock())
+            return 0;
+        
         int out = 0;
 
         for (Klingon klingon : klingons) {
             int damage = klingon.firePhasers(enterprise.sectorX, enterprise.sectorY);
 
-            IO.printf("Klingon (%d, %d) has fireed their phasers dealing: %d damage\n",
+            IO.printf("Klingon (%d, %d) has fired their phasers dealing: %d damage\n",
                     GameLib.toBase1(klingon.getLocation().sectorY),
                     GameLib.toBase1(klingon.getLocation().sectorX),
                     damage
