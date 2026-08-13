@@ -53,7 +53,7 @@ const Quadrant& Galaxy::getQuadrant(common::Location loc) const {
 
 // Returns the galatic region name of a particular quadrant. Takes base-1 coordinates.
 std::string Galaxy::getQuadrantRegionName(int x, int y) {
-    return getQuadrantRegionName({-1, -1, common::toBase0(x), common::toBase0(y)});
+    return getQuadrantRegionName({common::Location::INVALID, common::Location::INVALID, common::toBase0(x), common::toBase0(y)});
 }
 
 // Returns the galatic region name of a particular quadrant. Takes base-0 coordinates
@@ -70,7 +70,7 @@ std::string Galaxy::getQuadrantRegionName(common::Location location) {
 
 // Gets the Quadrant's roman numeral for a particular region. Takes base-1 coordinates.
 std::string Galaxy::getQuadrantRomanNumeral(int x, int y) {
-    return getQuadrantRomanNumeral({-1, -1, common::toBase0(x), common::toBase0(y)});
+    return getQuadrantRomanNumeral({common::Location::INVALID, common::Location::INVALID, common::toBase0(x), common::toBase0(y)});
 }
 
 // Gets the Quadrant's roman numeral for a particular region. Takes base-0 coordinates
@@ -88,7 +88,7 @@ std::string Galaxy::getQuadrantRomanNumeral(common::Location location) {
 // Gets a quadrant's full galatic region name based off a location. Takes base-1 
 // coordinates.
 std::string Galaxy::getGalaticRegionName(int x, int y) {
-    return getGalaticRegionName({-1, -1, common::toBase0(x), common::toBase0(y)});
+    return getGalaticRegionName({common::Location::INVALID, common::Location::INVALID, common::toBase0(x), common::toBase0(y)});
 }
 
 // Gets a quadrant's full galatic region name based off a location. Takes base-0 
@@ -114,8 +114,8 @@ void Galaxy::printGalaticRegionMap() {
     for (int y = common::MIN_INDEX_0; y <= common::MAX_INDEX_0; ++y) {
         common::IO::printf("%d   %s%s\n",
                             common::toBase1(y), 
-                            common::padCenter(getQuadrantRegionName({-1, -1, 0, y}), 24).c_str(), 
-                            common::padCenter(getQuadrantRegionName({-1, -1, 5, y}), 24).c_str()
+                            common::padCenter(getQuadrantRegionName({common::Location::INVALID, common::Location::INVALID, 0, y}), 24).c_str(), 
+                            common::padCenter(getQuadrantRegionName({common::Location::INVALID, common::Location::INVALID, 5, y}), 24).c_str()
                         );
         common::IO::println(common::padLeft("----- ----- ----- ----- ----- ----- ----- -----", 52));
     }

@@ -89,7 +89,7 @@ public class Galaxy {
      * @return the galatic region name of quadrant (x, y)
      */
     public static String getQuadrantRegionName(int x, int y) {
-        return getQuadrantRegionName(new Location(-1, -1, GameLib.toBase0(x), GameLib.toBase0(y)));
+        return getQuadrantRegionName(new Location(Location.INVALID, Location.INVALID, GameLib.toBase0(x), GameLib.toBase0(y)));
     }
 
     /**
@@ -120,7 +120,7 @@ public class Galaxy {
      * @return the Quadrant's roman numeral for a particular region. 
      */
     public static String getQuadrantRomanNumeral(int x, int y) {
-        return getQuadrantRegionName(new Location(-1, -1, GameLib.toBase0(x), GameLib.toBase0(y)));
+        return getQuadrantRegionName(new Location(Location.INVALID, Location.INVALID, GameLib.toBase0(x), GameLib.toBase0(y)));
     }
 
     /**
@@ -151,7 +151,8 @@ public class Galaxy {
      * @return the quadrant's full galatic region name 
      */
     public static String getGalaticRegionName(int x, int y) {
-        return getGalaticRegionName(new Location(-1, -1, GameLib.toBase0(x), GameLib.toBase0(y)));
+        return getGalaticRegionName(new Location(Location.INVALID, Location.INVALID, 
+            GameLib.toBase0(x), GameLib.toBase0(y)));
     }
 
     /**
@@ -187,8 +188,8 @@ public class Galaxy {
         for (int y = GameLib.MIN_INDEX_0; y <= GameLib.MAX_INDEX_0; ++y) {
             IO.printf("%d   %s%s\n",
                                 GameLib.toBase1(y), 
-                                StringUtils.padCenter(getQuadrantRegionName(new Location(-1, -1, 0, y)), 24), 
-                                StringUtils.padCenter(getQuadrantRegionName(new Location(-1, -1, 5, y)), 24)
+                                StringUtils.padCenter(getQuadrantRegionName(new Location(Location.INVALID, Location.INVALID, 0, y)), 24), 
+                                StringUtils.padCenter(getQuadrantRegionName(new Location(Location.INVALID, Location.INVALID, 5, y)), 24)
                             );
             IO.println(StringUtils.padLeft("----- ----- ----- ----- ----- ----- ----- -----", 52));
         }

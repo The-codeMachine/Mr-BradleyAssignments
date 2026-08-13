@@ -100,13 +100,15 @@ void QuadrantMap::placeKlingons(int amount) {
         }
 
         place(x, y, KLINGON);
-        klingons.emplace_back(common::Location(common::toBase0(x), common::toBase0(y), -1, -1));
+        klingons.emplace_back(common::Location(common::toBase0(x), common::toBase0(y), 
+            common::Location::INVALID, common::Location::INVALID));
     }
 }
 
 // Places a starbase inside the QuadrantMap. Records the position at baseLocation.
 void QuadrantMap::placeBase(int amount) {
-    baseLocation = {-1, -1, -1, -1};
+    baseLocation = {common::Location::INVALID, common::Location::INVALID, 
+                    common::Location::INVALID, common::Location::INVALID};
     
     assert(amount <= common::ROWS * common::COLS);
 
@@ -122,7 +124,8 @@ void QuadrantMap::placeBase(int amount) {
         }
 
         place(x, y, BASE);
-        baseLocation = common::Location(common::toBase0(x), common::toBase0(y), -1, -1);
+        baseLocation = common::Location(common::toBase0(x), common::toBase0(y), 
+            common::Location::INVALID, common::Location::INVALID);
     }
 }
 
@@ -178,8 +181,8 @@ void QuadrantMap::place(common::Location loc, const std::string& value) {
 void QuadrantMap::clearSector(int x, int y)
 {
     if (at(x, y) == ENTERPRISE) {
-        enterprise.sectorX = -1;
-        enterprise.sectorY = -1;
+        enterprise.sectorX = common::Location::INVALID;
+        enterprise.sectorY = common::Location::INVALID;
     }
     
     // checks like validPos are done within place
@@ -266,9 +269,8 @@ int QuadrantMap::klingonsFire() {
     for (Klingon& klingon : klingons) {
         int damage = klingon.firePhasers(enterprise.sectorX, enterprise.sectorY);
 
-        common::IO::printf("Klingon (%d, %d) has fired their phasers dealing: %d damage\n",
-                            common::toBase1(klingon.getLocation().sectorY),
-                            common::toBase1(klingon.getLocation().sectorX), 
+        common::IO::printf("Klingon %s has fired their phasers dealing: %d damage\n",
+                            klingon.getLocation().sectorString().c_str(),
                             damage
                         );
 

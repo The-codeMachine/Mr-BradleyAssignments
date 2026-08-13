@@ -350,12 +350,12 @@ public class Game {
             klingon.adjustEnergy(-damage);
 
             IO.printf("%d unit hit on Klingon at %s\n", 
-                        damage, klingonLocation.toString()
+                        damage, klingonLocation.sectorString()
             );
 
             if (!klingon.isDestroyed()) {
                 IO.printf("(Sensors show %d units remaining on klingon: %s)\n",
-                        klingon.energy(), klingonLocation.toString()
+                        klingon.energy(), klingonLocation.sectorString()
                 );
                 continue;
             }
@@ -416,7 +416,7 @@ public class Game {
         } else if (sector.equals(QuadrantMap.BASE)) {
             destroyStarbase(loc);
         } else if (sector.equals(QuadrantMap.STAR)) {
-            IO.printf("Star at (%d, %d) absorbed torpedo energy\n", loc.sectorY, loc.sectorX);
+            IO.printf("Star at %s absorbed torpedo energy\n", loc.sectorString());
         }
     }
 
@@ -441,7 +441,7 @@ public class Game {
             at(position).removeObject(klingonLocation, QuadrantMap.KLINGON);
             galaxy.getQuadrant(position).reduceKlingons();
 
-            IO.printf("***Klingon Destroyed***\nKlingon: %s\n", klingonLocation.toString());
+            IO.printf("***Klingon Destroyed***\nKlingon: %s\n", klingonLocation.sectorString());
             it.remove();
             return;
         }
@@ -524,7 +524,7 @@ public class Game {
             }
 
             if (!moveSuccess) {
-                IO.printf("Warp engines shut down at (%d, %d) due to bad navigation\n", newLocation.sectorY, newLocation.sectorX);
+                IO.printf("Warp engines shut down at %s due to bad navigation\n", newLocation.sectorString());
             }
 
             shortRangeCommand();
@@ -814,7 +814,7 @@ public class Game {
                 k.getLocation()
             );
 
-            IO.printf("%nKlingon %s: \n", k.getLocation());
+            IO.printf("%nKlingon %s: \n", k.getLocation().sectorString());
             IO.printf("Direction: %.10f\n", dd.direction);
             IO.printf("Factor: %.10f\n", dd.factor);
         }
@@ -831,7 +831,8 @@ public class Game {
 
         Location starbaseLocation = at(startingPosition).base();
 
-        if (starbaseLocation.equals(new Location(-1, -1, -1, -1))) {
+        if (starbaseLocation.equals(new Location(Location.INVALID, Location.INVALID, 
+                Location.INVALID, Location.INVALID))) {
             IO.println("Mr. Spock reports: ");
             IO.println("\"Sensors show no starbases in this quadrant\"");
             return;

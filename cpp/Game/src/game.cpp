@@ -261,12 +261,12 @@ void Game::firePhasers(double phaserEnergy) {
         klingon.adjustEnergy(-damage);
 
         common::IO::printf("%d unit hit on Klingon at %s\n",
-                            damage, klingonLocation.toString().c_str());
+                            damage, klingonLocation.sectorString().c_str());
 
 
         if (!klingon.isDestroyed()) {
             common::IO::printf("(Sensors show %d units remaining on klingon: %s)\n", 
-                                klingon.getEnergy(), klingonLocation.toString().c_str());
+                                klingon.getEnergy(), klingonLocation.sectorString().c_str());
             
             ++it;
             continue;
@@ -326,7 +326,7 @@ void Game::fireTorpedo(double warpDirection) {
     } else if (sector == QuadrantMap::BASE) {
         destoryStarbase(loc);
     } else if (sector == QuadrantMap::STAR) {
-        common::IO::printf("Star at (%d, %d) absorbed torpedo energy\n", loc.sectorY, loc.sectorY);
+        common::IO::printf("Star at %s absorbed torpedo energy\n", loc.sectorString().c_str());
     }
 }
 
@@ -347,7 +347,7 @@ bool Game::destroyKlingon(common::Location position) {
 
         common::IO::printf(
             "***Klingon Destroyed***\nKlingon: %s\n",
-            klingonLocation.toString().c_str()
+            klingonLocation.sectorString().c_str()
         );
 
         klingons.erase(it);
@@ -416,7 +416,7 @@ void Game::moveCommand(const std::vector<std::string>& command) {
         }
 
         if (!moveSuccess) {
-            common::IO::printf("Warp engines shut down at (%d, %d) due to bad navigation\n", newLocation.sectorY, newLocation.sectorX);
+            common::IO::printf("Warp engines shut down at %s due to bad navigation\n", newLocation.sectorString().c_str());
         }
 
         shortRangeCommand();
@@ -659,7 +659,7 @@ void Game::computerLibraryCommandPTD() const {
         // direction and factor are set to 0 in calculateDD
         calculateDD(startingLocation, k.getLocation(), direction, factor);
 
-        common::IO::printf("\nKlingon %s: \n", k.getLocation().toString().c_str());
+        common::IO::printf("\nKlingon %s: \n", k.getLocation().sectorString().c_str());
         common::IO::printf("Direction: %.10f\n", direction);
         common::IO::printf("Factor: %.10f\n", factor);
     }
@@ -671,7 +671,8 @@ void Game::computerLibraryCommandSND() const {
     common::Location startingPosition = enterprise.getLocation();
 
     common::Location starbaseLocation = at(startingPosition).base();
-    if (starbaseLocation == common::Location{-1, -1, -1, -1}) {
+    if (starbaseLocation == common::Location{common::Location::INVALID, common::Location::INVALID, 
+                                            common::Location::INVALID, common::Location::INVALID}) {
         common::IO::println("Mr. Spock reports: ");
         common::IO::println("\"Sensors show no starbases in this quadrant\"");
         return;

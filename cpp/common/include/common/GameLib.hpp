@@ -51,6 +51,8 @@ namespace common {
         bool sameQuadrant(const Location& other) const;
         bool sameSector(const Location& other) const;
 
+        std::string sectorString() const;
+        std::string quadrantString() const;
         std::string toString() const;
 
         int quadrantX;
@@ -58,6 +60,8 @@ namespace common {
 
         int sectorX;
         int sectorY;
+
+        static inline constexpr int INVALID = -1;
     };
 
     bool isBetween();

@@ -41,21 +41,49 @@ namespace common
         return sectorX == other.sectorX && sectorY == other.sectorY;
     }
 
+    // Returns a string representing this location's current sector. Returns
+    // an empty string if the sector values at invalid
+    std::string Location::sectorString() const {
+        if (sectorX != INVALID && sectorY != INVALID) {
+            return "Sector (" + std::to_string(toBase1(sectorY)) + ", " + std::to_string(toBase1(sectorX)) + ")";
+        }
+
+        return "";
+    }
+
+    // Returns a string representing this location's current quadrant. Returns
+    // an empty string if the quadrant values at invalid
+    std::string Location::quadrantString() const {
+        if (quadrantX != INVALID && quadrantY != INVALID) {
+            return "Quadrant (" + std::to_string(toBase1(quadrantY)) + ", " + std::to_string(toBase1(quadrantX)) + ")";
+        }
+
+        return "";
+    }
+
     // Converts the location into a string. Checks that the positions are valid
-    // and converts them to (row, column) notation and to base-1.
+    // and converts them to (row, column) notation and to base-1. 
     std::string Location::toString() const {
         std::string out;
         
-        if (sectorX != -1 && sectorY != -1) {
-            out += "(" + std::to_string(toBase1(sectorY)) + ", " + std::to_string(toBase1(sectorX)) + ")";
-        }
-        if (quadrantX != -1 && quadrantY != -1) {
-            out += " in ("+ std::to_string(toBase1(quadrantY)) + ", " + std::to_string(toBase1(quadrantX)) + ")";
-        }
+        // if sector string is empty then just do the
+        // quadrant. 
+        out += sectorString();
+        if (out == "")
+            return quadrantString();
+
+        // if quadrant string is empty then simply return the
+        // sector string, else add the "in" word. 
+        std::string qStr = quadrantString();
+
+        if (qStr == "")
+            return out;
+        out += " in " + qStr;
         
         return out;
     }
 
+    // Checks whether or not a value is between low and high (inclusive)
     bool isBetween(double value, double low, double high) {
         return low <= value && value <= high;
     }

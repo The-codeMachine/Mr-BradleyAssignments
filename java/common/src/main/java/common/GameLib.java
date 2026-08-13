@@ -20,14 +20,23 @@ public class GameLib {
 
     /**
      * 
-     * This is a helper class which represents a 
-     * paired (x, y) coordinate. This allows public
-     * access to its x, and y value. You can 
-     * construct it with an inital x, and y value, or
-     * none. If the location is unassigned a random number
-     * between 0-7 will be generated.
+     * Location is a helper class which represents a complete
+     * position within this game. It includes quadrant
+     * coordinates, and sector coordinates. Both are valid 
+     * [0, 7]. As such, this class represents base-0 coordinates.
+     * Everything is stored in (column, row) notation. 
      * 
-     * Both coordinates are stored as base-0. 
+     * Construction does not check or validate the coordinates 
+     * inputted. 
+     * 
+     * -1 is a valid value. It represents something that is not
+     * represented. toString will skip any value set as -1. E.g.
+     * if one of the quadrant coordinates are set to -1 it will 
+     * only print the sector coordinates (given that neither of
+     * those are equal to -1 as well).
+     * 
+     * Output through toString prints in (row, column) notation
+     * as base-1. This is to help the users understand it better. 
      * 
      */
     public static class Location {
@@ -71,16 +80,61 @@ public class GameLib {
             return sectorX == other.sectorX && sectorY == other.sectorY;
         }
 
+        /**
+         * 
+         * Calculates and returns a string representing this location's
+         * sector value. Converts to base-1 coordinates with (row, column)
+         * convention. If one of the coordinates are invalid then it will
+         * return an empty string. 
+         * 
+         * @return the aforementioned sector string
+         */
+        public String sectorString() {
+            if (sectorX != INVALID && sectorY != INVALID)
+                return "Sector (" + toBase1(sectorY) + ", " + toBase1(sectorX) + ")";
+
+            return "";
+        }
+
+        /**
+         * 
+         * Calculates and returns a string representing this location's
+         * quadrant value. Converts to base-1 coordinates with (row, column)
+         * convention. If one of the coordinates are invalid then it will
+         * return an empty string. 
+         * 
+         * @return the aforementioned quadrant string
+         */
+        public String quadrantString() {
+            if (quadrantX != INVALID && quadrantY != INVALID)
+                return "Quadrant (" + toBase1(quadrantY) + ", " + toBase1(quadrantX) + ")";
+            
+            return "";
+        }
+
+        /**
+         * 
+         * Converts the location into a string. Checks that the positions are valid
+         * and converts them to (row, column) notation with base-1 coordinates. 
+         * 
+         */
         @Override
         public String toString() {
             String out = "";
         
-            if (sectorX != -1 && sectorY != -1) {
-                out += "(" + toBase1(sectorY) + ", " + toBase1(sectorX) + ")";
-            }
-            if (quadrantX != -1 && quadrantY != -1) {
-                out += " in ("+ toBase1(quadrantY) + ", " + toBase1(quadrantX) + ")";
-            }
+            // if sector string is empty then just do the quadrant
+            out += sectorString();
+            if (out.equals(""))
+                return quadrantString();
+
+            // if quadrant string is empty then simply return the
+            // sector string, else add the "in" word
+            String qStr = quadrantString();
+            
+            if (qStr.equals(""))
+                return out;
+
+            out += " in " + qStr;
             
             return out;
         }
@@ -90,6 +144,8 @@ public class GameLib {
 
         public int quadrantX;
         public int quadrantY;
+
+        public static final int INVALID = -1;
     }
 
     // Random helper functions

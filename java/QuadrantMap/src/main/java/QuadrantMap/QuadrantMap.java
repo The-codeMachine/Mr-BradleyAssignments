@@ -59,7 +59,7 @@ public class QuadrantMap {
      */
     public QuadrantMap(Quadrant q, int x, int y) {
         klingons = new ArrayList<>();
-        enterprise = new Location(-1, -1, -1, -1);
+        enterprise = new Location(Location.INVALID, Location.INVALID, Location.INVALID, Location.INVALID);
         initializeQuadrant(q, x, y);
     }
 
@@ -71,7 +71,7 @@ public class QuadrantMap {
      */
     public QuadrantMap(Quadrant q) {
         klingons = new ArrayList<>();
-        enterprise = new Location(-1, -1, -1, -1);
+        enterprise = new Location(Location.INVALID, Location.INVALID, Location.INVALID, Location.INVALID);
         initializeQuadrant(q);
     }
 
@@ -442,12 +442,12 @@ public class QuadrantMap {
             }
 
             place(pos[X], pos[Y], KLINGON);
-            klingons.add(new Klingon(new Location(GameLib.toBase0(pos[X]), GameLib.toBase0(pos[Y]), -1, -1)));
+            klingons.add(new Klingon(new Location(GameLib.toBase0(pos[X]), GameLib.toBase0(pos[Y]), Location.INVALID, Location.INVALID)));
         }
     }
 
     private void placeBases(int amount) {
-        baseLocation = new Location(-1, -1, -1, -1);
+        baseLocation = new Location(Location.INVALID, Location.INVALID, Location.INVALID, Location.INVALID);
 
         assert(amount <= GameLib.ROWS * GameLib.COLS);
 
@@ -459,7 +459,7 @@ public class QuadrantMap {
             }
             
             place(pos[X], pos[Y], BASE);
-            baseLocation = new Location(GameLib.toBase0(pos[X]), GameLib.toBase0(pos[Y]), -1, -1);
+            baseLocation = new Location(GameLib.toBase0(pos[X]), GameLib.toBase0(pos[Y]), Location.INVALID, Location.INVALID);
         }
     }
 
