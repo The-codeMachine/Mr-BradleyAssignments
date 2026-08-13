@@ -215,7 +215,7 @@ bool Game::move(double warpFactor, double warpDirection) {
 
 // Destroys a star base within the Galaxy. Removes it from the quadrant
 // and the galaxy
-void Game::destoryStarbase(common::Location location) {
+void Game::destroyStarbase(common::Location location) {
     common::IO::println("***Starbase Destroyed***");
 
     galaxy.reduceStarBases(location);
@@ -324,7 +324,7 @@ void Game::fireTorpedo(double warpDirection) {
     if (sector == QuadrantMap::KLINGON) {
         destroyKlingon(loc);
     } else if (sector == QuadrantMap::BASE) {
-        destoryStarbase(loc);
+        destroyStarbase(loc);
     } else if (sector == QuadrantMap::STAR) {
         common::IO::printf("Star at %s absorbed torpedo energy\n", loc.sectorString().c_str());
     }

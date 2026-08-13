@@ -56,7 +56,7 @@ private:
     common::Location findMovementDestination(const std::vector<common::Location>& path, double& starDateChange);
     void updateEnterpriseMap(common::Location oldLocation, common::Location newLocation);
 
-    void destoryStarbase(common::Location location);
+    void destroyStarbase(common::Location location);
 
     void firePhasers(double phaserEnergy);
     void fireTorpedo(double warpDirection);
