@@ -92,8 +92,8 @@ public class QuadrantMap {
         quadrantString.place(index, value);
 
         if (value.equals(ENTERPRISE)) {
-            enterprise.sectorX = GameLib.toBase0(x);
-            enterprise.sectorY = GameLib.toBase0(y);
+            enterprise.sectorY = x;
+            enterprise.sectorX = y;
         }
     }
 
@@ -106,7 +106,7 @@ public class QuadrantMap {
      * @param value
      */
     public void place(Location loc, String value) {
-        place(GameLib.toBase1(loc.sectorX), GameLib.toBase1(loc.sectorY), value);
+        place(loc.sectorY, loc.sectorX, value);
     }
 
     /**
@@ -137,7 +137,7 @@ public class QuadrantMap {
      * @param loc
      */
     public void clearSector(Location loc) {
-        clearSector(GameLib.toBase1(loc.sectorX), GameLib.toBase1(loc.sectorY));
+        clearSector(loc.sectorY, loc.sectorX);
     }
 
     /**
@@ -189,8 +189,8 @@ public class QuadrantMap {
      * @param value
      */
     public void move(Location oldLocation, Location newLocation, String value) {
-        move(GameLib.toBase1(oldLocation.sectorX), GameLib.toBase1(oldLocation.sectorY),
-            GameLib.toBase1(newLocation.sectorX), GameLib.toBase1(newLocation.sectorY), value);
+        move(oldLocation.sectorY, oldLocation.sectorX,
+            newLocation.sectorY, newLocation.sectorX, value);
     }
 
     /**
@@ -222,7 +222,7 @@ public class QuadrantMap {
      * @param object
      */
     public void removeObject(Location loc, String object) {
-        removeObject(GameLib.toBase1(loc.sectorX), GameLib.toBase1(loc.sectorY), object);
+        removeObject(loc.sectorY, loc.sectorX, object);
     }
 
     /**
@@ -249,11 +249,10 @@ public class QuadrantMap {
         int out = 0;
 
         for (Klingon klingon : klingons) {
-            int damage = klingon.firePhasers(enterprise.sectorX, enterprise.sectorY);
+            int damage = klingon.firePhasers(enterprise.sectorY, enterprise.sectorX);
 
-            IO.printf("Klingon (%d, %d) has fired their phasers dealing: %d damage\n",
-                    GameLib.toBase1(klingon.getLocation().sectorY),
-                    GameLib.toBase1(klingon.getLocation().sectorX),
+            IO.printf("Klingon %s has fired their phasers dealing: %d damage\n",
+                    klingon.getLocation().sectorString(),
                     damage
             );
 
@@ -300,8 +299,8 @@ public class QuadrantMap {
      * @return true if the Enterprise can dock and false if it cannot
      */
     public boolean canDock() {
-        int centerX = GameLib.toBase1(enterprise.sectorX);
-        int centerY = GameLib.toBase1(enterprise.sectorY);
+        int centerX = enterprise.sectorY;
+        int centerY = enterprise.sectorX;
 
         for (int y = centerY - 1; y <= centerY + 1; ++y) {
             for (int x = centerX - 1; x <= centerX + 1; ++x) {
@@ -352,7 +351,7 @@ public class QuadrantMap {
      * @return the symbol as a string from (sectorX, sectorY)
      */
     public String at(Location loc) {
-        return at(GameLib.toBase1(loc.sectorX), GameLib.toBase1(loc.sectorY));
+        return at(loc.sectorY, loc.sectorX);
     }
 
     /**
@@ -385,7 +384,7 @@ public class QuadrantMap {
      * @return
      */
     public boolean empty(Location loc) {
-        return empty(GameLib.toBase1(loc.sectorX), GameLib.toBase1(loc.sectorY));
+        return empty(loc.sectorY, loc.sectorX);
     }
 
     @Override

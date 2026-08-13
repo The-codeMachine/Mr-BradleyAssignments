@@ -100,7 +100,7 @@ void QuadrantMap::placeKlingons(int amount) {
         }
 
         place(x, y, KLINGON);
-        klingons.emplace_back(common::Location(common::toBase0(x), common::toBase0(y), 
+        klingons.emplace_back(common::Location(x, y, 
             common::Location::INVALID, common::Location::INVALID));
     }
 }
@@ -124,7 +124,7 @@ void QuadrantMap::placeBase(int amount) {
         }
 
         place(x, y, BASE);
-        baseLocation = common::Location(common::toBase0(x), common::toBase0(y), 
+        baseLocation = common::Location(x, y, 
             common::Location::INVALID, common::Location::INVALID);
     }
 }
@@ -162,16 +162,16 @@ void QuadrantMap::place(int x, int y, const std::string &value)
     quadrantString.place(index, value);
 
     if (value == ENTERPRISE) {
-        enterprise.sectorX = common::toBase0(x);
-        enterprise.sectorY = common::toBase0(y);
+        enterprise.sectorY = x;
+        enterprise.sectorX = y;
     }
 }
 
 // Writes a fixed-width symbol into the specified sector.
 // The updated String then becomes the new map.
-// Uses base-0 coordinates through Location
+// Uses base-1 coordinates through Location
 void QuadrantMap::place(common::Location loc, const std::string& value) {
-    place(common::toBase1(loc.sectorX), common::toBase1(loc.sectorY), value);
+    place(loc.sectorY, loc.sectorX, value);
 }
 
 // Removes whatever occupies the specified sector.
@@ -181,8 +181,8 @@ void QuadrantMap::place(common::Location loc, const std::string& value) {
 void QuadrantMap::clearSector(int x, int y)
 {
     if (at(x, y) == ENTERPRISE) {
-        enterprise.sectorX = common::Location::INVALID;
         enterprise.sectorY = common::Location::INVALID;
+        enterprise.sectorX = common::Location::INVALID;
     }
     
     // checks like validPos are done within place
@@ -192,9 +192,9 @@ void QuadrantMap::clearSector(int x, int y)
 // Removes whatever occupies the specified sector.
 // Clearing is implemented by replacing the sector with
 // the empty-space symbol.
-// Uses base-0 coordinates through Location.
+// Uses base-1 coordinates through Location.
 void QuadrantMap::clearSector(common::Location loc) {
-    clearSector(common::toBase1(loc.sectorX), common::toBase1(loc.sectorY));
+    clearSector(loc.sectorY, loc.sectorX);
 }
 
 // Moves a value from (x, y) to (newX, newY). It does
@@ -222,10 +222,10 @@ void QuadrantMap::move(int x, int y, int newX, int newY, const std::string &valu
 // then clearing it, and inserting it into (newX, newY) after
 // verifying that (newX, newY) is empty. Can be used to move
 // Enterprise or Klingons.
-// Uses base-0 coordinates through location
+// Uses base-1 coordinates through location
 void QuadrantMap::move(common::Location oldLocation, common::Location newLocation, const std::string& value) {
-    move(common::toBase1(oldLocation.sectorX), common::toBase1(oldLocation.sectorY),
-        common::toBase1(newLocation.sectorX), common::toBase1(newLocation.sectorY), value);
+    move(oldLocation.sectorY, oldLocation.sectorX,
+        newLocation.sectorY, newLocation.sectorX, value);
 }
 
 // Clears a sector only if it has value as its object. If it does then
@@ -243,9 +243,9 @@ void QuadrantMap::removeObject(int x, int y, const std::string &object)
 
 // Clears a sector only if it has value as its object. If it does then
 // it is cleared.
-// Uses base-0 coordinates through Location. 
+// Uses base-1 coordinates through Location. 
 void QuadrantMap::removeObject(common::Location loc, const std::string& object) {
-    removeObject(common::toBase1(loc.sectorX), common::toBase1(loc.sectorY), object);
+    removeObject(loc.sectorY, loc.sectorX, object);
 }
 
 // Gets the locations of all the klingons within this QuadrantMap (reference)
@@ -267,7 +267,7 @@ int QuadrantMap::klingonsFire() {
     int out = 0;
 
     for (Klingon& klingon : klingons) {
-        int damage = klingon.firePhasers(enterprise.sectorX, enterprise.sectorY);
+        int damage = klingon.firePhasers(enterprise.sectorY, enterprise.sectorX);
 
         common::IO::printf("Klingon %s has fired their phasers dealing: %d damage\n",
                             klingon.getLocation().sectorString().c_str(),
@@ -310,8 +310,8 @@ const common::Location& QuadrantMap::base() const {
 // Checks whether the Enterprise can dock or not based off its current position.
 // Returns true if the Enterprise can dock, and false elsewise. 
 bool QuadrantMap::canDock() const noexcept {
-    const int centerX = common::toBase1(enterprise.sectorX);
-    const int centerY = common::toBase1(enterprise.sectorY);
+    const int centerX = enterprise.sectorY;
+    const int centerY = enterprise.sectorX;
 
     for (int y = centerY - 1; y <= centerY + 1; ++y) {
         for (int x = centerX - 1; x <= centerX + 1; ++x) {
@@ -345,9 +345,9 @@ std::string QuadrantMap::at(int x, int y) const
 // The 2D coordinates are converted into a 1D index into
 // the backing String, and the fixed-width symbol stored
 // at that location is returned.
-// Uses base-0 coordinates through Location.
+// Uses base-1 coordinates through Location.
 std::string QuadrantMap::at(common::Location loc) const {
-    return at(common::toBase1(loc.sectorX), common::toBase1(loc.sectorY));
+    return at(loc.sectorY, loc.sectorX);
 }
 
 // Checks if sector (x, y) is empty.
@@ -356,7 +356,7 @@ std::string QuadrantMap::at(common::Location loc) const {
 // Uses base-1 coordinates
 bool QuadrantMap::empty(int x, int y) const
 {
-    // getIndexFrom converts it to a base-0 1D index for quadrantString
+    // getIndexFrom converts it to a base-1 1D index for quadrantString
     int index = getIndexFrom(x, y);
     return quadrantString.isEmpty(index);
 }
@@ -364,9 +364,9 @@ bool QuadrantMap::empty(int x, int y) const
 // Checks if sector (x, y) is empty.
 // X, and y both use base-1 positions.
 // Checks if at(x, y) == "   ".
-// Uses base-0 coordinates through location
+// Uses base-1 coordinates through location
 bool QuadrantMap::empty(common::Location loc) const {
-    return empty(common::toBase1(loc.sectorX), common::toBase1(loc.sectorY));
+    return empty(loc.sectorY, loc.sectorX);
 }
 
 // Converts the QuadrantMap into a string

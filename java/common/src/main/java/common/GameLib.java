@@ -23,7 +23,7 @@ public class GameLib {
      * Location is a helper class which represents a complete
      * position within this game. It includes quadrant
      * coordinates, and sector coordinates. Both are valid 
-     * [0, 7]. As such, this class represents base-0 coordinates.
+     * [1, 8]. As such, this class represents base-1 coordinates.
      * Everything is stored in (column, row) notation. 
      * 
      * Construction does not check or validate the coordinates 
@@ -40,20 +40,20 @@ public class GameLib {
      * 
      */
     public static class Location {
-        public Location(int sectorX, int sectorY, int quadrantX, int quadrantY) {
-            this.sectorX = sectorX;
+        public Location(int sectorY, int sectorX, int quadrantY, int quadrantX) {
             this.sectorY = sectorY;
+            this.sectorX = sectorX;
 
-            this.quadrantX = quadrantX;
             this.quadrantY = quadrantY;
+            this.quadrantX = quadrantX;
         }
 
         public Location() {
-            sectorX = GameLib.randomInt(MIN_INDEX_0, MAX_INDEX_0);
-            sectorY = GameLib.randomInt(MIN_INDEX_0, MAX_INDEX_0);
+            sectorY = GameLib.randomInt(MIN_INDEX_1, MAX_INDEX_1);
+            sectorX = GameLib.randomInt(MIN_INDEX_1, MAX_INDEX_1);
             
-            quadrantX = GameLib.randomInt(MIN_INDEX_0, MAX_INDEX_0);
-            quadrantY = GameLib.randomInt(MIN_INDEX_0, MAX_INDEX_0);
+            quadrantY = GameLib.randomInt(MIN_INDEX_1, MAX_INDEX_1);
+            quadrantX = GameLib.randomInt(MIN_INDEX_1, MAX_INDEX_1);
         }
 
         /**
@@ -65,7 +65,7 @@ public class GameLib {
          * @return true if the two locations share the same quadrant location
          */
         public boolean sameQuadrant(Location other) {
-            return quadrantX == other.quadrantX && quadrantY == other.quadrantY;
+            return quadrantY == other.quadrantY && quadrantX == other.quadrantX;
         }
 
         /**
@@ -77,7 +77,7 @@ public class GameLib {
          * @return true if the two locations share the same sector location
          */
         public boolean sameSector(Location other) {
-            return sectorX == other.sectorX && sectorY == other.sectorY;
+            return sectorY == other.sectorY && sectorX == other.sectorX;
         }
 
         /**
@@ -90,8 +90,8 @@ public class GameLib {
          * @return the aforementioned sector string
          */
         public String sectorString() {
-            if (sectorX != INVALID && sectorY != INVALID)
-                return "Sector (" + toBase1(sectorY) + ", " + toBase1(sectorX) + ")";
+            if (sectorY != INVALID && sectorX != INVALID)
+                return "Sector (" + sectorX + ", " + sectorY + ")";
 
             return "";
         }
@@ -106,8 +106,8 @@ public class GameLib {
          * @return the aforementioned quadrant string
          */
         public String quadrantString() {
-            if (quadrantX != INVALID && quadrantY != INVALID)
-                return "Quadrant (" + toBase1(quadrantY) + ", " + toBase1(quadrantX) + ")";
+            if (quadrantY != INVALID && quadrantX != INVALID)
+                return "Quadrant (" + quadrantX + ", " + quadrantY + ")";
             
             return "";
         }
@@ -139,11 +139,11 @@ public class GameLib {
             return out;
         }
 
-        public int sectorX;
         public int sectorY;
+        public int sectorX;
 
-        public int quadrantX;
         public int quadrantY;
+        public int quadrantX;
 
         public static final int INVALID = -1;
     }

@@ -92,9 +92,9 @@ QuadrantMap& Game::at(int x, int y) {
 }
 
 // Gets the QuadrantMap at (x, y). This
-// method takes base-0 location coordinates.
+// method takes base-1 location coordinates.
 QuadrantMap& Game::at(common::Location location) {
-    return map[location.quadrantX][location.quadrantY];
+    return map[common::toBase0(location.quadrantY)][common::toBase0(location.quadrantX)];
 }
 
 // Gets the QuadrantMap at (x, y). This
@@ -104,9 +104,9 @@ const QuadrantMap& Game::at(int x, int y) const {
 }
 
 // Gets the QuadrantMap at (x, y). This
-// method takes base-0 location coordinates.
+// method takes base-1 location coordinates.
 const QuadrantMap& Game::at(common::Location location) const {
-    return map[location.quadrantX][location.quadrantY];
+    return map[common::toBase0(location.quadrantY)][common::toBase0(location.quadrantX)];
 }
 
 // Gets the current Enterprise and returns a reference
@@ -255,8 +255,8 @@ void Game::firePhasers(double phaserEnergy) {
         auto& klingon = *it;
         auto klingonLocation = klingon.getLocation();
 
-        int damage = enterprise.firePhasers(phaserEnergy, klingonLocation.sectorX,
-                            klingonLocation.sectorY, klingonSize);
+        int damage = enterprise.firePhasers(phaserEnergy, klingonLocation.sectorY,
+                            klingonLocation.sectorX, klingonSize);
 
         klingon.adjustEnergy(-damage);
 
@@ -272,7 +272,7 @@ void Game::firePhasers(double phaserEnergy) {
             continue;
         }
 
-        destroyKlingon(common::Location(klingonLocation.sectorX, klingonLocation.sectorY, location.quadrantX, location.quadrantY));
+        destroyKlingon(common::Location(klingonLocation.sectorY, klingonLocation.sectorX, location.quadrantY, location.quadrantX));
         it = currentKlingons.begin();
     }
 }
@@ -413,6 +413,8 @@ void Game::moveCommand(const std::vector<std::string>& command) {
         if (oldPos != newLocation) {
             at(newLocation).klingonsMove();
             enterprise.takeDamage(at(newLocation).klingonsFire());
+            if (enterprise.isDestroyed())
+                return;
         }
 
         if (!moveSuccess) {
@@ -482,6 +484,9 @@ void Game::phaserCommand(const std::vector<std::string>& command) {
         double phaserEnergy = std::stod(command[1]);
         firePhasers(phaserEnergy);
         enterprise.takeDamage(at(enterprise.getLocation()).klingonsFire());
+        if (enterprise.isDestroyed())
+            return;
+
         shortRangeCommand();
     } catch (const std::exception& e) {
         common::IO::warning("Error occurred: " + std::string(e.what()));
@@ -505,7 +510,13 @@ void Game::torpedoCommand(const std::vector<std::string>& command) {
     try {
         double warpDirection = std::stod(command[1]);
         fireTorpedo(warpDirection);
+        if (enterprise.isDestroyed())
+            return;
+
         enterprise.takeDamage(at(enterprise.getLocation()).klingonsFire());
+        if (enterprise.isDestroyed())
+            return;
+        
         shortRangeCommand();
     } catch (const std::exception& e) {
         common::IO::warning("Error occurred: " + std::string(e.what()));
@@ -679,8 +690,8 @@ void Game::computerLibraryCommandSND() const {
     }
 
     // Determine which side of the starbase the Enterprise is on.
-    const int dx = startingPosition.sectorX - starbaseLocation.sectorX;
-    const int dy = startingPosition.sectorY - starbaseLocation.sectorY;
+    const int dx = startingPosition.sectorY - starbaseLocation.sectorY;
+    const int dy = startingPosition.sectorX - starbaseLocation.sectorX;
 
     // Select the starbase's neighboring sector closest to the Enterprise.
     //
@@ -689,14 +700,14 @@ void Game::computerLibraryCommandSND() const {
     common::Location targetLocation = starbaseLocation;
 
     if (dx > 0)
-        ++targetLocation.sectorX;
+        ++targetLocation.sectorY;
     else if (dx < 0)
-        --targetLocation.sectorX;
+        --targetLocation.sectorY;
 
     if (dy > 0)
-        ++targetLocation.sectorY;
+        ++targetLocation.sectorX;
     else if (dy < 0)
-        --targetLocation.sectorY;
+        --targetLocation.sectorX;
 
     double direction;
     double factor;
@@ -739,8 +750,8 @@ void Game::calculateDD(common::Location startingLocation,
     factor = 0.0;
     
     // calculate distance
-    const double dx = endingLocation.sectorX - startingLocation.sectorX;
-    const double dy = startingLocation.sectorY - endingLocation.sectorY;
+    const double dx = endingLocation.sectorY - startingLocation.sectorY;
+    const double dy = startingLocation.sectorX - endingLocation.sectorX;
 
     double distance = std::hypot(dx, dy);
 

@@ -24,8 +24,8 @@ namespace common {
      * Location is a helper class which represents a complete
      * position within this game. It includes quadrant
      * coordinates, and sector coordinates. Both are valid 
-     * [0, 7]. As such, this class represents base-0 coordinates.
-     * Everything is stored in (column, row) notation. 
+     * [1, 8]. As such, this class represents base-1 coordinates.
+     * Everything is stored in (row, column) notation. 
      * 
      * Construction does not check or validate the coordinates 
      * inputted. 
@@ -43,7 +43,7 @@ namespace common {
     class Location {
     public:
         Location();
-        Location(int sectorX, int sectorY, int quadrantX, int quadrantY);
+        Location(int sectorY, int sectorX, int quadrantY, int quadrantX);
 
         bool operator!=(const Location& other) const;
         bool operator==(const Location& other) const;
@@ -55,11 +55,11 @@ namespace common {
         std::string quadrantString() const;
         std::string toString() const;
 
-        int quadrantX;
         int quadrantY;
+        int quadrantX;
 
-        int sectorX;
         int sectorY;
+        int sectorX;
 
         static inline constexpr int INVALID = -1;
     };

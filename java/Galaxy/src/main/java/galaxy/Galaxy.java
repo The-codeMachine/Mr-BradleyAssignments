@@ -76,7 +76,7 @@ public class Galaxy {
      * @return a Quadrant located at (quadrantX, quadrantY)
      */
     public Quadrant getQuadrant(Location loc) {
-        return getQuadrant(GameLib.toBase1(loc.quadrantX), GameLib.toBase1(loc.quadrantY));
+        return getQuadrant(loc.quadrantY, loc.quadrantX);
     }
 
     /**
@@ -89,7 +89,7 @@ public class Galaxy {
      * @return the galatic region name of quadrant (x, y)
      */
     public static String getQuadrantRegionName(int x, int y) {
-        return getQuadrantRegionName(new Location(Location.INVALID, Location.INVALID, GameLib.toBase0(x), GameLib.toBase0(y)));
+        return getQuadrantRegionName(new Location(Location.INVALID, Location.INVALID, x, y));
     }
 
     /**
@@ -101,8 +101,8 @@ public class Galaxy {
      * @return the galatic region name of quadrant at Location
      */
     public static String getQuadrantRegionName(Location location) {
-        int x = location.quadrantX;
-        int y = location.quadrantY;
+        int x = GameLib.toBase0(location.quadrantY);
+        int y = GameLib.toBase0(location.quadrantX);
 
         if (!validIndex(x) || !validIndex(y))
             return "";
@@ -132,8 +132,8 @@ public class Galaxy {
      * @return the Quadrant's roman numeral for a particular region
      */
     public static String getQuadrantRomanNumeral(Location location) {
-        int x = location.quadrantX;
-        int y = location.quadrantY;
+        int x = GameLib.toBase0(location.quadrantY);
+        int y = GameLib.toBase0(location.quadrantX);
 
         if (!validIndex(x) || !validIndex(y))
             return "";
@@ -152,7 +152,7 @@ public class Galaxy {
      */
     public static String getGalaticRegionName(int x, int y) {
         return getGalaticRegionName(new Location(Location.INVALID, Location.INVALID, 
-            GameLib.toBase0(x), GameLib.toBase0(y)));
+            x, y));
     }
 
     /**
@@ -188,8 +188,8 @@ public class Galaxy {
         for (int y = GameLib.MIN_INDEX_0; y <= GameLib.MAX_INDEX_0; ++y) {
             IO.printf("%d   %s%s\n",
                                 GameLib.toBase1(y), 
-                                StringUtils.padCenter(getQuadrantRegionName(new Location(Location.INVALID, Location.INVALID, 0, y)), 24), 
-                                StringUtils.padCenter(getQuadrantRegionName(new Location(Location.INVALID, Location.INVALID, 5, y)), 24)
+                                StringUtils.padCenter(getQuadrantRegionName(new Location(Location.INVALID, Location.INVALID, 1, GameLib.toBase1(y))), 24), 
+                                StringUtils.padCenter(getQuadrantRegionName(new Location(Location.INVALID, Location.INVALID, 7, GameLib.toBase1(y))), 24)
                             );
             IO.println(StringUtils.padLeft("----- ----- ----- ----- ----- ----- ----- -----", 52));
         }
@@ -229,7 +229,7 @@ public class Galaxy {
      * @param location
      */
     public void reduceStarBases(Location location) {
-        reduceStarBases(GameLib.toBase1(location.quadrantX), GameLib.toBase1(location.quadrantY));
+        reduceStarBases(location.quadrantY, location.quadrantX);
     }
 
     /**
@@ -268,7 +268,7 @@ public class Galaxy {
      * @param location
      */
     public void reduceKlingons(Location location) {
-        reduceKlingons(GameLib.toBase1(location.quadrantX), GameLib.toBase1(location.quadrantY));
+        reduceKlingons(location.quadrantY, location.quadrantX);
     }
 
     /**
@@ -279,10 +279,10 @@ public class Galaxy {
      * @param location
      */
     public void longRangeScan(Location location) {
-        int startY = (int)MathUtils.clamp(location.quadrantY - 1, GameLib.MIN_INDEX_0, GameLib.MAX_INDEX_0);
-        int endY   = (int)MathUtils.clamp(location.quadrantY + 1, GameLib.MIN_INDEX_0, GameLib.MAX_INDEX_0);
-        int startX = (int)MathUtils.clamp(location.quadrantX - 1, GameLib.MIN_INDEX_0, GameLib.MAX_INDEX_0);
-        int endX   = (int)MathUtils.clamp(location.quadrantX + 1, GameLib.MIN_INDEX_0, GameLib.MAX_INDEX_0);
+        int startY = (int)MathUtils.clamp(GameLib.toBase0(location.quadrantX) - 1, GameLib.MIN_INDEX_0, GameLib.MAX_INDEX_0);
+        int endY   = (int)MathUtils.clamp(GameLib.toBase0(location.quadrantX) + 1, GameLib.MIN_INDEX_0, GameLib.MAX_INDEX_0);
+        int startX = (int)MathUtils.clamp(GameLib.toBase0(location.quadrantY) - 1, GameLib.MIN_INDEX_0, GameLib.MAX_INDEX_0);
+        int endX   = (int)MathUtils.clamp(GameLib.toBase0(location.quadrantY) + 1, GameLib.MIN_INDEX_0, GameLib.MAX_INDEX_0);
 
         for (int y = startY; y <= endY; ++y) {
             for (int x = startX; x <= endX; ++x)

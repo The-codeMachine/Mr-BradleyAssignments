@@ -64,7 +64,7 @@ public class Game {
      * @return the QuadrantMap at (x, y)
      */
     public QuadrantMap at(Location location) {
-        return map[location.quadrantX][location.quadrantY];
+        return at(location.quadrantY, location.quadrantX);
     }
 
     /**
@@ -345,8 +345,8 @@ public class Game {
             Klingon klingon = it.next();
             Location klingonLocation = klingon.getLocation();
 
-            int damage = enterprise.firePhasers(phaserEnergy, klingonLocation.sectorX, 
-                                                klingonLocation.sectorY, klingonSize);
+            int damage = enterprise.firePhasers(phaserEnergy, klingonLocation.sectorY, 
+                                                klingonLocation.sectorX, klingonSize);
             klingon.adjustEnergy(-damage);
 
             IO.printf("%d unit hit on Klingon at %s\n", 
@@ -521,6 +521,8 @@ public class Game {
             if (oldPos != newLocation) {
                 at(newLocation).klingonsMove();
                 enterprise.takeDamage(at(newLocation).klingonsFire());
+                if (enterprise.isDestroyed())
+                    return;
             }
 
             if (!moveSuccess) {
@@ -599,6 +601,9 @@ public class Game {
             double phaserEnergy = Double.parseDouble(command.get(1));
             firePhasers(phaserEnergy);
             enterprise.takeDamage(at(enterprise.getLocation()).klingonsFire());
+            if (enterprise.isDestroyed())
+                return;
+
             shortRangeCommand();
         } catch (Exception e) {
             IO.exception(e);
@@ -627,6 +632,9 @@ public class Game {
             double warpDirection = Double.parseDouble(command.get(1));
             fireTorpedo(warpDirection);
             enterprise.takeDamage(at(enterprise.getLocation()).klingonsFire());
+            if (enterprise.isDestroyed())
+                return;
+
             shortRangeCommand();
         } catch (Exception e) {
             IO.exception(e);
@@ -839,29 +847,29 @@ public class Game {
         }
 
         // Determine which side of the starbase the Enterprise is on.
-        int dx = startingPosition.sectorX - starbaseLocation.sectorX;
-        int dy = startingPosition.sectorY - starbaseLocation.sectorY;
+        int dx = startingPosition.sectorY - starbaseLocation.sectorY;
+        int dy = startingPosition.sectorX - starbaseLocation.sectorX;
 
         // Select the starbase's neighboring sector closest to the Enterprise.
         //
         // If the Enterprise is east of the starbase, target the east neighbor.
         // If it is northeast, target the northeast neighbor, etc.
         Location targetLocation = new Location(
-            starbaseLocation.quadrantX,
             starbaseLocation.quadrantY,
-            starbaseLocation.sectorX,
-            starbaseLocation.sectorY
+            starbaseLocation.quadrantX,
+            starbaseLocation.sectorY,
+            starbaseLocation.sectorX
         );
 
         if (dx > 0)
-            ++targetLocation.sectorX;
+            ++targetLocation.sectorY;
         else if (dx < 0)
-            --targetLocation.sectorX;
+            --targetLocation.sectorY;
 
         if (dy > 0)
-            ++targetLocation.sectorY;
+            ++targetLocation.sectorX;
         else if (dy < 0)
-            --targetLocation.sectorY;
+            --targetLocation.sectorX;
 
         DDResult dd = calculateDD(startingPosition, targetLocation);
 
@@ -912,8 +920,8 @@ public class Game {
         double factor = 0.0;
 
         // calculate distance
-        double dx = endingLocation.sectorX - startingLocation.sectorX;
-        double dy = startingLocation.sectorY - endingLocation.sectorY;
+        double dx = endingLocation.sectorY - startingLocation.sectorY;
+        double dy = startingLocation.sectorX - endingLocation.sectorX;
 
         double distance = Math.hypot(dx, dy);
 

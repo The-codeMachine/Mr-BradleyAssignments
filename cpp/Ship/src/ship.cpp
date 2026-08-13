@@ -121,8 +121,8 @@ std::vector<common::Location> Ship::calculatePath(double warpFactor, double warp
     dx /= length;
     dy /= length;
 
-    double x = location.quadrantX * common::COLS + location.sectorX;
-    double y = location.quadrantY * common::ROWS + location.sectorY;
+    double x = common::toBase0(location.quadrantY) * common::COLS + common::toBase0(location.sectorY);
+    double y = common::toBase0(location.quadrantX) * common::ROWS + common::toBase0(location.sectorX);
 
     int lastX = (int) std::floor(x);
     int lastY = (int) std::floor(y);
@@ -158,10 +158,10 @@ std::vector<common::Location> Ship::calculatePath(double warpFactor, double warp
         if (globalX != lastX || globalY != lastY) {
 
             path.push_back({
-                    globalX % common::COLS,
-                    globalY % common::ROWS,
-                    globalX / common::COLS,
-                    globalY / common::ROWS});
+                    common::toBase1(globalX % common::COLS),
+                    common::toBase1(globalY % common::ROWS),
+                    common::toBase1(globalX / common::COLS),
+                    common::toBase1(globalY / common::ROWS)});
 
             lastX = globalX;
             lastY = globalY;
@@ -195,9 +195,9 @@ bool Ship::takeDamage(double phaserEnergy) {
 // based off how much is fired, how 
 // far the ship is, and how many klingons
 // are in the quadant currently.
-// Takes base-0 input
+// Takes base-1 input
 int Ship::firePhasers(double phaserEnergy, int x, int y) {
-    double distance = std::hypot(location.sectorX - x, location.sectorY - y);
+    double distance = std::hypot(common::toBase0(location.sectorY) - x, common::toBase0(location.sectorX) - y);
 
     return (phaserEnergy / distance) * (common::random() + 2);
 }

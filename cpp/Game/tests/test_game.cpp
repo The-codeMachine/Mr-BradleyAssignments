@@ -12,8 +12,8 @@ void testMove(Game& game, double warp, double direction, const std::string& name
 
     common::IO::println("Current Quadrant:");
     common::IO::println(game.at(
-            common::toBase1(game.getEnterprise().getLocation().quadrantX),
-            common::toBase1(game.getEnterprise().getLocation().quadrantY)).toString());
+            game.getEnterprise().getLocation().quadrantY,
+            game.getEnterprise().getLocation().quadrantX).toString());
 
     common::IO::println("");
 }

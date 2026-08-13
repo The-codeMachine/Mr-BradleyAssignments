@@ -121,7 +121,7 @@ bool Enterprise::takeDamage(double phaserEnergy) {
 // Reduces accurarcy if the COMPUTER_SYSTEMS are broken (essentially
 // decreases the amount of damage). 
 int Enterprise::firePhasers(double phaserEnergy, int x, int y, int numKlingons) {
-    double distance = std::hypot(getLocation().sectorX - x, getLocation().sectorY - y);
+    double distance = std::hypot(getLocation().sectorY - x, getLocation().sectorX - y);
     double h = phaserEnergy / numKlingons;
 
     return isDeviceBroken(std::string(Devices::COMPUTER_SYSTEMS)) ? 

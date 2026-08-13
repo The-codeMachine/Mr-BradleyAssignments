@@ -196,8 +196,7 @@ namespace common {
                 return {-1, -1, -1, -1};
             }
 
-            // converts from (row, column) to (column, row) by switching the numbers
-            return Location(toBase0(numbers[1]), toBase0(numbers[0]), toBase0(numbers[3]), toBase0(numbers[2]));
+            return Location(numbers[1], numbers[0], numbers[3], numbers[2]);
         }
 
         // Prompts the user to enter a valid sector using the (row, column) convention.
@@ -217,9 +216,8 @@ namespace common {
                 warning("Number is invalid, try again");
                 return {-1, -1, -1, -1};
             }
-
-            // converts from (row, column) to (column, row) by switching the numbers
-            return Location(toBase0(numbers[1]), toBase0(numbers[0]), -1, -1);
+            
+            return Location(numbers[1], numbers[0], -1, -1);
         }
 
         // Prompts the user to enter a valid quadrant using the (row, column) convention.
@@ -240,8 +238,7 @@ namespace common {
                 return {-1, -1, -1, -1};
             }
 
-            // converts from (row, column) to (column, row) by switching the numbers
-            return Location(-1, -1, toBase0(numbers[1]), toBase0(numbers[0]));
+            return Location(-1, -1, numbers[1], numbers[0]);
         }
 
         // Logs a trace message. 

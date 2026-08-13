@@ -35,20 +35,20 @@ const Quadrant& Galaxy::getQuadrant(int x, int y) const
     return map[x][y];
 }
 
-// Gets a Quadrant from the map. Takes the base-0 coordinates through location 
+// Gets a Quadrant from the map. Takes the base-1 coordinates through location 
 // (reference). 
 Quadrant& Galaxy::getQuadrant(common::Location loc) {
-    assert(validIndex(loc.quadrantX) && validIndex(loc.quadrantY));
+    assert(validIndex(common::toBase0(loc.quadrantY)) && validIndex(common::toBase0(loc.quadrantX)));
     
-    return map[loc.quadrantX][loc.quadrantY];
+    return map[common::toBase0(loc.quadrantY)][common::toBase0(loc.quadrantX)];
 }
 
-// Gets a Quadrant from the map. Takes the base-0 coordinates through location
+// Gets a Quadrant from the map. Takes the base-1 coordinates through location
 // (const reference)
 const Quadrant& Galaxy::getQuadrant(common::Location loc) const {
-    assert(validIndex(loc.quadrantX) && validIndex(loc.quadrantY));
+    assert(validIndex(common::toBase0(loc.quadrantY)) && validIndex(common::toBase0(loc.quadrantX)));
     
-    return map[loc.quadrantX][loc.quadrantY];
+    return map[common::toBase0(loc.quadrantY)][common::toBase0(loc.quadrantX)];
 }
 
 // Returns the galatic region name of a particular quadrant. Takes base-1 coordinates.
@@ -56,11 +56,11 @@ std::string Galaxy::getQuadrantRegionName(int x, int y) {
     return getQuadrantRegionName({common::Location::INVALID, common::Location::INVALID, common::toBase0(x), common::toBase0(y)});
 }
 
-// Returns the galatic region name of a particular quadrant. Takes base-0 coordinates
+// Returns the galatic region name of a particular quadrant. Takes base-1 coordinates
 // through Location.
 std::string Galaxy::getQuadrantRegionName(common::Location location) {
-    const int x = location.quadrantX;
-    const int y = location.quadrantY;
+    const int x = common::toBase0(location.quadrantY);
+    const int y = common::toBase0(location.quadrantX);
     
     if (!validIndex(x) || !validIndex(y))
         return "";
@@ -73,11 +73,11 @@ std::string Galaxy::getQuadrantRomanNumeral(int x, int y) {
     return getQuadrantRomanNumeral({common::Location::INVALID, common::Location::INVALID, common::toBase0(x), common::toBase0(y)});
 }
 
-// Gets the Quadrant's roman numeral for a particular region. Takes base-0 coordinates
+// Gets the Quadrant's roman numeral for a particular region. Takes base-1 coordinates
 // through Location.
 std::string Galaxy::getQuadrantRomanNumeral(common::Location location) {
-    const int x = location.quadrantX;
-    const int y = location.quadrantY;
+    const int x = common::toBase0(location.quadrantY);
+    const int y = common::toBase0(location.quadrantX);
     
     if (!validIndex(x) || !validIndex(y))
         return "";
@@ -88,10 +88,10 @@ std::string Galaxy::getQuadrantRomanNumeral(common::Location location) {
 // Gets a quadrant's full galatic region name based off a location. Takes base-1 
 // coordinates.
 std::string Galaxy::getGalaticRegionName(int x, int y) {
-    return getGalaticRegionName({common::Location::INVALID, common::Location::INVALID, common::toBase0(x), common::toBase0(y)});
+    return getGalaticRegionName({common::Location::INVALID, common::Location::INVALID, x, y});
 }
 
-// Gets a quadrant's full galatic region name based off a location. Takes base-0 
+// Gets a quadrant's full galatic region name based off a location. Takes base-1 
 // coordinates through Location.
 std::string Galaxy::getGalaticRegionName(common::Location location) {
     std::string name = getQuadrantRegionName(location);
@@ -114,8 +114,8 @@ void Galaxy::printGalaticRegionMap() {
     for (int y = common::MIN_INDEX_0; y <= common::MAX_INDEX_0; ++y) {
         common::IO::printf("%d   %s%s\n",
                             common::toBase1(y), 
-                            common::padCenter(getQuadrantRegionName({common::Location::INVALID, common::Location::INVALID, 0, y}), 24).c_str(), 
-                            common::padCenter(getQuadrantRegionName({common::Location::INVALID, common::Location::INVALID, 5, y}), 24).c_str()
+                            common::padCenter(getQuadrantRegionName({common::Location::INVALID, common::Location::INVALID, 1, common::toBase1(y)}), 24).c_str(), 
+                            common::padCenter(getQuadrantRegionName({common::Location::INVALID, common::Location::INVALID, 7, common::toBase1(y)}), 24).c_str()
                         );
         common::IO::println(common::padLeft("----- ----- ----- ----- ----- ----- ----- -----", 52));
     }
@@ -137,9 +137,9 @@ void Galaxy::reduceStarBases(int x, int y) {
 }
 
 // Reduces the number of star bases by one, and removes it from
-// the quadrant. Takes base-0 coordinates through location
+// the quadrant. Takes base-1 coordinates through location
 void Galaxy::reduceStarBases(common::Location location) {
-    reduceStarBases(common::toBase1(location.quadrantX), common::toBase1(location.quadrantY));
+    reduceStarBases(location.quadrantY, location.quadrantX);
 }
 
 // Gets and returns the total number of klingons in the galaxy
@@ -160,18 +160,18 @@ void Galaxy::reduceKlingons(int x, int y) {
 
 // Reduces the amount of klingons in both the specific Quadrant and the
 // total number of klingons. Checks that there is actually a klingon in
-// that quadrant. Takes base-0 coordinates through Location. 
+// that quadrant. Takes base-1 coordinates through Location. 
 void Galaxy::reduceKlingons(common::Location location) {
-    reduceKlingons(common::toBase1(location.quadrantX), common::toBase1(location.quadrantY));
+    reduceKlingons(location.quadrantY, location.quadrantX);
 }
 
 // Makes a long range scan around the Enterprise (inputted as location). 
 // Updates the scanned galaxy. 
 void Galaxy::longRangeScan(common::Location location) {
-    const int startY = std::clamp(location.quadrantY - 1, common::MIN_INDEX_0, common::MAX_INDEX_0);
-    const int endY   = std::clamp(location.quadrantY + 1, common::MIN_INDEX_0, common::MAX_INDEX_0);
-    const int startX = std::clamp(location.quadrantX - 1, common::MIN_INDEX_0, common::MAX_INDEX_0);
-    const int endX   = std::clamp(location.quadrantX + 1, common::MIN_INDEX_0, common::MAX_INDEX_0);
+    const int startY = std::clamp(common::toBase0(location.quadrantX) - 1, common::MIN_INDEX_0, common::MAX_INDEX_0);
+    const int endY   = std::clamp(common::toBase0(location.quadrantX) + 1, common::MIN_INDEX_0, common::MAX_INDEX_0);
+    const int startX = std::clamp(common::toBase0(location.quadrantY) - 1, common::MIN_INDEX_0, common::MAX_INDEX_0);
+    const int endX   = std::clamp(common::toBase0(location.quadrantY) + 1, common::MIN_INDEX_0, common::MAX_INDEX_0);
 
     for (int y = startY; y <= endY; ++y) {
         for (int x = startX; x <= endX; ++x)
@@ -197,8 +197,8 @@ void Galaxy::longRangeScan(common::Location location) {
 void Galaxy::printScannedGalaxy() const noexcept {
     common::IO::println("\n+-----+-----+-----+-----+-----+-----+-----+-----+");
 
-    for (int y = 0; y < common::ROWS; ++y) {
-        for (int x = 0; x < common::COLS; ++x) {
+    for (int y = 0; y < common::COLS; ++y) {
+        for (int x = 0; x < common::ROWS; ++x) {
             auto q = scannedGalaxy[y][x];
             if (q == std::nullopt) {
                 common::IO::printf("| --- ");
@@ -244,15 +244,15 @@ void Galaxy::populateGalaxy()
     // Ensure at least 1 base exists
     if (totalBases < 1)
     {
-        int i = common::randomInt(0, 7);
-        int j = common::randomInt(0, 7);
+        int i = common::randomInt(common::MIN_INDEX_0, common::MAX_INDEX_0);
+        int j = common::randomInt(common::MIN_INDEX_0, common::MAX_INDEX_0);
 
         map[i][j].putBase();
         totalBases = 1;
     }
 }
 
-// Checks whether index is a valid index for the galaxy. Takes base-0 coordinates. 
+// Checks whether index is a valid index for the galaxy. Takes base-1 coordinates. 
 bool Galaxy::validIndex(int index) {
     return index >= common::MIN_INDEX_0 && index <= common::MAX_INDEX_0;
 }

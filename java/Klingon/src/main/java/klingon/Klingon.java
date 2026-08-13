@@ -66,8 +66,8 @@ public class Klingon extends Ship {
      */
     public Location calculateDestination() {
         Location randomLocation = new Location();
-        return new Location(randomLocation.sectorX, randomLocation.sectorY, 
-                            getLocation().quadrantX, getLocation().quadrantY);
+        return new Location(randomLocation.sectorY, randomLocation.sectorX, 
+                            getLocation().quadrantY, getLocation().quadrantX);
     }
 
     /**

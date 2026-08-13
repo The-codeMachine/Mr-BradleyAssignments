@@ -11,18 +11,18 @@ namespace common
 
     // Creates a location from the predefined sector (x, y) and quadrant (x, y) values. Does
     // not check that they are valid. You can enter invalid values (e.g. -1 to represent nothing)
-    Location::Location(int sectorX, int sectorY, int quadrantX, int quadrantY) :
-        sectorX(sectorX), sectorY(sectorY), quadrantX(quadrantX), quadrantY(quadrantY) {}
+    Location::Location(int sectorY, int sectorX, int quadrantY, int quadrantX) :
+        sectorY(sectorY), sectorX(sectorX), quadrantY(quadrantY), quadrantX(quadrantX) {}
 
     // Generates a random sector (x, y) and quadrant (x, y) position. Makes sure it is valid.   
-    Location::Location() : sectorX(common::randomInt(MIN_INDEX_0, MAX_INDEX_0)), sectorY(common::randomInt(MIN_INDEX_0, MAX_INDEX_0)),
-        quadrantX(common::randomInt(MIN_INDEX_0, MAX_INDEX_0)), quadrantY(common::randomInt(MIN_INDEX_0, MAX_INDEX_0)) {}
+    Location::Location() : sectorY(common::randomInt(MIN_INDEX_1, MAX_INDEX_1)), sectorX(common::randomInt(MIN_INDEX_1, MAX_INDEX_1)),
+        quadrantY(common::randomInt(MIN_INDEX_1, MAX_INDEX_1)), quadrantX(common::randomInt(MIN_INDEX_1, MAX_INDEX_1)) {}
 
     // Checks whether or not this location has the same values as another, returns
     // true if it does 
     bool Location::operator==(const Location& other) const {
-        return (other.sectorX == sectorX && other.sectorY == sectorY 
-            && quadrantX == other.quadrantX && quadrantY == other.quadrantY);
+        return (other.sectorY == sectorY && other.sectorX == sectorX 
+            && quadrantY == other.quadrantY && quadrantX == other.quadrantX);
     }
 
     // Checks whether or not this location has the same values as another, returns
@@ -33,19 +33,19 @@ namespace common
 
     // Checks that another location and this location are in the same quadrant
     bool Location::sameQuadrant(const Location& other) const {
-        return quadrantX == other.quadrantX && quadrantY == other.quadrantY;
+        return quadrantY == other.quadrantY && quadrantX == other.quadrantX;
     }
 
     // Checks that another location and this location are in the same sector
     bool Location::sameSector(const Location& other) const {
-        return sectorX == other.sectorX && sectorY == other.sectorY;
+        return sectorY == other.sectorY && sectorX == other.sectorX;
     }
 
     // Returns a string representing this location's current sector. Returns
     // an empty string if the sector values at invalid
     std::string Location::sectorString() const {
-        if (sectorX != INVALID && sectorY != INVALID) {
-            return "Sector (" + std::to_string(toBase1(sectorY)) + ", " + std::to_string(toBase1(sectorX)) + ")";
+        if (sectorY != INVALID && sectorX != INVALID) {
+            return "Sector (" + std::to_string(sectorX) + ", " + std::to_string(sectorY) + ")";
         }
 
         return "";
@@ -54,8 +54,8 @@ namespace common
     // Returns a string representing this location's current quadrant. Returns
     // an empty string if the quadrant values at invalid
     std::string Location::quadrantString() const {
-        if (quadrantX != INVALID && quadrantY != INVALID) {
-            return "Quadrant (" + std::to_string(toBase1(quadrantY)) + ", " + std::to_string(toBase1(quadrantX)) + ")";
+        if (quadrantY != INVALID && quadrantX != INVALID) {
+            return "Quadrant (" + std::to_string(quadrantX) + ", " + std::to_string(quadrantY) + ")";
         }
 
         return "";

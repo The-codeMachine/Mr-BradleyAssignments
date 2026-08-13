@@ -229,9 +229,8 @@ public class IO {
             return new Location(-1, -1, -1, -1);
         }
 
-        // converts from (row, column) to (column, row) by switching the numbers
-        return new Location(GameLib.toBase0(numbers.get(1)), GameLib.toBase0(numbers.get(0)), 
-                            GameLib.toBase0(numbers.get(3)), GameLib.toBase0(numbers.get(4))); 
+        return new Location(numbers.get(1), numbers.get(0), 
+                            numbers.get(3), numbers.get(4)); 
     }
 
     /**
@@ -256,9 +255,7 @@ public class IO {
             return new Location(-1, -1, -1, -1);
         }
 
-        // converts from (row, column) to (column, row) by switching the numbers
-        return new Location(GameLib.toBase0(numbers.get(1)), GameLib.toBase0(numbers.get(0)), 
-                            -1, -1); 
+        return new Location(numbers.get(1), numbers.get(0), -1, -1); 
     }
     
     /**
@@ -283,8 +280,7 @@ public class IO {
             return new Location(-1, -1, -1, -1);
         }
 
-        // converts from (row, column) to (column, row) by switching the numbers
-        return new Location(-1, -1, GameLib.toBase0(numbers.get(1)), GameLib.toBase0(numbers.get(0))); 
+        return new Location(-1, -1, numbers.get(1), numbers.get(0)); 
     }
 
     /**

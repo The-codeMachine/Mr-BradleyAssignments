@@ -15,8 +15,8 @@ public class Main {
 
         IO.println("Current Quadrant:");
         IO.println(game.at(
-                GameLib.toBase1(game.getEnterprise().getLocation().quadrantX),
-                GameLib.toBase1(game.getEnterprise().getLocation().quadrantY)).toString());
+                game.getEnterprise().getLocation().quadrantY,
+                game.getEnterprise().getLocation().quadrantX).toString());
 
         IO.println("");
     }
@@ -57,11 +57,7 @@ public class Main {
         }
 
         Game game = new Game();
-        IO.println("Initial Quadrant");
-        Location loc = game.getEnterprise().getLocation();
-        IO.println(game.at(GameLib.toBase1(loc.quadrantX), GameLib.toBase1(loc.quadrantY)).toString());
-
-        game.run();
+        game.run();        
     }
 }
 

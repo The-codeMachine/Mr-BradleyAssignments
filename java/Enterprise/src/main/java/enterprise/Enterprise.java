@@ -156,7 +156,7 @@ public class Enterprise extends Ship {
      * @return the amount of damage the phasers do to a klingon
      */
     public int firePhasers(double phaserEnergy, int x, int y, int numKlingons) {
-        double distance = Math.hypot(getLocation().sectorX - x, getLocation().sectorY - y);
+        double distance = Math.hypot(GameLib.toBase0(getLocation().sectorY) - x, GameLib.toBase0(getLocation().sectorX) - y);
         double h = phaserEnergy / numKlingons;
 
         return isDeviceBroken(Devices.COMPUTER_SYSTEMS) ? 
