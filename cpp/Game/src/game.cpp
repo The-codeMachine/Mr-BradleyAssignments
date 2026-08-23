@@ -435,26 +435,62 @@ void Game::shortRangeCommand() {
         return;
     }
 
-    // status conditions
+    // Status conditions
     const auto& location = enterprise.getLocation();
     std::string condition = "Green";
 
     if (enterprise.getEnergy() < 300)
         condition = "Yellow";
-    
+
     if (galaxy.getQuadrant(location).klingons() > 0)
         condition = "*Red*";
 
-    if (enterprise.getDocked()) 
+    if (enterprise.getDocked())
         condition = "Docked";
-    
-    common::IO::printf("Status condition: %s\n", condition.c_str());
-    common::IO::println(at(location).toString());
-    common::IO::println(enterprise.toString());
-    common::IO::printf("Klingons left: %d\n", galaxy.getKlingons());
-    common::IO::printf("Star date: %.3f\n\n", currentStardate);
-}
 
+    common::IO::printf("Status condition: %s\n", condition.c_str());
+
+    // Split map and status into individual lines
+    std::istringstream mapStream(at(location).toString());
+    std::istringstream statusStream(enterprise.toString());
+
+    std::string mapLine;
+    std::string statusLine;
+
+    std::vector<std::string> statusLines;
+
+    while (std::getline(statusStream, statusLine)) {
+        statusLines.push_back(statusLine);
+    }
+
+    statusLines.push_back(std::format("Klingons left: {}", galaxy.getKlingons()));
+
+    statusLines.push_back(std::format("Star date: {:.3f}", currentStardate));
+
+    // Print map alongside status
+    std::size_t statusIndex = 0;
+
+    while (std::getline(mapStream, mapLine)) {
+        if (statusIndex < statusLines.size()) {
+            common::IO::printf("%-40s   %s\n",
+                mapLine.c_str(), statusLines[statusIndex].c_str());
+                
+            ++statusIndex;
+        } else {
+            common::IO::printf("%s\n", mapLine.c_str());
+        }
+    }
+
+    // Print any remaining status lines
+    while (statusIndex < statusLines.size()) {
+        common::IO::printf("%-40s   %s\n",
+            "", statusLines[statusIndex].c_str());
+            
+        ++statusIndex;
+    }
+
+    common::IO::println("");
+}
  
 // Does a long range scan around the Enterprise. Returns
 // the quadrant's KBS value around the Enterprise. 
@@ -484,10 +520,6 @@ void Game::phaserCommand(const std::vector<std::string>& command) {
         double phaserEnergy = std::stod(command[1]);
         firePhasers(phaserEnergy);
         enterprise.takeDamage(at(enterprise.getLocation()).klingonsFire());
-        if (enterprise.isDestroyed())
-            return;
-
-        shortRangeCommand();
     } catch (const std::exception& e) {
         common::IO::warning("Error occurred: " + std::string(e.what()));
         return;
@@ -510,14 +542,7 @@ void Game::torpedoCommand(const std::vector<std::string>& command) {
     try {
         double warpDirection = std::stod(command[1]);
         fireTorpedo(warpDirection);
-        if (enterprise.isDestroyed())
-            return;
-
         enterprise.takeDamage(at(enterprise.getLocation()).klingonsFire());
-        if (enterprise.isDestroyed())
-            return;
-        
-        shortRangeCommand();
     } catch (const std::exception& e) {
         common::IO::warning("Error occurred: " + std::string(e.what()));
         return;

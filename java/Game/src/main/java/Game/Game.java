@@ -546,23 +546,39 @@ public class Game {
             return;
         }
 
-        // status conditions
+        // Determine status condition
         Location location = enterprise.getLocation();
         String condition = "Green";
+
         if (enterprise.energy() < 300)
             condition = "Yellow";
 
         if (galaxy.getQuadrant(location).klingons() > 0)
             condition = "*Red*";
 
-        if (enterprise.getDocked()) 
+        if (enterprise.getDocked())
             condition = "Docked";
 
-        IO.printf("Status condition: %s\n", condition);
-        IO.println(at(location).toString());
-        IO.println(enterprise.toString());
-        IO.printf("Klingons left: %d\n", galaxy.klingons());
-        IO.printf("Star date: %.3f\n\n", currentStardate);
+        IO.printf("Status condition: %s%n", condition);
+
+        String[] mapLines = at(location).toString().split("\n");
+
+        String[] statusLines = {
+            String.format("Energy: %d", enterprise.energy()),
+            String.format("Location: %s", enterprise.getLocation()),
+            String.format("Torpedoes: %d", enterprise.getTorpedoes()),
+            String.format("Shields: %.1f", enterprise.shields()),
+            String.format("Docked: %s", enterprise.getDocked()),
+            String.format("Klingons left: %d", galaxy.klingons()),
+            String.format("Star date: %.3f", currentStardate)
+        };
+
+        for (int i = 0; i < mapLines.length; i++) {
+            String status = i < statusLines.length ? statusLines[i] : "";
+            IO.printf("%-40s   %s%n", mapLines[i], status);
+        }
+
+        IO.println("");
     }
 
     /**
@@ -601,10 +617,6 @@ public class Game {
             double phaserEnergy = Double.parseDouble(command.get(1));
             firePhasers(phaserEnergy);
             enterprise.takeDamage(at(enterprise.getLocation()).klingonsFire());
-            if (enterprise.isDestroyed())
-                return;
-
-            shortRangeCommand();
         } catch (Exception e) {
             IO.exception(e);
             return;
@@ -632,10 +644,6 @@ public class Game {
             double warpDirection = Double.parseDouble(command.get(1));
             fireTorpedo(warpDirection);
             enterprise.takeDamage(at(enterprise.getLocation()).klingonsFire());
-            if (enterprise.isDestroyed())
-                return;
-
-            shortRangeCommand();
         } catch (Exception e) {
             IO.exception(e);
             return;

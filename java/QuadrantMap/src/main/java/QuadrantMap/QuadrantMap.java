@@ -404,6 +404,7 @@ public class QuadrantMap {
             out += "\n";
         }
 
+        out += dashRow;
         return out;
     }
 

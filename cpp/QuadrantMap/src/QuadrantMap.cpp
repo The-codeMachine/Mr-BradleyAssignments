@@ -386,6 +386,7 @@ std::string QuadrantMap::toString() const
         out += "\n";
     }
 
+    out += "---+---+---+---+---+---+---+---+\n";
     return out;
 }
 
